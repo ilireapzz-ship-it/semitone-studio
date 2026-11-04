@@ -1,0 +1,32 @@
+SEMITONE STUDIO for Windows — install and use in FL Studio
+==========================================================
+
+INSTALL
+1. Copy the folder "Semitone Studio.vst3" into:
+      C:\Program Files\Common Files\VST3\
+2. Open FL Studio > Options > Manage plugins > Find installed plugins (or "Start scan").
+   Semitone Studio appears under Generators. Tick the star to add it to your favourites.
+3. "Semitone Studio.exe" is the standalone app: double-click to run it without a DAW.
+
+The plugin window needs Microsoft Edge WebView2, which is already part of Windows 10/11.
+
+PLAY YOUR OWN INSTRUMENTS (Omnisphere, Kontakt, Serum...) FROM EACH PART
+Semitone sends every part on its own MIDI channel:
+   Melody = Ch 1, Chords = Ch 2, Bass = Ch 3, Drums = Ch 10 (change them in Sounds > MIDI channels)
+1. Add Semitone Studio to the Channel Rack. It makes no sound itself.
+2. In Semitone's plugin window click the gear icon (wrapper settings) > MIDI > set "Output port" to 1.
+3. Add an instrument for each part (e.g. Omnisphere for Chords). In its wrapper settings set
+   "Input port" to 1 and its MIDI channel to the part's channel (Chords = 2).
+4. Press Play in FL Studio. Semitone follows FL's tempo and playhead.
+   Use the bar at the top of the plugin to choose "whole song" or "selected section (looped)".
+
+DRAG PARTS INTO FL STUDIO
+In Compose, the "Into your DAW" chips (Melody, Chords, Bass, Drums, All parts) can be dragged
+straight onto FL's Playlist or a channel. Each orchestral instrument has its own chip too.
+
+YOUR SONG IS SAVED IN THE FL PROJECT
+Save the FL project as usual. Semitone's song (melody, chords, lyrics, mix...) is stored inside it
+and comes back when you reopen the project.
+
+Exports (MIDI, pitch packs, DAW exports) open a Save dialog; the default folder is
+Documents\Semitone Studio\Exports.

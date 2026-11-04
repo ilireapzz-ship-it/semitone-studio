@@ -1,0 +1,62 @@
+name: Build Semitone Studio
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Sequencer tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and run tests
+        run: g++ -std=c++17 -O1 -Wall -ISource tests/sequencer_test.cpp -o seqtest && ./seqtest
+
+  windows:
+    name: Windows (VST3 + app)
+    needs: test
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Get the WebView2 SDK
+        shell: pwsh
+        run: nuget install Microsoft.Web.WebView2 -Version 1.0.1901.177 -OutputDirectory "$env:RUNNER_TEMP/webview2"
+      - name: Configure
+        shell: pwsh
+        run: cmake -B build -G "Visual Studio 17 2022" -A x64 "-DJUCE_WEBVIEW2_PACKAGE_LOCATION=$env:RUNNER_TEMP/webview2"
+      - name: Build
+        run: cmake --build build --config Release --parallel
+      - name: Package
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory dist | Out-Null
+          Copy-Item -Recurse "build/SemitoneStudio_artefacts/Release/VST3/Semitone Studio.vst3" dist/
+          Copy-Item "build/SemitoneStudio_artefacts/Release/Standalone/Semitone Studio.exe" dist/
+          Copy-Item docs/INSTALL-WINDOWS.txt dist/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Semitone-Studio-Windows
+          path: dist
+
+  macos:
+    name: macOS (VST3 + AU + app)
+    needs: test
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release "-DCMAKE_OSX_ARCHITECTURES=arm64;x86_64"
+      - name: Build
+        run: cmake --build build --config Release --parallel 4
+      - name: Package (ad-hoc signed)
+        run: |
+          mkdir -p dist
+          A="build/SemitoneStudio_artefacts/Release"
+          cp -R "$A/VST3/Semitone Studio.vst3" "$A/AU/Semitone Studio.component" "$A/Standalone/Semitone Studio.app" dist/
+          for b in dist/*.vst3 dist/*.component dist/*.app; do codesign --force --deep -s - "$b"; done
+          cp docs/INSTALL-MAC.txt dist/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Semitone-Studio-Mac
+          path: dist

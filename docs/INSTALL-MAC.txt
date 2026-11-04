@@ -1,0 +1,13 @@
+SEMITONE STUDIO for macOS — install
+===================================
+
+1. Copy "Semitone Studio.vst3" to  ~/Library/Audio/Plug-Ins/VST3/
+   Copy "Semitone Studio.component" to  ~/Library/Audio/Plug-Ins/Components/
+   Put "Semitone Studio.app" in Applications.
+2. These test builds are not notarised yet. The first time, right-click the app > Open, and if a
+   plugin is blocked run this in Terminal:
+      xattr -dr com.apple.quarantine ~/Library/Audio/Plug-Ins/VST3/"Semitone Studio.vst3" ~/Library/Audio/Plug-Ins/Components/"Semitone Studio.component"
+3. Rescan plugins in your DAW. In Logic, Semitone appears as an instrument (Audio Units).
+
+Each part leaves on its own MIDI channel (Melody 1, Chords 2, Bass 3, Drums 10); route your
+instrument tracks' MIDI input from Semitone Studio. See INSTALL-WINDOWS.txt for the FL Studio steps.
