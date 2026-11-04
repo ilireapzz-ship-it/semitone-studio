@@ -19,6 +19,12 @@ Each part leaves on its own MIDI channel: Melody 1, Chords 2, Bass 3, Drums 10.
    Instruments with a MIDI-channel setting (Omnisphere parts are Ch 1-8) pick their part by channel.
 4. Use FL's SONG mode and press Play. (In PAT mode FL loops the pattern length.)
 
+OMNISPHERE TIPS
+- Many Omnisphere multis switch on STACK MODE (label next to Utility). Stack mode ignores the
+  part channels, so a part can go silent. Turn it off on the Stack page.
+- Glides, slides, scoops, falls and vibrato are sent as pitch bend with a range of 12
+  semitones. Set the patch's pitch-bend range to 12 so they land on the right notes.
+
 DRAG PARTS INTO FL STUDIO
 Drag a part chip (Melody, Chords, Bass, Drums, All parts) from "Into your DAW" onto FL's
 Channel Rack. FL shows its Import MIDI box: press Accept.

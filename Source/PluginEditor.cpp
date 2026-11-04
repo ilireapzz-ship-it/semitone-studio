@@ -145,8 +145,14 @@ void SemitoneEditor::dragFile (const juce::String& name, const juce::String& bas
         ok = r == st::DragResult::started;
         if (! ok) why = r == st::DragResult::released ? "released" : r == st::DragResult::refused ? "refused" : "failed";
        #else
-        ok = juce::DragAndDropContainer::performExternalDragDropOfFiles ({ f.getFullPathName() }, false, this);
-        if (! ok) why = "failed";
+        // Windows: the drag only works while the button is still held (the web view asked for it by message)
+        if (! juce::ModifierKeys::getCurrentModifiersRealtime().isLeftButtonDown())
+            why = "released";
+        else
+        {
+            ok = juce::DragAndDropContainer::performExternalDragDropOfFiles ({ f.getFullPathName() }, true, this);
+            if (! ok) why = "failed";
+        }
        #endif
     }
 

@@ -2,31 +2,44 @@ SEMITONE STUDIO for Windows — install and use in FL Studio
 ==========================================================
 
 INSTALL
-1. Copy the folder "Semitone Studio.vst3" into:
+1. Right-click the downloaded zip > Properties > tick "Unblock" > OK, then extract it.
+   (Windows marks files from the internet; unblocking first avoids security prompts.)
+2. Copy the folder "Semitone Studio.vst3" into:
       C:\Program Files\Common Files\VST3\
-2. Open FL Studio > Options > Manage plugins > Find installed plugins (or "Start scan").
-   Semitone Studio appears under Generators. Tick the star to add it to your favourites.
-3. "Semitone Studio.exe" is the standalone app: double-click to run it without a DAW.
+3. FL Studio: Options > Manage plugins > Find installed plugins (or "Start scan").
+   Semitone Studio appears under Generators.
+4. "Semitone Studio.exe" is the standalone app. These test builds aren't code-signed yet, so
+   SmartScreen may say "Windows protected your PC": click More info > Run anyway.
 
 The plugin window needs Microsoft Edge WebView2, which is already part of Windows 10/11.
 
-PLAY YOUR OWN INSTRUMENTS (Omnisphere, Kontakt, Serum...) FROM EACH PART
-Semitone sends every part on its own MIDI channel:
-   Melody = Ch 1, Chords = Ch 2, Bass = Ch 3, Drums = Ch 10 (change them in Sounds > MIDI channels)
+PLAY YOUR INSTRUMENTS (Omnisphere, Kontakt, Nexus...) FROM EACH PART
+Each part leaves on its own MIDI channel: Melody 1, Chords 2, Bass 3, Drums 10
+(change them in Compose > Sounds > MIDI channels into FL Studio).
 1. Add Semitone Studio to the Channel Rack. It makes no sound itself.
-2. In Semitone's plugin window click the gear icon (wrapper settings) > MIDI > set "Output port" to 1.
-3. Add an instrument for each part (e.g. Omnisphere for Chords). In its wrapper settings set
-   "Input port" to 1 and its MIDI channel to the part's channel (Chords = 2).
-4. Press Play in FL Studio. Semitone follows FL's tempo and playhead.
-   Use the bar at the top of the plugin to choose "whole song" or "selected section (looped)".
+2. In its window click the gear (wrapper settings) > MIDI > Output port = 1.
+3. Add your instruments. In each one's gear > MIDI set Input port = 1.
+   Instruments with a MIDI-channel setting pick their part by channel (Omnisphere: the CH. box
+   of each part in the Multi page). A synth that plays every channel plays every part: untick
+   the parts it shouldn't play in Semitone.
+4. Use FL's SONG mode and press Play. In PAT mode FL loops the pattern length.
+   Semitone follows FL's tempo and position; the bar at the top chooses "whole song" or
+   "selected section (looped)".
+
+OMNISPHERE TIPS
+- Many Omnisphere multis switch on STACK MODE (label next to Utility). Stack mode ignores the
+  part channels, so a part can go silent. Turn it off on the Stack page.
+- Glides, slides, scoops, falls and vibrato are sent as pitch bend with a range of 12
+  semitones. Set the patch's pitch-bend range to 12 so they land on the right notes.
 
 DRAG PARTS INTO FL STUDIO
-In Compose, the "Into your DAW" chips (Melody, Chords, Bass, Drums, All parts) can be dragged
-straight onto FL's Channel Rack (FL shows its Import MIDI box: press Accept). Each orchestral instrument has its own chip too.
+Drag a part chip (Melody, Chords, Bass, Drums, All parts) from "Into your DAW" onto FL's
+Channel Rack. FL shows its Import MIDI box: press Accept. Single parts are on MIDI channel 1
+so the instrument you drop them on plays them.
+
+YOUR MIDI KEYBOARD
+Select the Semitone Studio channel and play: notes reach Play along, Ear training and live play.
 
 YOUR SONG IS SAVED IN THE FL PROJECT
-Save the FL project as usual. Semitone's song (melody, chords, lyrics, mix...) is stored inside it
-and comes back when you reopen the project.
-
-Exports (MIDI, pitch packs, DAW exports) open a Save dialog; the default folder is
-Documents\Semitone Studio\Exports.
+Save the FL project as usual. Semitone's song comes back when you reopen the project.
+Exports open a Save dialog; the default folder is Documents\Semitone Studio\Exports.
