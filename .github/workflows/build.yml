@@ -3,6 +3,10 @@ name: Build Semitone Studio
 on:
   push:
   workflow_dispatch:
+    inputs:
+      mac_runner:
+        description: macOS runner label (macos-15-intel or macos-latest)
+        default: macos-15-intel
 
 jobs:
   test:
@@ -42,7 +46,8 @@ jobs:
   macos:
     name: macOS (VST3 + AU + app)
     needs: test
-    runs-on: macos-latest
+    timeout-minutes: 40
+    runs-on: ${{ github.event.inputs.mac_runner || 'macos-15-intel' }}
     steps:
       - uses: actions/checkout@v4
       - name: Configure
