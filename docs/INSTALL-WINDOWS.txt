@@ -22,7 +22,7 @@ Semitone sends every part on its own MIDI channel:
 
 DRAG PARTS INTO FL STUDIO
 In Compose, the "Into your DAW" chips (Melody, Chords, Bass, Drums, All parts) can be dragged
-straight onto FL's Playlist or a channel. Each orchestral instrument has its own chip too.
+straight onto FL's Channel Rack (FL shows its Import MIDI box: press Accept). Each orchestral instrument has its own chip too.
 
 YOUR SONG IS SAVED IN THE FL PROJECT
 Save the FL project as usual. Semitone's song (melody, chords, lyrics, mix...) is stored inside it

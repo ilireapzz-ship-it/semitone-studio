@@ -126,7 +126,7 @@ void SemitoneEditor::saveFile (const juce::String& name, const juce::String& bas
 
 void SemitoneEditor::dragFile (const juce::String& name, const juce::String& base64)
 {
-    // write the part to a temp file, then start a real OS drag the DAW accepts (FL Studio: drop on the Playlist or a channel)
+    // write the part to a temp file, then start a real OS drag the DAW accepts (FL Studio: drop on the Channel Rack)
     const auto dir = juce::File::getSpecialLocation (juce::File::tempDirectory).getChildFile ("SemitoneStudioDrag");
     dir.createDirectory();
     const auto f = dir.getChildFile (juce::File::createLegalFileName (name));
