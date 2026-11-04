@@ -1896,7 +1896,8 @@ function scheduleBar(bar,t,spb,skip=0){
 function play(mode='section'){
   ensureAudio(); stopAll(); master=newMaster('song'); prewarmSong();
   const B=METERS[S.meter].B, full=barList(mode);
-  const from=mode==='section'?Math.max(0,Math.min(S.playFrom||0,full.length*B-.25)):0, sb=Math.floor(from/B+1e-9), off=from-sb*B;
+  const secStart=mode==='song'?Math.max(0,full.findIndex(x=>x.si===S.sel))*B:0, secLen=mode==='song'?full.filter(x=>x.si===S.sel).length*B:full.length*B;
+  const from=secStart+Math.max(0,Math.min(S.playFrom||0,secLen-.25)), sb=Math.floor(from/B+1e-9), off=from-sb*B;
   const first=full.slice(sb), loop=!!S.loopOn;
   const barAt=k=>k<first.length?first[k]:full[(k-first.length)%full.length];
   const TT={starts:[],durs:[]}, sp0=barTiming(barAt(0)).spb, t0=ac.currentTime+.12-off*sp0; PLAY_T0=t0;
@@ -3374,6 +3375,7 @@ function plLoadLink(url){
   }catch(e){ $('#plMsg').textContent=e.message||'That link couldn’t be read.'; }
 }
 async function plConnectMidi(){
+  if(inNative()){ $('#plMidiStatus').textContent=nativeKbMsg(); return; }
   if(!navigator.requestMIDIAccess){ $('#plMidiStatus').textContent='This browser doesn’t support MIDI keyboards. Chrome and Edge do.'; return; }
   try{ const accs=await navigator.requestMIDIAccess(); const ins=[...accs.inputs.values()];
     const attach=i=>{ i.onmidimessage=ev=>{ const [st,n,v]=ev.data; const tp=st&0xF0; if(tp===0x90&&v>0) noteOn(n,Math.max(.4,v/127)); else if(tp===0x80||(tp===0x90&&v===0)) noteOff(n); }; };
@@ -6092,7 +6094,7 @@ function liveOn(m,vel){ ensureAudio(); if(!master) master=newMaster('song'); if(
 function liveOff(m){ const h=LIVE.held[m]; if(!h) return; delete LIVE.held[m]; const now=ac.currentTime; h.ng.gain.setTargetAtTime(0,now,.05); setTimeout(()=>{ try{ h.ng.disconnect(); }catch(e){} },900);
   if(LIVE.rec&&h.pos&&h.pos.si===LIVE.recSi){ const spb=S.PT?60/(typeof tempoAt==='function'?tempoAt(h.pos.si,h.pos.beat):S.bpm):60/S.bpm; LIVE.recNotes.push({m,beat:h.pos.beat,dur:Math.max(.1,(now-h.t)/spb)}); renderLiveStatus(); }
   const k=document.querySelector(`.lk-key[data-m="${m}"]`); if(k) k.classList.remove('down'); }
-async function connectMidi(){ if(!navigator.requestMIDIAccess){ liveMsg('This browser doesn’t offer Web MIDI. Chrome and Edge do; Safari and Firefox (without an add-on) don’t. The computer keyboard works everywhere: press A W S E D F T G Y H U J K.'); return; }
+async function connectMidi(){ if(inNative()){ liveMsg(nativeKbMsg()); return; } if(!navigator.requestMIDIAccess){ liveMsg('This browser doesn’t offer Web MIDI. Chrome and Edge do; Safari and Firefox (without an add-on) don’t. The computer keyboard works everywhere: press A W S E D F T G Y H U J K.'); return; }
   try{ const acc=await navigator.requestMIDIAccess(); LIVE.midi=acc; const hook=()=>{ let n=0; acc.inputs.forEach(inp=>{ n++; inp.onmidimessage=onMidi; }); liveMsg(n?`MIDI connected: ${[...acc.inputs.values()].map(i=>i.name).join(', ')}. Play away.`:'MIDI is allowed, but no keyboard is plugged in. Connect one and it will appear here.'); }; hook(); acc.onstatechange=hook; }
   catch(e){ liveMsg('MIDI was blocked here (the page frame may not be allowed to use it). Open the artifact in its own tab, or use the computer keyboard: A W S E D F T G Y H U J K.'); } }
 function onMidi(e){ const [st,d1,d2]=e.data, c=st&0xf0; if(c===0x90&&d2>0) liveOn(d1,d2/127); else if(c===0x80||(c===0x90&&d2===0)) liveOff(d1); }
@@ -6894,6 +6896,11 @@ function nativeHost(h){ NATIVE.hs=h; const bar=$('#nativeBar'); if(!bar) return;
 function nativeBarHTML(){ return `<div class="native-bar" id="nativeBar"><b>● ${NATIVE.plugin?'Inside '+esc(NATIVE.host||'your DAW'):'Semitone desktop'}</b><span id="nbState" class="mono"></span>
   ${NATIVE.plugin?`<label class="en-opt">${esc(NATIVE.host||'DAW')} plays <select id="nbScope"><option value="song">the whole song</option><option value="sec">the selected section (looped)</option></select></label><label class="en-opt"><input type="checkbox" id="nbFollow" checked> Follow the playhead</label>`:''}
   <button class="btn mini-btn" id="nbSetup">${NATIVE.plugin?'MIDI channels & setup':'MIDI output'}</button><button class="btn mini-btn" id="nbTempo" hidden></button></div>`; }
+// MIDI you play into the plugin (keyboard -> DAW -> Semitone): play-along, ear training and quizzes use noteOn; Compose/Orchestral play and record live
+function nativeKbMsg(){ return `Your MIDI keyboard comes in through ${NATIVE.host||'your DAW'}: select the Semitone Studio channel (in FL Studio, click it in the Channel Rack) and play. It works here, in Play along and in Ear training.`; }
+function nativeMidiIn(d){ const m=(d&&d.m)||[]; const page=(location.hash||'#compose').slice(1); const learnish=/^(play|read|ear|learn|time)$/.test(page);
+  for(let i=0;i+2<m.length;i+=3){ const st=m[i], n=m[i+1], v=m[i+2], c=st&0xf0; const on=c===0x90&&v>0, off=c===0x80||(c===0x90&&v===0); if(!on&&!off) continue;
+    try{ if(learnish){ on?noteOn(n,Math.max(.4,v/127)):noteOff(n); } else { on?liveOn(n,v/127):liveOff(n); } }catch(e){} } }
 function nativeInit(){ if(!NATIVE.on) return;
   nOn('st_init',d=>{ NATIVE.plugin=!!d.plugin; NATIVE.host=(d.host||'').replace(/\s*\(.*\)$/,'')||'your DAW'; if(NATIVE.host==='Unknown') NATIVE.host='your DAW';
     document.body.insertAdjacentHTML('afterbegin',nativeBarHTML()); document.body.classList.add('is-native');
@@ -6903,8 +6910,9 @@ function nativeInit(){ if(!NATIVE.on) return;
     $('#nbTempo').onclick=()=>{ const bpm=Math.round(NATIVE.hs.bpm); if(nativeScope()==='song'){ S.bpm=bpm; $('#bpm').value=bpm; $('#bpm').dispatchEvent(new Event('input')); } else { O.bpm=bpm; $('#oBpm').value=bpm; $('#oBpm').dispatchEvent(new Event('input')); } toast('Song tempo matched to '+bpm+' BPM'); };
     if(d.project) nativeRestore(d.project); renderMout(); nativeSync(); });
   nOn('st_host',nativeHost);
+  nOn('st_midiin',nativeMidiIn);
   nOn('st_saved',d=>toast(d.ok?'Saved to '+d.path:'Not saved'));
-  setInterval(nativeSync,700); setInterval(nativeSaveState,2000);
+  setInterval(nativeSync,700); setInterval(nativeSaveState,1000);
   addEventListener('hashchange',()=>setTimeout(nativeSync,50));
   nEmit('st_ready',{}); }
 

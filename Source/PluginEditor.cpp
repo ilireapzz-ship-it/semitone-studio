@@ -10,7 +10,8 @@ SemitoneEditor::SemitoneEditor (SemitoneProcessor& p)
     setResizeLimits (720, 480, 4096, 3000);
     setSize (1280, 820);
     browser.goToURL (juce::WebBrowserComponent::getResourceProviderRoot());
-    startTimerHz (30);
+    incoming.reserve (1024);
+    startTimerHz (60);
 }
 
 SemitoneEditor::~SemitoneEditor() { stopTimer(); }
@@ -62,6 +63,17 @@ std::optional<juce::WebBrowserComponent::Resource> SemitoneEditor::getResource (
 
 void SemitoneEditor::timerCallback()
 {
+    // notes played into the plugin
+    incoming.clear();
+    if (proc.popIncomingMidi (incoming) > 0)
+    {
+        juce::Array<juce::var> arr;
+        for (auto v : incoming) { arr.add ((int) (v & 0xff)); arr.add ((int) ((v >> 8) & 0xff)); arr.add ((int) ((v >> 16) & 0xff)); }
+        auto* m = new juce::DynamicObject();
+        m->setProperty ("m", arr);
+        browser.emitEventIfBrowserIsVisible ("st_midiin", juce::var (m));
+    }
+
     // transport for the interface: playhead, tempo, whether the host is playing
     auto* o = new juce::DynamicObject();
     o->setProperty ("playing", proc.uiPlaying.load());
@@ -69,7 +81,8 @@ void SemitoneEditor::timerCallback()
     o->setProperty ("bpm", proc.uiBpm.load());
     o->setProperty ("hostTransport", proc.uiHostHasTransport.load());
     const bool playing = proc.uiPlaying.load();
-    if (playing || playing != lastPlaying || (++ticks % 15) == 0)
+    ++ticks;
+    if ((playing && (ticks % 2) == 0) || playing != lastPlaying || (ticks % 30) == 0)
         browser.emitEventIfBrowserIsVisible ("st_host", juce::var (o));
     else
         delete o;

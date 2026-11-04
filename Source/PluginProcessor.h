@@ -2,6 +2,7 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_audio_utils/juce_audio_utils.h>
 #include "Sequencer.h"
+#include <array>
 
 // The plugin: plays the song from the Semitone interface as MIDI, in time with the host.
 // Each part leaves on its own MIDI channel so the DAW can route it to any instrument (Omnisphere etc).
@@ -45,6 +46,10 @@ public:
     std::atomic<double> uiPpq { 0.0 }, uiBpm { 120.0 };
     std::atomic<bool> uiHostHasTransport { false };
 
+    // MIDI played into the plugin (your keyboard, via the DAW), handed to the interface for
+    // play-along, ear training and live recording. Audio thread writes, message thread reads.
+    int popIncomingMidi (std::vector<juce::uint32>& dest);
+
 private:
     st::Sequencer sequencer;
     std::vector<st::Event> events;
@@ -55,6 +60,9 @@ private:
     std::atomic<double> stBpm { 120.0 };
     double stPpq = 0.0;
     std::atomic<double> stStartRequest { -1.0 };
+
+    juce::AbstractFifo inFifo { 1024 };
+    std::array<juce::uint32, 1024> inBuf {};
 
     juce::CriticalSection stateLock;
     juce::String projectJson, timelineJson;

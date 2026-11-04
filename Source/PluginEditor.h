@@ -23,6 +23,7 @@ private:
     SemitoneProcessor& proc;
     juce::WebBrowserComponent browser;
     std::unique_ptr<juce::FileChooser> chooser;
+    std::vector<juce::uint32> incoming;
     bool lastPlaying = false;
     int ticks = 0;
 

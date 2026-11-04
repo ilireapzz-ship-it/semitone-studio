@@ -17,6 +17,19 @@ void SemitoneProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
 {
     juce::ScopedNoDenormals noDenormals;
     buffer.clear();      // Milestone 1 makes no sound of its own: your DAW's instruments do
+    // pass notes you play to the interface (it uses them for play-along and live recording)
+    for (const auto meta : midi)
+    {
+        const auto m = meta.getMessage();
+        if (m.isNoteOnOrOff() || m.isSustainPedalOn() || m.isSustainPedalOff())
+        {
+            const auto* d = m.getRawData();
+            const auto packed = (juce::uint32) d[0] | ((juce::uint32) d[1] << 8) | ((juce::uint32) (m.getRawDataSize() > 2 ? d[2] : 0) << 16);
+            const auto w = inFifo.write (1);
+            if (w.blockSize1 > 0) inBuf[(size_t) w.startIndex1] = packed;
+            else if (w.blockSize2 > 0) inBuf[(size_t) w.startIndex2] = packed;
+        }
+    }
     midi.clear();        // incoming MIDI is not passed through
     const int n = buffer.getNumSamples();
 
@@ -102,6 +115,14 @@ void SemitoneProcessor::setStateInformation (const void* data, int size)
     juce::String tl;
     { const juce::ScopedLock sl (stateLock); projectJson = t.getProperty ("project").toString(); tl = t.getProperty ("timeline").toString(); }
     if (tl.isNotEmpty()) setTimelineFromVar (juce::JSON::parse (tl)); // plays even before the window is opened
+}
+
+int SemitoneProcessor::popIncomingMidi (std::vector<juce::uint32>& dest)
+{
+    const auto r = inFifo.read (inFifo.getNumReady());
+    for (int i = 0; i < r.blockSize1; ++i) dest.push_back (inBuf[(size_t) (r.startIndex1 + i)]);
+    for (int i = 0; i < r.blockSize2; ++i) dest.push_back (inBuf[(size_t) (r.startIndex2 + i)]);
+    return r.blockSize1 + r.blockSize2;
 }
 
 juce::AudioProcessorEditor* SemitoneProcessor::createEditor() { return new SemitoneEditor (*this); }
