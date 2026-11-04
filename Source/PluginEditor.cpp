@@ -1,5 +1,6 @@
 #include "PluginEditor.h"
 #include "BinaryData.h"
+#include "MacDrag.h"
 
 SemitoneEditor::SemitoneEditor (SemitoneProcessor& p)
     : AudioProcessorEditor (p), proc (p), browser (makeOptions())
@@ -110,6 +111,26 @@ void SemitoneEditor::dragFile (const juce::String& name, const juce::String& bas
     dir.createDirectory();
     const auto f = dir.getChildFile (juce::File::createLegalFileName (name));
     const auto data = decode (base64);
-    if (! f.replaceWithData (data.getData(), data.getSize())) return;
-    juce::DragAndDropContainer::performExternalDragDropOfFiles ({ f.getFullPathName() }, false, this);
+    auto* o = new juce::DynamicObject();
+    juce::String why;
+    bool ok = false;
+
+    if (! f.replaceWithData (data.getData(), data.getSize()))
+        why = "write";
+    else
+    {
+       #if JUCE_MAC
+        void* view = getPeer() != nullptr ? getPeer()->getNativeHandle() : nullptr;
+        const auto r = st::startMacFileDrag (view, f.getFullPathName());
+        ok = r == st::DragResult::started;
+        if (! ok) why = r == st::DragResult::released ? "released" : "failed";
+       #else
+        ok = juce::DragAndDropContainer::performExternalDragDropOfFiles ({ f.getFullPathName() }, false, this);
+        if (! ok) why = "failed";
+       #endif
+    }
+
+    o->setProperty ("ok", ok);
+    o->setProperty ("why", why);
+    browser.emitEventIfBrowserIsVisible ("st_dragdone", juce::var (o));
 }

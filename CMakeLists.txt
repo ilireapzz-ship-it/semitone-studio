@@ -69,6 +69,10 @@ target_sources(SemitoneStudio PRIVATE
     Source/PluginProcessor.cpp
     Source/PluginEditor.cpp)
 
+if(APPLE)
+    target_sources(SemitoneStudio PRIVATE Source/MacDrag.mm)
+endif()
+
 target_compile_definitions(SemitoneStudio PUBLIC
     JUCE_WEB_BROWSER=1
     JUCE_USE_CURL=0
