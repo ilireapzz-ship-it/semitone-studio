@@ -17,11 +17,23 @@ struct Note
     int ch = 0, key = 60, vel = 100; // MIDI channel 0-15, key 0-127, velocity 1-127
 };
 
+struct Ctl
+{
+    double at = 0;                       // beat
+    unsigned char status = 0, d1 = 0, d2 = 0; // e.g. pitch bend 0xE0|ch, lsb, msb
+};
+
 struct Timeline
 {
     std::vector<Note> notes; // sorted by start
+    std::vector<Ctl> ctls;   // sorted by beat (pitch bend for melody articulations)
     double length = 0;       // loop length in beats
-    void sort() { std::sort (notes.begin(), notes.end(), [] (const Note& a, const Note& b) { return a.start < b.start; }); }
+    int bendRange = 0;       // semitones; announced with RPN 0 when > 0
+    void sort()
+    {
+        std::sort (notes.begin(), notes.end(), [] (const Note& a, const Note& b) { return a.start < b.start; });
+        std::stable_sort (ctls.begin(), ctls.end(), [] (const Ctl& a, const Ctl& b) { return a.at < b.at; });
+    }
 };
 
 struct Event
@@ -42,11 +54,11 @@ public:
     void process (bool playing, double ppqStart, double bpm, double sampleRate, int numSamples, std::vector<Event>& out)
     {
         auto t = std::atomic_load (&pending);
-        if (t != current) { allNotesOff (out, 0); current = std::move (t); }
+        if (t != current) { allNotesOff (out, 0); current = std::move (t); needSetup = true; }
 
         if (! playing || ! current || current->length <= 0 || bpm <= 0 || sampleRate <= 0 || numSamples <= 0)
         {
-            if (wasPlaying) allNotesOff (out, 0);
+            if (wasPlaying) { allNotesOff (out, 0); resetBends (out, 0); }
             wasPlaying = false;
             return;
         }
@@ -55,7 +67,8 @@ public:
         const double ppqEnd = ppqStart + numSamples * beatsPerSample;
 
         // Transport jumped (loop in the host, user moved the playhead): release everything first.
-        if (wasPlaying && std::abs (ppqStart - lastEnd) > 1.0e-3) allNotesOff (out, 0);
+        if (wasPlaying && std::abs (ppqStart - lastEnd) > 1.0e-3) { allNotesOff (out, 0); resetBends (out, 0); }
+        if (! wasPlaying || needSetup) { setup (out); needSetup = false; }
         wasPlaying = true;
         lastEnd = ppqEnd;
 
@@ -86,6 +99,13 @@ public:
             const double base = std::floor (a / L) * L;
             const double from = a - base;
             const double to = std::min (ppqEnd - base, L);
+            const auto& cs = current->ctls;
+            auto ci = std::lower_bound (cs.begin(), cs.end(), from, [] (const Ctl& c, double v) { return c.at < v; });
+            for (; ci != cs.end() && ci->at < to; ++ci)
+            {
+                out.push_back ({ offsetFor (base + ci->at), ci->status, ci->d1, ci->d2 });
+                if ((ci->status & 0xF0) == 0xE0) bentChannels |= (1u << (ci->status & 15));
+            }
             auto it = std::lower_bound (ns.begin(), ns.end(), from, [] (const Note& n, double v) { return n.start < v; });
             for (; it != ns.end() && it->start < to; ++it)
             {
@@ -110,11 +130,39 @@ public:
 
     size_t activeCount() const { return active.size(); }
 
+    // centre the pitch bend on every channel that was bent
+    void resetBends (std::vector<Event>& out, int offset)
+    {
+        for (int ch = 0; ch < 16; ++ch)
+            if (bentChannels & (1u << ch)) out.push_back ({ offset, (unsigned char) (0xE0 | ch), 0, 64 });
+        bentChannels = 0;
+    }
+
+private:
+    // announce the pitch-bend range (RPN 0) on the channels that use bends
+    void setup (std::vector<Event>& out)
+    {
+        if (! current || current->bendRange <= 0) return;
+        unsigned chans = 0;
+        for (auto& c : current->ctls) if ((c.status & 0xF0) == 0xE0) chans |= (1u << (c.status & 15));
+        for (int ch = 0; ch < 16; ++ch)
+        {
+            if (! (chans & (1u << ch))) continue;
+            const unsigned char cc = (unsigned char) (0xB0 | ch);
+            out.push_back ({ 0, cc, 101, 0 });   out.push_back ({ 0, cc, 100, 0 });
+            out.push_back ({ 0, cc, 6, (unsigned char) std::clamp (current->bendRange, 1, 24) }); out.push_back ({ 0, cc, 38, 0 });
+            out.push_back ({ 0, cc, 101, 127 }); out.push_back ({ 0, cc, 100, 127 });
+        }
+    }
+
+public:
+
 private:
     struct Active { double endAbs; int ch, key; };
     std::shared_ptr<const Timeline> pending, current;
     std::vector<Active> active;
-    bool wasPlaying = false;
+    bool wasPlaying = false, needSetup = true;
+    unsigned bentChannels = 0;
     double lastEnd = 0;
 };
 } // namespace st

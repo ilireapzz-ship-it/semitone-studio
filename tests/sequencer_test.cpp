@@ -38,5 +38,23 @@ int main()
     int rel = 0; for (auto& e : out) if ((e.status & 0xF0) == 0x80 && e.d1 == 36) rel++;
     assert (rel == 1);
     std::printf ("jump release ok; all tests passed\n");
+    
+    // pitch bends play inside their block, RPN range is announced first, and bends reset on stop
+    {
+        auto tl = std::make_shared<st::Timeline>();
+        tl->length = 4; tl->bendRange = 12;
+        tl->notes.push_back ({ 0.0, 1.0, 0, 60, 100 });
+        tl->ctls.push_back ({ 0.5, 0xE0, 0, 80 });
+        tl->sort();
+        st::Sequencer s; s.setTimeline (tl);
+        std::vector<st::Event> out;
+        s.process (true, 0.0, 120.0, 48000.0, 48000, out); // 2 beats
+        int rpn = 0, bends = 0; for (auto& e : out) { if ((e.status & 0xF0) == 0xB0 && e.d1 == 6 && e.d2 == 12) ++rpn; if ((e.status & 0xF0) == 0xE0) ++bends; }
+        if (rpn != 1 || bends != 1) { std::printf ("FAIL bends rpn=%d bends=%d\n", rpn, bends); return 1; }
+        out.clear(); s.process (false, 2.0, 120.0, 48000.0, 512, out);
+        bool reset = false; for (auto& e : out) if (e.status == 0xE0 && e.d2 == 64) reset = true;
+        if (! reset) { std::printf ("FAIL bend reset\n"); return 1; }
+        std::printf ("ok: pitch bends\n");
+    }
     return 0;
 }

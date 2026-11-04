@@ -85,6 +85,21 @@ void SemitoneProcessor::setTimelineFromVar (const juce::var& v)
             tl->notes.push_back (nt);
         }
     }
+    tl->bendRange = (int) v.getProperty ("bendRange", 0);
+    if (auto* ev = v.getProperty ("ev", juce::var()).getArray())
+    {
+        const int count = ev->size() / 4;
+        tl->ctls.reserve ((size_t) count);
+        for (int i = 0; i < count; ++i)
+        {
+            st::Ctl c;
+            c.at = (double) (*ev)[i * 4];
+            c.status = (unsigned char) juce::jlimit (0x80, 0xEF, (int) (*ev)[i * 4 + 1]);
+            c.d1 = (unsigned char) juce::jlimit (0, 127, (int) (*ev)[i * 4 + 2]);
+            c.d2 = (unsigned char) juce::jlimit (0, 127, (int) (*ev)[i * 4 + 3]);
+            tl->ctls.push_back (c);
+        }
+    }
     tl->sort();
     sequencer.setTimeline (tl);
     const juce::ScopedLock sl (stateLock);

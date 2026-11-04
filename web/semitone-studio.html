@@ -2439,6 +2439,28 @@ function mtrk(name,evs,extra=[]){
   out.push(0,0xFF,0x2F,0);
   const n=out.length; return [...ascii('MTrk'),(n>>>24)&255,(n>>>16)&255,(n>>>8)&255,n&255,...out];
 }
+/* Melody expression as MIDI: glides/slides, scoops, falls and vibrato become pitch bend
+   (bend range 12 semitones, announced with RPN 0), so a DAW instrument plays the same articulations. */
+const BEND_RANGE=12;
+function bendVal(semis){ return Math.max(0,Math.min(16383,Math.round(8192+semis/BEND_RANGE*8191))); }
+function songLeadBends(){ // [{beat, v}] across the song timeline
+  if(!S.parts.lead||!S.parts.lead.on) return [];
+  const B=METERS[S.meter].B, bars=barList('song'), out=[], spbB=S.bpm/60; let bent=false;
+  const ramp=(t0,t1,s0,s1,steps)=>{ for(let k=0;k<=steps;k++){ const f=k/steps; out.push({beat:t0+(t1-t0)*f,v:bendVal(s0+(s1-s0)*f)}); } };
+  bars.forEach((bar,i)=>{ const base=i*B, vv=viewCached(bar.si), E=exprFor(vv);
+    vv.melody.forEach((n,j)=>{ if(n.start<bar.b*B-1e-6||n.start>=(bar.b+1)*B-1e-6) return; const ex=E[j]; if(!ex) return;
+      const rs=n.start-bar.b*B, a=base+swingT(rs), e=base+swingT(rs+ex.playDur), len=Math.max(.05,e-a);
+      const any=ex.glide||ex.scoop||ex.fall||ex.vib;
+      if(!any){ if(bent){ out.push({beat:a,v:8192}); bent=false; } return; }
+      bent=true;
+      if(ex.glide&&ex.glide.from!=null){ const gb=Math.min(len*.8,(ex.glide.time||.09)*spbB); ramp(a,a+gb,ex.glide.from-n.m,0,8); }
+      else if(ex.scoop){ ramp(a,a+Math.min(len*.6,.09*spbB),-ex.scoop,0,6); }
+      else out.push({beat:a,v:8192});
+      if(ex.vib&&len>.9){ const depth=Math.min(.6,ex.vib*.9), start=a+Math.min(len*.35,.5), stop=ex.fall?a+len*.55:e, hz=5.5/spbB, step=1/48; for(let x=start;x<stop;x+=step){ out.push({beat:x,v:bendVal(depth*Math.sin(2*Math.PI*hz*(x-start)))}); } out.push({beat:stop,v:8192}); }
+      if(ex.fall){ const f0=a+Math.max(len*.55,.01); ramp(f0,e+.06*spbB,0,-ex.fall,8); }
+    }); });
+  return out; }
+function bendRpn(ch,tk){ return [[101,0],[100,0],[6,BEND_RANGE],[38,0],[101,127],[100,127]].map(([c,v],k)=>({t:0,o:-0.5+k*.01,b:[0xB0|ch,c,v]})); }
 function buildMidi(){
   const Q=480, tk=b=>Math.round(b*Q), M=METERS[S.meter], B=M.B, bars=barList('song');
   const note=(arr,ch,m,start,dur,vel)=>{arr.push({t:tk(start),o:1,b:[0x90|ch,m,vel]});arr.push({t:tk(start+Math.max(dur,.05)),o:0,b:[0x80|ch,m,0]});};
@@ -2451,6 +2473,7 @@ function buildMidi(){
     if(on('lead')){ const vv=viewCached(bar.si), E=exprFor(vv); vv.melody.forEach((n,i)=>{ if(n.start<bar.b*B-1e-6||n.start>=(bar.b+1)*B-1e-6) return; const ex=E[i]||{playDur:n.dur,vel:1}, rs=n.start-bar.b*B, a=swingT(rs), e=swingT(rs+ex.playDur); if(ex.grace!=null) note(mel,0,ex.grace,Math.max(0,base+a-.125),.1,70); note(mel,0,n.m,base+a,e-a,Math.max(30,Math.min(127,Math.round(92*ex.vel*energyMul(bar.si,'lead'))))); }); }
     if(on('drums')) drumEventsForBar(bar).forEach(d=>note(drm,9,GM_DRUM[d.r],base+d.x,.1,Math.max(20,Math.min(127,Math.round(100*d.vel)))));
   });
+  if(mel.length){ const lb=songLeadBends(); if(lb.length){ mel.push(...bendRpn(0,tk)); lb.forEach(x=>mel.push({t:tk(x.beat),o:.5,b:[0xE0,x.v&127,(x.v>>7)&127]})); mel.push({t:tk(bars.length*B),o:.5,b:[0xE0,0,64]}); } }
   if(mel.length&&Object.values(S.lyrics||{}).some(x=>x&&x.trim())) mel.push(...midiLyricEvents(tk));
   { const segs=songSegs(); [[mel,'lead',0],[pad,'chords',1],[bass,'bass',2],[drm,'drums',9]].forEach(([arr,ch,c])=>{ if(arr.length) arr.push(...ccEvents('song',ch,c,segs,tk)); }); }
   if(anyTempo()){ let lastUs=-1; bars.forEach((bar,i)=>{ for(let j=0;j<B;j+=.5){ const u=Math.round(60e6/tempoAt(bar.si,bar.b*B+j)); if(u!==lastUs){ lastUs=u; marks.push({t:tk(i*B+j),o:1.5,b:[0xFF,0x51,0x03,(u>>16)&255,(u>>8)&255,u&255]}); } } }); }
@@ -6880,7 +6903,9 @@ function nativeSecRange(scope){ if(scope==='song'){ const B=METERS[S.meter].B; l
 function nativeTimeline(){ const scope=nativeScope(), D=dawTracks(scope), [s0,s1]=NATIVE.secOnly?nativeSecRange(scope):[0,D.total], notes=[];
   D.tracks.forEach(t=>{ const r=scope==='song'?MOUT.map.song[t.id]:orchRoute(t.id); if(r&&!r.on) return; const ch=r?r.ch:t.ch;
     t.notes.forEach(n=>{ if(n.t<s0-1e-6||n.t>=s1-1e-6) return; notes.push(+(n.t-s0).toFixed(4),+Math.max(.02,Math.min(n.d,s1-n.t)).toFixed(4),ch,n.m,n.v); }); });
-  return {length:s1-s0,notes,scope,offset:s0}; }
+  // melody articulations (glides, scoops, falls, vibrato) as pitch bend: [beat, status, d1, d2, ...]
+  const ev=[]; if(scope==='song'){ const r=MOUT.map.song.lead; if(!r||r.on){ const ch=r?r.ch:0; songLeadBends().forEach(x=>{ if(x.beat<s0-1e-6||x.beat>=s1-1e-6) return; ev.push(+(x.beat-s0).toFixed(4),0xE0|ch,x.v&127,(x.v>>7)&127); }); } }
+  return {length:s1-s0,notes,ev,bendRange:BEND_RANGE,scope,offset:s0}; }
 function nativeSync(){ if(!NATIVE.on||!NATIVE.inited||!S.song) return; try{ const tl=nativeTimeline(), k=JSON.stringify(tl); if(k!==NATIVE.lastTl){ NATIVE.lastTl=k; NATIVE.tl=tl; nEmit('st_timeline',tl); } }catch(e){ console.warn('timeline',e); } }
 function nativeSaveState(){ if(!NATIVE.on||!NATIVE.inited||!S.song) return; try{ const st=JSON.stringify({v:1,song:projectData(),orch:orchData(),proj:S.project}); if(st!==NATIVE.lastState){ NATIVE.lastState=st; nEmit('st_state',{json:st}); } }catch(e){} }
 function nativeRestore(json){ try{ const d=JSON.parse(json); if(d.song) applyProject(d.song); if(d.proj) { S.project=d.proj; renderProjectBar(); } if(d.orch&&d.orch.sections&&d.orch.sections.length){ Object.assign(O,d.orch,{sel:0,undo:[],redo:[],selNote:null,selSet:new Set(),playFrom:0}); renderOrch(); } NATIVE.lastState=''; if($('#restoreBar')) $('#restoreBar').hidden=true; toast('Song restored from your '+(NATIVE.host||'DAW')+' project'); }catch(e){ console.warn('restore',e); } }
