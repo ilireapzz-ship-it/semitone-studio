@@ -1,5 +1,6 @@
 #import <AppKit/AppKit.h>
 #include "MacDrag.h"
+#include <juce_core/juce_core.h>
 
 @interface SemitoneStudioDragSource_1 : NSObject <NSDraggingSource>
 @end
@@ -8,7 +9,8 @@
 - (NSDragOperation) draggingSession: (NSDraggingSession*) session sourceOperationMaskForDraggingContext: (NSDraggingContext) context
 {
     (void) session; (void) context;
-    return NSDragOperationCopy;
+    // DAWs differ in the operation they ask for (FL Studio does not accept a copy-only drag)
+    return NSDragOperationCopy | NSDragOperationGeneric | NSDragOperationLink | NSDragOperationMove;
 }
 - (BOOL) ignoreModifierKeysForDraggingSession: (NSDraggingSession*) session { (void) session; return YES; }
 @end
@@ -58,6 +60,13 @@ DragResult startMacFileDrag (void* nsViewPtr, const juce::String& path)
             return DragResult::failed;
 
         session.animatesToStartingPositionsOnCancelOrFail = YES;
+
+        // Older drop targets read the classic file-list type rather than file URLs: offer both.
+        JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wdeprecated-declarations")
+        NSPasteboard* pb = session.draggingPasteboard;
+        [pb addTypes: @[ NSFilenamesPboardType ] owner: nil];
+        [pb setPropertyList: @[ nsPath ] forType: NSFilenamesPboardType];
+        JUCE_END_IGNORE_WARNINGS_GCC_LIKE
         return DragResult::started;
     }
 }

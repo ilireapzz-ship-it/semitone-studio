@@ -8,7 +8,14 @@ SemitoneEditor::SemitoneEditor (SemitoneProcessor& p)
     addAndMakeVisible (browser);
     setResizable (true, true);
     setResizeLimits (720, 480, 4096, 3000);
-    setSize (1280, 820);
+    // fit the window on smaller laptop screens (the host adds its own title bar)
+    int w = 1280, h = 820;
+    if (auto* d = juce::Desktop::getInstance().getDisplays().getPrimaryDisplay())
+    {
+        w = juce::jmin (w, d->userArea.getWidth() - 40);
+        h = juce::jmin (h, d->userArea.getHeight() - 140);
+    }
+    setSize (juce::jmax (720, w), juce::jmax (480, h));
     browser.goToURL (juce::WebBrowserComponent::getResourceProviderRoot());
     incoming.reserve (1024);
     startTimerHz (60);
