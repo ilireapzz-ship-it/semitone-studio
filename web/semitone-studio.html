@@ -51,7 +51,7 @@ button,select,input{font:inherit;color:inherit}
 .panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;min-width:0}
 .panel-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:14px}
 [hidden]{display:none!important}
-.is-native .topbar{top:var(--nb-h,0px)}.is-native .o-notebar{top:calc(58px + var(--nb-h,0px))}
+.is-native .topbar{top:var(--nb-h,0px)}.is-native .toast{bottom:auto;top:calc(var(--nb-h,0px) + 64px);z-index:70}.is-native .o-notebar{top:calc(58px + var(--nb-h,0px))}
 .stack{display:flex;flex-direction:column;gap:18px}
 
 /* buttons */
@@ -6800,7 +6800,7 @@ function initNativeDrag(){
     NDRAG.sent=true; NDRAG.until=Date.now()+1500; const nf=dxFile(c.dataset.dxs,c.dataset.dxi); c.classList.add('dragging'); nEmit('st_drag',{name:nf.name,b64:u8b64(nf.data)}); },true);
   const end=()=>{ if(NDRAG.el) NDRAG.el.classList.remove('dragging'); NDRAG.el=null; };
   document.addEventListener('pointerup',end,true); document.addEventListener('pointercancel',end,true); window.addEventListener('blur',end);
-  nOn('st_dragdone',v=>{ end(); if(v&&v.ok===false) toast(v.why==='released'?'Keep holding the mouse button while you drag the part out':'Couldn’t start the drag — click the part to save it instead'); });
+  nOn('st_dragdone',v=>{ end(); if(v&&v.ok===false) toast(v.why==='released'?'Keep holding the mouse button while you drag the part out':v.why==='refused'?'Drop the part on your DAW’s timeline or a track (FL Studio: the Playlist or a channel)':'Couldn’t start the drag — click the part to save it instead'); });
 }
 function initDawDrag(){ if(inNative()) initNativeDrag(); document.addEventListener('dragstart',e=>{ const c=e.target.closest&&e.target.closest('.dx-drag'); if(!c) return; if(NATIVE.on){ e.preventDefault(); const nf=dxFile(c.dataset.dxs,c.dataset.dxi); nEmit('st_drag',{name:nf.name,b64:u8b64(nf.data)}); return; } const f=dxFile(c.dataset.dxs,c.dataset.dxi), url=URL.createObjectURL(new Blob([f.data],{type:'audio/midi'}));
     e.dataTransfer.effectAllowed='copy'; e.dataTransfer.setData('DownloadURL',`audio/midi:${f.name}:${url}`); e.dataTransfer.setData('text/uri-list',url); e.dataTransfer.setData('text/plain',f.name); setTimeout(()=>URL.revokeObjectURL(url),60000); });

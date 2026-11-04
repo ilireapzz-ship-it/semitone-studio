@@ -3,7 +3,7 @@
 
 namespace st
 {
-    enum class DragResult { started, released, failed };
+    enum class DragResult { started, released, refused, failed };
 
    #if JUCE_MAC
     // Start a real macOS file drag from the plugin window at the mouse position.

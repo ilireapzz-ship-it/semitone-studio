@@ -127,7 +127,7 @@ void SemitoneEditor::saveFile (const juce::String& name, const juce::String& bas
 void SemitoneEditor::dragFile (const juce::String& name, const juce::String& base64)
 {
     // write the part to a temp file, then start a real OS drag the DAW accepts (FL Studio: drop on the Playlist or a channel)
-    const auto dir = juce::File::getSpecialLocation (juce::File::tempDirectory).getChildFile ("Semitone Studio Drag");
+    const auto dir = juce::File::getSpecialLocation (juce::File::tempDirectory).getChildFile ("SemitoneStudioDrag");
     dir.createDirectory();
     const auto f = dir.getChildFile (juce::File::createLegalFileName (name));
     const auto data = decode (base64);
@@ -143,7 +143,7 @@ void SemitoneEditor::dragFile (const juce::String& name, const juce::String& bas
         void* view = getPeer() != nullptr ? getPeer()->getNativeHandle() : nullptr;
         const auto r = st::startMacFileDrag (view, f.getFullPathName());
         ok = r == st::DragResult::started;
-        if (! ok) why = r == st::DragResult::released ? "released" : "failed";
+        if (! ok) why = r == st::DragResult::released ? "released" : r == st::DragResult::refused ? "refused" : "failed";
        #else
         ok = juce::DragAndDropContainer::performExternalDragDropOfFiles ({ f.getFullPathName() }, false, this);
         if (! ok) why = "failed";

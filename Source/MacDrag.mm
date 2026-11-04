@@ -1,18 +1,36 @@
 #import <AppKit/AppKit.h>
 #include "MacDrag.h"
-#include <juce_core/juce_core.h>
 
-@interface SemitoneStudioDragSource_1 : NSObject <NSDraggingSource>
+// Drag source for part files. Implements both the modern and the classic (informal) drag-source
+// methods, because the drag is started with the classic file-drag API that older drop targets
+// (FL Studio's Playlist among them) understand best.
+@interface SemitoneStudioDragSource_2 : NSObject <NSDraggingSource>
+@property (nonatomic) NSDragOperation lastOperation;
 @end
 
-@implementation SemitoneStudioDragSource_1
+@implementation SemitoneStudioDragSource_2
 - (NSDragOperation) draggingSession: (NSDraggingSession*) session sourceOperationMaskForDraggingContext: (NSDraggingContext) context
 {
     (void) session; (void) context;
-    // DAWs differ in the operation they ask for (FL Studio does not accept a copy-only drag)
     return NSDragOperationCopy | NSDragOperationGeneric | NSDragOperationLink | NSDragOperationMove;
 }
+- (NSDragOperation) draggingSourceOperationMaskForLocal: (BOOL) isLocal
+{
+    (void) isLocal;
+    return NSDragOperationCopy | NSDragOperationGeneric | NSDragOperationLink | NSDragOperationMove;
+}
+- (BOOL) ignoreModifierKeysWhileDragging { return YES; }
 - (BOOL) ignoreModifierKeysForDraggingSession: (NSDraggingSession*) session { (void) session; return YES; }
+- (void) draggedImage: (NSImage*) image endedAt: (NSPoint) point operation: (NSDragOperation) operation
+{
+    (void) image; (void) point;
+    self.lastOperation = operation;
+}
+- (void) draggingSession: (NSDraggingSession*) session endedAtPoint: (NSPoint) point operation: (NSDragOperation) operation
+{
+    (void) session; (void) point;
+    self.lastOperation = operation;
+}
 @end
 
 namespace st
@@ -48,26 +66,30 @@ DragResult startMacFileDrag (void* nsViewPtr, const juce::String& path)
         NSString* nsPath = [NSString stringWithUTF8String: path.toRawUTF8()];
         NSURL* url = [NSURL fileURLWithPath: nsPath];
 
-        NSDraggingItem* item = [[[NSDraggingItem alloc] initWithPasteboardWriter: url] autorelease];
-        const NSPoint p = [view convertPoint: inWindow fromView: nil];
-        [item setDraggingFrame: NSMakeRect (p.x - 16.0, p.y - 16.0, 32.0, 32.0)
-                      contents: [[NSWorkspace sharedWorkspace] iconForFile: nsPath]];
-
-        static SemitoneStudioDragSource_1* source = [[SemitoneStudioDragSource_1 alloc] init];
-
-        NSDraggingSession* session = [view beginDraggingSessionWithItems: @[ item ] event: event source: source];
-        if (session == nil)
-            return DragResult::failed;
-
-        session.animatesToStartingPositionsOnCancelOrFail = YES;
-
-        // Older drop targets read the classic file-list type rather than file URLs: offer both.
+        // the drag pasteboard carries the file both ways: the classic file list and a file URL
+        NSPasteboard* pb = [NSPasteboard pasteboardWithName: NSPasteboardNameDrag];
         JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wdeprecated-declarations")
-        NSPasteboard* pb = session.draggingPasteboard;
-        [pb addTypes: @[ NSFilenamesPboardType ] owner: nil];
+        [pb declareTypes: @[ NSFilenamesPboardType, NSPasteboardTypeFileURL ] owner: nil];
         [pb setPropertyList: @[ nsPath ] forType: NSFilenamesPboardType];
         JUCE_END_IGNORE_WARNINGS_GCC_LIKE
-        return DragResult::started;
+        [pb setString: [url absoluteString] forType: NSPasteboardTypeFileURL];
+
+        NSImage* icon = [[NSWorkspace sharedWorkspace] iconForFile: nsPath];
+        [icon setSize: NSMakeSize (32.0, 32.0)];
+
+        static SemitoneStudioDragSource_2* source = [[SemitoneStudioDragSource_2 alloc] init];
+        source.lastOperation = NSDragOperationNone;
+
+        NSPoint p = [view convertPoint: inWindow fromView: nil];
+        p.x -= 16.0;
+        p.y += [view isFlipped] ? 16.0 : -16.0;
+
+        // runs until the drop (or cancel)
+        JUCE_BEGIN_IGNORE_WARNINGS_GCC_LIKE ("-Wdeprecated-declarations")
+        [view dragImage: icon at: p offset: NSZeroSize event: event pasteboard: pb source: source slideBack: YES];
+        JUCE_END_IGNORE_WARNINGS_GCC_LIKE
+
+        return source.lastOperation != NSDragOperationNone ? DragResult::started : DragResult::refused;
     }
 }
 }
