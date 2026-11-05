@@ -784,6 +784,10 @@ h2 .info-i{width:19px;height:19px;font-size:12px;margin-left:8px;position:relati
 .compose-grid.side-min .side-toggle{position:static;order:99;margin-left:auto!important;align-self:center}
 .fam-rest{font-size:.72rem;color:var(--muted);margin-left:8px;font-style:italic}
 .ofam.fam-empty:not([open]){opacity:.85}
+.sec-drag-hint{margin:.35rem 0 .1rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.sec-drag{display:inline-flex;align-items:center;gap:.3rem;padding:.18rem .6rem;border:1px dashed currentColor;border-radius:999px;font-weight:600;cursor:grab;user-select:none;-webkit-user-select:none}
+body.is-native #timeline .sec{cursor:grab}
+#timeline .sec.dragging,.sec-drag.dragging{opacity:.55;cursor:grabbing}
 </style>
 
 <header class="topbar">
@@ -2555,8 +2559,9 @@ function songLeadBends(){ // [{beat, v}] across the song timeline
     }); });
   return out; }
 function bendRpn(ch,tk){ return [[101,0],[100,0],[6,BEND_RANGE],[38,0],[101,127],[100,127]].map(([c,v],k)=>({t:0,o:-0.5+k*.01,b:[0xB0|ch,c,v]})); }
+var MIDI_SEC=null; // a section index: buildMidi() writes only that section, starting at beat 0
 function buildMidi(){
-  const Q=480, tk=b=>Math.round(b*Q), M=METERS[S.meter], B=M.B, bars=barList('song');
+  const Q=480, tk=b=>Math.round(b*Q), M=METERS[S.meter], B=M.B, allBars=barList('song'), bars=MIDI_SEC==null?allBars:allBars.filter(b=>b.si===MIDI_SEC), secOff=MIDI_SEC==null?0:allBars.findIndex(b=>b.si===MIDI_SEC)*B;
   const note=(arr,ch,m,start,dur,vel)=>{arr.push({t:tk(start),o:1,b:[0x90|ch,m,vel]});arr.push({t:tk(start+Math.max(dur,.05)),o:0,b:[0x80|ch,m,0]});};
   const mel=[],pad=[],bass=[],drm=[],marks=[], pat=compPattern(S.comp,S.meter), on=p=>S.parts[p].on&&(typeof MIDI_ONLY==='undefined'||!MIDI_ONLY||MIDI_ONLY===p);
   bars.forEach((bar,i)=>{
@@ -2567,9 +2572,9 @@ function buildMidi(){
     if(on('lead')){ const vv=viewCached(bar.si), E=exprFor(vv); vv.melody.forEach((n,i)=>{ if(n.start<bar.b*B-1e-6||n.start>=(bar.b+1)*B-1e-6) return; const ex=E[i]||{playDur:n.dur,vel:1}, rs=n.start-bar.b*B, a=swingT(rs), e=swingT(rs+ex.playDur); if(ex.grace!=null) note(mel,0,ex.grace,Math.max(0,base+a-.125),.1,70); note(mel,0,n.m,base+a,e-a,Math.max(30,Math.min(127,Math.round(92*ex.vel*energyMul(bar.si,'lead'))))); }); }
     if(on('drums')) drumEventsForBar(bar).forEach(d=>note(drm,9,GM_DRUM[d.r],base+d.x,.1,Math.max(20,Math.min(127,Math.round(100*d.vel)))));
   });
-  if(mel.length){ const lb=songLeadBends(); if(lb.length){ mel.push(...bendRpn(0,tk)); lb.forEach(x=>mel.push({t:tk(x.beat),o:.5,b:[0xE0,x.v&127,(x.v>>7)&127]})); mel.push({t:tk(bars.length*B),o:.5,b:[0xE0,0,64]}); } }
-  if(mel.length&&Object.values(S.lyrics||{}).some(x=>x&&x.trim())) mel.push(...midiLyricEvents(tk));
-  { const segs=songSegs(); [[mel,'lead',0],[pad,'chords',1],[bass,'bass',2],[drm,'drums',9]].forEach(([arr,ch,c])=>{ if(arr.length) arr.push(...ccEvents('song',ch,c,segs,tk)); }); }
+  if(mel.length){ const lb=songLeadBends().filter(x=>MIDI_SEC==null||(x.beat>=secOff-1e-6&&x.beat<secOff+bars.length*B-1e-6)).map(x=>({...x,beat:x.beat-secOff})); if(lb.length){ mel.push(...bendRpn(0,tk)); lb.forEach(x=>mel.push({t:tk(x.beat),o:.5,b:[0xE0,x.v&127,(x.v>>7)&127]})); mel.push({t:tk(bars.length*B),o:.5,b:[0xE0,0,64]}); } }
+  if(MIDI_SEC==null&&mel.length&&Object.values(S.lyrics||{}).some(x=>x&&x.trim())) mel.push(...midiLyricEvents(tk));
+  if(MIDI_SEC==null){ const segs=songSegs(); [[mel,'lead',0],[pad,'chords',1],[bass,'bass',2],[drm,'drums',9]].forEach(([arr,ch,c])=>{ if(arr.length) arr.push(...ccEvents('song',ch,c,segs,tk)); }); }
   if(anyTempo()){ let lastUs=-1; bars.forEach((bar,i)=>{ for(let j=0;j<B;j+=.5){ const u=Math.round(60e6/tempoAt(bar.si,bar.b*B+j)); if(u!==lastUs){ lastUs=u; marks.push({t:tk(i*B+j),o:1.5,b:[0xFF,0x51,0x03,(u>>16)&255,(u>>8)&255,u&255]}); } } }); }
   const us=Math.round(60e6/S.bpm);
   const conductor=mtrk('Semitone Studio',marks,[0,0xFF,0x51,0x03,(us>>16)&255,(us>>8)&255,us&255, 0,0xFF,0x58,0x04,M.top,M.bot===8?3:2,M.compound?36:24,8]);
@@ -7077,7 +7082,7 @@ function nativeInit(){ if(!NATIVE.on) return;
     const fo=$('#nbFollow'); if(fo) fo.onchange=e=>{ NATIVE.follow=e.target.checked; };
     $('#nbSetup').onclick=()=>{ const sc2=nativeScope(); const box=document.querySelector(`.mout-box[data-scope="${sc2==='orch'?'orch':'song'}"]`); if(box){ if(sc2==='song') location.hash='#compose'; box.scrollIntoView({behavior:'smooth',block:'center'}); } };
     $('#nbTempo').onclick=()=>{ const bpm=Math.round(NATIVE.hs.bpm); if(nativeScope()==='song'){ S.bpm=bpm; $('#bpm').value=bpm; $('#bpm').dispatchEvent(new Event('input')); } else { O.bpm=bpm; $('#oBpm').value=bpm; $('#oBpm').dispatchEvent(new Event('input')); } toast('Song tempo matched to '+bpm+' BPM'); };
-    NATIVE.recent=d.recent||[]; NATIVE.songFile=d.songFile||''; if(d.project) nativeRestore(d.project); NATIVE.inited=true; initNativeFiles(); if(NATIVE.songFile&&d.project) NATIVE.fileState=d.songFileSame?songStateJSON():null; if(NATIVE.songFile&&!d.songFileSame) NATIVE.fileState=''; renderMout(); nativeSync(); nativeSaveState(); try{ initNativeSound(d); }catch(e){ console.warn('native sound',e); } });
+    NATIVE.recent=d.recent||[]; NATIVE.songFile=d.songFile||''; if(d.project) nativeRestore(d.project); NATIVE.inited=true; initNativeFiles(); if(NATIVE.songFile&&d.project) NATIVE.fileState=d.songFileSame?songStateJSON():null; if(NATIVE.songFile&&!d.songFileSame) NATIVE.fileState=''; renderMout(); nativeSync(); nativeSaveState(); try{ initNativeSound(d); }catch(e){ console.warn('native sound',e); } try{ initSectionDrag(); }catch(e){ console.warn('section drag',e); } });
   nOn('st_host',nativeHost);
   nOn('st_midiin',nativeMidiIn);
   nOn('st_saved',d=>toast(d.ok?'Saved to '+d.path:'Not saved'));
@@ -7246,6 +7251,33 @@ function initNativeSound(d){ if(!NATIVE.plugin) return; NSND.mode=d&&d.soundMode
   nOn('st_audio_need',x=>{ if(!x||x.seq!==NSND.seq) return; if(x.sr) NSND.sr=x.sr; NSND.queue=(x.ids||[]).slice(); nSndStatus(); nAudioPump(); });
   nOn('st_audio_got',()=>nSndStatus());
   setInterval(nAudioTick,1000); addEventListener('hashchange',()=>setTimeout(nAudioTick,80)); nAudioTick(); }
+/* ---- plugin: drag song sections (or the whole song) from the structure bar onto the DAW timeline ---- */
+const SDRAG={b:null,x:0,y:0,sent:false,until:0,alt:false};
+function secFileBase(si){ const s=S.song.sections[si], same=S.song.sections.filter(x=>x.name===s.name).length>1; return (fileBase()+' - '+(si+1)+' '+s.name).replace(/[\\/:*?"<>|]/g,''); }
+function sectionMidi(si){ MIDI_SEC=si; try{ return buildMidi(); } finally{ MIDI_SEC=null; } }
+function secDrag(si,alt){ const B=METERS[S.meter].B, all=si==null, idx=all?S.song.sections.map((_,i)=>i):[si];
+  const name=all?fileBase()+' - whole song':secFileBase(si);
+  if(alt||NSND.mode===2){ if(!alt) toast('Sound is set to MIDI only, so this is MIDI: drop it on the Channel Rack');
+    const data=all?buildMidi():sectionMidi(si); nEmit('st_drag',{name:name+'.mid',b64:u8b64(data)}); return; }
+  let items=[]; try{ items=nAudioLayout(); }catch(e){}
+  const h=NATIVE.hs; if(h&&Math.abs(h.bpm-S.bpm)>=.5) toast(`Heads-up: the audio is at your song’s ${S.bpm} BPM but ${NATIVE.host||'the DAW'} is at ${Math.round(h.bpm)}, so it won’t line up with the grid. Use “Match the song” first.`);
+  nEmit('st_drag_audio',{name,bpm:S.bpm,items:idx.map(i=>({id:items[i]&&items[i].id,beats:S.song.sections[i].bars*B}))}); }
+function secDragChip(){ return `<span class="sec-drag dx-sec" data-sall="1" title="Drag the whole song into ${esc(NATIVE.host||'your DAW')} as one audio clip (hold ⌥ for MIDI)">⇲ Whole song</span>`; }
+function initSectionDrag(){ if(!NATIVE.plugin) return;
+  const tl=$('#timeline'); if(!tl) return;
+  const hint=document.createElement('div'); hint.className='qhint sec-drag-hint'; hint.id='secDragHint';
+  hint.innerHTML=`${secDragChip()} Drag a section, or the whole song, onto the ${esc(NATIVE.host==='FL Studio'?'Playlist':'timeline')}: it lands as audio, exactly as long as the section. Hold ⌥ for MIDI${NATIVE.host==='FL Studio'?' (drop that on the Channel Rack)':''}.`;
+  tl.insertAdjacentElement('afterend',hint);
+  const startEl=e=>e.target.closest&&(e.target.closest('#timeline .sec')||e.target.closest('.dx-sec'));
+  document.addEventListener('pointerdown',e=>{ const b=startEl(e); if(!b||e.button!==0) return; SDRAG.b=b; SDRAG.x=e.clientX; SDRAG.y=e.clientY; SDRAG.sent=false; SDRAG.alt=e.altKey; },true);
+  document.addEventListener('pointermove',e=>{ const b=SDRAG.b; if(!b||SDRAG.sent||!(e.buttons&1)) return; if(Math.hypot(e.clientX-SDRAG.x,e.clientY-SDRAG.y)<6) return;
+    SDRAG.sent=true; SDRAG.until=Date.now()+1500; b.classList.add('dragging'); secDrag(b.dataset.sall?null:+b.dataset.i,SDRAG.alt||e.altKey); },true);
+  const end=()=>{ if(SDRAG.b) SDRAG.b.classList.remove('dragging'); SDRAG.b=null; };
+  document.addEventListener('pointerup',end,true); document.addEventListener('pointercancel',end,true); window.addEventListener('blur',end);
+  // a drag is not a click: don't select the section (or restart playback) when the drag ends
+  document.addEventListener('click',e=>{ if(!startEl(e)) return; if(SDRAG.sent&&Date.now()<SDRAG.until){ SDRAG.sent=false; e.stopPropagation(); e.preventDefault(); } },true);
+  nOn('st_dragdone',v=>{ end(); if(v&&v.why==='notready') toast(NSND.queue.length||NSND.busy?'The section’s sound is still being prepared: try again in a few seconds':'That section’s sound isn’t ready yet: set Sound to include Semitone’s instruments, or hold ⌥ to drag MIDI'); });
+ }
 /* ---------- routing + boot ---------- */
 function route(){
   if(location.hash==='#classroom'){ let last='learn'; try{ last=localStorage.getItem('ss_lesson')||'learn'; }catch(e){} if(!['learn','time','read','play','ear'].includes(last)) last='learn'; history.replaceState(null,'','#'+last); }

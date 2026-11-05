@@ -78,6 +78,7 @@ juce::WebBrowserComponent::Options SemitoneEditor::makeOptions()
             proc.setStandaloneTransport ((bool) v.getProperty ("play", false), (double) v.getProperty ("beat", 0.0), (double) v.getProperty ("bpm", 120.0));
         })
         .withEventListener ("st_save", [this] (const juce::var& v) { saveFile (v.getProperty ("name", "Semitone export").toString(), v.getProperty ("b64", "").toString()); })
+        .withEventListener ("st_drag_audio", [this] (const juce::var& v) { dragAudio (v); })
         .withEventListener ("st_drag", [this] (const juce::var& v) { dragFile (v.getProperty ("name", "Semitone part.mid").toString(), v.getProperty ("b64", "").toString()); });
 }
 
@@ -195,39 +196,105 @@ void SemitoneEditor::saveFile (const juce::String& name, const juce::String& bas
 
 void SemitoneEditor::dragFile (const juce::String& name, const juce::String& base64)
 {
-    // write the part to a temp file, then start a real OS drag the DAW accepts (FL Studio: drop on the Channel Rack)
+    // write the part to a temp file, then start a real OS drag the DAW accepts (FL Studio: drop MIDI on the Channel Rack)
+    const auto f = dragDir().getChildFile (juce::File::createLegalFileName (name));
+    const auto data = decode (base64);
+    if (! f.replaceWithData (data.getData(), data.getSize())) { dragDone (false, "write"); return; }
+    startDrag (f);
+}
+
+juce::File SemitoneEditor::dragDir()
+{
     const auto dir = juce::File::getSpecialLocation (juce::File::tempDirectory).getChildFile ("SemitoneStudioDrag");
     dir.createDirectory();
-    const auto f = dir.getChildFile (juce::File::createLegalFileName (name));
-    const auto data = decode (base64);
+    return dir;
+}
+
+void SemitoneEditor::dragDone (bool ok, const juce::String& why)
+{
     auto* o = new juce::DynamicObject();
-    juce::String why;
-    bool ok = false;
-
-    if (! f.replaceWithData (data.getData(), data.getSize()))
-        why = "write";
-    else
-    {
-       #if JUCE_MAC
-        void* view = getPeer() != nullptr ? getPeer()->getNativeHandle() : nullptr;
-        const auto r = st::startMacFileDrag (view, f.getFullPathName());
-        ok = r == st::DragResult::started;
-        if (! ok) why = r == st::DragResult::released ? "released" : r == st::DragResult::refused ? "refused" : "failed";
-       #else
-        // Windows: the drag only works while the button is still held (the web view asked for it by message)
-        if (! juce::ModifierKeys::getCurrentModifiersRealtime().isLeftButtonDown())
-            why = "released";
-        else
-        {
-            ok = juce::DragAndDropContainer::performExternalDragDropOfFiles ({ f.getFullPathName() }, true, this);
-            if (! ok) why = "failed";
-        }
-       #endif
-    }
-
     o->setProperty ("ok", ok);
     o->setProperty ("why", why);
     browser.emitEventIfBrowserIsVisible ("st_dragdone", juce::var (o));
+}
+
+void SemitoneEditor::startDrag (const juce::File& f)
+{
+    bool ok = false;
+    juce::String why;
+   #if JUCE_MAC
+    void* view = getPeer() != nullptr ? getPeer()->getNativeHandle() : nullptr;
+    const auto r = st::startMacFileDrag (view, f.getFullPathName());
+    ok = r == st::DragResult::started;
+    if (! ok) why = r == st::DragResult::released ? "released" : r == st::DragResult::refused ? "refused" : "failed";
+   #else
+    // Windows: the drag only works while the button is still held (the web view asked for it by message)
+    if (! juce::ModifierKeys::getCurrentModifiersRealtime().isLeftButtonDown())
+        why = "released";
+    else
+    {
+        ok = juce::DragAndDropContainer::performExternalDragDropOfFiles ({ f.getFullPathName() }, true, this);
+        if (! ok) why = "failed";
+    }
+   #endif
+    dragDone (ok, why);
+}
+
+// Song sections as audio: the clips the plugin already plays, cut to each section's exact length
+// (no pre-roll, no tail) so sections dropped side by side on the DAW timeline line up bar for bar.
+void SemitoneEditor::dragAudio (const juce::var& v)
+{
+    const auto name = juce::File::createLegalFileName (v.getProperty ("name", "Semitone section").toString()) + ".wav";
+    std::vector<std::pair<std::shared_ptr<const st::Clip>, double>> parts;
+    int sr = 0;
+    if (auto* items = v.getProperty ("items", juce::var()).getArray())
+        for (const auto& it : *items)
+        {
+            auto c = proc.findClip (it.getProperty ("id", "").toString());
+            if (! c || (sr != 0 && c->sr != sr)) { dragDone (false, "notready"); return; }
+            sr = c->sr;
+            parts.push_back ({ c, (double) it.getProperty ("beats", 0.0) });
+        }
+    if (parts.empty() || sr <= 0) { dragDone (false, "notready"); return; }
+
+    const double bpm = juce::jmax (20.0, (double) v.getProperty ("bpm", 120.0));
+    std::vector<std::pair<int, int>> spans;   // [from, to) frames of each clip
+    int total = 0;
+    for (auto& [c, beats] : parts)
+    {
+        const int a = juce::jlimit (0, c->frames, (int) std::lround (c->secondsAt (0.0, bpm) * c->sr));
+        const int b = juce::jlimit (a, c->frames, (int) std::lround (c->secondsAt (beats, bpm) * c->sr));
+        spans.push_back ({ a, b });
+        total += b - a;
+    }
+    juce::AudioBuffer<float> buf (2, juce::jmax (1, total));
+    int at = 0;
+    constexpr float k = 1.0f / 32768.0f;
+    for (size_t i = 0; i < parts.size(); ++i)
+    {
+        const auto* d = parts[i].first->pcm.data();
+        for (int f = spans[i].first; f < spans[i].second; ++f, ++at)
+        {
+            buf.setSample (0, at, d[(size_t) f * 2] * k);
+            buf.setSample (1, at, d[(size_t) f * 2 + 1] * k);
+        }
+    }
+    // a few milliseconds of fade at each end so a cut never clicks
+    const int fade = juce::jmin (total / 2, (int) (0.004 * sr));
+    if (fade > 0) { buf.applyGainRamp (0, fade, 0.0f, 1.0f); buf.applyGainRamp (total - fade, fade, 1.0f, 0.0f); }
+
+    const auto f = dragDir().getChildFile (name);
+    f.deleteFile();
+    {
+        juce::WavAudioFormat wav;
+        std::unique_ptr<juce::OutputStream> os (f.createOutputStream().release());
+        if (os == nullptr) { dragDone (false, "write"); return; }
+        std::unique_ptr<juce::AudioFormatWriter> w (wav.createWriterFor (os.get(), sr, 2, 24, {}, 0));
+        if (w == nullptr) { dragDone (false, "write"); return; }
+        os.release();   // the writer owns the stream now
+        if (! w->writeFromAudioSampleBuffer (buf, 0, total)) { dragDone (false, "write"); return; }
+    }
+    startDrag (f);
 }
 
 // ---------- songs as files ----------

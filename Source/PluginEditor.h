@@ -18,6 +18,10 @@ private:
     std::optional<juce::WebBrowserComponent::Resource> getResource (const juce::String& url);
     void saveFile (const juce::String& name, const juce::String& base64);
     void dragFile (const juce::String& name, const juce::String& base64);
+    void dragAudio (const juce::var& v);
+    void startDrag (const juce::File& f);
+    void dragDone (bool ok, const juce::String& why);
+    static juce::File dragDir();
     void saveSong (const juce::var& v);
     void openSong();
     void openSongAt (const juce::File& f);

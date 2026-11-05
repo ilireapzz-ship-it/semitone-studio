@@ -53,6 +53,7 @@ public:
     juce::StringArray setAudioLayout (const juce::var& items);
     void addClip (const juce::String& id, std::shared_ptr<st::Clip> clip);
     void releaseRetired();
+    std::shared_ptr<const st::Clip> findClip (const juce::String& id) const { auto f = clips.find (id); return f == clips.end() ? nullptr : f->second; }
     double getSampleRateNow() const { return sr; }
     juce::String songFile; // the .semitone file this song was last opened from or saved to (message thread)
 
