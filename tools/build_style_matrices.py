@@ -90,6 +90,8 @@ def main():
     libp.write_text(json.dumps(lib, ensure_ascii=False, indent=2) + '\n')
 
 def check_catalog(progs):
+    lib = json.loads((ROOT / 'data/style-library.json').read_text())
+    profile_ids = {p['id'] for p in lib['profiles']} | {o['id'] for o in lib['orchestral']}
     """data/catalog.json lists every song by album with tags; songs marked chords:true must have chord data in their era."""
     cp = ROOT / 'data/catalog.json'
     if not cp.exists(): return
@@ -99,6 +101,7 @@ def check_catalog(progs):
     for artist, a in cat['artists'].items():
         for al in a['albums']:
             names = {s['song'] for s in progs.get(al['era'], [])}
+            if al['era'] not in progs and al['era'] not in profile_ids: problems.append(f"{artist} / {al['album']}: era '{al['era']}' is not a profile")
             for s in al['songs']:
                 problems += [f"{artist} / {s['title']}: unknown tag '{t}' (add it to tagVocab)" for t in s['tags'] if t not in vocab]
                 if s.get('chords') and s['title'] not in names: problems.append(f"{artist} / {s['title']}: chords:true but not in progressions.json '{al['era']}'")

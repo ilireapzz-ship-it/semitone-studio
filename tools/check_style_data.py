@@ -85,7 +85,7 @@ for a in C['artists'].values():
     for al in a['albums']:
         for v in al.get('vibes',[]):
             if v not in C['tagVocab']['vibe']: I(f"album {al['album']}: vibe {v} not in vocab")
-        if al['era'] not in [p['id'] for p in L['profiles']]: I(f"album {al['album']}: era profile {al['era']} missing")
+        if al['era'] not in [p['id'] for p in L['profiles']]+[o['id'] for o in L['orchestral']]: I(f"album {al['album']}: era profile {al['era']} missing")
 for k,v in L.get('artistEras',{}).items():
     if k=='about': continue
     for e in v['eras']:

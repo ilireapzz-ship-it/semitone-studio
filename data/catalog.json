@@ -124,7 +124,18 @@
       "Fairlight",
       "pitched vocals",
       "distorted guitar",
-      "acoustic piano"
+      "acoustic piano",
+      "accordion",
+      "toy piano",
+      "mandolin",
+      "violin",
+      "cello",
+      "duduk",
+      "taiko",
+      "ondes Martenot",
+      "glass harmonica",
+      "vibraphone",
+      "banjo"
     ],
     "production": [
       "hip-hop beat",
@@ -165,7 +176,13 @@
       "ballad",
       "cabaret",
       "interlude",
-      "instrumental"
+      "instrumental",
+      "waltz",
+      "post-rock",
+      "ambient",
+      "minimalist",
+      "leitmotif",
+      "score"
     ]
   },
   "artists": {
@@ -5582,6 +5599,476 @@
             }
           ],
           "note": "released July 2026; no chord data yet"
+        }
+      ]
+    },
+    "Yann Tiersen": {
+      "profileDefault": "tiersen",
+      "kind": "composer",
+      "albums": [
+        {
+          "album": "La Valse des monstres",
+          "year": 1995,
+          "era": "tiersen",
+          "producers": [],
+          "sound": [
+            "home-recorded, mostly solo; written for the stage"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Yann_Tiersen"
+          ],
+          "songs": [],
+          "note": "album-level only"
+        },
+        {
+          "album": "Rue des cascades",
+          "year": 1996,
+          "era": "tiersen",
+          "producers": [],
+          "sound": [
+            "short pieces on toy piano, harpsichord, violin, accordion, mandolin"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Yann_Tiersen"
+          ],
+          "songs": [],
+          "note": "album-level only (several pieces reappear on Amélie)"
+        },
+        {
+          "album": "Le Phare",
+          "year": 1998,
+          "era": "tiersen",
+          "producers": [],
+          "sound": [
+            "recorded on Ushant; piano, accordion, violin; first guest singers"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Yann_Tiersen"
+          ],
+          "songs": [],
+          "note": "album-level only (several pieces reappear on Amélie)"
+        },
+        {
+          "album": "L'Absente",
+          "year": 2001,
+          "era": "tiersen",
+          "producers": [],
+          "sound": [
+            "full orchestra, strings and ondes Martenot, many guests"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Yann_Tiersen"
+          ],
+          "songs": [],
+          "note": "album-level only"
+        },
+        {
+          "album": "Amélie (soundtrack)",
+          "year": 2001,
+          "era": "tiersen",
+          "producers": [],
+          "sound": [
+            "mostly earlier pieces reworked: accordion, piano, harpsichord, toy piano, banjo, vibraphone; waltzes"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Am%C3%A9lie_(soundtrack)"
+          ],
+          "songs": [
+            {
+              "title": "J'y suis jamais allé",
+              "tags": [
+                "playful",
+                "nostalgic",
+                "accordion",
+                "waltz"
+              ]
+            },
+            {
+              "title": "Les Jours tristes",
+              "tags": [
+                "melancholy",
+                "strings",
+                "instrumental"
+              ]
+            },
+            {
+              "title": "La Valse d'Amélie",
+              "tags": [
+                "nostalgic",
+                "tender",
+                "waltz",
+                "toy piano",
+                "accordion"
+              ]
+            },
+            {
+              "title": "Comptine d'un autre été : L'Après-midi",
+              "tags": [
+                "melancholy",
+                "tender",
+                "acoustic piano",
+                "minimalist",
+                "sparse"
+              ]
+            },
+            {
+              "title": "La Noyée",
+              "tags": [
+                "melancholy",
+                "accordion",
+                "waltz"
+              ]
+            },
+            {
+              "title": "L'Autre valse d'Amélie",
+              "tags": [
+                "tender",
+                "waltz",
+                "accordion"
+              ]
+            },
+            {
+              "title": "Guilty",
+              "tags": [
+                "nostalgic",
+                "cabaret"
+              ],
+              "cover": true,
+              "note": "another writer's song: listed, not analysed"
+            },
+            {
+              "title": "À quai",
+              "tags": [
+                "reflective",
+                "acoustic piano",
+                "strings",
+                "slow build"
+              ]
+            },
+            {
+              "title": "Le Moulin",
+              "tags": [
+                "nostalgic",
+                "acoustic piano",
+                "accordion"
+              ]
+            },
+            {
+              "title": "Pas si simple",
+              "tags": [
+                "playful",
+                "accordion"
+              ]
+            },
+            {
+              "title": "La Valse d'Amélie (orchestra version)",
+              "tags": [
+                "romantic",
+                "strings",
+                "waltz"
+              ]
+            },
+            {
+              "title": "La Valse des vieux os",
+              "tags": [
+                "playful",
+                "toy piano",
+                "waltz"
+              ]
+            },
+            {
+              "title": "La Dispute",
+              "tags": [
+                "melancholy",
+                "acoustic piano",
+                "slow build"
+              ]
+            },
+            {
+              "title": "Si tu n'étais pas là",
+              "tags": [
+                "nostalgic",
+                "cabaret"
+              ],
+              "cover": true,
+              "note": "another writer's song: listed, not analysed"
+            },
+            {
+              "title": "Soir de fête",
+              "tags": [
+                "joyful",
+                "accordion"
+              ]
+            },
+            {
+              "title": "La Redécouverte",
+              "tags": [
+                "dreamy",
+                "sparse"
+              ]
+            },
+            {
+              "title": "Sur le fil",
+              "tags": [
+                "cathartic",
+                "violin",
+                "slow build"
+              ]
+            },
+            {
+              "title": "Le Banquet",
+              "tags": [
+                "playful",
+                "harpsichord"
+              ]
+            },
+            {
+              "title": "La Valse d'Amélie (piano version)",
+              "tags": [
+                "tender",
+                "acoustic piano",
+                "waltz"
+              ]
+            },
+            {
+              "title": "La Valse des monstres",
+              "tags": [
+                "playful",
+                "dark",
+                "waltz",
+                "accordion"
+              ]
+            },
+            {
+              "title": "Les Deux pianos",
+              "tags": [
+                "tender",
+                "acoustic piano"
+              ]
+            },
+            {
+              "title": "Comptine d'un autre été : La Démarche",
+              "tags": [
+                "restless",
+                "acoustic piano",
+                "minimalist"
+              ]
+            },
+            {
+              "title": "La Maison",
+              "tags": [
+                "nostalgic",
+                "tender",
+                "acoustic piano"
+              ]
+            }
+          ],
+          "kind": "soundtrack"
+        },
+        {
+          "album": "Good Bye, Lenin!",
+          "year": 2003,
+          "era": "tiersen",
+          "producers": [],
+          "sound": [
+            "score written from scratch: piano and strings"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Yann_Tiersen"
+          ],
+          "songs": [],
+          "kind": "soundtrack",
+          "note": "album-level only"
+        },
+        {
+          "album": "Les Retrouvailles",
+          "year": 2005,
+          "era": "tiersen",
+          "producers": [],
+          "sound": [
+            "orchestra and many guest vocalists"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Yann_Tiersen"
+          ],
+          "songs": [],
+          "note": "album-level only"
+        },
+        {
+          "album": "Tabarly",
+          "year": 2008,
+          "era": "tiersen-piano",
+          "producers": [],
+          "sound": [
+            "mostly solo piano"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Yann_Tiersen"
+          ],
+          "songs": [],
+          "kind": "soundtrack",
+          "note": "album-level only"
+        },
+        {
+          "album": "Dust Lane / Skyline / ∞",
+          "year": 2010,
+          "era": "tiersen-postrock",
+          "producers": [],
+          "sound": [
+            "post-rock: acoustic guitar, mandolin and bouzouki growing into synths, electric guitars and choirs; themes of mortality"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Yann_Tiersen"
+          ],
+          "songs": [],
+          "kind": "era",
+          "note": "album-level only"
+        },
+        {
+          "album": "EUSA / All / Portrait / Kerber / 11 5 18 2 5 18 / Rathlin from a Distance",
+          "year": 2016,
+          "era": "tiersen-piano",
+          "producers": [],
+          "sound": [
+            "solo piano (EUSA), then field recordings, ambient electronics and analogue synths"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Yann_Tiersen"
+          ],
+          "songs": [],
+          "kind": "era",
+          "note": "album-level only; electronic side also in the E S B project"
+        }
+      ]
+    },
+    "Ramin Djawadi": {
+      "profileDefault": "djawadi",
+      "kind": "composer",
+      "albums": [
+        {
+          "album": "Game of Thrones (seasons 1–8)",
+          "year": 2011,
+          "era": "djawadi",
+          "producers": [],
+          "sound": [
+            "cello as the core voice; house and character leitmotifs introduced gradually; duduk, didgeridoo, glass harmonica for specific groups; piano saved for Light of the Seven"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Music_of_Game_of_Thrones"
+          ],
+          "songs": [
+            {
+              "title": "Main Title",
+              "tags": [
+                "triumphant",
+                "cinematic",
+                "cello",
+                "strings",
+                "leitmotif"
+              ]
+            },
+            {
+              "title": "The Rains of Castamere",
+              "tags": [
+                "dark",
+                "mournful",
+                "leitmotif",
+                "slow"
+              ]
+            },
+            {
+              "title": "Light of the Seven",
+              "tags": [
+                "dark",
+                "cinematic",
+                "acoustic piano",
+                "choir",
+                "slow build"
+              ]
+            },
+            {
+              "title": "Mhysa",
+              "tags": [
+                "triumphant",
+                "choir",
+                "duduk",
+                "slow build"
+              ]
+            },
+            {
+              "title": "Goodbye Brother",
+              "tags": [
+                "mournful",
+                "cello",
+                "strings"
+              ]
+            },
+            {
+              "title": "The Night King",
+              "tags": [
+                "dark",
+                "acoustic piano",
+                "slow build"
+              ]
+            }
+          ],
+          "kind": "score",
+          "note": "Main Title and Light of the Seven have chord data on Hooktheory; the rest are tagged only"
+        },
+        {
+          "album": "Westworld (2016–2022)",
+          "year": 2016,
+          "era": "djawadi",
+          "producers": [],
+          "sound": [
+            "player-piano and string arrangements; slow, mechanical, melancholic main title in 3/4"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/List_of_works_by_Ramin_Djawadi"
+          ],
+          "songs": [
+            {
+              "title": "Main Title",
+              "tags": [
+                "melancholy",
+                "cinematic",
+                "acoustic piano",
+                "strings",
+                "waltz"
+              ]
+            }
+          ],
+          "kind": "score"
+        },
+        {
+          "album": "House of the Dragon (2022–)",
+          "year": 2022,
+          "era": "djawadi",
+          "producers": [],
+          "sound": [
+            "cello still central, viola takes solos; bamboo flutes and woodwinds; drum-driven set pieces"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Music_of_Game_of_Thrones"
+          ],
+          "songs": [],
+          "kind": "score",
+          "note": "album-level only"
+        },
+        {
+          "album": "Film and other TV: Iron Man, Pacific Rim, Prison Break, Person of Interest, Jack Ryan, Eternals",
+          "year": 2008,
+          "era": "djawadi",
+          "producers": [],
+          "sound": [
+            "hybrid orchestral and rock scores: electric guitars, synths and orchestra"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/List_of_works_by_Ramin_Djawadi"
+          ],
+          "songs": [],
+          "kind": "era",
+          "note": "album-level only"
         }
       ]
     }

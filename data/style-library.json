@@ -2434,7 +2434,8 @@
           "bpm": 150,
           "src": "https://www.hooktheory.com/theorytab/view/yann-tiersen/amelie---la-maison"
         }
-      ]
+      ],
+      "eraName": "Amélie era (waltzes, accordion, toy piano)"
     },
     {
       "id": "strangerthings",
@@ -9011,6 +9012,303 @@
         "profile": "charli",
         "note": "no chord data yet"
       }
+    },
+    {
+      "id": "tiersen-postrock",
+      "kind": "composer",
+      "tags": [
+        "Yann Tiersen"
+      ],
+      "alsoTags": [
+        "soundtrack:Amélie",
+        "genre:french-waltz",
+        "instrument:accordion",
+        "instrument:piano"
+      ],
+      "style": {
+        "id": "tiersen-postrock",
+        "meter": "4/4",
+        "comp": "pulse",
+        "swing": 50,
+        "name": "Yann Tiersen · Dust Lane / Skyline post-rock",
+        "lane": "Yann Tiersen",
+        "desc": "Post-rock: slow crescendos from acoustic guitar and mandolin into synths, electric guitars and choirs; 4/4, long builds.",
+        "mode": "aeolian",
+        "key": 4,
+        "bpm": 100,
+        "sevenths": false,
+        "density": 0.5,
+        "leap": 0.2,
+        "register": [
+          60,
+          84
+        ],
+        "sound": "keys",
+        "drums": false,
+        "structure": "ballad",
+        "contour": 0,
+        "space": 1.2,
+        "mopts": {
+          "chorus": {
+            "shift": 0
+          }
+        },
+        "rhythms": [
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            1,
+            0.5,
+            0.5,
+            1
+          ],
+          [
+            3
+          ],
+          [
+            0.5,
+            0.5,
+            1,
+            1
+          ]
+        ]
+      },
+      "bass": "root",
+      "groove": "waltz",
+      "kit": "acoustic",
+      "instr": {
+        "chords": "i:steel",
+        "pad": "i:junopad",
+        "lead": "reverb electric guitar (stand-in steel)"
+      },
+      "quirks": "natural",
+      "feel": {
+        "kick": 0,
+        "snare": 0,
+        "hat": 0,
+        "jit": 0.006,
+        "vj": 0.12,
+        "ghost": 0,
+        "acc": 0.3
+      },
+      "sug": {
+        "ext": 0.1,
+        "borrow": 0.2,
+        "sec": 0.3,
+        "tri": 0,
+        "sus": 0.2
+      },
+      "trans": {
+        "chorus": [],
+        "verse": [],
+        "bridge": [],
+        "pre": []
+      },
+      "art": {
+        "legato": 0.4,
+        "vibLong": 0.2,
+        "scoopStart": 0,
+        "fallEnd": 0.05,
+        "slideLeap": 0,
+        "ghost": 0,
+        "stacc": 0.35,
+        "accent": 0.3,
+        "grace": 0.15,
+        "tenuto": 0.3,
+        "info": "Light and clear: detached waltz notes, the odd grace note, no slides."
+      },
+      "arrangement": {
+        "accompaniment": "a repeating piano figure (arpeggios or oom-pah-pah) that never stops",
+        "colours": [
+          "accordion melody",
+          "mandolin for distant, festive moments",
+          "music-box or celeste chimes",
+          "a typewriter or hand-claps as percussion"
+        ],
+        "form": "the main waltz returns in several versions (piano alone, accordion, full)"
+      },
+      "mixHint": "Intimate and dry, like a small room; no drums; instruments panned as if around a table.",
+      "dna": {
+        "tagline": "post-rock crescendos",
+        "intro": "Dust Lane (2010), Skyline (2011) and ∞ (2014).",
+        "stats": [
+          [
+            "Songs analysed",
+            "0"
+          ]
+        ],
+        "points": [
+          {
+            "c": "high",
+            "t": "Dust Lane began with acoustic guitar, mandolin and bouzouki, then added synths and electric guitars; Skyline is more rock-oriented.",
+            "src": [
+              "https://en.wikipedia.org/wiki/Yann_Tiersen"
+            ],
+            "used": "instruments, structure"
+          }
+        ]
+      },
+      "eraOf": "Yann Tiersen",
+      "eraName": "Dust Lane / Skyline post-rock",
+      "matrixFrom": {
+        "profile": "tiersen",
+        "note": "no chord data of its own yet"
+      }
+    },
+    {
+      "id": "tiersen-piano",
+      "kind": "composer",
+      "tags": [
+        "Yann Tiersen"
+      ],
+      "alsoTags": [
+        "soundtrack:Amélie",
+        "genre:french-waltz",
+        "instrument:accordion",
+        "instrument:piano"
+      ],
+      "style": {
+        "id": "tiersen-piano",
+        "meter": "4/4",
+        "comp": "pulse",
+        "swing": 50,
+        "name": "Yann Tiersen · Solo piano and ambient",
+        "lane": "Yann Tiersen",
+        "desc": "Solo piano (Tabarly, EUSA) and later ambient electronics and field recordings: repeated figures, sparse, slow.",
+        "mode": "aeolian",
+        "key": 4,
+        "bpm": 70,
+        "sevenths": false,
+        "density": 0.3,
+        "leap": 0.2,
+        "register": [
+          60,
+          84
+        ],
+        "sound": "keys",
+        "drums": false,
+        "structure": "ballad",
+        "contour": 0,
+        "space": 1.2,
+        "mopts": {
+          "chorus": {
+            "shift": 0
+          }
+        },
+        "rhythms": [
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            1,
+            0.5,
+            0.5,
+            1
+          ],
+          [
+            3
+          ],
+          [
+            0.5,
+            0.5,
+            1,
+            1
+          ]
+        ]
+      },
+      "bass": "root",
+      "groove": "waltz",
+      "kit": "acoustic",
+      "instr": {
+        "chords": "i:piano",
+        "pad": "i:propad"
+      },
+      "quirks": "natural",
+      "feel": {
+        "kick": 0,
+        "snare": 0,
+        "hat": 0,
+        "jit": 0.006,
+        "vj": 0.12,
+        "ghost": 0,
+        "acc": 0.3
+      },
+      "sug": {
+        "ext": 0.1,
+        "borrow": 0.2,
+        "sec": 0.3,
+        "tri": 0,
+        "sus": 0.2
+      },
+      "trans": {
+        "chorus": [],
+        "verse": [],
+        "bridge": [],
+        "pre": []
+      },
+      "art": {
+        "legato": 0.4,
+        "vibLong": 0.2,
+        "scoopStart": 0,
+        "fallEnd": 0.05,
+        "slideLeap": 0,
+        "ghost": 0,
+        "stacc": 0.35,
+        "accent": 0.3,
+        "grace": 0.15,
+        "tenuto": 0.3,
+        "info": "Light and clear: detached waltz notes, the odd grace note, no slides."
+      },
+      "arrangement": {
+        "accompaniment": "a repeating piano figure (arpeggios or oom-pah-pah) that never stops",
+        "colours": [
+          "accordion melody",
+          "mandolin for distant, festive moments",
+          "music-box or celeste chimes",
+          "a typewriter or hand-claps as percussion"
+        ],
+        "form": "the main waltz returns in several versions (piano alone, accordion, full)"
+      },
+      "mixHint": "Intimate and dry, like a small room; no drums; instruments panned as if around a table.",
+      "dna": {
+        "tagline": "solo piano and ambient electronics",
+        "intro": "Tabarly (2008), EUSA (2016) and the later records to Rathlin from a Distance (2025).",
+        "stats": [
+          [
+            "Songs analysed",
+            "0"
+          ]
+        ],
+        "points": [
+          {
+            "c": "high",
+            "t": "Tabarly is mostly solo piano; later work adds electronics and analogue synths.",
+            "src": [
+              "https://en.wikipedia.org/wiki/Yann_Tiersen"
+            ],
+            "used": "instruments"
+          }
+        ]
+      },
+      "eraOf": "Yann Tiersen",
+      "eraName": "Solo piano and ambient",
+      "matrixFrom": {
+        "profile": "tiersen",
+        "note": "no chord data of its own yet"
+      }
     }
   ],
   "producers": [
@@ -10890,7 +11188,35 @@
           }
         ],
         "note": "Only the Game of Thrones main title has published chord analysis; Westworld traits are descriptive. Add more cues to data/progressions.json when analyses turn up."
-      }
+      },
+      "chordSources": [
+        {
+          "piece": "Light of the Seven",
+          "key": "C minor",
+          "bpm": 116,
+          "sections": {
+            "intro": "i iv",
+            "verse": "i V VII",
+            "pre": "i III vi i VI"
+          },
+          "src": "https://www.hooktheory.com/theorytab/view/ramin-djawadi/light-of-the-seven---game-of-thrones",
+          "c": "high"
+        },
+        {
+          "piece": "Westworld (main title)",
+          "key": "A minor",
+          "bpm": 74,
+          "meter": "3/4",
+          "sections": {
+            "intro": "i VI",
+            "chorus": "VI iv VII i iv",
+            "outro": "i VI i iv III"
+          },
+          "src": "https://www.hooktheory.com/theorytab/view/ramin-djawadi/westworld---intro",
+          "c": "high",
+          "note": "page lists ~220 BPM counted in quarter notes of a fast 3/4"
+        }
+      ]
     }
   ],
   "soundtrackLibrary": {
@@ -12031,6 +12357,14 @@
         "charli-pop2",
         "charli",
         "charli-mff"
+      ]
+    },
+    "Yann Tiersen": {
+      "default": "tiersen",
+      "eras": [
+        "tiersen",
+        "tiersen-piano",
+        "tiersen-postrock"
       ]
     }
   },
