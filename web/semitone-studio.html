@@ -803,6 +803,12 @@ body.is-native #timeline .sec,body.is-native #oTimeline .sec{cursor:grab}
 .tv-note{border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:.86rem}.tv-note b{display:block;margin-bottom:2px}.tv-note ul{margin:4px 0 0;padding-left:18px}.tv-note.warn{border-color:var(--ratio)}.tv-note .btn{margin:6px 6px 0 0}
 .tv-eras{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}.tv-era{text-align:left;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:8px;padding:8px 10px;cursor:pointer;font:inherit;font-size:.82rem}.tv-era[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);background:var(--soft)}.tv-era b{display:block}
 @media (max-width:900px){.tv-body{display:block;overflow:auto}.tv-main{overflow:visible}.tv-card{overflow:visible;border-left:0;border-top:1px solid var(--line)}.tv-groups{grid-template-columns:minmax(0,1fr)}}
+.pv-prods{margin:0;padding:8px 16px;border-bottom:1px solid var(--line)}.pv-prods .tchip b{display:block}.pv-prods .tchip small{display:block;margin:0}.pv-prods .tchip{border-radius:8px;text-align:left}
+.pv-key{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:.82rem}.pv-cell{display:inline-block;width:22px;height:12px;border:1px solid var(--line);border-radius:3px}
+.pv-grid{display:grid;gap:4px;min-width:520px}.pv-wrap{overflow-x:auto}.pv-row{display:flex;gap:4px;align-items:stretch}.pv-name{flex:0 0 72px;font-size:.82rem;font-weight:600;align-self:center}.pv-secs{flex:1;display:flex;gap:4px;min-width:0}
+.pv-sec{position:relative;min-height:34px;border-radius:6px;background:var(--soft);border:1px solid var(--line);font-size:.74rem;padding:2px 5px;overflow:hidden;white-space:nowrap;min-width:0}.pv-sec.head{background:var(--surface);font-weight:600}
+.muted-cell,.pv-sec.muted-cell{background:repeating-linear-gradient(135deg,var(--line) 0 3px,transparent 3px 7px)}.changed,.pv-sec.changed{border:2px solid var(--ratio)}.pv-sec i{position:absolute;right:3px;top:3px;font-style:normal;background:var(--ratio);color:#14100a;border-radius:99px;min-width:16px;text-align:center;font-size:.68rem;font-weight:700}
+.pv-move{border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:.84rem}.pv-move.soon{opacity:.55}.pv-move h4{margin:0 0 2px;font-size:.88rem;display:flex;gap:8px;align-items:flex-start}.pv-move h4 span{flex:1}.pv-move h4 span.pv-num{flex:0 0 22px}.pv-move small{color:var(--muted);display:block;margin-top:3px}.pv-num{background:var(--ratio);color:#14100a;border-radius:99px;min-width:20px;text-align:center;font-size:.74rem;font-weight:700}
 </style>
 
 <header class="topbar">
@@ -956,7 +962,7 @@ body.is-native #timeline .sec,body.is-native #oTimeline .sec{cursor:grab}
         <button class="btn" id="audioBtn" hidden>Export audio</button>
         <button class="btn" id="dxOpen" hidden title="All parts as MIDI (one file or one per part), plus Reaper and DAWproject files, colour-coded">⇪ Export to DAW</button>
         <button class="btn" id="ppOpen" hidden title="Everything an artist’s team needs in one zip">📦 Pitch pack</button>
-        <button class="btn" id="arrBtn" title="Turn this song into an orchestral cue">Arrange for orchestra</button>
+        <button class="btn" id="passBtn" title="Ask a producer about this song: their likely moves, heard on A/B, and you keep what works">Producer pass</button><button class="btn" id="arrBtn" title="Turn this song into an orchestral cue">Arrange for orchestra</button>
         <span class="mono" id="tempoNow" aria-live="off"></span><span class="seed mono muted" id="seedOut"></span>
       </div>
       <div class="roll-tools">
@@ -1408,6 +1414,12 @@ body.is-native #timeline .sec,body.is-native #oTimeline .sec{cursor:grab}
     <div class="tv-groups" id="tagGroups"></div><div id="tagEras"></div><div id="tagVariants"></div>
   </div><aside class="tv-card" id="tagCard" aria-live="polite"></aside></div>
 </div>
+<div class="tagview" id="passView" hidden role="dialog" aria-modal="true" aria-labelledby="pvTitle">
+  <div class="tv-head"><button class="btn mini-btn" id="passBack">← Song</button><h2 id="pvTitle">Producer pass</h2><span class="seg" role="group" aria-label="Which version plays"><button class="btn mini-btn tog" id="passA" aria-pressed="false">A · Your version</button><button class="btn mini-btn tog" id="passB" aria-pressed="true">B · With the pass</button></span><button class="btn mini-btn" id="passPlay">▶ Play</button><span class="muted tv-hint">Switch A/B while it plays.</span></div>
+  <div class="tv-row pv-prods" id="passProds"></div>
+  <div class="tv-body"><div class="tv-main"><div class="pv-key muted"><span class="pv-cell muted-cell"></span> muted by the pass <span class="pv-cell changed"></span> changed <span style="margin-left:auto">Numbers on the timeline match the session notes</span></div><div id="passGrid"></div></div>
+  <aside class="tv-card" id="passNotes" aria-live="polite"></aside></div>
+</div>
 <div class="modal" id="libModal" hidden role="dialog" aria-modal="true" aria-labelledby="libTitle">
   <div class="modal-box">
     <div class="panel-head"><h2 id="libTitle">Library</h2><button class="btn mini-btn" data-close>Close</button></div>
@@ -1717,7 +1729,7 @@ function generate(seed,keepSel){
   const sections=list.map(([type,bars,label])=>{ seen[type]=(seen[type]||0)+1;
     const name=label||(SEC[type]+(type==='verse'&&counts.verse>1?' '+seen[type]:''));
     const s={type,bars,name,startBar:bar}; bar+=bars; return s; });
-  S.song={mats,sections,totalBars:bar}; S.versions={}; if(S.trans){ S.trans={}; S.transOwn={}; } invalidateViews(); S.selNote=null;
+  S.song={mats,sections,totalBars:bar}; S.versions={}; S.secMute={}; if(S.trans){ S.trans={}; S.transOwn={}; } invalidateViews(); S.selNote=null;
   if(!S.beats) buildBeats(STYLE_GROOVE[S.style.id]);
   if(!keepSel||S.sel==null||S.sel>=sections.length){ const v=sections.findIndex(s=>s.type==='verse'); S.sel=v<0?0:v; }
   if(S.smartArt!==false) smartArtAll();
@@ -1995,25 +2007,25 @@ function barList(mode){
 }
 function scheduleBar(bar,t,spb,skip=0){
   applyAuto('song',bar.si,bar.b*METERS[S.meter].B,(bar.b+1)*METERS[S.meter].B,t,spb);
-  const M=METERS[S.meter], B=M.B, c=bar.ch, Q=QQ(), at=x=>t+swingT(x)*spb, boost=S.comp==='sustain'?1:1.3, pa=SOUNDS[partSound('chords')].pad.attack;
+  const secOn=p=>!(S.secMute&&S.secMute[p]&&S.secMute[p][bar.si]); const M=METERS[S.meter], B=M.B, c=bar.ch, Q=QQ(), at=x=>t+swingT(x)*spb, boost=S.comp==='sustain'?1:1.3, pa=SOUNDS[partSound('chords')].pad.attack;
   const bend=Q.cbend>0&&bar.prevCh&&bar.prevCh.d!==c.d&&skip===0, bt=.04+Q.cbend*.32, EN=energyOf(bar.si), EM=energyMul(bar.si,'chords'), EL=energyMul(bar.si,'lead');
   const artF=S.comp==='sustain'?1:Q.artic==='staccato'?.5:Q.artic==='legato'?1.25:1;
-  compPattern(S.comp,S.meter).forEach((h,hi)=>{
+  if(secOn('chords')) compPattern(S.comp,S.meter).forEach((h,hi)=>{
     let on=h.on, len=h.dur; { const DF=dropFrom(bar); if(DF!=null){ if(on>=DF-1e-6) return; len=Math.min(len,DF-on); } } if(on<skip-1e-6){ if(on+len<=skip+1e-6) return; len=on+len-skip; on=skip; }
     const a=at(on), d=(swingT(on+len)-swingT(on))*spb*artF, v=h.lab==='U'?.7:near(h.on,0)?1.1:.9;
     const pk=chordPerfKind(), up=h.lab==='U', nP=c.pad.length;
     c.pad.forEach((m,k)=>{ const ex={attack:Math.min(pa,d*.4)}; if(bend&&hi===0){ const pm=bar.prevCh.pad[Math.min(k,bar.prevCh.pad.length-1)]; if(pm!==m){ex.glideFrom=pm;ex.glideTime=bt;} }
       const st=pk==='strum'?a+(up?(nP-1-k):k)*.014*(up?.7:1):a, dd=pk==='pedal'?d*1.3+.12:pk==='strum'?Math.max(.05,d-(st-a)):d;
       playPart('chords',m,st,dd,v*boost*(pk==='strum'&&up?.8:1)*EM,ex); if(EN>=.85&&k===nP-1&&hi===0) playPart('chords',m+12,st,dd,v*boost*.3,{attack:ex.attack}); }); });
-  dropTrim(bassNotes(bar),bar).forEach((bn,k)=>{ let x=bn.x, du=bn.dur; if(x+du<=skip+1e-6) return; if(x<skip){ du-=skip-x; x=skip; }
+  if(secOn('bass')) dropTrim(bassNotes(bar),bar).forEach((bn,k)=>{ let x=bn.x, du=bn.dur; if(x+du<=skip+1e-6) return; if(x<skip){ du-=skip-x; x=skip; }
     const ex={}; if(bend&&k===0&&bar.prevCh.bass!==c.bass){ex.glideFrom=bar.prevCh.bass;ex.glideTime=bt*.8;} playPart('bass',bn.m,at(x),Math.max(.05,(swingT(x+du)-swingT(x))*spb),bn.vel*EM,ex); });
   const v=viewCached(bar.si), E=exprFor(v);
-  v.melody.forEach((n,i)=>{ if(n.start<bar.b*B-1e-6||n.start>=(bar.b+1)*B-1e-6) return; const rs=n.start-bar.b*B; if(rs<skip-1e-6) return;
+  if(secOn('lead')) v.melody.forEach((n,i)=>{ if(n.start<bar.b*B-1e-6||n.start>=(bar.b+1)*B-1e-6) return; const rs=n.start-bar.b*B; if(rs<skip-1e-6) return;
     const e=E[i]||{playDur:n.dur,vel:1,tOff:0}, st=Math.max(ac.currentTime+.005,at(rs)+e.tOff), d=Math.max(.04,(swingT(rs+e.playDur)-swingT(rs))*spb);
     if(e.grace!=null) playPart('lead',e.grace,Math.max(ac.currentTime+.005,st-.065),.06,e.vel*.8);
     const ex={}; if(e.glide){ex.glideFrom=e.glide.from;ex.glideTime=e.glide.time;} if(e.scoop) ex.scoop=e.scoop; if(e.vib) ex.vib=e.vib; if(e.fall) ex.fall=e.fall;
     playPart('lead',n.m,st,d,e.vel*EL,ex); if(S.energyOn&&EN>=.95&&n.m-12>=48) playPart('lead',n.m-12,st+.012,d,e.vel*.32,{}); });
-  if(S.parts.drums.on&&(!RENDER_ONLY||RENDER_ONLY==='drums')) scheduleDrums(bar,t,spb,skip);
+  if(S.parts.drums.on&&secOn('drums')&&(!RENDER_ONLY||RENDER_ONLY==='drums')) scheduleDrums(bar,t,spb,skip);
   if(typeof scheduleTakes==='function'&&TAKES.length&&(!RENDER_ONLY||RENDER_ONLY==='vox')) scheduleTakes(bar,t,spb,skip);
   if(typeof scheduleTransitions==='function') scheduleTransitions(bar,t,spb);
 }
@@ -2589,10 +2601,11 @@ function buildMidi(){
   bars.forEach((bar,i)=>{
     const base=i*B;
     if(bar.b===0){ const nm=ascii(S.song.sections[bar.si].name); marks.push({t:tk(base),o:2,b:[0xFF,0x06,...vlq(nm.length),...nm]}); }
-    if(on('chords')) pat.forEach(h=>{ const a=swingT(h.on), e=swingT(h.on+h.dur); bar.ch.pad.forEach(m=>note(pad,1,m,base+a,e-a,Math.round((h.lab==='U'?60:74)*energyMul(bar.si,'chords')))); });
-    if(on('bass')) dropTrim(bassNotes(bar),bar).forEach(bn=>note(bass,2,bn.m,base+swingT(bn.x),swingT(bn.x+bn.dur)-swingT(bn.x),Math.min(127,Math.round(92*bn.vel*energyMul(bar.si,'bass')))));
-    if(on('lead')){ const vv=viewCached(bar.si), E=exprFor(vv); vv.melody.forEach((n,i)=>{ if(n.start<bar.b*B-1e-6||n.start>=(bar.b+1)*B-1e-6) return; const ex=E[i]||{playDur:n.dur,vel:1}, rs=n.start-bar.b*B, a=swingT(rs), e=swingT(rs+ex.playDur); if(ex.grace!=null) note(mel,0,ex.grace,Math.max(0,base+a-.125),.1,70); note(mel,0,n.m,base+a,e-a,Math.max(30,Math.min(127,Math.round(92*ex.vel*energyMul(bar.si,'lead'))))); }); }
-    if(on('drums')) drumEventsForBar(bar).forEach(d=>note(drm,9,GM_DRUM[d.r],base+d.x,.1,Math.max(20,Math.min(127,Math.round(100*d.vel)))));
+    const son=p=>on(p)&&!(S.secMute&&S.secMute[p]&&S.secMute[p][bar.si]);
+    if(son('chords')) pat.forEach(h=>{ const a=swingT(h.on), e=swingT(h.on+h.dur); bar.ch.pad.forEach(m=>note(pad,1,m,base+a,e-a,Math.round((h.lab==='U'?60:74)*energyMul(bar.si,'chords')))); });
+    if(son('bass')) dropTrim(bassNotes(bar),bar).forEach(bn=>note(bass,2,bn.m,base+swingT(bn.x),swingT(bn.x+bn.dur)-swingT(bn.x),Math.min(127,Math.round(92*bn.vel*energyMul(bar.si,'bass')))));
+    if(son('lead')){ const vv=viewCached(bar.si), E=exprFor(vv); vv.melody.forEach((n,i)=>{ if(n.start<bar.b*B-1e-6||n.start>=(bar.b+1)*B-1e-6) return; const ex=E[i]||{playDur:n.dur,vel:1}, rs=n.start-bar.b*B, a=swingT(rs), e=swingT(rs+ex.playDur); if(ex.grace!=null) note(mel,0,ex.grace,Math.max(0,base+a-.125),.1,70); note(mel,0,n.m,base+a,e-a,Math.max(30,Math.min(127,Math.round(92*ex.vel*energyMul(bar.si,'lead'))))); }); }
+    if(son('drums')) drumEventsForBar(bar).forEach(d=>note(drm,9,GM_DRUM[d.r],base+d.x,.1,Math.max(20,Math.min(127,Math.round(100*d.vel)))));
   });
   if(mel.length){ const lb=songLeadBends().filter(x=>MIDI_SEC==null||(x.beat>=secOff-1e-6&&x.beat<secOff+bars.length*B-1e-6)).map(x=>({...x,beat:x.beat-secOff})); if(lb.length){ mel.push(...bendRpn(0,tk)); lb.forEach(x=>mel.push({t:tk(x.beat),o:.5,b:[0xE0,x.v&127,(x.v>>7)&127]})); mel.push({t:tk(bars.length*B),o:.5,b:[0xE0,0,64]}); } }
   if(MIDI_SEC==null&&mel.length&&Object.values(S.lyrics||{}).some(x=>x&&x.trim())) mel.push(...midiLyricEvents(tk));
@@ -3711,7 +3724,7 @@ function projectData(){ if(typeof verSync==='function') verSync();
   const parts={}; Object.entries(S.parts).forEach(([k,p])=>parts[k]={on:p.on,vol:p.vol,sound:p.sound==='sample'?'style':p.sound});
   return {v:1,style:S.style.id,key:S.key,mode:S.mode,bpm:S.bpm,sevenths:S.sevenths,density:S.density,leap:S.leap,meter:S.meter,comp:S.comp,swing:S.swing,
     structure:S.structure,structSeed:S.structSeed,seed:S.seed,matrix:S.matrix,mats,sections:S.song.sections.map(s=>[s.type,s.bars,s.name]),beats:S.beats,groove:S.groove,kit:S.kit,fill:S.fill,parts,
-    qOn:S.qOn,q:S.q,qPreset:S.qPreset,sel:S.sel,mix:S.mix,auto:S.auto,smart:S.smart,autoGen:S.autoGen,mixGen:S.mixGen,mixOwn:S.mixOwn,autoNotes:S.autoNotes,moveSalt:S.moveSalt,smartArt:S.smartArt,artSalt:S.artSalt,lyrics:S.lyrics,showLyrics:S.showLyrics,perf:S.perf,energy:S.song.sections.map(s=>s.energy==null?null:s.energy),lift:S.lift,energyOn:S.energyOn,polish:S.polish,polishTrim:S.polishTrim,versions:S.versions,transOn:S.transOn,trans:S.trans,transOwn:S.transOwn,room:S.room,roomMix:S.roomMix,tags:S.tags||[],tagChoices:S.tagChoices||{}};
+    qOn:S.qOn,q:S.q,qPreset:S.qPreset,sel:S.sel,mix:S.mix,auto:S.auto,smart:S.smart,autoGen:S.autoGen,mixGen:S.mixGen,mixOwn:S.mixOwn,autoNotes:S.autoNotes,moveSalt:S.moveSalt,smartArt:S.smartArt,artSalt:S.artSalt,lyrics:S.lyrics,showLyrics:S.showLyrics,perf:S.perf,energy:S.song.sections.map(s=>s.energy==null?null:s.energy),lift:S.lift,energyOn:S.energyOn,polish:S.polish,polishTrim:S.polishTrim,versions:S.versions,transOn:S.transOn,trans:S.trans,transOwn:S.transOwn,room:S.room,roomMix:S.roomMix,tags:S.tags||[],tagChoices:S.tagChoices||{},secMute:S.secMute||{}};
 }
 function applyMats(mats){
   Object.entries(mats).forEach(([t,m])=>{ const mat=S.song.mats[t]; if(!mat) return; mat.loop=m.loop; if(m.blockBars) mat.blockBars=m.blockBars; if(Array.isArray(m.prog)&&m.prog.length===mat.blockBars){ mat.chords=m.prog.map(chordOf); if(Array.isArray(m.cv)) mat.chords=mat.chords.map((c,i)=>m.cv[i]?customChord(c,m.cv[i]):c); } else { const c4=m.loop.map(c=>chordOf(c)); mat.chords=Array.from({length:mat.blockBars},(_,b)=>c4[b%4]); if(t==='outro') mat.chords[mat.blockBars-1]=makeChord(0); } mat.melody=m.melody.map(n=>({...n})); });
@@ -3732,6 +3745,7 @@ function applyProject(d){
   applyMats(d.mats);
   S.versions=d.versions?JSON.parse(JSON.stringify(d.versions)):{}; S.transOn=d.transOn!==false; S.trans=d.trans||{}; S.transOwn=d.transOwn||{}; if($('#transOn')) $('#transOn').checked=S.transOn;
   S.lift=d.lift||0; S.energyOn=d.energyOn!==false; S.polish=POLISH[d.polish]?d.polish:'gentle'; S.polishTrim=d.polishTrim||0; if(typeof finishUI==='function') finishUI(); if(Array.isArray(d.energy)) S.song.sections.forEach((s,i)=>{ if(d.energy[i]!=null) s.energy=d.energy[i]; }); if($('#liftSel')){ $('#liftSel').value=String(S.lift); $('#energyOn').checked=S.energyOn; }
+  S.secMute=JSON.parse(JSON.stringify(d.secMute||{}));
   if(ROOMS[d.room]){ S.room=d.room; S.roomMix=d.roomMix!=null?d.roomMix:ROOMS[d.room].mix; syncRoom(); }
   invalidateViews(); S.sel=Math.min(d.sel||0,S.song.sections.length-1);
   renderStyles(); syncControls(); renderMixer(); renderQuirks(); selectSection(S.sel);
@@ -7249,7 +7263,7 @@ function initInfo(){
 const NSND={mode:0,seq:0,lastLayout:'',stableAt:0,queue:[],busy:false,need:new Set(),sr:48000,map:{},have:new Set(),status:''};
 function nHash(str){ let h1=0x811c9dc5, h2=0x01000193^str.length; for(let i=0;i<str.length;i++){ const c=str.charCodeAt(i); h1=Math.imul(h1^c,16777619); h2=Math.imul(h2^c,0x5bd1e995); h2^=h2>>>13; } return (h1>>>0).toString(16).padStart(8,'0')+(h2>>>0).toString(16).padStart(8,'0'); }
 function nSecKey(si,g){ const sec=S.song.sections[si], v=sectionView(si); const nb=k=>S.song.sections[k]?{t:S.song.sections[k].type,b:S.song.sections[k].bars}:null;
-  return JSON.stringify([g,si,sec.type,sec.bars,energyOf(si),v.chords.map(c=>[codeOf(c),c.custom||null]),v.melody.map(n=>[n.m,+n.start.toFixed(4),+n.dur.toFixed(4),n.art||0]),transOf(si),transOf(si+1),nb(si-1),nb(si+1),typeof TAKES!=='undefined'?TAKES.length:0,NSND.sr]); }
+  return JSON.stringify([g,si,Object.keys(S.secMute||{}).filter(p=>S.secMute[p][si]),sec.type,sec.bars,energyOf(si),v.chords.map(c=>[codeOf(c),c.custom||null]),v.melody.map(n=>[n.m,+n.start.toFixed(4),+n.dur.toFixed(4),n.art||0]),transOf(si),transOf(si+1),nb(si-1),nb(si+1),typeof TAKES!=='undefined'?TAKES.length:0,NSND.sr]); }
 function nAudioLayout(){ const d=projectData(), g={...d}; ['mats','sections','sel','versions','showLyrics','energy'].forEach(k=>delete g[k]); const gs=JSON.stringify(g); const B=METERS[S.meter].B; let at=0; const items=[];
   S.song.sections.forEach((s,si)=>{ const id=nHash(nSecKey(si,gs)); items.push({id,at}); NSND.map[id]={scope:'song',si}; at+=s.bars*B; }); return items; }
 function nOrchLayout(){ const d=orchData(), g={...d}; ['sections','parts','themes','var','name','id','autoNotes'].forEach(k=>delete g[k]); const gs=JSON.stringify(g); let at=0; const items=[];
@@ -7416,6 +7430,52 @@ function initTags(){ $('#tagBack').onclick=tagClose; $('#tagUse').onclick=tagApp
   $('#tagView').addEventListener('click',e=>{ const b=e.target.closest('[data-tag]'); if(b){ tagToggle(b.dataset.tag); return; } const c=e.target.closest('[data-tfield]'); if(c){ TL.choices[c.dataset.tfield]=c.dataset.tpick; tagRender(); } });
   document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&!$('#tagView').hidden) tagClose(); }); }
 
+/* ---------- producer pass: a producer's likely moves on a finished song, heard on A/B ---------- */
+const PASS={q:null,level:1,on:{},take:0,A:null,side:'B'};
+const PASS_PART={vocal:'lead',lead:'lead',melody:'lead',piano:'chords',keys:'chords',chords:'chords',guitar:'chords',bass:'bass',drums:'drums'}, PASS_LV=[['Sounds & mix',['sound','mix']],['+ Arrangement',['sound','mix','arrangement','structure']],['+ Writing',['sound','mix','arrangement','structure','writing']]];
+function passSecs(d,spec){ const secs=d.sections.map(x=>x[0]), n=secs.length, nth=(t,k)=>{ let c=0; for(let i=0;i<n;i++) if(secs[i]===t&&++c===k) return i; return -1; }, last=t=>secs.lastIndexOf(t); const out=new Set();
+  String(spec||'all').split(/[,|]/).map(x=>x.trim()).forEach(x=>{ const m=/^(\w+)\.\.(\w+)$/.exec(x); if(m){ const a=passSecs(d,m[1])[0]; if(a!=null) for(let i=a;i<n;i++) out.add(i); return; } if(x==='all'||x==='end'){ for(let i=0;i<n;i++) out.add(i); return; } if(x==='lastChorus'){ const i=last('chorus'); if(i>=0) out.add(i); return; } const q=/^([a-z]+)(\d)?$/.exec(x); if(!q) return; if(q[2]){ const i=nth(q[1],+q[2]); if(i>=0) out.add(i); } else secs.forEach((t,i)=>{ if(t===q[1]) out.add(i); }); }); return [...out].sort((a,b)=>a-b); }
+function passOp(raw){ const op=raw.trim(), m=/^(fx:)?(\w+)/.exec(op), v=m&&m[2], at=(/@([\w.|,]+)/.exec(op)||[])[1]||'all'; const P={sound:(d,k,x)=>{ if(d.parts[k]&&/^i:/.test(x)) d.parts[k].sound=x; }};
+  if(v==='mute'&&/all-but/.test(op)){ const keep=(/all-but\(([^)]*)\)/.exec(op)[1]).split(',').map(x=>PASS_PART[x.trim()]); return d=>{ d.secMute=d.secMute||{}; const si=passSecs(d,at); ['lead','chords','bass','drums'].filter(p=>!keep.includes(p)).forEach(p=>{ d.secMute[p]=d.secMute[p]||{}; si.forEach(i=>d.secMute[p][i]=1); }); return {mute:si,parts:['lead','chords','bass','drums'].filter(p=>!keep.includes(p))}; }; }
+  if(v==='muteMostComplexPart') return d=>{ d.secMute=d.secMute||{}; d.secMute.chords=d.secMute.chords||{}; const si=passSecs(d,at); si.forEach(i=>d.secMute.chords[i]=1); return {mute:si,parts:['chords']}; };
+  if(v==='thin'&&/@(?!chorus-under)/.test(op)||v==='thin'&&/chords@/.test(op)){ const amt=+(/amount=([\d.]+)/.exec(op)||[,.5])[1]; return d=>{ const si=passSecs(d,at); d.energy=d.energy||[]; si.forEach(i=>d.energy[i]=+(Math.max(.15,(d.energy[i]==null?.7:d.energy[i])*(1-amt*.6))).toFixed(3)); return {change:si,parts:['chords','bass','drums']}; }; }
+  if(v==='instr'){ const list=op.slice(6).split(',').map(x=>x.split('=')); return d=>{ list.forEach(([k,x])=>P.sound(d,k,x)); return {all:list.map(x=>x[0])}; }; }
+  if(v==='swapSound'&&/->i:/.test(op)&&!/@/.test(op)){ const q=/swapSound:(\w+)->(i:\w+)/.exec(op); return d=>{ P.sound(d,q[1],q[2]); return {all:[q[1]]}; }; }
+  if(v==='kit'){ const k=(/kit:(\w+)/.exec(op)||[])[1]; if(!KITS[k]) return null; return d=>{ d.kit=k; return {all:['drums']}; }; }
+  if(v==='groove'){ const g=(/groove:(\w+)/.exec(op)||[])[1]; if(!tagGrooveOk(g)||/@/.test(op)) return null; return d=>{ d._groove=g; return {all:['drums']}; }; }
+  const rv=/^(?:fx:)?reverb\*([\d.]+)/.exec(op); if(rv) return d=>{ d.roomMix=+((d.roomMix||0)*+rv[1]).toFixed(3); return {}; };
+  if(/^bass\+\d/.test(op)){ const db=+/\+(\d+)/.exec(op)[1]; return d=>{ d.parts.bass.vol=+(d.parts.bass.vol*Math.pow(10,db/20)).toFixed(3); return {all:['bass']}; }; }
+  if(v==='humanize') return d=>{ d.perf={...(d.perf||{}),human:true}; return {}; };
+  if(v==='cutBars'&&/->/.test(op)&&!/until|longest/.test(op)){ const cuts=[...op.matchAll(/(\w+)->(\d+)/g)].map(x=>[x[1],+x[2]]); return d=>{ const si=[]; cuts.forEach(([t,n])=>d.sections.forEach((x,i)=>{ if(x[0]===t&&x[1]>n){ x[1]=n; si.push(i); } })); return {change:si,parts:['chords']}; }; }
+  return null; }
+function passMoves(){ const lv=PASS_LV[PASS.level][1]; return PASS.q.pass.moves.filter(m=>lv.includes(m.level)||m.level==='writing').map((m,i)=>{ const ops=String(m.op).split(';').map(x=>x.trim()).filter(x=>x&&!/^label/.test(x)), fn=ops.map(passOp); return {...m,num:i+1,fn:fn.filter(Boolean),soon:fn.every(f=>!f),part:fn.some(f=>!f)&&fn.some(Boolean),out:!lv.includes(m.level)}; }); }
+function passBuild(list){ const d=JSON.parse(PASS.A), marks=[]; list.forEach(m=>m.fn.forEach(f=>{ const r=f(d); if(r) marks.push({...r,num:m.num}); })); return {d,marks}; }
+function passActive(){ return passMoves().filter(m=>!m.soon&&!m.out&&PASS.on[m.id]); }
+function passGo(d){ const g=d._groove, keep={...d}; delete keep._groove; H.restoring=true; try{ applyProject({...keep,sel:S.sel}); if(g){ S.groove=g; buildBeats(g); renderAll(); } }finally{ H.restoring=false; H.reset=false; } }
+function passSwitch(side,hold){ const was=S.playing&&S.playMode; PASS.side=side; passGo(side==='A'?JSON.parse(PASS.A):passBuild(passActive()).d); if(was&&!hold) play(was); passRender(); }
+function passOpen(pid){ histCheck(true); H.restoring=true; const qs=TL.d.producers, tag=(S.tags||[]).find(t=>t.startsWith('producer:')); PASS.q=qs.find(q=>q.id===pid)||qs.find(q=>tag&&q.tags[0]===tag.slice(9))||qs[0]; PASS.A=JSON.stringify({...projectData(),sel:S.sel}); PASS.side='B'; PASS.take=0; passDefaults(); $('#passView').hidden=false; H.restoring=false; passSwitch('B',true); }
+function passDefaults(){ PASS.on={}; PASS.q.pass.moves.forEach(m=>{ PASS.on[m.id]=m.onByDefault!==false&&m.level!=='writing'; }); }
+function passPick(q){ if(PASS.A===null) return; PASS.q=q; PASS.take=0; passDefaults(); passSwitch('B'); }
+function passClose(){ stopPlay(); $('#passView').hidden=true; PASS.A=null; }
+function passDiscard(){ passGo(JSON.parse(PASS.A)); passClose(); H.cur=histCapture(); toast('Pass discarded: your version is back'); }
+function passKeep(){ const list=passActive(), name=PASS.q.tags[0], A=PASS.A; stopPlay(); passGo(JSON.parse(A)); H.cur=histCapture(); const did=[]; let n=0; H.keeping=true; list.forEach(m=>{ did.push(m); passGo(passBuild(did).d); H.quietUntil=0; H.nextLabel=`${name}-style pass: ${m.what}`; if(histCheck(true)) n++; else H.nextLabel=null; }); H.keeping=false; passClose(); renderMixer(); toast(n?`Kept ${n} change${n>1?'s':''}: each one can be undone`:'Nothing to keep'); }
+function passTake(){ PASS.take++; const r=mulberry(((S.seed||1)*131+PASS.take*7919)>>>0); passDefaults(); PASS.q.pass.moves.forEach(m=>{ if(m.level==='writing') return; const keep=m.c==='high'?.75:m.c==='med'?.5:.35; PASS.on[m.id]=r()<keep; }); passSwitch(PASS.side); }
+function passGrid(marks,bd){ const d=PASS.side==='B'?bd:JSON.parse(PASS.A), secs=d.sections, sm=PASS.side==='B'?marks:[], cell=(p,i)=>{ const hit=sm.filter(m=>(m.mute||m.change||[]).includes(i)&&(m.parts||[]).includes(p)), mute=sm.some(m=>(m.mute||[]).includes(i)&&(m.parts||[]).includes(p)), ch=hit.some(m=>(m.change||[]).includes(i))||sm.some(m=>(m.all||[]).includes(p)), nums=[...hit,...sm.filter(m=>(m.all||[]).includes(p)&&i===0)].map(m=>m.num); return `<div class="pv-sec${mute?' muted-cell':ch?' changed':''}" style="flex:${secs[i][1]} 1 0">${nums.length?`<i>${nums[0]}</i>`:''}</div>`; };
+  return `<div class="pv-wrap"><div class="pv-grid"><div class="pv-row"><span class="pv-name">Structure</span><div class="pv-secs">${secs.map(x=>`<div class="pv-sec head" style="flex:${x[1]} 1 0">${esc(x[2]||SEC[x[0]]||x[0])}<br>${x[1]} bars</div>`).join('')}</div></div>${[['lead','Melody'],['chords','Chords'],['bass','Bass'],['drums','Drums']].map(([p,n])=>`<div class="pv-row"><span class="pv-name">${n}</span><div class="pv-secs">${secs.map((_,i)=>cell(p,i)).join('')}</div></div>`).join('')}</div></div>`; }
+function passRender(){ const qs=TL.d.producers, P=PASS.q.pass, name=PASS.q.tags[0], moves=passMoves(), B=passBuild(passActive()), n=passActive().length, host=u=>{ try{ return new URL(u).hostname.replace(/^www\./,''); }catch(e){ return 'source'; } };
+  $('#passProds').innerHTML=qs.map(q=>`<button class="tchip" data-pq="${q.id}" aria-pressed="${q===PASS.q}"><b>${esc(q.tags[0])}</b><small>${esc(q.pass.name)}</small></button>`).join('');
+  $('#passA').setAttribute('aria-pressed',PASS.side==='A'); $('#passB').setAttribute('aria-pressed',PASS.side==='B'); $('#passPlay').textContent=S.playing?'■ Stop':'▶ Play'; $('#passGrid').innerHTML=passGrid(B.marks,B.d);
+  $('#passNotes').innerHTML=`<span class="label">Session notes · take ${PASS.take+1}</span><h3 style="margin:0">${esc(name)}-style pass: ${esc(P.name.toLowerCase())}</h3><p style="margin:0;font-size:.86rem">${esc(P.summary)}</p>
+   <div class="tv-note"><b>First listen</b>${esc(P.firstListen)}<br><button class="btn mini-btn" id="passBare">▶ Hear the bare version</button>${(P.asks||[]).length?`<b style="margin-top:8px">Questions for you</b><ul>${P.asks.map(a=>`<li>${esc(a)}</li>`).join('')}</ul>`:''}</div>
+   <div><span class="label">How far</span><div class="seg" role="group" aria-label="How far">${PASS_LV.map((l,i)=>`<button class="btn mini-btn tog" data-plv="${i}" aria-pressed="${PASS.level===i}">${l[0]}</button>`).join('')}</div></div>
+   ${moves.map(m=>{ const off=m.soon||m.out, why=m.c==='low'?'a guess from how they work (low confidence)':(m.src||[]).length?`source: ${esc(host(m.src[0]))}`:''; return `<div class="pv-move${off?' soon':''}"><h4><span class="pv-num">${m.num}</span><span>${esc(m.what)}</span>${off?'':`<input type="checkbox" data-pm="${esc(m.id)}" aria-label="Use this move"${PASS.on[m.id]?' checked':''}>`}</h4>${esc(m.why)}<small>${esc(m.level)}${why?' · '+why:''}${m.soon?' · coming soon':m.out?' · only at “+ Writing”':m.part?' · part of this isn’t possible yet':''}${m.level==='writing'&&!off?' · changes melody or chords':''}</small></div>`; }).join('')}
+   <div><button class="btn primary" id="passKeep"${n?'':' disabled'}>Keep ${n} change${n===1?'':'s'}</button> <button class="btn" id="passTake">↻ Try another take</button> <button class="btn" id="passDiscard">Discard</button></div>
+   <p class="muted" style="font-size:.8rem;margin:0">${esc(name)}-style pass, based on how they’re known to work. These are Semitone’s suggestions, not their words. Each change you keep is its own undo step.</p>`; }
+function initPass(){ $('#passBtn').onclick=()=>{ if(TL.d) passOpen(); }; $('#passBack').onclick=passDiscard; $('#passA').onclick=()=>passSwitch('A'); $('#passB').onclick=()=>passSwitch('B'); $('#passPlay').onclick=()=>{ if(S.playing) stopPlay(); else play('song'); passRender(); };
+  $('#passView').addEventListener('click',e=>{ const t=e.target, q=t.closest('[data-pq]'), lv=t.closest('[data-plv]'); if(q){ passPick(TL.d.producers.find(x=>x.id===q.dataset.pq)); return; } if(lv){ PASS.level=+lv.dataset.plv; passSwitch(PASS.side); return; } if(t.id==='passKeep') passKeep(); if(t.id==='passDiscard') passDiscard(); if(t.id==='passTake') passTake();
+    if(t.id==='passBare'){ const d=JSON.parse(PASS.A); d.secMute={}; ['bass','drums'].forEach(p=>{ d.secMute[p]={}; d.sections.forEach((_,i)=>d.secMute[p][i]=1); }); stopPlay(); passGo(d); PASS.side='bare'; play('song'); passRender(); } });
+  $('#passView').addEventListener('change',e=>{ const m=e.target.dataset.pm; if(m){ PASS.on[m]=e.target.checked; passSwitch(PASS.side==='A'?'A':'B'); } }); }
+
 /* ---------- song history: undo and redo for every change ----------
    One list for the whole song, Compose and Orchestral together. After each settled change the song is
    compared with the last known state; a difference becomes a step with a short label. Notes, chords and
@@ -7440,6 +7500,7 @@ function histLabel(a,b){ const same=k=>JSON.stringify(a[k])===JSON.stringify(b[k
   if(['beats','groove','kit','fill'].some(k=>!same(k))) return {key:'drums',merge:1500,label:'Changed the drums'};
   if(['energy','lift','energyOn'].some(k=>!same(k))) return {key:'energy',merge:1500,label:'Changed the energy'};
   if(['room','roomMix'].some(k=>!same(k))) return {key:'room',merge:1500,label:'Changed the room reverb'};
+  if(!same('secMute')) return {key:'secMute',label:'Changed which parts play'};
   if(['polish','polishTrim'].some(k=>!same(k))) return {key:'polish',merge:1500,label:'Changed the final polish'};
   if(['trans','transOn','transOwn'].some(k=>!same(k))) return {key:'trans',label:'Changed a transition'};
   if(!same('versions')) return {key:'versions',label:'Changed the section versions'};
@@ -7448,12 +7509,12 @@ function histStep(a,b){ if(a.song!==b.song) return histLabel(JSON.parse(a.song),
   if(x.key!==y.key) return {key:'okey',label:`Changed the cue’s key to ${histName('key',y.key)}`}; if(x.bpm!==y.bpm) return {key:'obpm',merge:1500,label:`Changed the cue’s tempo to ${y.bpm} BPM`};
   if(JSON.stringify(x.mix)!==JSON.stringify(y.mix)) return {key:'omix',merge:1500,label:'Changed the orchestral mix'}; return {key:'orch',label:'Changed the orchestral parts'}; }
 function histHasOrch(st){ try{ return JSON.parse(st.orch).sections.length>0; }catch(e){ return false; } }
-function histCheck(fine){ if(!S.song||S.rendering||H.restoring||H.down||(typeof LIVE!=='undefined'&&LIVE.rec)) return false;
+function histCheck(fine){ if(!S.song||S.rendering||H.restoring||H.down||(PASS.A!==null&&!H.keeping)||(typeof LIVE!=='undefined'&&LIVE.rec)) return false;
   const now=Date.now(); let st; try{ st=histCapture(); }catch(e){ return false; }
   if(H.reset||!H.cur){ H.reset=false; H.past=[]; H.future=[]; H.cur=st; H.last=null; H.quietUntil=now+1500; syncUndoBtns(); return false; }
   if(st.song===H.cur.song&&st.orch===H.cur.orch) return false;
   if(now<H.quietUntil||(st.song===H.cur.song&&!histHasOrch(H.cur))){ H.cur=st; return false; }  // settling after a restore, or a cue built for the first time
-  const step=histStep(H.cur,st), top=H.past[H.past.length-1], fineNow=fine||H.fine; H.fine=false;
+  const step=histStep(H.cur,st), top=H.past[H.past.length-1], fineNow=fine||H.fine; H.fine=false; if(H.nextLabel){ step.label=H.nextLabel; H.nextLabel=null; }
   if(!fineNow&&step.merge&&top&&H.last===step.key&&now-H.lastAt<step.merge){ top.label=step.label; H.cur=st; H.lastAt=now; if(top.state.song===st.song&&top.state.orch===st.orch) H.past.pop(); }
   else { H.past.push({state:H.cur,label:step.label}); if(H.past.length>H.max) H.past.shift(); H.cur=st; H.last=step.key; H.lastAt=now; }
   H.future=[]; syncUndoBtns(); return true; }
@@ -7502,7 +7563,7 @@ const redraw=()=>{if(!S.playing)renderRoll();drawWave();renderRead();drawPlay();
 try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>setTimeout(redraw,30));}catch(e){}
 new MutationObserver(()=>setTimeout(redraw,30)).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
 
-initStyleLibrary(); initTags(); buildStyles(); bindControls(); initExtras(); initTime(); initStudio2(); initQuirks(); initRead(); initPlay(); initProjects(); initOrch2(); initOrch(); initRoom(); initB3(); initEar(); initPractice(); initWeird(); initArt(); initMix(); initSmartView(); initCArt(); initCLane(); initSug(); initInstr(); initLyrics(); initPerf(); initEnergy(); initFinish(); initLive(); initSel(); initEdit2(); earUI(); initPro(); initDaw(); initBassRoll(); renderODrag(); try{ initTidy(); }catch(e){ console.warn('tidy',e); } try{ initInfo(); }catch(e){ console.warn('info',e); } nativeInit(); document.querySelectorAll('[data-meter]').forEach(el=>el.innerHTML=meterHTML()); $('#oPolishSel').value=O.polish||'off'; $('#oPolishSel').onchange=e=>{ O.polish=e.target.value; }; $('#oShowArt').onchange=drawAllORolls; renderNoteBar(); buildKeyboard(); buildClock();
+initStyleLibrary(); initTags(); initPass(); buildStyles(); bindControls(); initExtras(); initTime(); initStudio2(); initQuirks(); initRead(); initPlay(); initProjects(); initOrch2(); initOrch(); initRoom(); initB3(); initEar(); initPractice(); initWeird(); initArt(); initMix(); initSmartView(); initCArt(); initCLane(); initSug(); initInstr(); initLyrics(); initPerf(); initEnergy(); initFinish(); initLive(); initSel(); initEdit2(); earUI(); initPro(); initDaw(); initBassRoll(); renderODrag(); try{ initTidy(); }catch(e){ console.warn('tidy',e); } try{ initInfo(); }catch(e){ console.warn('info',e); } nativeInit(); document.querySelectorAll('[data-meter]').forEach(el=>el.innerHTML=meterHTML()); $('#oPolishSel').value=O.polish||'off'; $('#oPolishSel').onchange=e=>{ O.polish=e.target.value; }; $('#oShowArt').onchange=drawAllORolls; renderNoteBar(); buildKeyboard(); buildClock();
 S.seed=4127; loadStyle(STYLES[0],false);
 renderInterval(); renderClock(); renderFacts(); route(); initHistory();
 if(document.fonts&&document.fonts.ready) document.fonts.ready.then(redraw);
