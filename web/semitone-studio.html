@@ -7006,8 +7006,31 @@ function nativeTimeline(){ const scope=nativeScope(), D=dawTracks(scope), [s0,s1
   const ev=[]; if(scope==='song'){ const r=MOUT.map.song.lead; if(!r||r.on){ const ch=r?r.ch:0; songLeadBends().forEach(x=>{ if(x.beat<s0-1e-6||x.beat>=s1-1e-6) return; ev.push(+(x.beat-s0).toFixed(4),0xE0|ch,x.v&127,(x.v>>7)&127); }); } }
   return {length:s1-s0,notes,ev,bendRange:BEND_RANGE,scope,offset:s0}; }
 function nativeSync(){ if(!NATIVE.on||!NATIVE.inited||!S.song) return; try{ const tl=nativeTimeline(), k=JSON.stringify(tl); if(k!==NATIVE.lastTl){ NATIVE.lastTl=k; NATIVE.tl=tl; nEmit('st_timeline',tl); } }catch(e){ console.warn('timeline',e); } }
-function nativeSaveState(){ if(!NATIVE.on||!NATIVE.inited||!S.song) return; try{ const st=JSON.stringify({v:1,song:projectData(),orch:orchData(),proj:S.project}); if(st!==NATIVE.lastState){ NATIVE.lastState=st; nEmit('st_state',{json:st}); } }catch(e){} }
-function nativeRestore(json){ try{ const d=JSON.parse(json); if(d.song) applyProject(d.song); if(d.proj) { S.project=d.proj; renderProjectBar(); } if(d.orch&&d.orch.sections&&d.orch.sections.length){ Object.assign(O,d.orch,{sel:0,undo:[],redo:[],selNote:null,selSet:new Set(),playFrom:0}); renderOrch(); } NATIVE.lastState=''; if($('#restoreBar')) $('#restoreBar').hidden=true; toast('Song restored from your '+(NATIVE.host||'DAW')+' project'); }catch(e){ console.warn('restore',e); } }
+function songStateJSON(){ return JSON.stringify({v:1,song:projectData(),orch:orchData(),proj:S.project}); }
+function nativeSaveState(){ if(!NATIVE.on||!NATIVE.inited||!S.song) return; try{ const st=songStateJSON(); if(st!==NATIVE.lastState){ NATIVE.lastState=st; nEmit('st_state',{json:st}); } nativeFileMark(st); }catch(e){} }
+/* ---- songs as .semitone files (desktop app and plugin) ---- */
+function nativeFileName(){ return (S.project&&S.project.name)||'Untitled song'; }
+function nativeFileMark(st){ const dirty=NATIVE.fileState==null?!!NATIVE.songFile:st!==NATIVE.fileState; const nm=nativeFileName();
+  const t=(dirty?'• ':'')+nm+' — Semitone Studio'; if(t!==NATIVE.lastTitle){ NATIVE.lastTitle=t; nEmit('st_title',{title:t}); }
+  const info=$('#projInfo'); if(info&&NATIVE.songFile) info.textContent=dirty?'Unsaved changes':`Saved to ${NATIVE.songFile.split(/[\\/]/).pop()}`; }
+function nativeSongSave(asNew){ const nm=($('#projName').value.trim()||nativeFileName()).slice(0,60); S.project={...S.project,name:nm}; NATIVE.pendingSave=songStateJSON(); nEmit('st_song_save',{json:NATIVE.pendingSave,name:nm,saveAs:!!asNew||!NATIVE.songFile}); }
+function nativeSongOpen(path){ nEmit('st_song_open',{path:path||''}); }
+function nativeRecentOptions(){ const r=NATIVE.recent||[]; return `<optgroup label="Song files"><option value="__file">Open a song file…  (⌘O)</option>${r.map(x=>`<option value="file:${esc(x.path)}">${esc(x.name)}</option>`).join('')}</optgroup>`; }
+function initNativeFiles(){
+  const sv=$('#projSave'), sa=$('#projSaveAs'), op=$('#projOpen');
+  if(sv){ sv.onclick=()=>nativeSongSave(false); sv.title='Save the song as a .semitone file (⌘S)'; }
+  if(sa){ sa.onclick=()=>nativeSongSave(true); sa.textContent='Save as…'; sa.title='Save a copy under a new name (⇧⌘S)'; }
+  const np=$('#projNew'); if(np){ const old=np.onclick; np.onclick=()=>{ NATIVE.songFile=''; NATIVE.fileState=null; old&&old(); }; }
+  if(op){ op.onchange=e=>{ const v=e.target.value; e.target.value=''; if(v==='__file') nativeSongOpen(); else if(v.startsWith('file:')) nativeSongOpen(v.slice(5)); else if(v) openProject(v); }; }
+  const _rpb=renderProjectBar; renderProjectBar=function(){ _rpb(); const o=$('#projOpen'); if(o&&!o.querySelector('optgroup[label="Song files"]')) o.insertAdjacentHTML('beforeend',nativeRecentOptions()); if(NATIVE.songFile) nativeFileMark(NATIVE.lastState||songStateJSON()); };
+  renderProjectBar();
+  document.addEventListener('keydown',e=>{ if(!(e.metaKey||e.ctrlKey)||e.altKey) return; const k=e.key.toLowerCase(); if(k==='s'){ e.preventDefault(); e.stopPropagation(); nativeSongSave(e.shiftKey); } else if(k==='o'&&!e.shiftKey){ e.preventDefault(); e.stopPropagation(); nativeSongOpen(); } },true);
+  nOn('st_song_saved',d=>{ if(!d||d.cancelled) return; if(!d.ok){ toast('The song couldn’t be saved there'); return; } NATIVE.songFile=d.path; NATIVE.fileState=NATIVE.pendingSave; NATIVE.recent=d.recent||NATIVE.recent; S.project={...S.project,name:d.name}; renderProjectBar(); nativeFileMark(NATIVE.lastState||NATIVE.pendingSave); toast(`Saved ${d.name}.semitone`); });
+  nOn('st_song_opened',d=>{ if(!d) return; NATIVE.recent=d.recent||NATIVE.recent; if(!d.ok){ toast('That song file has moved or been deleted'); renderProjectBar(); return; }
+    let parsed=null; try{ parsed=JSON.parse(d.json); }catch(e){} if(!parsed||!parsed.song){ toast('That file isn’t a Semitone song'); return; }
+    stopPlay(); nativeRestore(d.json,'file'); S.project={...(parsed.proj||{}),id:null,name:d.name}; NATIVE.songFile=d.path; renderProjectBar(); NATIVE.fileState=songStateJSON(); nativeSaveState(); toast(`Opened ${d.name}`); });
+}
+function nativeRestore(json,from){ try{ const d=JSON.parse(json); if(d.song) applyProject(d.song); if(d.proj) { S.project=d.proj; renderProjectBar(); } if(d.orch&&d.orch.sections&&d.orch.sections.length){ Object.assign(O,d.orch,{sel:0,undo:[],redo:[],selNote:null,selSet:new Set(),playFrom:0}); renderOrch(); } NATIVE.lastState=''; if($('#restoreBar')) $('#restoreBar').hidden=true; if(from!=='file') toast(NATIVE.plugin?'Song restored from your '+(NATIVE.host||'DAW')+' project':'Welcome back: your last song is open'); }catch(e){ console.warn('restore',e); } }
 function nativeHost(h){ NATIVE.hs=h; const bar=$('#nativeBar'); if(!bar) return; const tl=NATIVE.tl;
   const st=$('#nbState'); if(st) st.textContent=NATIVE.plugin?(h.playing?`▶ playing · ${Math.round(h.bpm)} BPM`:`stopped · ${Math.round(h.bpm)} BPM`):(h.playing?'▶ sending MIDI':'ready');
   const tw=$('#nbTempo'); if(tw){ const scopeBpm=nativeScope()==='song'?S.bpm:O.bpm; tw.hidden=!NATIVE.plugin||Math.abs(h.bpm-scopeBpm)<.5; tw.textContent=`${NATIVE.host||'Your DAW'} is at ${Math.round(h.bpm)} BPM, your song at ${scopeBpm}: notes follow ${NATIVE.host||'the DAW'}. Match the song`; }
@@ -7039,7 +7062,7 @@ function nativeInit(){ if(!NATIVE.on) return;
     const fo=$('#nbFollow'); if(fo) fo.onchange=e=>{ NATIVE.follow=e.target.checked; };
     $('#nbSetup').onclick=()=>{ const sc2=nativeScope(); const box=document.querySelector(`.mout-box[data-scope="${sc2==='orch'?'orch':'song'}"]`); if(box){ if(sc2==='song') location.hash='#compose'; box.scrollIntoView({behavior:'smooth',block:'center'}); } };
     $('#nbTempo').onclick=()=>{ const bpm=Math.round(NATIVE.hs.bpm); if(nativeScope()==='song'){ S.bpm=bpm; $('#bpm').value=bpm; $('#bpm').dispatchEvent(new Event('input')); } else { O.bpm=bpm; $('#oBpm').value=bpm; $('#oBpm').dispatchEvent(new Event('input')); } toast('Song tempo matched to '+bpm+' BPM'); };
-    if(d.project) nativeRestore(d.project); NATIVE.inited=true; renderMout(); nativeSync(); nativeSaveState(); });
+    NATIVE.recent=d.recent||[]; NATIVE.songFile=d.songFile||''; if(d.project) nativeRestore(d.project); NATIVE.inited=true; initNativeFiles(); if(NATIVE.songFile&&d.project) NATIVE.fileState=d.songFileSame?songStateJSON():null; if(NATIVE.songFile&&!d.songFileSame) NATIVE.fileState=''; renderMout(); nativeSync(); nativeSaveState(); });
   nOn('st_host',nativeHost);
   nOn('st_midiin',nativeMidiIn);
   nOn('st_saved',d=>toast(d.ok?'Saved to '+d.path:'Not saved'));

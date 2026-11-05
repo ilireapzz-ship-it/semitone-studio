@@ -18,12 +18,18 @@ private:
     std::optional<juce::WebBrowserComponent::Resource> getResource (const juce::String& url);
     void saveFile (const juce::String& name, const juce::String& base64);
     void dragFile (const juce::String& name, const juce::String& base64);
+    void saveSong (const juce::var& v);
+    void openSong();
+    void openSongAt (const juce::File& f);
+    void songOpened (const juce::File& f, const juce::String& json);
+    void setTitle (const juce::String& t);
     static juce::MemoryBlock decode (const juce::String& base64);
 
     SemitoneProcessor& proc;
     juce::WebBrowserComponent browser;
     std::unique_ptr<juce::FileChooser> chooser;
     std::vector<juce::uint32> incoming;
+    juce::String lastAutosaved;
     bool lastPlaying = false;
     int ticks = 0;
 

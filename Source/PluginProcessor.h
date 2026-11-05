@@ -40,6 +40,7 @@ public:
     juce::String getProjectState() const { const juce::ScopedLock sl (stateLock); return projectJson; }
     void setStandaloneTransport (bool play, double startBeat, double bpm);
     bool isStandalone() const { return wrapperType == wrapperType_Standalone; }
+    juce::String songFile; // the .semitone file this song was last opened from or saved to (message thread)
 
     // ---- read by the editor's timer ----
     std::atomic<bool> uiPlaying { false };

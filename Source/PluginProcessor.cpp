@@ -1,10 +1,17 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "SongFiles.h"
 
 SemitoneProcessor::SemitoneProcessor()
     : AudioProcessor (BusesProperties().withOutput ("Output", juce::AudioChannelSet::stereo(), true))
 {
     events.reserve (4096);
+    // standalone app: come back to the song you were working on, even after a crash
+    if (isStandalone())
+    {
+        const auto f = st::files::autosaveFile();
+        if (f.existsAsFile()) projectJson = f.loadFileAsString();
+    }
 }
 
 bool SemitoneProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
@@ -117,7 +124,7 @@ void SemitoneProcessor::getStateInformation (juce::MemoryBlock& dest)
 {
     // The whole Semitone song is saved inside the DAW project.
     juce::ValueTree t ("SemitoneState");
-    { const juce::ScopedLock sl (stateLock); t.setProperty ("project", projectJson, nullptr); t.setProperty ("timeline", timelineJson, nullptr); }
+    { const juce::ScopedLock sl (stateLock); t.setProperty ("project", projectJson, nullptr); t.setProperty ("timeline", timelineJson, nullptr); t.setProperty ("songFile", songFile, nullptr); }
     t.setProperty ("version", 1, nullptr);
     juce::MemoryOutputStream mo (dest, false);
     t.writeToStream (mo);
@@ -128,7 +135,13 @@ void SemitoneProcessor::setStateInformation (const void* data, int size)
     auto t = juce::ValueTree::readFromData (data, (size_t) size);
     if (! t.isValid()) return;
     juce::String tl;
-    { const juce::ScopedLock sl (stateLock); projectJson = t.getProperty ("project").toString(); tl = t.getProperty ("timeline").toString(); }
+    {
+        const juce::ScopedLock sl (stateLock);
+        // the standalone app's autosave is always newer than the state saved when it last quit
+        if (! (isStandalone() && projectJson.isNotEmpty())) projectJson = t.getProperty ("project").toString();
+        tl = t.getProperty ("timeline").toString();
+        if (t.hasProperty ("songFile")) songFile = t.getProperty ("songFile").toString();
+    }
     if (tl.isNotEmpty()) setTimelineFromVar (juce::JSON::parse (tl)); // plays even before the window is opened
 }
 
