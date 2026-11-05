@@ -94,6 +94,15 @@ public:
         }
     }
 
+    // Audio thread, after process(): does a rendered section cover this song beat?
+    bool covers (double songBeat) const
+    {
+        if (! current) return false;
+        for (const auto& p : current->items)
+            if (p.clip && p.clip->mb.size() >= 2 && songBeat >= p.at && songBeat < p.at + p.clip->mb.back()) return true;
+        return false;
+    }
+
 private:
     std::shared_ptr<const Bank> pending, current;
 };

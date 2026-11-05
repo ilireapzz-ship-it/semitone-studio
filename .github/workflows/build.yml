@@ -15,7 +15,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build and run tests
-        run: g++ -std=c++17 -O1 -Wall -ISource tests/sequencer_test.cpp -o seqtest && ./seqtest
+        run: |
+          g++ -std=c++17 -O1 -Wall -ISource tests/sequencer_test.cpp -o seqtest && ./seqtest
+          g++ -std=c++17 -O2 -Wall -ISource tests/synth_test.cpp -o synthtest && ./synthtest
 
   windows:
     name: Windows (VST3 + app)

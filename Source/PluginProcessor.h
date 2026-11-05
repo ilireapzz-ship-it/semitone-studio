@@ -3,7 +3,9 @@
 #include <juce_audio_utils/juce_audio_utils.h>
 #include "Sequencer.h"
 #include "ClipPlayer.h"
+#include "Synth.h"
 #include <map>
+#include <set>
 #include <array>
 
 // The plugin: plays the song from the Semitone interface as MIDI, in time with the host.
@@ -13,7 +15,7 @@ class SemitoneProcessor : public juce::AudioProcessor
 public:
     SemitoneProcessor();
 
-    void prepareToPlay (double sampleRate, int) override { sr = sampleRate; }
+    void prepareToPlay (double sampleRate, int) override;
     void releaseResources() override {}
     bool isBusesLayoutSupported (const BusesLayout& layouts) const override;
     void processBlock (juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
@@ -25,7 +27,7 @@ public:
     bool acceptsMidi() const override { return true; }
     bool producesMidi() const override { return true; }
     bool isMidiEffect() const override { return false; }
-    double getTailLengthSeconds() const override { return 0; }
+    double getTailLengthSeconds() const override { return 3.0; } // note releases and the room
 
     int getNumPrograms() override { return 1; }
     int getCurrentProgram() override { return 0; }
@@ -43,8 +45,9 @@ public:
     void setStandaloneTransport (bool play, double startBeat, double bpm);
     bool isStandalone() const { return wrapperType == wrapperType_Standalone; }
     // ---- Semitone's own sounds inside the DAW (message thread) ----
-    // soundMode: 0 = Semitone's sounds + MIDI, 1 = Semitone's sounds only, 2 = MIDI only
-    void setSoundMode (int m) { soundMode = juce::jlimit (0, 2, m); }
+    // soundMode: 0 = Semitone's sounds + MIDI, 1 = Semitone's sounds only, 2 = MIDI only,
+    // 3 = the built-in engine alone (ignores rendered sections, no MIDI out)
+    void setSoundMode (int m) { soundMode = juce::jlimit (0, 3, m); }
     int getSoundMode() const { return soundMode.load(); }
     // layout: [{id, at}] — returns the clip ids this plugin still needs rendered
     juce::StringArray setAudioLayout (const juce::var& items);
@@ -83,11 +86,25 @@ private:
     void rebuildBank();
     std::shared_ptr<st::Clip> loadCachedClip (const juce::String& id);
 
+    // the native engine: plays whatever no rendered section covers
+    st::Synth synth;
+    void setSynthSound (const juce::var& sound, const st::Timeline& tl);
+    void buildSynthPatch();
+    juce::CriticalSection synthLock;                               // guards the next two
+    std::shared_ptr<const st::SynthPatch> synthTemplate;
+    std::vector<std::set<int>> synthKeys;                          // per part: the notes the song uses
+    std::atomic<int> synthGen { 0 };
+    std::map<juce::int64, std::unique_ptr<st::NoteBuffer>> noteCache;   // the build thread only; voices read it, so it only grows
+    std::vector<std::pair<std::shared_ptr<const st::SynthPatch>, juce::uint32>> retiredPatches;   // the build thread only
+    std::shared_ptr<const st::SynthPatch> patchNow;                // the build thread only
+
     juce::AbstractFifo inFifo { 1024 };
     std::array<juce::uint32, 1024> inBuf {};
 
     juce::CriticalSection stateLock;
     juce::String projectJson, timelineJson;
+
+    juce::ThreadPool synthPool { 1 };   // last, so it stops first
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SemitoneProcessor)
 };

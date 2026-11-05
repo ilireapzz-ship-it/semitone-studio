@@ -39,11 +39,14 @@ fi
 GEN=()
 command -v ninja >/dev/null && GEN=(-G Ninja)
 
-# 3. Tests (sequencer + clip player, no JUCE needed)
+# 3. Tests (sequencer, clip player and sound engine, no JUCE needed)
 say "Tests"
 clang++ -std=c++17 -O1 -Wall -ISource tests/sequencer_test.cpp -o build-local-seqtest
 ./build-local-seqtest | tail -3
 rm -f build-local-seqtest
+clang++ -std=c++17 -O2 -Wall -ISource tests/synth_test.cpp -o build-local-synthtest
+./build-local-synthtest | tail -3
+rm -f build-local-synthtest
 
 # 4. Build (the first build also downloads JUCE: allow ~10 minutes; later builds take a minute or two)
 say "Building ($(uname -m))"

@@ -14,6 +14,14 @@ SemitoneProcessor::SemitoneProcessor()
     }
 }
 
+void SemitoneProcessor::prepareToPlay (double sampleRate, int)
+{
+    const bool changed = sampleRate != sr;
+    sr = sampleRate;
+    synth.prepare (sr);
+    if (changed) buildSynthPatch();   // the piano and plucked notes are rendered for one sample rate
+}
+
 bool SemitoneProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
     const auto out = layouts.getMainOutputChannelSet();
@@ -67,7 +75,7 @@ void SemitoneProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
     events.clear();
     sequencer.process (playing, ppq, bpm, sr, n, events);
     const int mode = soundMode.load();
-    if (mode != 1)
+    if (mode == 0 || mode == 2)
         for (const auto& e : events)
             midi.addEvent (juce::MidiMessage (e.status, e.d1, e.d2), e.offset);
 
@@ -77,8 +85,19 @@ void SemitoneProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
     {
         float* L = buffer.getWritePointer (0);
         float* R = buffer.getNumChannels() > 1 ? buffer.getWritePointer (1) : L;
-        clipPlayer.process (playing, ppq, bpm, sr, n, tlLength.load(), tlOffset.load(), L, R);
+        const double len = tlLength.load(), off = tlOffset.load();
+        if (mode != 3) clipPlayer.process (playing, ppq, bpm, sr, n, len, off, L, R);
+        // the native engine fills in wherever no rendered section covers the playhead
+        bool covered = false;
+        if (mode != 3 && len > 0)
+        {
+            double pos = std::fmod (ppq, len);
+            if (pos < 0) pos += len;
+            covered = clipPlayer.covers (pos + off);
+        }
+        synth.process (events, n, L, R, covered ? 0.0f : 1.0f);
     }
+    else if (mode == 2) synth.silence();
 
     uiPlaying = playing; uiPpq = ppq; uiBpm = bpm; uiHostHasTransport = hostTransport;
 }
@@ -122,8 +141,172 @@ void SemitoneProcessor::setTimelineFromVar (const juce::var& v)
     }
     tl->sort();
     sequencer.setTimeline (tl);
+    setSynthSound (v.getProperty ("sound", juce::var()), *tl);
     const juce::ScopedLock sl (stateLock);
     timelineJson = juce::JSON::toString (v, true);
+}
+
+// ---- the native engine's patch: the page sends the settings of every part (nativeSoundInfo in the HTML) ----
+static float num (const juce::var& o, const char* key, float fallback)
+{
+    const auto v = o.getProperty (key, juce::var());
+    return v.isVoid() ? fallback : (float) (double) v;
+}
+
+static st::Wave waveFrom (const juce::String& t)
+{
+    if (t == "sine") return st::Wave::sine;
+    if (t == "triangle" || t == "tri") return st::Wave::triangle;
+    if (t == "square") return st::Wave::square;
+    if (t == "pulse") return st::Wave::pulse;
+    return st::Wave::saw;
+}
+
+template <size_t N>
+static void numsInto (const juce::var& o, const char* key, std::array<float, N>& dest)
+{
+    if (auto* a = o.getProperty (key, juce::var()).getArray())
+        for (size_t i = 0; i < N && (int) i < a->size(); ++i) dest[i] = (float) (double) (*a)[(int) i];
+}
+
+static st::PartPatch partFrom (const juce::var& o)
+{
+    st::PartPatch p;
+    p.ch = juce::jlimit (0, 15, (int) o.getProperty ("ch", 0));
+    p.vol = num (o, "vol", .2f); p.velRef = juce::jmax (1.0f, num (o, "velRef", 92)); p.level = num (o, "level", 1); p.pan = num (o, "pan", 0);
+    const auto kind = o.getProperty ("kind", "voice").toString();
+    if (kind == "fm") p.kind = st::Kind::fm;
+    else if (kind == "piano" || kind == "pluck")
+    {
+        p.kind = st::Kind::buffer;
+        p.bufRelease = num (o, "rel", .22f); p.holdMin = num (o, "holdMin", 0); p.holdMax = num (o, "holdMax", 0);
+        p.velCutoff = kind == "piano";
+        const auto id = o.getProperty ("instr", "").toString();
+        p.instr = kind == "piano" ? 0 : 1 + (int) (id == "steel" ? st::Pluck::steel : id == "harp" ? st::Pluck::harp : id == "pizz" ? st::Pluck::pizz : id == "bassgtr" ? st::Pluck::bassgtr : st::Pluck::nylon);
+    }
+    else if (kind == "juno" || kind == "pro" || kind == "prophet")
+    {
+        p.kind = kind == "juno" ? st::Kind::juno : st::Kind::prophet;
+        p.saw = num (o, "saw", 0); p.pulse = num (o, "pulse", 0); p.pw = num (o, "pw", .5f); p.pwm = num (o, "pwm", 0); p.sub = num (o, "sub", 0); p.noise = num (o, "noise", 0);
+        p.cut = num (o, "cut", 1000); p.res = num (o, "res", .1f); p.env = num (o, "env", 1); p.kt = num (o, "kt", .5f); p.drift = num (o, "drift", .3f); p.gain = num (o, "gain", 1); p.scoop = num (o, "scoop", 0);
+        p.det = num (o, "det", 0); p.pm = num (o, "pm", 0);
+        const auto chorus = o.getProperty ("chorus", "").toString();
+        p.chorus = chorus == "I" ? 1 : chorus == "II" ? 2 : chorus == "I+II" ? 3 : 0;
+        p.bMul = num (o, "bRatio", 1) * std::pow (2.0f, num (o, "bOct", 0));
+        p.hpHz = p.kind == st::Kind::juno ? ((bool) o.getProperty ("mono", false) ? 30.0f : 90.0f) : 40.0f;
+        numsInto (o, "fe", p.fe); numsInto (o, "ae", p.ae); numsInto (o, "lfo", p.lfo);
+        if (auto* a = o.getProperty ("a", juce::var()).getArray()) if (a->size() >= 2)
+        { p.aWave = waveFrom ((*a)[0].toString()); p.aGain = (float) (double) (*a)[1]; if (a->size() > 2) p.aPw = (float) (double) (*a)[2]; }
+        if (auto* b = o.getProperty ("b", juce::var()).getArray()) if (b->size() >= 2)
+        { p.bWave = waveFrom ((*b)[0].toString()); p.bGain = (float) (double) (*b)[1]; if (b->size() > 2) p.bPw = (float) (double) (*b)[2]; }
+    }
+    else
+    {
+        p.kind = st::Kind::voice;
+        p.wave = waveFrom (o.getProperty ("type", "triangle").toString());
+        p.attack = num (o, "attack", .01f); p.release = num (o, "release", .3f); p.cutoff = num (o, "cutoff", 4000); p.decay = num (o, "decay", 0);
+        p.unison = num (o, "unison", 0); p.fenv = num (o, "fenv", 0); p.vib = num (o, "vib", 0); p.vibRate = num (o, "vibRate", 5.6f);
+        if (auto* ls = o.getProperty ("layers", juce::var()).getArray())
+            for (const auto& l : *ls)
+                if (auto* a = l.getArray(); a != nullptr && a->size() >= 3 && p.numLayers < (int) p.layers.size())
+                    p.layers[(size_t) p.numLayers++] = { (float) (double) (*a)[0], (float) (double) (*a)[2], waveFrom ((*a)[1].toString()) };
+    }
+    p.stereo = (bool) o.getProperty ("stereo", false);
+    return p;
+}
+
+void SemitoneProcessor::setSynthSound (const juce::var& sound, const st::Timeline& tl)
+{
+    std::shared_ptr<st::SynthPatch> t;
+    std::vector<std::set<int>> keys;
+    if (sound.isObject())   // none for the orchestral view, and for projects saved before this engine existed
+    {
+        t = std::make_shared<st::SynthPatch>();
+        if (auto* parts = sound.getProperty ("parts", juce::var()).getArray())
+            for (const auto& o : *parts)
+            {
+                t->parts.push_back (partFrom (o));
+                std::set<int> used;
+                for (const auto& n : tl.notes) if (n.ch == t->parts.back().ch) used.insert (n.key);
+                keys.push_back (std::move (used));
+            }
+        const auto d = sound.getProperty ("drums", juce::var());
+        if (d.isObject())
+        {
+            t->drumCh = juce::jlimit (0, 15, (int) d.getProperty ("ch", 9));
+            t->drumLevel = num (d, "level", 1); t->drumPan = num (d, "pan", 0);
+            const auto k = d.getProperty ("kit", juce::var());
+            t->kit.lp = num (k, "lp", 16000); t->kit.clap = num (k, "clap", .22f);
+            numsInto (k, "kick", t->kit.kick); numsInto (k, "snare", t->kit.snare); numsInto (k, "hat", t->kit.hat);
+            numsInto (k, "open", t->kit.open); numsInto (k, "rim", t->kit.rim); numsInto (k, "crash", t->kit.crash);
+        }
+        t->bendRange = (float) juce::jlimit (1, 48, tl.bendRange > 0 ? tl.bendRange : 12);
+        const auto r = sound.getProperty ("room", juce::var());
+        if (r.isObject())
+        {
+            t->roomMix = num (r, "mix", 0);
+            // the page's room rings as (1 - x)^decay across its length: this is where that reaches -60 dB
+            t->roomT60 = num (r, "len", 1) * (1 - std::pow (10.0f, -3 / juce::jmax (.1f, num (r, "decay", 3))));
+        }
+        const auto pl = sound.getProperty ("polish", juce::var());
+        if (pl.isObject())
+        {
+            auto& q = t->polish;
+            q.on = true; q.hp = num (pl, "hp", 28); q.thr = num (pl, "thr", -18); q.ratio = num (pl, "ratio", 2); q.att = num (pl, "att", .03f); q.rel = num (pl, "rel", .25f);
+            q.make = num (pl, "make", 1); q.lim = num (pl, "lim", -2); q.drive = num (pl, "drive", .8f);
+        }
+    }
+    {
+        const juce::ScopedLock sl (synthLock);
+        synthTemplate = t;
+        synthKeys = std::move (keys);
+    }
+    buildSynthPatch();
+}
+
+// Renders the piano and plucked notes the song needs (once each), away from the audio thread, then swaps the patch in.
+void SemitoneProcessor::buildSynthPatch()
+{
+    const int gen = ++synthGen;
+    const double rate = sr;
+    synthPool.addJob ([this, gen, rate]
+    {
+        std::shared_ptr<const st::SynthPatch> tmpl;
+        std::vector<std::set<int>> keys;
+        {
+            const juce::ScopedLock sl (synthLock);
+            tmpl = synthTemplate;
+            keys = synthKeys;
+        }
+        std::shared_ptr<st::SynthPatch> built;
+        if (tmpl != nullptr)
+        {
+            built = std::make_shared<st::SynthPatch> (*tmpl);
+            built->buffers.resize (built->parts.size());
+            for (size_t i = 0; i < built->parts.size(); ++i)
+            {
+                auto& nb = built->buffers[i];
+                nb.fill (nullptr);
+                const auto& p = built->parts[i];
+                if (p.instr < 0 || i >= keys.size()) continue;
+                for (int key : keys[i])
+                {
+                    if (synthGen.load() != gen) return;   // a newer song arrived: don't finish this one
+                    const auto id = ((juce::int64) (int) rate << 16) | ((juce::int64) p.instr << 8) | key;
+                    auto& slot = noteCache[id];
+                    if (slot == nullptr)
+                        slot = std::make_unique<st::NoteBuffer> (p.instr == 0 ? st::renderPianoNote (key, rate) : st::renderPluckNote (key, rate, (st::Pluck) (p.instr - 1)));
+                    nb[(size_t) key] = slot.get();
+                }
+            }
+        }
+        // the audio thread may still hold the previous patch: keep it a little while
+        const auto now = juce::Time::getMillisecondCounter();
+        if (patchNow != nullptr) retiredPatches.push_back ({ patchNow, now });
+        retiredPatches.erase (std::remove_if (retiredPatches.begin(), retiredPatches.end(), [now] (const auto& r) { return now - r.second > 5000; }), retiredPatches.end());
+        patchNow = built;
+        synth.setPatch (patchNow);
+    });
 }
 
 void SemitoneProcessor::setStandaloneTransport (bool play, double startBeat, double bpm)
