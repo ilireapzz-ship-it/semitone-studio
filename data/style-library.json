@@ -5225,6 +5225,33 @@
             "onByDefault": false
           }
         ]
+      },
+      "fxStyle": {
+        "base": [
+          "dry vocal, light compression, slapback and short tape delays slightly out of sync, no long delays",
+          "tremolo on pads and on the master with automated depth",
+          "delay mix automated like a riser; delays stopped and restarted for a pumping effect",
+          "wide room on drums and backing vocals",
+          "strings panned hard and dry"
+        ],
+        "byEmotion": {
+          "euphoric": "stack everything: walls of guitars, synth figure, room drums; tremolo depth up",
+          "melancholy": "pull right back (Liability-style): piano and voice, a little layering left",
+          "nostalgic": "Mellotron, 12-string, tape echo; 80s machines",
+          "dreamy": "chorus-pedal guitars, swells, delay risers",
+          "anxious": "off-sync delays and pumping"
+        },
+        "sounds": [
+          "juno",
+          "minimoog",
+          "dx7",
+          "m1",
+          "linndrum",
+          "mellotron",
+          "guitar12"
+        ],
+        "notes": "Contrast is his main automation: huge choruses against intimate quiet moments (Melodrama).",
+        "c": "med"
       }
     },
     {
@@ -5399,6 +5426,20 @@
             "onByDefault": true
           }
         ]
+      },
+      "fxStyle": {
+        "base": [
+          "automation serves contrast between sections: density, register and energy change, not effects showcases",
+          "the hook gets the most space: thin and duck parts under it"
+        ],
+        "byEmotion": {
+          "euphoric": "bigger contrast into the chorus; one new element enters per section",
+          "melancholy": "same rules at lower energy: still an early hook, still contrast",
+          "triumphant": "last chorus lift (key change or added layer)"
+        },
+        "sounds": [],
+        "notes": "Few published details on his mix techniques; this layer is about arrangement contrast.",
+        "c": "low"
       }
     },
     {
@@ -5596,6 +5637,29 @@
             "onByDefault": false
           }
         ]
+      },
+      "fxStyle": {
+        "base": [
+          "vocal dry and close; almost no reverb; little top end; bass prominent",
+          "hard tremolo chops synced to 8ths or 16ths",
+          "vocal transformer for character voices",
+          "reverbs, delays, pans and compression set before mixing"
+        ],
+        "byEmotion": {
+          "intimate": "whisper-close vocal, harmonies at lead level, nothing else moving",
+          "dark": "octave-down transformer voice, distorted bass, found-sound percussion",
+          "playful": "chopped tremolo and quirky found sounds",
+          "melancholy": "piano and voice, a breath of room, no swells"
+        },
+        "sounds": [
+          "upright",
+          "keyscape",
+          "omnisphere",
+          "trilian",
+          "found"
+        ],
+        "notes": "Changes the groove under a verse to change the vocal phrasing (bad guy).",
+        "c": "med"
       }
     },
     {
@@ -5750,6 +5814,29 @@
             "onByDefault": true
           }
         ]
+      },
+      "fxStyle": {
+        "base": [
+          "tuning scale and 808 notes locked to the key",
+          "analog synth layers played by hand",
+          "an expressive synth solo with bends and glides over the ending"
+        ],
+        "byEmotion": {
+          "melancholy": "minor harmony with a brief relative-major lift; a long, slow synth solo outro",
+          "euphoric": "big analog pads and a throbbing bass; the ending takes it somewhere new",
+          "dark": "low synth drones and distorted guitar"
+        },
+        "sounds": [
+          "jupiter8",
+          "cs80",
+          "minimoog",
+          "juno",
+          "triton",
+          "rhodes",
+          "obxa"
+        ],
+        "notes": "Mixing and mastering are a large part of his work, but his methods are rarely published.",
+        "c": "low"
       }
     },
     {
@@ -5908,6 +5995,25 @@
             "onByDefault": true
           }
         ]
+      },
+      "fxStyle": {
+        "base": [
+          "big drums with synths standing in for rock guitars",
+          "robotic, processed verses against a clear chorus vocal",
+          "chopped and stuttered vocal hooks"
+        ],
+        "byEmotion": {
+          "euphoric": "four-on-the-floor, stacked synth stabs, a stutter post-chorus",
+          "dark": "minor key, robotic verse vocals, darker synths (Poker Face)",
+          "playful": "chanted hooks and call-and-response"
+        },
+        "sounds": [
+          "juno",
+          "jupiter8",
+          "linndrum"
+        ],
+        "notes": "Few published details on effects; based on the records.",
+        "c": "low"
       }
     },
     {
@@ -6097,6 +6203,26 @@
             "onByDefault": true
           }
         ]
+      },
+      "fxStyle": {
+        "base": [
+          "as few effects as possible: dry and upfront",
+          "emotion comes from the performance and the arrangement, not automation"
+        ],
+        "byEmotion": {
+          "melancholy": "strip further: voice and one instrument; no swells",
+          "euphoric": "let the band play louder and freer rather than adding risers",
+          "intimate": "nothing on the vocal but level",
+          "defiant": "live drums, raw guitar, no polish"
+        },
+        "sounds": [
+          "upright",
+          "grand",
+          "guitar12",
+          "b3"
+        ],
+        "notes": "He avoids samples and electronic instruments when the song is about a performance (Adele 21) and prefers solo acoustic versions when they hold up (Johnny Cash).",
+        "c": "med"
       }
     },
     {
@@ -6304,6 +6430,28 @@
             "onByDefault": false
           }
         ]
+      },
+      "fxStyle": {
+        "base": [
+          "vocal chain: low cut, two 1176-style compressors, de-esser, vintage plate (VintageVerb)",
+          "transient designer on drums (sustain)",
+          "chorus on bass and acoustic guitars",
+          "saturation only on songs needing grit"
+        ],
+        "byEmotion": {
+          "euphoric": "more vocal layers each chorus, double-time drums, tempo push at the end",
+          "melancholy": "piano and voice longer before the band; strings in the bridge",
+          "defiant": "Decapitator grit and live drums; the bridge explodes",
+          "playful": "Juno organ and Motown backbeat tricks"
+        },
+        "sounds": [
+          "juno",
+          "mellotron",
+          "upright",
+          "strings"
+        ],
+        "notes": "He sets reverb and delay himself before mixing, and often pulls choruses back after time away.",
+        "c": "med"
       }
     },
     {
@@ -6502,6 +6650,30 @@
             "onByDefault": false
           }
         ]
+      },
+      "fxStyle": {
+        "base": [
+          "extreme multiband compression (OTT) on synths, drums and vocals",
+          "filter sweeps for movement in static layers",
+          "pitch envelopes on kicks",
+          "hard-tuned or pitched, chopped vocals",
+          "abrupt mutes instead of fades"
+        ],
+        "byEmotion": {
+          "euphoric": "glossy and maximal: Eurodance stabs, everything bright, stutters",
+          "melancholy": "odd voicings under a plain, untreated vocal (I Think About It All The Time)",
+          "tense": "clashing held notes, distorted synths and drums, gaps instead of downbeats (Sympathy Is a Knife)",
+          "playful": "chopped vocal parts and disorienting riffs (360)"
+        },
+        "sounds": [
+          "serum",
+          "dx7",
+          "synplant",
+          "kick2",
+          "vocoder"
+        ],
+        "notes": "Producers on Brat focus on the timbre of each individual sound.",
+        "c": "med"
       }
     }
   ],
@@ -7844,7 +8016,7 @@
     }
   },
   "producerPass": {
-    "about": "A producer pass runs on a finished song: Semitone proposes what that producer would likely do, as session notes. Each move is one line with a reason and its own on/off switch; A/B compares your version and the pass while it plays; the pass is one undo step and so is each move. \"How far\" picks the levels: sounds & mix (sound, mix) / + arrangement (arrangement, structure) / + writing (writing: only these touch melody or chords, and say so). \"Try another take\" draws a different subset and variant of the moves. Wording is always \"<name>-style pass, based on how they are known to work\": never quotes or first-person lines in the producer's voice. op strings are a small action language for the engine (mute, muteDoubles, cutBars, dropDrums, drumFeel, tempoCurve, layer, layerRamp, thin, swapSound, kit, groove, fx, vocalTake, addSection, melodyRepeat, melodyMatch, chordColor); moves the engine cannot do yet stay listed but greyed with \"coming soon\". Each pass also has firstListen (what the pass looks at first, said about the producer, never in their voice) and asks (questions the card puts to the user). Moves carry c (confidence) and src; onByDefault=false moves are offered but start switched off.",
+    "about": "A producer pass runs on a finished song: Semitone proposes what that producer would likely do, as session notes. Each move is one line with a reason and its own on/off switch; A/B compares your version and the pass while it plays; the pass is one undo step and so is each move. \"How far\" picks the levels: sounds & mix (sound, mix) / + arrangement (arrangement, structure) / + writing (writing: only these touch melody or chords, and say so). \"Try another take\" draws a different subset and variant of the moves. Wording is always \"<name>-style pass, based on how they are known to work\": never quotes or first-person lines in the producer's voice. op strings are a small action language for the engine (mute, muteDoubles, cutBars, dropDrums, drumFeel, tempoCurve, layer, layerRamp, thin, swapSound, kit, groove, fx, vocalTake, addSection, melodyRepeat, melodyMatch, chordColor); moves the engine cannot do yet stay listed but greyed with \"coming soon\". Each pass also has firstListen (what the pass looks at first, said about the producer, never in their voice) and asks (questions the card puts to the user). Moves carry c (confidence) and src; onByDefault=false moves are offered but start switched off. The pass also reads the song's emotion and vibe: data/sound-library.json emotionRules give the baseline, the producer's fxStyle.byEmotion says how that producer handles it, and sound moves suggest real instruments (sound-library instruments) with software options and the user's own presets when found.",
     "levels": {
       "sounds & mix": [
         "sound",

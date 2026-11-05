@@ -1,7 +1,7 @@
 {
-  "about": "Every artist and composer, song by song, grouped by album (an era). Tags describe how each song sounds (mood, tempo feel, instruments, production), so Semitone can pick an era, or songs whose tags match what the user asks for. Chord data lives in progressions.json under the era profile id. Tags are descriptive notes written for Semitone, not copied text; edit them freely. Covers are listed but never analysed.",
+  "about": "Every artist and composer, song by song, grouped by album (an era). Tags describe how each song sounds (mood, tempo feel, instruments, production), so Semitone can pick an era, or songs whose tags match what the user asks for. Chord data lives in progressions.json under the era profile id. Tags are descriptive notes written for Semitone, not copied text; edit them freely. Covers are listed but never analysed. Emotion is the feeling; vibe is the setting or picture (see data/sound-library.json vibes).",
   "tagVocab": {
-    "mood": [
+    "emotion": [
       "melancholy",
       "tender",
       "nostalgic",
@@ -32,6 +32,26 @@
       "weary",
       "reflective",
       "intimate"
+    ],
+    "vibe": [
+      "late-night drive",
+      "neon city",
+      "old Hollywood",
+      "smoky lounge",
+      "film noir",
+      "spy film",
+      "desert highway",
+      "70s California",
+      "small-town Americana",
+      "beach haze",
+      "bedroom confessional",
+      "rainy window",
+      "club peak time",
+      "festival sunset",
+      "church",
+      "cabaret",
+      "winter",
+      "summer road trip"
     ],
     "tempo": [
       "slow",
@@ -76,10 +96,7 @@
       "lush",
       "spoken section",
       "two-chord vamp",
-      "old Hollywood",
       "psychedelic",
-      "70s soft rock",
-      "Americana",
       "jazzy",
       "folk"
     ]
@@ -226,7 +243,8 @@
                 "melancholy",
                 "synth",
                 "strings",
-                "mid-tempo"
+                "mid-tempo",
+                "late-night drive"
               ],
               "chords": true
             },
@@ -241,6 +259,11 @@
               "chords": false,
               "note": "no chord source found yet: tags and the album sound still apply; fill in with the song analyser"
             }
+          ],
+          "vibes": [
+            "old Hollywood",
+            "late-night drive",
+            "neon city"
           ]
         },
         {
@@ -268,10 +291,11 @@
               "title": "Ride",
               "tags": [
                 "cinematic",
-                "Americana",
+                "small-town Americana",
                 "strings",
                 "piano",
-                "slow build"
+                "slow build",
+                "desert highway"
               ],
               "chords": true
             },
@@ -358,6 +382,10 @@
               ],
               "chords": true
             }
+          ],
+          "vibes": [
+            "old Hollywood",
+            "film noir"
           ]
         },
         {
@@ -390,7 +418,8 @@
                 "reverb electric guitar",
                 "live band",
                 "slow",
-                "long jam"
+                "long jam",
+                "desert highway"
               ],
               "chords": true
             },
@@ -433,7 +462,8 @@
                 "sultry",
                 "psychedelic",
                 "reverb electric guitar",
-                "tempo drop in chorus"
+                "tempo drop in chorus",
+                "beach haze"
               ],
               "chords": true
             },
@@ -537,6 +567,11 @@
               "chords": false,
               "note": "no chord source found yet: tags and the album sound still apply; fill in with the song analyser"
             }
+          ],
+          "vibes": [
+            "desert highway",
+            "beach haze",
+            "film noir"
           ]
         },
         {
@@ -590,7 +625,8 @@
                 "saxophone",
                 "piano",
                 "strings",
-                "slow"
+                "slow",
+                "smoky lounge"
               ],
               "chords": true
             },
@@ -611,7 +647,8 @@
                 "hazy",
                 "808",
                 "trap hi-hats",
-                "mid-tempo"
+                "mid-tempo",
+                "beach haze"
               ],
               "chords": true
             },
@@ -632,7 +669,8 @@
                 "jazzy",
                 "saxophone",
                 "trap hi-hats",
-                "slow"
+                "slow",
+                "neon city"
               ],
               "chords": true
             },
@@ -685,7 +723,8 @@
                 "cinematic",
                 "strings",
                 "brass",
-                "slow"
+                "slow",
+                "spy film"
               ],
               "chords": true
             },
@@ -710,6 +749,12 @@
               "note": "a cover of another writer's song: listed, not analysed",
               "chords": false
             }
+          ],
+          "vibes": [
+            "old Hollywood",
+            "film noir",
+            "spy film",
+            "smoky lounge"
           ]
         },
         {
@@ -750,7 +795,7 @@
                 "warm",
                 "acoustic guitar",
                 "slide guitar",
-                "70s soft rock",
+                "70s California",
                 "slow"
               ],
               "chords": true
@@ -762,7 +807,9 @@
                 "long jam",
                 "acoustic guitar",
                 "guitar solo",
-                "mellotron"
+                "mellotron",
+                "70s California",
+                "beach haze"
               ],
               "chords": true
             },
@@ -824,7 +871,7 @@
                 "yearning",
                 "piano",
                 "strings",
-                "70s soft rock",
+                "70s California",
                 "slow"
               ],
               "chords": true
@@ -833,7 +880,7 @@
               "title": "The Next Best American Record",
               "tags": [
                 "hazy",
-                "70s soft rock",
+                "70s California",
                 "clean electric guitar",
                 "mid-tempo"
               ],
@@ -843,7 +890,7 @@
               "title": "The Greatest",
               "tags": [
                 "elegiac",
-                "70s soft rock",
+                "70s California",
                 "guitar solo",
                 "piano",
                 "mid-tempo"
@@ -882,6 +929,10 @@
               ],
               "chords": true
             }
+          ],
+          "vibes": [
+            "70s California",
+            "beach haze"
           ]
         },
         {
@@ -914,7 +965,8 @@
                 "reflective",
                 "piano",
                 "strings",
-                "tempo changes"
+                "tempo changes",
+                "small-town Americana"
               ],
               "chords": true
             },
@@ -925,7 +977,8 @@
                 "piano",
                 "sparse",
                 "no drums",
-                "slow"
+                "slow",
+                "bedroom confessional"
               ],
               "chords": true
             },
@@ -1007,7 +1060,7 @@
               "title": "Thunder",
               "tags": [
                 "warm",
-                "Americana",
+                "small-town Americana",
                 "piano",
                 "mid-tempo"
               ],
@@ -1038,7 +1091,7 @@
               "title": "Living Legend",
               "tags": [
                 "nostalgic",
-                "Americana",
+                "small-town Americana",
                 "piano",
                 "slow"
               ],
@@ -1065,6 +1118,11 @@
               ],
               "chords": true
             }
+          ],
+          "vibes": [
+            "small-town Americana",
+            "bedroom confessional",
+            "smoky lounge"
           ]
         }
       ]

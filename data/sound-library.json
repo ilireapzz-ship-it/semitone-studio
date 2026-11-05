@@ -1,0 +1,2120 @@
+{
+  "about": "What Semitone knows about real production instruments and effects, so it can suggest the sound to use instead of pretending its own synths match them. Each entry names the instrument, who is known to use it and how (sourced), software that recreates it, a patch recipe (what to set, not a preset name), and the Semitone instrument that stands in while sketching. Never invent preset names: name a preset only when it was found in the user's own library (see libraryMatch).",
+  "libraryMatch": {
+    "about": "With the user's permission, the desktop app scans the plug-in folders on their computer (names only: plug-in names and preset file names, never audio) and keeps the list locally. Suggestions then say \"in your library: <plug-in> → <preset>\" when a name matches the recipe (by keywords such as Juno, arp, felt, Mellotron, strings), and otherwise list software to try. Nothing leaves the computer.",
+    "macFolders": [
+      "/Library/Audio/Plug-Ins/VST3",
+      "/Library/Audio/Plug-Ins/Components",
+      "~/Library/Audio/Plug-Ins",
+      "/Library/Application Support/Spectrasonics/STEAM (Omnisphere/Keyscape/Trilian patch names)",
+      "~/Documents/Image-Line/FL Studio/Presets",
+      "~/Documents/Image-Line/FL Studio/Settings (plug-in database)"
+    ],
+    "winFolders": [
+      "C:/Program Files/Common Files/VST3",
+      "C:/Program Files/Image-Line/FL Studio */Data/Patches",
+      "Documents/Image-Line/FL Studio/Presets"
+    ]
+  },
+  "instruments": [
+    {
+      "id": "juno",
+      "name": "Roland Juno-6 / Juno-60",
+      "kind": "analog polysynth",
+      "roles": [
+        "pad",
+        "arp",
+        "bass",
+        "chords"
+      ],
+      "character": [
+        "warm",
+        "chorused",
+        "80s",
+        "soft"
+      ],
+      "usedBy": [
+        {
+          "who": "Jack Antonoff",
+          "how": "low end and arpeggios, a whole album built around it (1989, first Bleachers album)",
+          "src": [
+            "https://mixdownmag.com.au/features/jack-antonoff-on-recording-new-bleachers-album-bruce-springsteen-and-daring-to-suck",
+            "https://mixdownmag.com.au/features/gear-rundown-jack-antonoff/"
+          ]
+        },
+        {
+          "who": "Dan Nigro",
+          "how": "sub pads in choruses; organ sounds on vampire",
+          "src": [
+            "https://www.uaudio.com/blogs/ua/apollo-creators-daniel-nigro",
+            "https://www.soundonsound.com/techniques/inside-track-olivia-rodrigo-vampire"
+          ]
+        },
+        {
+          "who": "Mike Dean",
+          "how": "Roland Juno (HS-60) in his core trio of synths",
+          "src": [
+            "https://reverb.com/featured/in-the-studio-with-super-producer-mike-dean"
+          ]
+        }
+      ],
+      "software": [
+        "Arturia V Collection: Jun-6 V",
+        "TAL-U-NO-LX (Juno-60 style)",
+        "Roland Cloud: JUNO-60",
+        "Omnisphere: search the browser for \"Juno\""
+      ],
+      "semitoneStandIn": [
+        "i:junopoly",
+        "i:junopad",
+        "i:junobass"
+      ],
+      "recipe": {
+        "pad": "saw + sub, low-pass about half open, slow attack, chorus I or II",
+        "arp": "square/pulse, short decay, arpeggiator up 1/16, chorus I",
+        "bass": "saw + sub osc, low-pass low, short envelope, no chorus"
+      },
+      "eras": [
+        "80s",
+        "modern"
+      ]
+    },
+    {
+      "id": "jupiter8",
+      "name": "Roland Jupiter-8",
+      "kind": "analog polysynth",
+      "roles": [
+        "pad",
+        "brass",
+        "lead"
+      ],
+      "character": [
+        "lush",
+        "big",
+        "bright",
+        "80s"
+      ],
+      "usedBy": [
+        {
+          "who": "Mike Dean",
+          "how": "top rack of his studio",
+          "src": [
+            "https://reverb.com/featured/in-the-studio-with-super-producer-mike-dean"
+          ]
+        }
+      ],
+      "software": [
+        "Arturia V Collection: JUP-8 V",
+        "Roland Cloud: JUPITER-8"
+      ],
+      "semitoneStandIn": [
+        "i:propad",
+        "i:probrass"
+      ],
+      "recipe": {
+        "pad": "two detuned saws, slow attack and release, cross-mod off",
+        "brass": "saws, filter envelope with fast attack and medium decay"
+      },
+      "eras": [
+        "80s"
+      ]
+    },
+    {
+      "id": "cs80",
+      "name": "Yamaha CS-80",
+      "kind": "analog polysynth",
+      "roles": [
+        "pad",
+        "brass",
+        "lead"
+      ],
+      "character": [
+        "cinematic",
+        "expressive",
+        "huge"
+      ],
+      "usedBy": [
+        {
+          "who": "Mike Dean",
+          "how": "top rack of his studio",
+          "src": [
+            "https://reverb.com/featured/in-the-studio-with-super-producer-mike-dean"
+          ]
+        }
+      ],
+      "software": [
+        "Arturia V Collection: CS-80 V"
+      ],
+      "semitoneStandIn": [
+        "i:propad",
+        "i:probrass"
+      ],
+      "recipe": {
+        "pad": "saw brass with slow filter swell and ring-mod off; add pitch bend by hand"
+      },
+      "eras": [
+        "70s",
+        "80s"
+      ]
+    },
+    {
+      "id": "minimoog",
+      "name": "Moog Minimoog Model D",
+      "kind": "analog monosynth",
+      "roles": [
+        "lead",
+        "bass",
+        "percussive"
+      ],
+      "character": [
+        "fat",
+        "warm",
+        "aggressive"
+      ],
+      "usedBy": [
+        {
+          "who": "Jack Antonoff",
+          "how": "high end and percussive sounds; through a fuzz pedal for massive leads",
+          "src": [
+            "https://mixdownmag.com.au/features/jack-antonoff-on-recording-new-bleachers-album-bruce-springsteen-and-daring-to-suck",
+            "https://www.musicradar.com/how-to/how-to-sound-like-jack-antonoff-he-puts-minimoog-through-a-fuzz-pedal-for-an-absolutely-massive-sound"
+          ]
+        },
+        {
+          "who": "Mike Dean",
+          "how": "in his rack (MiniMoog, Voyager, Sub 37, Matriarch, Grandmother)",
+          "src": [
+            "https://reverb.com/featured/in-the-studio-with-super-producer-mike-dean"
+          ]
+        }
+      ],
+      "software": [
+        "Arturia V Collection: Mini V",
+        "u-he Diva (generic analog)"
+      ],
+      "semitoneStandIn": [
+        "i:prolead",
+        "i:probass"
+      ],
+      "recipe": {
+        "lead": "three saws slightly detuned, glide on, filter about 60% with some envelope",
+        "bass": "one saw + one square an octave down, short decay"
+      },
+      "eras": [
+        "70s",
+        "80s",
+        "modern"
+      ]
+    },
+    {
+      "id": "prophet5",
+      "name": "Sequential Prophet-5",
+      "kind": "analog polysynth",
+      "roles": [
+        "pad",
+        "keys",
+        "brass"
+      ],
+      "character": [
+        "vintage",
+        "punchy",
+        "80s"
+      ],
+      "usedBy": [],
+      "software": [
+        "Arturia V Collection: Prophet-5 V"
+      ],
+      "semitoneStandIn": [
+        "i:propad",
+        "i:prokeys",
+        "i:probrass"
+      ],
+      "recipe": {
+        "keys": "saw + pulse, short filter envelope, a little poly-mod for bell tones"
+      },
+      "eras": [
+        "80s"
+      ]
+    },
+    {
+      "id": "obxa",
+      "name": "Oberheim OB-X / OB-Xa",
+      "kind": "analog polysynth",
+      "roles": [
+        "brass",
+        "pad"
+      ],
+      "character": [
+        "bold",
+        "brassy",
+        "80s"
+      ],
+      "usedBy": [
+        {
+          "who": "Mike Dean",
+          "how": "OB-X and Four-Voice in his rack",
+          "src": [
+            "https://reverb.com/featured/in-the-studio-with-super-producer-mike-dean"
+          ]
+        }
+      ],
+      "software": [
+        "Arturia V Collection: OP-Xa V"
+      ],
+      "semitoneStandIn": [
+        "i:probrass"
+      ],
+      "recipe": {
+        "brass": "two saws, fast filter envelope, unison"
+      },
+      "eras": [
+        "80s"
+      ]
+    },
+    {
+      "id": "dx7",
+      "name": "Yamaha DX7",
+      "kind": "FM synth",
+      "roles": [
+        "epiano",
+        "bass",
+        "bell"
+      ],
+      "character": [
+        "glassy",
+        "bright",
+        "80s"
+      ],
+      "usedBy": [
+        {
+          "who": "Jack Antonoff",
+          "how": "for an 80s character",
+          "src": [
+            "https://mixdownmag.com.au/features/gear-rundown-jack-antonoff/"
+          ]
+        },
+        {
+          "who": "A. G. Cook",
+          "how": "Arturia DX7 V for gritty lo-fi FM basslines",
+          "src": [
+            "https://www.internettattoo.com/blog/ag-cook-hyperpop-plugin-svst"
+          ]
+        }
+      ],
+      "software": [
+        "Arturia V Collection: DX7 V",
+        "Dexed (free DX7 emulation)"
+      ],
+      "semitoneStandIn": [
+        "i:epiano"
+      ],
+      "recipe": {
+        "epiano": "the classic FM electric piano: soft attack, tine bell",
+        "bass": "FM bass with fast decay"
+      },
+      "eras": [
+        "80s"
+      ]
+    },
+    {
+      "id": "m1",
+      "name": "Korg M1",
+      "kind": "digital workstation",
+      "roles": [
+        "piano",
+        "organ",
+        "pad"
+      ],
+      "character": [
+        "90s",
+        "house",
+        "bright"
+      ],
+      "usedBy": [
+        {
+          "who": "Jack Antonoff",
+          "how": "M1 piano layered with a real piano on Green Light",
+          "src": [
+            "https://www.musicradar.com/how-to/how-to-sound-like-jack-antonoff-he-puts-minimoog-through-a-fuzz-pedal-for-an-absolutely-massive-sound",
+            "https://mixdownmag.com.au/features/gear-rundown-jack-antonoff/"
+          ]
+        }
+      ],
+      "software": [
+        "Korg Collection: M1"
+      ],
+      "semitoneStandIn": [
+        "i:piano"
+      ],
+      "recipe": {
+        "piano": "the famous bright M1 piano, layered under an acoustic piano"
+      },
+      "eras": [
+        "90s"
+      ]
+    },
+    {
+      "id": "triton",
+      "name": "Korg Triton",
+      "kind": "digital workstation",
+      "roles": [
+        "keys",
+        "pad",
+        "strings"
+      ],
+      "character": [
+        "2000s",
+        "glossy"
+      ],
+      "usedBy": [
+        {
+          "who": "Mike Dean",
+          "how": "part of his core trio with Voyager and Juno",
+          "src": [
+            "https://reverb.com/featured/in-the-studio-with-super-producer-mike-dean"
+          ]
+        }
+      ],
+      "software": [
+        "Korg Collection: TRITON"
+      ],
+      "semitoneStandIn": [
+        "i:prokeys"
+      ],
+      "recipe": {},
+      "eras": [
+        "2000s"
+      ]
+    },
+    {
+      "id": "linndrum",
+      "name": "LinnDrum / LM-1",
+      "kind": "drum machine",
+      "roles": [
+        "drums"
+      ],
+      "character": [
+        "80s",
+        "punchy",
+        "gated"
+      ],
+      "usedBy": [
+        {
+          "who": "Jack Antonoff",
+          "how": "LinnDrum through a Copicat echo and analog mixer",
+          "src": [
+            "https://mixdownmag.com.au/features/jack-antonoff-on-recording-new-bleachers-album-bruce-springsteen-and-daring-to-suck",
+            "https://mixdownmag.com.au/features/gear-rundown-jack-antonoff/"
+          ]
+        }
+      ],
+      "software": [
+        "any LinnDrum sample kit",
+        "drum machine plug-ins with Linn kits"
+      ],
+      "semitoneStandIn": [
+        "kit:electro"
+      ],
+      "recipe": {
+        "drums": "straight 8ths, big snare with a short echo, hand claps on 2 and 4"
+      },
+      "eras": [
+        "80s"
+      ]
+    },
+    {
+      "id": "tr808",
+      "name": "Roland TR-808",
+      "kind": "drum machine",
+      "roles": [
+        "drums",
+        "bass"
+      ],
+      "character": [
+        "boomy",
+        "hip-hop",
+        "trap"
+      ],
+      "usedBy": [],
+      "software": [
+        "any 808 sample kit",
+        "Roland Cloud: TR-808"
+      ],
+      "semitoneStandIn": [
+        "kit:808"
+      ],
+      "recipe": {
+        "bass": "long 808 kick tuned to the key (check every note against the key)"
+      }
+    },
+    {
+      "id": "mellotron",
+      "name": "Mellotron",
+      "kind": "tape-replay keyboard",
+      "roles": [
+        "strings",
+        "flute",
+        "choir"
+      ],
+      "character": [
+        "nostalgic",
+        "wobbly",
+        "60s",
+        "psychedelic"
+      ],
+      "usedBy": [
+        {
+          "who": "Jack Antonoff",
+          "how": "strings from Mellotron, panned hard and dry",
+          "src": [
+            "https://www.musicradar.com/how-to/how-to-sound-like-jack-antonoff-he-puts-minimoog-through-a-fuzz-pedal-for-an-absolutely-massive-sound"
+          ]
+        },
+        {
+          "who": "Dan Nigro",
+          "how": "Mellotron in the second verse of vampire",
+          "src": [
+            "https://www.soundonsound.com/techniques/inside-track-olivia-rodrigo-vampire"
+          ]
+        }
+      ],
+      "software": [
+        "Arturia V Collection: Mellotron V"
+      ],
+      "semitoneStandIn": [
+        "i:strings (stand-in)"
+      ],
+      "recipe": {
+        "strings": "MkII strings, no reverb, panned hard left and right",
+        "flute": "M400 flute for a 60s psychedelic colour"
+      },
+      "eras": [
+        "60s",
+        "70s"
+      ]
+    },
+    {
+      "id": "rhodes",
+      "name": "Fender Rhodes",
+      "kind": "electric piano",
+      "roles": [
+        "keys"
+      ],
+      "character": [
+        "warm",
+        "soulful",
+        "70s"
+      ],
+      "usedBy": [
+        {
+          "who": "Mike Dean",
+          "how": "Rhodes 73 and a Rhodes Chroma in his studio",
+          "src": [
+            "https://reverb.com/featured/in-the-studio-with-super-producer-mike-dean"
+          ]
+        }
+      ],
+      "software": [
+        "Arturia V Collection: Stage-73 V",
+        "Spectrasonics Keyscape"
+      ],
+      "semitoneStandIn": [
+        "i:epiano"
+      ],
+      "recipe": {
+        "keys": "soft velocity, a little tremolo (stereo pan), light drive"
+      },
+      "eras": [
+        "70s"
+      ]
+    },
+    {
+      "id": "wurli",
+      "name": "Wurlitzer electric piano",
+      "kind": "electric piano",
+      "roles": [
+        "keys"
+      ],
+      "character": [
+        "bluesy",
+        "barky",
+        "60s"
+      ],
+      "usedBy": [],
+      "software": [
+        "Arturia V Collection: Wurli V3",
+        "Spectrasonics Keyscape"
+      ],
+      "semitoneStandIn": [
+        "i:epiano"
+      ],
+      "recipe": {},
+      "eras": [
+        "60s",
+        "70s"
+      ]
+    },
+    {
+      "id": "upright",
+      "name": "Upright piano",
+      "kind": "acoustic piano",
+      "roles": [
+        "piano"
+      ],
+      "character": [
+        "intimate",
+        "woody",
+        "imperfect"
+      ],
+      "usedBy": [
+        {
+          "who": "Finneas",
+          "how": "writes on a real piano, performs Keyscape on a MIDI keyboard",
+          "src": [
+            "https://www.mixonline.com/recording/finneas-on-producing-billie-eilishs-number-one-album-in-his-bedroom"
+          ]
+        },
+        {
+          "who": "Dan Nigro",
+          "how": "vampire started on an upright and an iPhone",
+          "src": [
+            "https://www.soundonsound.com/techniques/inside-track-olivia-rodrigo-vampire"
+          ]
+        }
+      ],
+      "software": [
+        "Spectrasonics Keyscape",
+        "Spitfire LABS: Soft Piano (free)",
+        "Arturia V Collection: Piano V"
+      ],
+      "semitoneStandIn": [
+        "i:piano"
+      ],
+      "recipe": {
+        "piano": "felt or soft upright, close mics, keep the pedal noise"
+      }
+    },
+    {
+      "id": "grand",
+      "name": "Grand piano",
+      "kind": "acoustic piano",
+      "roles": [
+        "piano"
+      ],
+      "character": [
+        "big",
+        "cinematic",
+        "classic"
+      ],
+      "usedBy": [],
+      "software": [
+        "Spectrasonics Keyscape",
+        "Arturia V Collection: Piano V / Augmented Grand Piano"
+      ],
+      "semitoneStandIn": [
+        "i:piano"
+      ],
+      "recipe": {}
+    },
+    {
+      "id": "b3",
+      "name": "Hammond B-3 organ",
+      "kind": "organ",
+      "roles": [
+        "organ"
+      ],
+      "character": [
+        "soulful",
+        "gospel",
+        "churchy"
+      ],
+      "usedBy": [],
+      "software": [
+        "Arturia V Collection: B-3 V"
+      ],
+      "semitoneStandIn": [
+        "i:organ"
+      ],
+      "recipe": {
+        "organ": "drawbars 888000000, slow Leslie, speed up into the chorus"
+      }
+    },
+    {
+      "id": "solina",
+      "name": "Solina String Ensemble",
+      "kind": "string machine",
+      "roles": [
+        "strings",
+        "pad"
+      ],
+      "character": [
+        "70s",
+        "dreamy",
+        "thin"
+      ],
+      "usedBy": [],
+      "software": [
+        "Arturia V Collection: Solina V"
+      ],
+      "semitoneStandIn": [
+        "i:junopad"
+      ],
+      "recipe": {},
+      "eras": [
+        "70s"
+      ]
+    },
+    {
+      "id": "strings",
+      "name": "Orchestral strings",
+      "kind": "acoustic ensemble",
+      "roles": [
+        "strings"
+      ],
+      "character": [
+        "cinematic",
+        "emotional",
+        "lush"
+      ],
+      "usedBy": [
+        {
+          "who": "Dan Nigro",
+          "how": "real strings by Paul Cartwright on vampire",
+          "src": [
+            "https://www.soundonsound.com/techniques/inside-track-olivia-rodrigo-vampire"
+          ]
+        }
+      ],
+      "software": [
+        "Spitfire LABS strings (free)",
+        "Arturia V Collection: Augmented Strings",
+        "a Kontakt string library"
+      ],
+      "semitoneStandIn": [
+        "i:strings",
+        "i:pizz"
+      ],
+      "recipe": {
+        "strings": "long legato for the chorus, short spiccato for verses; swell with expression (CC11), not volume"
+      }
+    },
+    {
+      "id": "guitar12",
+      "name": "12-string acoustic guitar",
+      "kind": "acoustic guitar",
+      "roles": [
+        "chords"
+      ],
+      "character": [
+        "jangly",
+        "bright",
+        "folk rock"
+      ],
+      "usedBy": [
+        {
+          "who": "Jack Antonoff",
+          "how": "a Bleachers staple; walls of 6- and 12-strings panned left and right",
+          "src": [
+            "https://mixdownmag.com.au/features/jack-antonoff-on-recording-new-bleachers-album-bruce-springsteen-and-daring-to-suck",
+            "https://www.musicradar.com/how-to/how-to-sound-like-jack-antonoff-he-puts-minimoog-through-a-fuzz-pedal-for-an-absolutely-massive-sound"
+          ]
+        }
+      ],
+      "software": [
+        "a real 12-string",
+        "an acoustic guitar library"
+      ],
+      "semitoneStandIn": [
+        "i:steel"
+      ],
+      "recipe": {
+        "chords": "strummed 8ths, double-tracked and panned hard L/R"
+      }
+    },
+    {
+      "id": "eguitar",
+      "name": "Electric guitar (clean, reverb and tremolo)",
+      "kind": "electric guitar",
+      "roles": [
+        "chords",
+        "lead"
+      ],
+      "character": [
+        "dreamy",
+        "psychedelic",
+        "twangy"
+      ],
+      "usedBy": [],
+      "software": [
+        "a real guitar through an amp sim",
+        "an electric guitar library"
+      ],
+      "semitoneStandIn": [
+        "i:steel (needs a new instrument)"
+      ],
+      "recipe": {
+        "chords": "clean amp, spring reverb, tremolo about 5 Hz, slow arpeggios"
+      }
+    },
+    {
+      "id": "pedalsteel",
+      "name": "Pedal steel guitar",
+      "kind": "electric guitar",
+      "roles": [
+        "lead",
+        "pad"
+      ],
+      "character": [
+        "Americana",
+        "lonely",
+        "sliding"
+      ],
+      "usedBy": [],
+      "software": [
+        "a pedal steel library",
+        "a session player"
+      ],
+      "semitoneStandIn": [
+        "i:steel (needs a new instrument)"
+      ],
+      "recipe": {}
+    },
+    {
+      "id": "brass",
+      "name": "Brass and saxophone",
+      "kind": "acoustic ensemble",
+      "roles": [
+        "brass",
+        "lead"
+      ],
+      "character": [
+        "jazzy",
+        "bold",
+        "smoky"
+      ],
+      "usedBy": [],
+      "software": [
+        "Arturia V Collection: Augmented Brass / Augmented Woodwinds",
+        "a Kontakt brass library"
+      ],
+      "semitoneStandIn": [
+        "i:probrass (stand-in)"
+      ],
+      "recipe": {}
+    },
+    {
+      "id": "omnisphere",
+      "name": "Spectrasonics Omnisphere",
+      "kind": "software synth",
+      "roles": [
+        "pad",
+        "texture",
+        "bass",
+        "keys"
+      ],
+      "character": [
+        "huge library",
+        "cinematic",
+        "any style"
+      ],
+      "usedBy": [
+        {
+          "who": "Finneas",
+          "how": "one of his most-used plug-ins on the Billie Eilish album",
+          "src": [
+            "https://www.soundonsound.com/people/billie-eilish"
+          ]
+        }
+      ],
+      "software": [
+        "Spectrasonics Omnisphere"
+      ],
+      "semitoneStandIn": [
+        "any"
+      ],
+      "recipe": {
+        "tip": "search its browser by attribute (warm, dark, evolving) and by the hardware it imitates"
+      }
+    },
+    {
+      "id": "keyscape",
+      "name": "Spectrasonics Keyscape",
+      "kind": "software keyboards",
+      "roles": [
+        "piano",
+        "keys"
+      ],
+      "character": [
+        "realistic",
+        "intimate"
+      ],
+      "usedBy": [
+        {
+          "who": "Finneas",
+          "how": "pianos for Billie Eilish productions",
+          "src": [
+            "https://www.soundonsound.com/people/billie-eilish",
+            "https://www.mixonline.com/recording/finneas-on-producing-billie-eilishs-number-one-album-in-his-bedroom"
+          ]
+        }
+      ],
+      "software": [
+        "Spectrasonics Keyscape"
+      ],
+      "semitoneStandIn": [
+        "i:piano",
+        "i:epiano"
+      ],
+      "recipe": {}
+    },
+    {
+      "id": "trilian",
+      "name": "Spectrasonics Trilian",
+      "kind": "software bass",
+      "roles": [
+        "bass"
+      ],
+      "character": [
+        "realistic",
+        "deep"
+      ],
+      "usedBy": [
+        {
+          "who": "Finneas",
+          "how": "one of his most-used plug-ins on the album",
+          "src": [
+            "https://www.soundonsound.com/people/billie-eilish"
+          ]
+        }
+      ],
+      "software": [
+        "Spectrasonics Trilian"
+      ],
+      "semitoneStandIn": [
+        "i:bassgtr"
+      ],
+      "recipe": {}
+    },
+    {
+      "id": "serum",
+      "name": "Xfer Serum",
+      "kind": "software wavetable synth",
+      "roles": [
+        "lead",
+        "pad",
+        "bass"
+      ],
+      "character": [
+        "modern",
+        "bright",
+        "aggressive"
+      ],
+      "usedBy": [
+        {
+          "who": "A. G. Cook",
+          "how": "Brat's synths (with Finn Keane); formant filters, random cutoff, downsampling",
+          "src": [
+            "https://www.musicradar.com/news/charli-xcx-brat-theory",
+            "https://www.internettattoo.com/blog/ag-cook-hyperpop-plugin-svst"
+          ]
+        }
+      ],
+      "software": [
+        "Xfer Serum"
+      ],
+      "semitoneStandIn": [
+        "i:propolymod"
+      ],
+      "recipe": {
+        "chords": "formant filter + low-pass, random cutoff per note, a little downsample distortion (I Think About It All The Time)"
+      }
+    },
+    {
+      "id": "synplant",
+      "name": "Sonic Charge Synplant 2",
+      "kind": "software synth",
+      "roles": [
+        "texture"
+      ],
+      "character": [
+        "evolving",
+        "random"
+      ],
+      "usedBy": [
+        {
+          "who": "A. G. Cook",
+          "how": "recorded patch variations turned into sampler instruments on Brat",
+          "src": [
+            "https://www.internettattoo.com/blog/ag-cook-hyperpop-plugin-svst"
+          ]
+        }
+      ],
+      "software": [
+        "Sonic Charge Synplant 2"
+      ],
+      "semitoneStandIn": [
+        "i:propolymod"
+      ],
+      "recipe": {}
+    },
+    {
+      "id": "kick2",
+      "name": "Sonic Academy Kick 2",
+      "kind": "software drum synth",
+      "roles": [
+        "kick"
+      ],
+      "character": [
+        "aggressive",
+        "tuned"
+      ],
+      "usedBy": [
+        {
+          "who": "A. G. Cook",
+          "how": "kicks with pitch envelopes as a central sound",
+          "src": [
+            "https://www.internettattoo.com/blog/ag-cook-hyperpop-plugin-svst"
+          ]
+        }
+      ],
+      "software": [
+        "Sonic Academy Kick 2"
+      ],
+      "semitoneStandIn": [
+        "kit:electro"
+      ],
+      "recipe": {}
+    },
+    {
+      "id": "vocoder",
+      "name": "Vocoder",
+      "kind": "voice effect / synth",
+      "roles": [
+        "vocal",
+        "texture"
+      ],
+      "character": [
+        "robotic",
+        "80s"
+      ],
+      "usedBy": [
+        {
+          "who": "A. G. Cook",
+          "how": "Arturia Vocoder V for noisy layers",
+          "src": [
+            "https://www.internettattoo.com/blog/ag-cook-hyperpop-plugin-svst"
+          ]
+        }
+      ],
+      "software": [
+        "Arturia V Collection: Vocoder V"
+      ],
+      "semitoneStandIn": [
+        "—"
+      ],
+      "recipe": {}
+    },
+    {
+      "id": "found",
+      "name": "Found sounds",
+      "kind": "recordings",
+      "roles": [
+        "percussion",
+        "texture"
+      ],
+      "character": [
+        "intimate",
+        "quirky",
+        "real"
+      ],
+      "usedBy": [
+        {
+          "who": "Finneas",
+          "how": "a crosswalk signal and a dentist drill in bad guy",
+          "src": [
+            "https://g105.iheart.com/alternate/amp/2020-02-04-finneas-used-crosswalk-dentist-drill-sounds-w-billie-eilish-in-bad-guy"
+          ]
+        }
+      ],
+      "software": [
+        "your phone's voice memos",
+        "any recorder"
+      ],
+      "semitoneStandIn": [
+        "kit:found (needs the found-sound set)"
+      ],
+      "recipe": {
+        "tip": "record clicks, taps, a lighter, a zip; tune and trim to replace the hi-hat"
+      }
+    }
+  ],
+  "effects": [
+    {
+      "id": "tapeecho",
+      "name": "Tape echo (Roland Space Echo style)",
+      "kind": "delay",
+      "does": "warm repeating echo with wobble; spring reverb",
+      "software": [
+        "Soundtoys EchoBoy",
+        "Valhalla Delay",
+        "Arturia Tape / Delay plug-ins",
+        "FL Studio Fruity Delay 3 (tape mode)"
+      ],
+      "usedBy": [
+        {
+          "who": "Jack Antonoff",
+          "how": "RE-501 chorus echo, a favourite",
+          "src": [
+            "https://mixdownmag.com.au/features/gear-rundown-jack-antonoff/",
+            "https://www.musicradar.com/how-to/how-to-sound-like-jack-antonoff-he-puts-minimoog-through-a-fuzz-pedal-for-an-absolutely-massive-sound"
+          ]
+        }
+      ],
+      "semitone": "delay (mixer)",
+      "automateFor": [
+        "throw the last word of a line",
+        "raise the mix into the chorus like a riser"
+      ]
+    },
+    {
+      "id": "slapback",
+      "name": "Slapback delay",
+      "kind": "delay",
+      "does": "one short repeat (80–140 ms), retro and close",
+      "software": [
+        "any delay at one repeat"
+      ],
+      "usedBy": [
+        {
+          "who": "Jack Antonoff",
+          "how": "slapback and short swells, slightly out of sync",
+          "src": [
+            "https://mixdownmag.com.au/features/jack-antonoff-on-recording-new-bleachers-album-bruce-springsteen-and-daring-to-suck"
+          ]
+        }
+      ],
+      "semitone": "delay (mixer)"
+    },
+    {
+      "id": "tremolo",
+      "name": "Tremolo / chop",
+      "kind": "modulation",
+      "does": "rhythmic volume pulse; at zero smoothing it chops",
+      "software": [
+        "Soundtoys Tremolator",
+        "FL Studio Fruity Love Philter / Gross Beat",
+        "Logic Tremolo"
+      ],
+      "usedBy": [
+        {
+          "who": "Jack Antonoff",
+          "how": "16th-note tremolo on pads; on the master with automated depth",
+          "src": [
+            "https://mixdownmag.com.au/features/gear-rundown-jack-antonoff/",
+            "https://www.musicradar.com/how-to/how-to-sound-like-jack-antonoff-he-puts-minimoog-through-a-fuzz-pedal-for-an-absolutely-massive-sound"
+          ]
+        },
+        {
+          "who": "Finneas",
+          "how": "hard chop, smoothing 0, synced 8ths or 16ths",
+          "src": [
+            "https://www.mixonline.com/recording/finneas-on-producing-billie-eilishs-number-one-album-in-his-bedroom"
+          ]
+        }
+      ],
+      "semitone": "tremolo (mixer)",
+      "automateFor": [
+        "depth up into the chorus",
+        "off for the last chorus to make it feel open"
+      ]
+    },
+    {
+      "id": "1176",
+      "name": "1176-style compressor",
+      "kind": "dynamics",
+      "does": "fast, aggressive compression with attitude",
+      "software": [
+        "UAD 1176",
+        "Waves CLA-76",
+        "Arturia Comp FET-76",
+        "FL Studio Fruity Limiter (comp mode)"
+      ],
+      "usedBy": [
+        {
+          "who": "Dan Nigro",
+          "how": "two in a row on vocals; Rev A bluestripe on almost every vocal",
+          "src": [
+            "https://www.soundonsound.com/techniques/inside-track-olivia-rodrigo-vampire",
+            "https://www.uaudio.com/blogs/ua/apollo-creators-daniel-nigro"
+          ]
+        }
+      ],
+      "semitone": "compressor (mixer)"
+    },
+    {
+      "id": "vintageverb",
+      "name": "Vintage plate / hall reverb",
+      "kind": "reverb",
+      "does": "80s-style digital space",
+      "software": [
+        "Valhalla VintageVerb",
+        "FL Studio Fruity Reeverb 2"
+      ],
+      "usedBy": [
+        {
+          "who": "Dan Nigro",
+          "how": "the song's main sonic flavour on vampire",
+          "src": [
+            "https://www.soundonsound.com/techniques/inside-track-olivia-rodrigo-vampire"
+          ]
+        }
+      ],
+      "semitone": "reverb (mixer)",
+      "automateFor": [
+        "wet swell over the last bars of a build, back to dry on the downbeat"
+      ]
+    },
+    {
+      "id": "chorus",
+      "name": "Chorus / ensemble",
+      "kind": "modulation",
+      "does": "widens and softens",
+      "software": [
+        "UAD Brigade Chorus",
+        "Arturia Chorus JUN-6",
+        "FL Studio Fruity Chorus"
+      ],
+      "usedBy": [
+        {
+          "who": "Dan Nigro",
+          "how": "Brigade Chorus on bass and acoustic guitars, and as a writing trick",
+          "src": [
+            "https://www.uaudio.com/blogs/ua/apollo-creators-daniel-nigro"
+          ]
+        }
+      ],
+      "semitone": "chorus (mixer)"
+    },
+    {
+      "id": "transient",
+      "name": "Transient designer",
+      "kind": "dynamics",
+      "does": "shapes attack and sustain of drums",
+      "software": [
+        "SPL Transient Designer",
+        "FL Studio Transient Processor"
+      ],
+      "usedBy": [
+        {
+          "who": "Dan Nigro",
+          "how": "on almost all drums, mostly the sustain control",
+          "src": [
+            "https://www.uaudio.com/blogs/ua/apollo-creators-daniel-nigro"
+          ]
+        }
+      ],
+      "semitone": "—"
+    },
+    {
+      "id": "saturation",
+      "name": "Saturation / distortion",
+      "kind": "colour",
+      "does": "grit and warmth",
+      "software": [
+        "Soundtoys Decapitator",
+        "FL Studio Fruity Blood Overdrive",
+        "a fuzz pedal"
+      ],
+      "usedBy": [
+        {
+          "who": "Dan Nigro",
+          "how": "Decapitator on songs needing grit",
+          "src": [
+            "https://www.soundonsound.com/techniques/inside-track-olivia-rodrigo-vampire"
+          ]
+        },
+        {
+          "who": "Jack Antonoff",
+          "how": "Minimoog through fuzz",
+          "src": [
+            "https://www.musicradar.com/how-to/how-to-sound-like-jack-antonoff-he-puts-minimoog-through-a-fuzz-pedal-for-an-absolutely-massive-sound"
+          ]
+        }
+      ],
+      "semitone": "drive (mixer)",
+      "automateFor": [
+        "drive up in the last chorus"
+      ]
+    },
+    {
+      "id": "pitchtune",
+      "name": "Pitch correction (Auto-Tune)",
+      "kind": "vocal",
+      "does": "from gentle correction to the hard robotic effect",
+      "software": [
+        "Antares Auto-Tune",
+        "Celemony Melodyne",
+        "FL Studio Pitcher / NewTone"
+      ],
+      "usedBy": [
+        {
+          "who": "A. G. Cook",
+          "how": "robotic yet expressive Charli vocals",
+          "src": [
+            "https://www.internettattoo.com/blog/ag-cook-hyperpop-plugin-svst",
+            "https://www.musicradar.com/news/charli-xcx-brat-theory"
+          ]
+        },
+        {
+          "who": "Mike Dean",
+          "how": "sets the tuning scale to the song key first",
+          "src": [
+            "https://thefader.com/2018/10/08/mike-dean-interview-travis-scott-and-kanye-west"
+          ]
+        }
+      ],
+      "semitone": "pitch shift (mixer)"
+    },
+    {
+      "id": "formant",
+      "name": "Formant / pitch transformer",
+      "kind": "vocal",
+      "does": "character voices, octave-down monsters, chipmunks",
+      "software": [
+        "Soundtoys Little AlterBoy",
+        "Logic Vocal Transformer",
+        "FL Studio Pitcher"
+      ],
+      "usedBy": [
+        {
+          "who": "Finneas",
+          "how": "Vocal Transformer textures (bad guy)",
+          "src": [
+            "https://www.mixonline.com/recording/finneas-on-producing-billie-eilishs-number-one-album-in-his-bedroom"
+          ]
+        },
+        {
+          "who": "Jack Antonoff",
+          "how": "Little AlterBoy and vocal synths for extreme processing",
+          "src": [
+            "https://www.musicradar.com/how-to/how-to-sound-like-jack-antonoff-he-puts-minimoog-through-a-fuzz-pedal-for-an-absolutely-massive-sound"
+          ]
+        }
+      ],
+      "semitone": "pitch shift (mixer)"
+    },
+    {
+      "id": "filter",
+      "name": "Filter sweep",
+      "kind": "filter",
+      "does": "removes lows or highs; moving it builds or releases",
+      "software": [
+        "Soundtoys FilterFreak",
+        "FL Studio Fruity Filter",
+        "any EQ"
+      ],
+      "usedBy": [
+        {
+          "who": "A. G. Cook",
+          "how": "FilterFreak sweeps and movement on Brat",
+          "src": [
+            "https://www.internettattoo.com/blog/ag-cook-hyperpop-plugin-svst"
+          ]
+        }
+      ],
+      "semitone": "filter (mixer)",
+      "automateFor": [
+        "high-pass the bass up through a build, off at the drop",
+        "band-pass the intro, open into the verse"
+      ]
+    },
+    {
+      "id": "ott",
+      "name": "Extreme multiband compression (OTT)",
+      "kind": "dynamics",
+      "does": "hyper-bright, in-your-face",
+      "software": [
+        "Xfer OTT (free)",
+        "FL Studio Maximus"
+      ],
+      "usedBy": [
+        {
+          "who": "A. G. Cook",
+          "how": "pushed to extremes on synths, drums and vocals",
+          "src": [
+            "https://www.internettattoo.com/blog/ag-cook-hyperpop-plugin-svst"
+          ]
+        }
+      ],
+      "semitone": "—"
+    },
+    {
+      "id": "doubler",
+      "name": "Doubler / ADT",
+      "kind": "vocal",
+      "does": "fake double-tracking for width",
+      "software": [
+        "Waves Doubler",
+        "Waves Air Chorus"
+      ],
+      "usedBy": [
+        {
+          "who": "Jack Antonoff",
+          "how": "used when mixing",
+          "src": [
+            "https://www.musicradar.com/how-to/how-to-sound-like-jack-antonoff-he-puts-minimoog-through-a-fuzz-pedal-for-an-absolutely-massive-sound"
+          ]
+        }
+      ],
+      "semitone": "chorus (mixer)"
+    },
+    {
+      "id": "room",
+      "name": "Room reverb / room mics",
+      "kind": "reverb",
+      "does": "a real space around drums and voices",
+      "software": [
+        "any short room reverb",
+        "FL Studio Fruity Reeverb 2 (small room)"
+      ],
+      "usedBy": [
+        {
+          "who": "Jack Antonoff",
+          "how": "two corner room mics wherever he works",
+          "src": [
+            "https://mixdownmag.com.au/features/jack-antonoff-on-recording-new-bleachers-album-bruce-springsteen-and-daring-to-suck"
+          ]
+        }
+      ],
+      "semitone": "reverb (mixer)"
+    },
+    {
+      "id": "stutter",
+      "name": "Stutter / beat repeat",
+      "kind": "edit",
+      "does": "repeats a short slice (1/16) of a vocal or beat",
+      "software": [
+        "FL Studio Gross Beat",
+        "Ableton Beat Repeat",
+        "iZotope Stutter Edit 2"
+      ],
+      "usedBy": [
+        {
+          "who": "A. G. Cook",
+          "how": "a 16th-note vocal slice repeated in Sympathy Is a Knife",
+          "src": [
+            "https://www.musicradar.com/news/charli-xcx-brat-theory"
+          ]
+        },
+        {
+          "who": "RedOne",
+          "how": "the stuttering hook after the chorus of Poker Face",
+          "src": [
+            "https://en.wikipedia.org/wiki/Poker_Face_(song)"
+          ]
+        }
+      ],
+      "semitone": "needs the stutter effect"
+    }
+  ],
+  "automationMoves": [
+    {
+      "move": "widthBuild",
+      "what": "narrow the mix during a build, full width on the chorus downbeat",
+      "src": [
+        "https://mastering.com/5-ways-to-create-tension-and-release-in-modern-production/"
+      ]
+    },
+    {
+      "move": "silenceGap",
+      "what": "cut everything (and reverb tails) for the last beat before a new section",
+      "src": [
+        "https://mastering.com/5-ways-to-create-tension-and-release-in-modern-production/"
+      ]
+    },
+    {
+      "move": "hpfSweep",
+      "what": "high-pass the kick and bass rising through a build, bypass on the drop",
+      "src": [
+        "https://mastering.com/5-ways-to-create-tension-and-release-in-modern-production/"
+      ]
+    },
+    {
+      "move": "gateRamp",
+      "what": "a gate or beat-repeat getting faster, then a mute on the last beat",
+      "src": [
+        "https://mastering.com/5-ways-to-create-tension-and-release-in-modern-production/"
+      ]
+    },
+    {
+      "move": "reverbSwell",
+      "what": "reverb wet rises over the last bars until the dry sound is buried, back to dry on the downbeat",
+      "src": [
+        "https://mastering.com/5-ways-to-create-tension-and-release-in-modern-production/"
+      ]
+    },
+    {
+      "move": "reverseSwell",
+      "what": "a reversed note or cymbal swelling into the first beat",
+      "src": [
+        "https://www.izotope.com/en/learn/7-creative-automation-tips-for-music-producers"
+      ]
+    },
+    {
+      "move": "vocalThrow",
+      "what": "send single words to a delay or reverb to fill gaps or build before the chorus",
+      "src": [
+        "https://www.izotope.com/en/learn/7-creative-automation-tips-for-music-producers"
+      ]
+    },
+    {
+      "move": "panDrift",
+      "what": "slow pan drift on secondary parts for gentle motion",
+      "src": [
+        "https://www.izotope.com/en/learn/7-creative-automation-tips-for-music-producers"
+      ]
+    },
+    {
+      "move": "fastPan",
+      "what": "fast hi-hat and percussion panning for club excitement",
+      "src": [
+        "https://www.izotope.com/en/learn/7-creative-automation-tips-for-music-producers"
+      ]
+    },
+    {
+      "move": "brightOpen",
+      "what": "EQ or filter opens on vocals and guitars for a brighter chorus; closes to cool down after a peak",
+      "src": [
+        "https://www.izotope.com/en/learn/7-creative-automation-tips-for-music-producers"
+      ]
+    },
+    {
+      "move": "bandpassIntro",
+      "what": "a band-passed intro that opens into the verse",
+      "src": [
+        "https://www.izotope.com/en/learn/7-creative-automation-tips-for-music-producers"
+      ]
+    },
+    {
+      "move": "gainLift",
+      "what": "a master gain lift (or a dip before) at the chorus",
+      "src": [
+        "https://www.izotope.com/en/learn/7-creative-automation-tips-for-music-producers"
+      ]
+    },
+    {
+      "move": "tempoRamp",
+      "what": "tempo drifting up or slowing at the end",
+      "src": [
+        "https://www.izotope.com/en/learn/7-creative-automation-tips-for-music-producers"
+      ]
+    },
+    {
+      "move": "humanize",
+      "what": "vary velocity, timing and release on programmed parts",
+      "src": [
+        "https://www.izotope.com/en/learn/7-creative-automation-tips-for-music-producers"
+      ]
+    },
+    {
+      "move": "pump",
+      "what": "sidechain or autopan ducking to the kick"
+    },
+    {
+      "move": "tapeWobble",
+      "what": "tape wow and flutter, saturation, a little top cut"
+    },
+    {
+      "move": "dropToVocal",
+      "what": "everything drops out except the vocal for one key line"
+    },
+    {
+      "move": "driveUp",
+      "what": "distortion or saturation rising through a section"
+    },
+    {
+      "move": "keyLift",
+      "what": "a key change up for the last chorus"
+    }
+  ],
+  "emotionRules": {
+    "about": "How a song's emotion changes automation and effects, before any producer. A section can carry its own emotion (an emotional arc). The moves come from mixing guides (sources in automationMoves); which emotion uses which is Semitone's own rule set (\"c\":\"low\"): tune by ear and from the song analyser.",
+    "emotions": {
+      "euphoric": {
+        "use": [
+          "widthBuild",
+          "hpfSweep",
+          "reverseSwell",
+          "gainLift",
+          "pump",
+          "brightOpen"
+        ],
+        "avoid": [
+          "dropToVocal"
+        ],
+        "arrangement": "big chorus, layers stacked, drums driving",
+        "sections": {
+          "pre": [
+            "widthBuild",
+            "hpfSweep"
+          ],
+          "chorus": [
+            "gainLift",
+            "brightOpen"
+          ]
+        },
+        "c": "low"
+      },
+      "triumphant": {
+        "use": [
+          "reverbSwell",
+          "widthBuild",
+          "keyLift",
+          "gainLift"
+        ],
+        "avoid": [
+          "tapeWobble"
+        ],
+        "arrangement": "drum fills into the last chorus, brass or big pads",
+        "c": "low"
+      },
+      "melancholy": {
+        "use": [
+          "vocalThrow",
+          "reverbSwell",
+          "panDrift"
+        ],
+        "avoid": [
+          "pump",
+          "fastPan",
+          "hpfSweep"
+        ],
+        "arrangement": "space around the vocal; reverb tails at phrase ends; a darker filter in verses",
+        "sections": {
+          "verse": [
+            "vocalThrow"
+          ],
+          "chorus": [
+            "reverbSwell"
+          ]
+        },
+        "c": "low"
+      },
+      "heartbroken": {
+        "use": [
+          "dropToVocal",
+          "vocalThrow",
+          "silenceGap"
+        ],
+        "avoid": [
+          "pump",
+          "gainLift"
+        ],
+        "arrangement": "pull everything back for the key line",
+        "c": "low"
+      },
+      "nostalgic": {
+        "use": [
+          "tapeWobble",
+          "bandpassIntro",
+          "panDrift"
+        ],
+        "avoid": [
+          "ott"
+        ],
+        "arrangement": "older sounds (Mellotron, Rhodes, tape echo); the intro sounds like a memory, then opens up",
+        "c": "low"
+      },
+      "tender": {
+        "use": [
+          "humanize",
+          "panDrift"
+        ],
+        "avoid": [
+          "pump",
+          "hpfSweep",
+          "gateRamp",
+          "ott"
+        ],
+        "arrangement": "few parts; small level rides only",
+        "c": "low"
+      },
+      "intimate": {
+        "use": [
+          "humanize"
+        ],
+        "avoid": [
+          "reverbSwell",
+          "widthBuild",
+          "pump"
+        ],
+        "arrangement": "dry, close vocal, almost no automation",
+        "c": "low"
+      },
+      "dreamy": {
+        "use": [
+          "reverbSwell",
+          "panDrift",
+          "tapeWobble"
+        ],
+        "avoid": [
+          "silenceGap",
+          "gateRamp"
+        ],
+        "arrangement": "long reverbs, chorus and tremolo on keys, soft attacks",
+        "c": "low"
+      },
+      "hazy": {
+        "use": [
+          "tapeWobble",
+          "reverbSwell",
+          "panDrift"
+        ],
+        "avoid": [
+          "brightOpen"
+        ],
+        "arrangement": "muted top end, slow tremolo, wet guitars",
+        "c": "low"
+      },
+      "dark": {
+        "use": [
+          "hpfSweep",
+          "silenceGap",
+          "driveUp"
+        ],
+        "avoid": [
+          "brightOpen",
+          "keyLift"
+        ],
+        "arrangement": "low register, sparse, distorted low end",
+        "c": "low"
+      },
+      "tense": {
+        "use": [
+          "gateRamp",
+          "hpfSweep",
+          "widthBuild",
+          "silenceGap"
+        ],
+        "avoid": [
+          "gainLift"
+        ],
+        "arrangement": "build without release until the drop; risers",
+        "c": "low"
+      },
+      "defiant": {
+        "use": [
+          "driveUp",
+          "silenceGap"
+        ],
+        "avoid": [
+          "reverbSwell",
+          "tapeWobble"
+        ],
+        "arrangement": "dry and punchy; hard cuts",
+        "c": "low"
+      },
+      "angry": {
+        "use": [
+          "driveUp",
+          "silenceGap"
+        ],
+        "avoid": [
+          "panDrift"
+        ],
+        "arrangement": "distortion rising, tight dry drums",
+        "c": "low"
+      },
+      "playful": {
+        "use": [
+          "fastPan",
+          "gateRamp"
+        ],
+        "avoid": [
+          "reverbSwell"
+        ],
+        "arrangement": "stutters, quirky percussion, filter wobbles",
+        "c": "low"
+      },
+      "sultry": {
+        "use": [
+          "tapeWobble",
+          "panDrift"
+        ],
+        "avoid": [
+          "fastPan",
+          "ott"
+        ],
+        "arrangement": "slow tremolo, warm saturation, low-pass on keys",
+        "c": "low"
+      },
+      "romantic": {
+        "use": [
+          "reverbSwell",
+          "brightOpen"
+        ],
+        "avoid": [
+          "ott",
+          "driveUp"
+        ],
+        "arrangement": "strings swelling into the chorus",
+        "c": "low"
+      },
+      "cinematic": {
+        "use": [
+          "reverbSwell",
+          "reverseSwell",
+          "widthBuild"
+        ],
+        "avoid": [
+          "pump"
+        ],
+        "arrangement": "string crescendos by expression, big low hits, silences",
+        "c": "low"
+      },
+      "lonely": {
+        "use": [
+          "vocalThrow",
+          "panDrift"
+        ],
+        "avoid": [
+          "widthBuild",
+          "gainLift"
+        ],
+        "arrangement": "wide empty space, few elements far apart, a mono vocal",
+        "c": "low"
+      },
+      "hopeful": {
+        "use": [
+          "brightOpen",
+          "gainLift",
+          "widthBuild"
+        ],
+        "avoid": [
+          "driveUp"
+        ],
+        "arrangement": "chords brighten (major lift), a lift in the last chorus",
+        "c": "low"
+      },
+      "anxious": {
+        "use": [
+          "gateRamp",
+          "tempoRamp",
+          "fastPan"
+        ],
+        "avoid": [
+          "reverbSwell"
+        ],
+        "arrangement": "restless rhythms, a slight tempo push",
+        "c": "low"
+      }
+    }
+  },
+  "vibes": {
+    "about": "A vibe is the setting or picture (late-night drive, old Hollywood); an emotion is the feeling. A vibe suggests tempo, sounds, effects and likely emotions.",
+    "tags": {
+      "late-night drive": {
+        "tempo": "mid",
+        "sounds": [
+          "juno",
+          "tr808",
+          "eguitar"
+        ],
+        "fx": [
+          "tapeecho",
+          "chorus"
+        ],
+        "emotions": [
+          "melancholy",
+          "dreamy"
+        ]
+      },
+      "neon city": {
+        "tempo": "mid-fast",
+        "sounds": [
+          "jupiter8",
+          "linndrum",
+          "minimoog"
+        ],
+        "fx": [
+          "vintageverb",
+          "chorus"
+        ],
+        "emotions": [
+          "euphoric",
+          "nostalgic"
+        ]
+      },
+      "old Hollywood": {
+        "tempo": "slow",
+        "sounds": [
+          "strings",
+          "grand",
+          "brass"
+        ],
+        "fx": [
+          "vintageverb"
+        ],
+        "emotions": [
+          "romantic",
+          "cinematic"
+        ]
+      },
+      "smoky lounge": {
+        "tempo": "slow",
+        "sounds": [
+          "rhodes",
+          "brass",
+          "upright"
+        ],
+        "fx": [
+          "room",
+          "tapeecho"
+        ],
+        "emotions": [
+          "sultry",
+          "melancholy"
+        ]
+      },
+      "film noir": {
+        "tempo": "slow",
+        "sounds": [
+          "strings",
+          "brass",
+          "eguitar"
+        ],
+        "fx": [
+          "vintageverb",
+          "tremolo"
+        ],
+        "emotions": [
+          "dark",
+          "sultry"
+        ]
+      },
+      "spy film": {
+        "tempo": "mid",
+        "sounds": [
+          "brass",
+          "strings",
+          "eguitar"
+        ],
+        "fx": [
+          "tapeecho",
+          "room"
+        ],
+        "emotions": [
+          "tense",
+          "cinematic"
+        ]
+      },
+      "desert highway": {
+        "tempo": "slow",
+        "sounds": [
+          "eguitar",
+          "pedalsteel"
+        ],
+        "fx": [
+          "tremolo",
+          "tapeecho"
+        ],
+        "emotions": [
+          "hazy",
+          "lonely"
+        ]
+      },
+      "70s California": {
+        "tempo": "mid",
+        "sounds": [
+          "rhodes",
+          "guitar12",
+          "mellotron"
+        ],
+        "fx": [
+          "tapeecho",
+          "room"
+        ],
+        "emotions": [
+          "nostalgic",
+          "hopeful"
+        ]
+      },
+      "small-town Americana": {
+        "tempo": "slow-mid",
+        "sounds": [
+          "upright",
+          "pedalsteel",
+          "b3"
+        ],
+        "fx": [
+          "room"
+        ],
+        "emotions": [
+          "nostalgic",
+          "tender"
+        ]
+      },
+      "beach haze": {
+        "tempo": "slow",
+        "sounds": [
+          "eguitar",
+          "juno",
+          "tr808"
+        ],
+        "fx": [
+          "chorus",
+          "tremolo"
+        ],
+        "emotions": [
+          "hazy",
+          "sultry"
+        ]
+      },
+      "bedroom confessional": {
+        "tempo": "slow",
+        "sounds": [
+          "upright",
+          "found"
+        ],
+        "fx": [
+          "tremolo"
+        ],
+        "emotions": [
+          "intimate",
+          "tender"
+        ]
+      },
+      "rainy window": {
+        "tempo": "slow",
+        "sounds": [
+          "upright",
+          "strings",
+          "mellotron"
+        ],
+        "fx": [
+          "vintageverb",
+          "tapeecho"
+        ],
+        "emotions": [
+          "melancholy",
+          "lonely"
+        ]
+      },
+      "club peak time": {
+        "tempo": "fast",
+        "sounds": [
+          "serum",
+          "kick2",
+          "juno"
+        ],
+        "fx": [
+          "ott",
+          "filter",
+          "stutter"
+        ],
+        "emotions": [
+          "euphoric",
+          "playful"
+        ]
+      },
+      "festival sunset": {
+        "tempo": "mid-fast",
+        "sounds": [
+          "juno",
+          "guitar12",
+          "strings"
+        ],
+        "fx": [
+          "vintageverb",
+          "filter"
+        ],
+        "emotions": [
+          "euphoric",
+          "hopeful"
+        ]
+      },
+      "church": {
+        "tempo": "slow",
+        "sounds": [
+          "b3",
+          "grand",
+          "strings"
+        ],
+        "fx": [
+          "vintageverb"
+        ],
+        "emotions": [
+          "cinematic",
+          "hopeful"
+        ]
+      },
+      "cabaret": {
+        "tempo": "mid",
+        "sounds": [
+          "upright",
+          "brass"
+        ],
+        "fx": [
+          "room"
+        ],
+        "emotions": [
+          "playful",
+          "sultry"
+        ]
+      },
+      "winter": {
+        "tempo": "slow",
+        "sounds": [
+          "grand",
+          "strings",
+          "solina"
+        ],
+        "fx": [
+          "vintageverb"
+        ],
+        "emotions": [
+          "lonely",
+          "tender"
+        ]
+      },
+      "summer road trip": {
+        "tempo": "mid-fast",
+        "sounds": [
+          "guitar12",
+          "juno",
+          "linndrum"
+        ],
+        "fx": [
+          "chorus",
+          "slapback"
+        ],
+        "emotions": [
+          "euphoric",
+          "nostalgic"
+        ]
+      }
+    }
+  },
+  "sources": [
+    "https://en.wikipedia.org/wiki/21_(Adele_album)",
+    "https://en.wikipedia.org/wiki/Poker_Face_(song)",
+    "https://g105.iheart.com/alternate/amp/2020-02-04-finneas-used-crosswalk-dentist-drill-sounds-w-billie-eilish-in-bad-guy",
+    "https://ladygaganow.net/news/redone-and-akon-interviewed-by-ew-about-lady-gagas-just-dance-for-its-10th-anniversary-r99",
+    "https://mastering.com/5-ways-to-create-tension-and-release-in-modern-production/",
+    "https://mixdownmag.com.au/features/gear-rundown-jack-antonoff/",
+    "https://mixdownmag.com.au/features/jack-antonoff-on-recording-new-bleachers-album-bruce-springsteen-and-daring-to-suck",
+    "https://reverb.com/featured/in-the-studio-with-super-producer-mike-dean",
+    "https://thefader.com/2018/10/08/mike-dean-interview-travis-scott-and-kanye-west",
+    "https://www.grammy.com/news/lorde-melodrama-album-anniversary-jack-antonoff-producer-star-pure-heroine-green-light",
+    "https://www.internettattoo.com/blog/ag-cook-hyperpop-plugin-svst",
+    "https://www.izotope.com/en/learn/7-creative-automation-tips-for-music-producers",
+    "https://www.kvraudio.com/news/arturia-releases-v-collection-11-63649",
+    "https://www.loudersound.com/bands-artists/johnny-cash-american-recordings-rick-rubin-story-behind-album",
+    "https://www.mixonline.com/recording/finneas-on-producing-billie-eilishs-number-one-album-in-his-bedroom",
+    "https://www.musicradar.com/how-to/how-to-sound-like-jack-antonoff-he-puts-minimoog-through-a-fuzz-pedal-for-an-absolutely-massive-sound",
+    "https://www.musicradar.com/news/charli-xcx-brat-theory",
+    "https://www.soundonsound.com/people/billie-eilish",
+    "https://www.soundonsound.com/techniques/inside-track-olivia-rodrigo-vampire",
+    "https://www.uaudio.com/blogs/ua/apollo-creators-daniel-nigro"
+  ]
+}

@@ -121,6 +121,20 @@ target look (Start, Song view, Record, Mix). Rules for every one of them:
     - The card shows where each move comes from in a few words ("from his live-band Adele sessions"), and low-confidence
       moves say so.
 
+### Real sounds, emotion and vibe (agreed with Jamie, 5 Nov 2026)
+26. **Point to real instruments instead of competing with Omnisphere or Serum.** Semitone's own synths are for sketching.
+    `data/sound-library.json` lists 31 production instruments and 15 effects: who is known to use them and how (sourced),
+    software that recreates them, a patch **recipe** (what to set), and Semitone's stand-in. Sound suggestions (producer
+    pass, Sounds tab, style info) name the instrument, the recipe and the software. **Never invent preset names.**
+27. **Scan my plug-ins** (desktop app, opt-in): read plug-in names and preset file names from the folders in
+    `libraryMatch` (names only, kept on the computer) and match them to recipes by keyword, so a suggestion can say
+    "in your library: Omnisphere → …". "Use in my DAW" exports the part as MIDI plus a note with the recipe.
+28. **Emotion and vibe drive effects and automation.** A song (and each section: an emotional arc) carries emotion
+    tags; the song carries vibe tags (catalog `tagVocab.emotion` / `.vibe`; sound-library `vibes`). `emotionRules` give
+    the baseline automation moves per emotion (use / avoid), the producer's `fxStyle.byEmotion` says how that producer
+    handles it, and a vibe suggests tempo, sounds and effects. Show automation as lanes with a one-line "why"
+    (design canvas board "7 · Real sounds, emotion and vibe"). Emotion→move rules are Semitone's own (`c: low`): tune them.
+
 ### Needs Jamie's decision first: don't start without asking
 24. **Built-in assistant.** A chat panel that sees the whole song and answers "why does the bridge feel weak?"
     or "three alternate chorus melodies in my range". Needs an AI model through an API (internet, running cost).
