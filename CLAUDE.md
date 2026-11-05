@@ -5,7 +5,7 @@ Claude Doc). Desktop app + VST3/AU plugin built with JUCE 8.0.4. Mac (FL Studio 
 Jamie is a songwriter, not a programmer: explain results in plain words, not code.
 
 ## Start of every session
-- `git pull` first: a cloud Claude session also pushes to `main`.
+- `git pull` first: a cloud Claude session and Codex (see AGENTS.md, which also holds the task list) push to `main` too.
 - Build and install on this Mac: `tools/build-mac.sh` (`--run` opens the app, `--no-install` builds only).
   Restart FL Studio to load a new plugin build. Every push to `main` also builds Mac + Windows in GitHub Actions.
 
@@ -20,6 +20,7 @@ Jamie is a songwriter, not a programmer: explain results in plain words, not cod
 | Native sound engine | `Source/Synth.h` (JUCE-free): live voices driven by the sequencer's events; plays any beat no rendered section covers, with no web page |
 | Song files, autosave, recents | `Source/SongFiles.h` |
 | Mac drag of MIDI files | `Source/MacDrag.mm` |
+| Interface tests | `tests/web/*.test.js` (Playwright, see tests/web/README.md) |
 | Tests | `tests/sequencer_test.cpp` (sequencer + clip player): `clang++ -std=c++17 -ISource tests/sequencer_test.cpp -o t && ./t`; `tests/synth_test.cpp` (sound engine), same way with `-O2`. `build-mac.sh` and CI run both |
 
 ## Bridge events (web ⇄ native, JSON)

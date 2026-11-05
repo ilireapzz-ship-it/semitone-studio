@@ -1,0 +1,19 @@
+const {chromium}=require('playwright');
+(async()=>{ const b=await chromium.launch(); const p=await b.newPage({viewport:{width:1300,height:900}}); const errs=[]; p.on('pageerror',e=>errs.push('PAGEERR '+e.message));
+ await p.addInitScript(()=>{ window.__nlog=[]; const H={}; window.__JUCE__={backend:{emitEvent:(id,o)=>__nlog.push([id,o]),addEventListener:(id,fn)=>{(H[id]=H[id]||[]).push(fn);}}}; window.__fire=(id,o)=>(H[id]||[]).forEach(f=>f(o)); });
+ await p.goto('file://'+require('path').resolve(__dirname,'../../web/semitone-studio.html')+''); await p.waitForTimeout(1500);
+ await p.evaluate(()=>__fire('st_init',{plugin:true,host:'FL Studio',project:'',sr:44100})); await p.waitForTimeout(1500);
+ console.log('hint:',await p.evaluate(()=>$('#secDragHint').textContent));
+ const box=await p.locator('#timeline .sec').nth(2).boundingBox(); const sel0=await p.evaluate(()=>S.sel);
+ await p.mouse.move(box.x+20,box.y+15); await p.mouse.down(); await p.mouse.move(box.x+60,box.y+40,{steps:5}); await p.mouse.up(); await p.waitForTimeout(200);
+ console.log('drag chorus:',await p.evaluate(()=>JSON.stringify(__nlog.filter(x=>x[0]==='st_drag_audio').pop()[1])),'sel stayed',sel0,'->',await p.evaluate(()=>S.sel));
+ await p.keyboard.down('Alt'); await p.mouse.move(box.x+20,box.y+15); await p.mouse.down(); await p.mouse.move(box.x+70,box.y+40,{steps:5}); await p.mouse.up(); await p.keyboard.up('Alt'); await p.waitForTimeout(200);
+ console.log('alt drag:',await p.evaluate(()=>{ const d=__nlog.filter(x=>x[0]==='st_drag').pop()[1]; const bin=atob(d.b64); return d.name+' '+bin.length+'B '+bin.slice(0,4); }));
+ // section midi length check: count note-ons in section vs whole song
+ console.log('midi sizes: section',await p.evaluate(()=>sectionMidi(2).length),'song',await p.evaluate(()=>buildMidi().length));
+ const c=await p.locator('.dx-sec:not([data-orch])').boundingBox(); await p.mouse.move(c.x+10,c.y+8); await p.mouse.down(); await p.mouse.move(c.x+60,c.y+40,{steps:5}); await p.mouse.up(); await p.waitForTimeout(200);
+ console.log('whole song:',await p.evaluate(()=>{ const d=__nlog.filter(x=>x[0]==='st_drag_audio').pop()[1]; return d.name+' items '+d.items.length+' beats '+d.items.map(x=>x.beats).join(','); }));
+ await p.click('#timeline .sec >> nth=3'); console.log('plain click selects:',await p.evaluate(()=>S.sel));
+ await p.evaluate(()=>__fire('st_dragdone',{ok:false,why:'notready'})); await p.waitForTimeout(100); console.log('toast:',await p.evaluate(()=>{ const t=document.querySelector('.toast'); return t?t.textContent:''; }));
+ await p.screenshot({path:require('path').join(require('os').tmpdir(),'secdrag.png'),clip:{x:0,y:300,width:1300,height:260}});
+ console.log(errs); await b.close(); })();
