@@ -56,6 +56,7 @@ suggest and you accept, never surprise changes.
    mix automation, transitions, recorded takes, samples and SoundFonts, orchestral instruments.
 
 ### Phase 2: record the song
+First version done: native takes in the desktop app (`Source/TakeRecorder.h`, `nativeTakeStart`), takes follow their section (`takeKey`, `takeSi`), Use this one, a Record button, punch-in from the playhead, a timing offset. Takes are not yet part of the .semitone file, and Record does not yet tell humming from singing.
 - Audio tracks for vocals and guitar, placed by section (recordings belong to a section, so they follow the structure).
 - One Record button: it knows whether you're humming (→ melody), singing, playing keys or recording an instrument.
 - Takes, comping and punch-in for each section; latency compensation.

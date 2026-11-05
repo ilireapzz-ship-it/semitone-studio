@@ -4,6 +4,9 @@
 #include "SongFiles.h"
 #include "FLMarkers.h"
 #include "LibraryScan.h"
+#if JucePlugin_Build_Standalone
+ #include <juce_audio_plugin_client/Standalone/juce_StandaloneFilterWindow.h>
+#endif
 
 SemitoneEditor::SemitoneEditor (SemitoneProcessor& p)
     : AudioProcessorEditor (p), proc (p), browser (makeOptions())
@@ -83,6 +86,8 @@ juce::WebBrowserComponent::Options SemitoneEditor::makeOptions()
         .withEventListener ("st_save", [this] (const juce::var& v) { saveFile (v.getProperty ("name", "Semitone export").toString(), v.getProperty ("b64", "").toString()); })
         // song structure -> FL Studio Playlist markers, through Semitone's controller script
         .withEventListener ("st_markers", [this] (const juce::var& v) { sendMarkers (v); })
+        .withEventListener ("st_take_start", [this] (const juce::var&) { takeStart(); })
+        .withEventListener ("st_take_stop", [this] (const juce::var&) { takeStop(); })
         .withEventListener ("st_scan", [this] (const juce::var&) { scanLibrary(); })
         .withEventListener ("st_scan_load", [this] (const juce::var&) { loadLibraryScan(); })
         .withEventListener ("st_drag_audio", [this] (const juce::var& v) { dragAudio (v); })
@@ -96,6 +101,15 @@ std::optional<juce::WebBrowserComponent::Resource> SemitoneEditor::getResource (
     {
         const auto* d = reinterpret_cast<const std::byte*> (BinaryData::index_html);
         return juce::WebBrowserComponent::Resource { std::vector<std::byte> (d, d + BinaryData::index_htmlSize), "text/html" };
+    }
+    if (path.startsWith ("takes/"))     // a finished take: only a plain file name in the Takes folder
+    {
+        const auto name = path.fromFirstOccurrenceOf ("/", false, false);
+        const auto f = st::files::takesFolder().getChildFile (name);
+        juce::MemoryBlock mb;
+        if (name.containsAnyOf ("/\\") || name.contains ("..") || ! f.loadFileAsData (mb)) return std::nullopt;
+        const auto* d = static_cast<const std::byte*> (mb.getData());
+        return juce::WebBrowserComponent::Resource { std::vector<std::byte> (d, d + mb.getSize()), "audio/wav" };
     }
     return std::nullopt;
 }
@@ -326,6 +340,42 @@ void SemitoneEditor::scanDone (const juce::String& json)
     auto* o = new juce::DynamicObject();
     o->setProperty ("json", json);
     browser.emitEventIfBrowserIsVisible ("st_scan_done", juce::var (o));
+}
+
+// Desktop app only: the page shows the take, the app records it. Inside a DAW the DAW records.
+void SemitoneEditor::takeStart()
+{
+    auto* o = new juce::DynamicObject();
+    bool ok = false;
+   #if JucePlugin_Build_Standalone
+    if (auto* h = juce::StandalonePluginHolder::getInstance())
+        h->getMuteInputValue().setValue (false);    // the input only goes to the file: nothing reaches the speakers
+    ok = proc.isStandalone() && proc.getTotalNumInputChannels() > 0;
+   #endif
+    if (ok)
+    {
+        takeFile = st::files::takesFolder().getNonexistentChildFile ("Take " + juce::Time::getCurrentTime().formatted ("%Y-%m-%d %H%M%S"), ".wav", false);
+        ok = proc.takeRecorder.start (takeFile.getFullPathName().toStdString(), proc.getSampleRateNow());
+    }
+    o->setProperty ("ok", ok);
+    browser.emitEventIfBrowserIsVisible ("st_take_started", juce::var (o));
+}
+
+void SemitoneEditor::takeStop()
+{
+    const auto res = proc.takeRecorder.stop();
+    auto* o = new juce::DynamicObject();
+    double inLat = 0;
+   #if JucePlugin_Build_Standalone
+    if (auto* h = juce::StandalonePluginHolder::getInstance())
+        if (auto* dev = h->deviceManager.getCurrentAudioDevice())
+            inLat = (dev->getInputLatencyInSamples() + dev->getCurrentBufferSizeSamples()) / juce::jmax (1.0, dev->getCurrentSampleRate());
+   #endif
+    o->setProperty ("file", takeFile.getFileName());
+    o->setProperty ("frames", (double) res.frames);
+    o->setProperty ("dropped", (double) res.dropped);
+    o->setProperty ("inLat", inLat);
+    browser.emitEventIfBrowserIsVisible ("st_take_done", juce::var (o));
 }
 
 void SemitoneEditor::sendMarkers (const juce::var& v)

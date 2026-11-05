@@ -21,6 +21,8 @@ private:
     void dragAudio (const juce::var& v);
     void sendMarkers (const juce::var& v);
     void scanLibrary();
+    void takeStart();
+    void takeStop();
     void loadLibraryScan();
     void scanDone (const juce::String& json);
     void prepareMarkers();
@@ -40,6 +42,7 @@ private:
     std::unique_ptr<juce::FileChooser> chooser;
     std::vector<juce::uint32> incoming;
     juce::String lastAutosaved;
+    juce::File takeFile;
     bool lastPlaying = false;
     int ticks = 0;
     std::shared_ptr<st::Clip> building;   // the clip arriving in chunks

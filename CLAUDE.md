@@ -20,6 +20,7 @@ Jamie is a songwriter, not a programmer: explain results in plain words, not cod
 | Native sound engine | `Source/Synth.h` (JUCE-free): live voices driven by the sequencer's events; plays any beat no rendered section covers, with no web page |
 | Song files, autosave, recents | `Source/SongFiles.h` |
 | Scan my plug-ins (names only, kept locally) | `Source/LibraryScan.h` |
+| Recording takes (desktop app, audio input to WAV, tested) | `Source/TakeRecorder.h`; files in Documents/Semitone Studio/Songs/Takes |
 | Mac drag of MIDI files | `Source/MacDrag.mm` |
 | Interface tests | `tests/web/*.test.js` (Playwright, see tests/web/README.md) |
 | Tests | `tests/sequencer_test.cpp` (sequencer + clip player): `clang++ -std=c++17 -ISource tests/sequencer_test.cpp -o t && ./t`; `tests/synth_test.cpp` (sound engine), same way with `-O2`. `build-mac.sh` and CI run both |
@@ -27,11 +28,11 @@ Jamie is a songwriter, not a programmer: explain results in plain words, not cod
 ## Bridge events (web ⇄ native, JSON)
 Web → native: `st_ready`, `st_timeline` (notes `[start,dur,ch,key,vel,…]`, `ev` pitch bends, `length`, `offset`,
 `sound` = every part's patch settings from `nativeSoundInfo()`, saved in the DAW project so the engine works with the window closed),
-`st_state`, `st_scan`, `st_scan_load`, `st_transport` (standalone), `st_save`, `st_drag`, `st_song_save`, `st_song_open`, `st_title`,
+`st_state`, `st_scan`, `st_scan_load`, `st_take_start`, `st_take_stop`, `st_transport` (standalone), `st_save`, `st_drag`, `st_song_save`, `st_song_open`, `st_title`,
 `st_soundmode` (0 sounds+MIDI, 1 sounds only, 2 MIDI only, 3 built-in engine only, for comparing), `st_audio_layout` (`[{id,at}]` per section),
 `st_audio_clip` (chunked int16 PCM + tempo marks).
 Native → web: `st_init`, `st_host` (playing/ppq/bpm ~30×/s), `st_midiin`, `st_saved`, `st_dragdone`,
-`st_song_saved`, `st_song_opened`, `st_audio_need`, `st_audio_got`, `st_scan_done`.
+`st_song_saved`, `st_song_opened`, `st_audio_need`, `st_audio_got`, `st_scan_done`, `st_take_started`, `st_take_done`.
 In the HTML, the bridge is the `NATIVE` / `nativeInit()` / `NSND` code (only active inside the app/plugin).
 
 ## Editing the HTML

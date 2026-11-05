@@ -48,6 +48,9 @@ rm -f build-local-seqtest
 clang++ -std=c++17 -O2 -Wall -ISource tests/synth_test.cpp -o build-local-synthtest
 ./build-local-synthtest | tail -3
 rm -f build-local-synthtest
+clang++ -std=c++17 -O2 -Wall -pthread -ISource tests/take_test.cpp -o build-local-taketest
+./build-local-taketest | tail -1
+rm -f build-local-taketest
 
 # 4. Build (the first build also downloads JUCE: allow ~10 minutes; later builds take a minute or two)
 say "Building ($(uname -m))"

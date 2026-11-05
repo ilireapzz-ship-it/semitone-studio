@@ -60,7 +60,7 @@ juce_add_plugin(SemitoneStudio
     VST3_CATEGORIES Instrument Generator
     AU_MAIN_TYPE kAudioUnitType_MusicDevice
     MICROPHONE_PERMISSION_ENABLED TRUE
-    MICROPHONE_PERMISSION_TEXT "Semitone listens to your voice or instrument to find notes and keys.")
+    MICROPHONE_PERMISSION_TEXT "Semitone records your voice or instrument and listens to find notes and keys.")
 
 juce_add_binary_data(SemitoneWeb SOURCES ${ST_WEB_OUT})
 add_dependencies(SemitoneWeb SemitoneWebWrap)

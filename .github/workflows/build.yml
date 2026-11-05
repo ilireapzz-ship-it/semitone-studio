@@ -19,6 +19,7 @@ jobs:
           python3 tools/embed_data.py --check || echo "::warning::data/ changed: run tools/embed_data.py"
           g++ -std=c++17 -O1 -Wall -ISource tests/sequencer_test.cpp -o seqtest && ./seqtest
           g++ -std=c++17 -O2 -Wall -ISource tests/synth_test.cpp -o synthtest && ./synthtest
+          g++ -std=c++17 -O2 -Wall -pthread -ISource tests/take_test.cpp -o taketest && ./taketest
 
   windows:
     name: Windows (VST3 + app)

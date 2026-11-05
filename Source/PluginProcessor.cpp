@@ -3,7 +3,9 @@
 #include "SongFiles.h"
 
 SemitoneProcessor::SemitoneProcessor()
-    : AudioProcessor (BusesProperties().withOutput ("Output", juce::AudioChannelSet::stereo(), true))
+    : AudioProcessor (juce::JUCEApplicationBase::isStandaloneApp()
+                          ? BusesProperties().withInput ("Input", juce::AudioChannelSet::stereo(), true).withOutput ("Output", juce::AudioChannelSet::stereo(), true)
+                          : BusesProperties().withOutput ("Output", juce::AudioChannelSet::stereo(), true))
 {
     events.reserve (4096);
     // standalone app: come back to the song you were working on, even after a crash
@@ -31,6 +33,8 @@ bool SemitoneProcessor::isBusesLayoutSupported (const BusesLayout& layouts) cons
 void SemitoneProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi)
 {
     juce::ScopedNoDenormals noDenormals;
+    if (takeRecorder.active() && getTotalNumInputChannels() > 0 && buffer.getNumChannels() > 0)
+        takeRecorder.push (buffer.getReadPointer (0), getTotalNumInputChannels() > 1 && buffer.getNumChannels() > 1 ? buffer.getReadPointer (1) : nullptr, buffer.getNumSamples());
     buffer.clear();
     // pass notes you play to the interface (it uses them for play-along and live recording)
     for (const auto meta : midi)

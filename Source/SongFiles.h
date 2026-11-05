@@ -17,6 +17,12 @@ namespace st::files
         d.createDirectory();
         return d;
     }
+    inline juce::File takesFolder()
+    {
+        auto d = songsFolder().getChildFile ("Takes");
+        d.createDirectory();
+        return d;
+    }
     inline juce::File autosaveFile() { return appData().getChildFile ("Autosave.semitone"); }
     inline juce::File recentFile()   { return appData().getChildFile ("recent.txt"); }
 

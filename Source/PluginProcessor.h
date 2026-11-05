@@ -1,4 +1,5 @@
 #pragma once
+#include "TakeRecorder.h"
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_audio_utils/juce_audio_utils.h>
 #include "Sequencer.h"
@@ -78,6 +79,9 @@ private:
     std::atomic<double> stStartRequest { -1.0 };
 
     st::ClipPlayer clipPlayer;
+public:
+    st::TakeRecorder takeRecorder;   // standalone only: the audio input goes here, never to the speakers
+private:
     std::atomic<int> soundMode { 0 };
     std::atomic<double> tlLength { 0.0 }, tlOffset { 0.0 };
     std::map<juce::String, std::shared_ptr<st::Clip>> clips;   // message thread
