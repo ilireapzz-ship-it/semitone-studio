@@ -8,6 +8,7 @@
 // Sections rendered by the page (ClipPlayer) still carry those.
 // Header-only and JUCE-free so it can be unit-tested anywhere.
 #pragma once
+#include <string>
 #include "Sequencer.h"
 #include <algorithm>
 #include <array>
@@ -77,6 +78,8 @@ struct Lane
 {
     int ch = -1;
     bool pan = false;
+    int fxSlot = -1, fxParam = -1;     // set: this lane drives an effect's parameter, with absolute values
+    std::string fxName;
     std::vector<std::pair<double, float>> pts;
 
     float at (double beat) const
@@ -95,10 +98,14 @@ struct Lane
     }
 };
 
+struct FxDesc;
+class FxBank;
 struct SynthPatch
 {
     std::vector<PartPatch> parts;
     std::vector<Lane> lanes;
+    std::shared_ptr<std::vector<FxDesc>> fxList;   // what the page asked for
+    std::shared_ptr<FxBank> fx;                    // built off the audio thread by the caller; running state lives here
     std::vector<NoteBuffers> buffers;   // one per part (the buffers are owned by the caller's cache)
     int drumCh = -1;
     float drumLevel = 1, drumPan = 0;
@@ -792,6 +799,10 @@ private:
 };
 
 // ---- the engine ----
+} // namespace st
+#include "SynthFx.h"
+namespace st
+{
 class Synth
 {
 public:
@@ -807,6 +818,7 @@ public:
         for (int i = 0; i < 3; ++i) choruses[(size_t) i].prepare (sr, i + 1);
         for (auto& v : voices) v.active = false;
         current.reset();
+        fxBus = nullptr;
     }
 
     // Any thread. The caller keeps the previous patch alive for a few seconds, as with ClipPlayer's banks.
@@ -821,6 +833,8 @@ public:
         if (next != current)
         {
             current = std::move (next);
+            fxBus = current ? current->fx.get() : nullptr;
+            busL.fill (0); busR.fill (0); chorusCh.fill (-1); busLevel.fill (1); busPan.fill (0); busStereo.fill (false);
             if (current)
             {
                 room.setDecay (current->roomT60);
@@ -855,7 +869,8 @@ public:
                 v.tick (bends[(size_t) (v.ch & 15)]);
                 if (! v.active) continue;
                 const int ci = v.ch & 15;
-                if (! v.isDrum && v.p.chorus > 0) { chorusIn[(size_t) (v.p.chorus - 1)] += v.outL * v.p.level * chGain[(size_t) ci]; continue; }
+                if (! v.isDrum && v.p.chorus > 0) { chorusIn[(size_t) (v.p.chorus - 1)] += v.outL * (fxBus ? 1.0f : v.p.level * chGain[(size_t) ci]); if (fxBus) { chorusCh[(size_t) (v.p.chorus - 1)] = ci; busLevel[(size_t) ci] = v.p.level; busPan[(size_t) ci] = v.p.pan; busStereo[(size_t) ci] = true; } continue; }
+                if (fxBus && fxBus->any[(size_t) ci]) { busL[(size_t) ci] += v.outL; busR[(size_t) ci] += v.outR; busLevel[(size_t) ci] = v.p.level; busPan[(size_t) ci] = v.p.pan; busStereo[(size_t) ci] = v.p.stereo; continue; }
                 float pl, pr;
                 panGains (hasPan[(size_t) ci] ? chPan[(size_t) ci] : v.p.pan, v.p.stereo, pl, pr);
                 l += v.outL * v.p.level * chGain[(size_t) ci] * pl;
@@ -865,9 +880,28 @@ public:
             {
                 float cl, cr;
                 choruses[c].run (chorusIn[c], cl, cr);
+                if (fxBus)
+                {
+                    const int ci = chorusCh[c];
+                    if (ci >= 0 && fxBus->any[(size_t) ci]) { busL[(size_t) ci] += cl; busR[(size_t) ci] += cr; continue; }
+                    if (ci >= 0) { cl *= busLevel[(size_t) ci] * chGain[(size_t) ci]; cr *= busLevel[(size_t) ci] * chGain[(size_t) ci]; }
+                }
                 l += cl; r += cr;
             }
+            if (fxBus)
+                for (size_t c = 0; c < 16; ++c)
+                {
+                    if (! fxBus->any[c]) continue;
+                    float bl = busL[c], br = busR[c];
+                    busL[c] = busR[c] = 0;
+                    fxBus->run ((int) c, bl, br);
+                    float pl, pr;
+                    panGains (hasPan[c] ? chPan[c] : busPan[c], busStereo[c], pl, pr);
+                    l += bl * busLevel[c] * chGain[c] * pl;
+                    r += br * busLevel[c] * chGain[c] * pr;
+                }
             l *= .6f * masterGain; r *= .6f * masterGain;    // the master bus
+            if (fxBus && fxBus->any[FxBank::master]) fxBus->run (FxBank::master, l, r);
             if (current->roomMix > 0)
             {
                 float wl, wr;
@@ -907,7 +941,8 @@ private:
         for (const auto& k : current->lanes)
         {
             const float v = k.at (beat);
-            if (k.ch < 0) { if (! k.pan) masterGain = v; }
+            if (k.fxSlot >= 0) { if (fxBus) if (auto* f = fxBus->at (k.ch < 0 ? FxBank::master : k.ch, k.fxSlot)) f->set (k.fxParam, v); }
+            else if (k.ch < 0) { if (! k.pan) masterGain = v; }
             else if (k.pan) { chPan[(size_t) (k.ch & 15)] = v; hasPan[(size_t) (k.ch & 15)] = true; }
             else chGain[(size_t) (k.ch & 15)] = v;
         }
@@ -971,7 +1006,10 @@ private:
     Noise rng;
     std::array<Voice, maxVoices> voices {};
     std::array<float, 16> chGain { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }, chPan {};
-    std::array<bool, 16> hasPan {};
+    std::array<bool, 16> hasPan {}, busStereo {};
+    std::array<float, 16> busL {}, busR {}, busLevel {}, busPan {};
+    std::array<int, 3> chorusCh { -1, -1, -1 };
+    FxBank* fxBus = nullptr;
     float masterGain = 1;
     std::array<double, 16> bends { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
     std::vector<Event> sorted;

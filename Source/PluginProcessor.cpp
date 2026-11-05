@@ -262,6 +262,28 @@ void SemitoneProcessor::setSynthSound (const juce::var& sound, const st::Timelin
                     for (int i = 0; i + 1 < p->size(); i += 2) k.pts.push_back ({ (double) (*p)[i], (float) (double) (*p)[i + 1] });
                 t->lanes.push_back (std::move (k));
             }
+        if (auto* fx = sound.getProperty ("fx", juce::var()).getArray())
+        {
+            t->fxList = std::make_shared<std::vector<st::FxDesc>>();
+            for (const auto& o : *fx)
+            {
+                st::FxDesc d;
+                d.ch = (int) o.getProperty ("ch", 0); d.slot = (int) o.getProperty ("slot", 0);
+                d.type = o.getProperty ("type", "").toString().toStdString(); d.style = o.getProperty ("style", "").toString().toStdString();
+                if (auto* obj = o.getProperty ("p", juce::var()).getDynamicObject())
+                    for (const auto& kv : obj->getProperties()) if (kv.value.isDouble() || kv.value.isInt() || kv.value.isInt64()) d.p[kv.name.toString().toStdString()] = (float) (double) kv.value;
+                t->fxList->push_back (std::move (d));
+            }
+        }
+        if (auto* lanes = sound.getProperty ("fxLanes", juce::var()).getArray())
+            for (const auto& o : *lanes)
+            {
+                st::Lane k;
+                k.ch = (int) o.getProperty ("ch", -1); k.fxSlot = (int) o.getProperty ("slot", 0); k.fxName = o.getProperty ("k", "").toString().toStdString();
+                if (auto* p = o.getProperty ("pts", juce::var()).getArray())
+                    for (int i = 0; i + 1 < p->size(); i += 2) k.pts.push_back ({ (double) (*p)[i], (float) (double) (*p)[i + 1] });
+                t->lanes.push_back (std::move (k));
+            }
         uint32_t mute = 0;
         if (auto* m = sound.getProperty ("midiMute", juce::var()).getArray())
             for (const auto& c : *m) mute |= 1u << juce::jlimit (0, 15, (int) c);
@@ -308,6 +330,14 @@ void SemitoneProcessor::buildSynthPatch()
         {
             built = std::make_shared<st::SynthPatch> (*tmpl);
             built->buffers.resize (built->parts.size());
+            if (built->fxList)
+            {
+                built->fx = st::makeFxBank (*built->fxList, rate);
+                for (auto& k : built->lanes)
+                    if (k.fxSlot >= 0)
+                        if (auto* f = built->fx->at (k.ch < 0 ? st::FxBank::master : k.ch, k.fxSlot)) k.fxParam = f->param (k.fxName);
+                built->lanes.erase (std::remove_if (built->lanes.begin(), built->lanes.end(), [] (const st::Lane& k) { return k.fxSlot >= 0 && k.fxParam < 0; }), built->lanes.end());
+            }
             for (size_t i = 0; i < built->parts.size(); ++i)
             {
                 auto& nb = built->buffers[i];

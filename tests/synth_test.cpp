@@ -305,6 +305,41 @@ int main()
         printf ("ok: rendered sections take over from the engine, and only for their own beats\n");
     }
 
+    // part effects: a filter darkens, an echo repeats, an effect lane moves its parameter, nothing runs away
+    {
+        auto run = [&] (std::vector<FxDesc> list, std::vector<Lane> lanes, double seconds, double from, double to)
+        {
+            Synth sy; sy.prepare (SR);
+            auto pt = std::make_shared<SynthPatch>();
+            PartPatch p; p.ch = 0; p.kind = Kind::voice; p.wave = Wave::saw; p.vol = .2f; p.cutoff = 12000; p.attack = .001f; p.release = .01f; p.level = 1;
+            pt->parts.push_back (p); pt->lanes = lanes; pt->fx = makeFxBank (list, SR);
+            sy.setPatch (pt);
+            const int blk = 480; std::vector<float> L ((size_t) blk), R ((size_t) blk); std::vector<Event> ev; double t = 0, e = 0; int c = 0;
+            Event on {}; on.status = 0x90; on.d1 = 81; on.d2 = 100; ev.push_back (on);
+            bool off = false;
+            while (t < seconds)
+            {
+                if (! off && t >= .5) { Event o {}; o.status = 0x80; o.d1 = 81; ev.push_back (o); off = true; }
+                std::fill (L.begin(), L.end(), 0.f); std::fill (R.begin(), R.end(), 0.f);
+                sy.process (ev, blk, L.data(), R.data(), 1, t * 2, 2.0 / SR); ev.clear();
+                for (int i = 0; i < blk; ++i) { if (! std::isfinite (L[(size_t) i])) return -1.0; if (t >= from && t < to) { e += L[(size_t) i] * L[(size_t) i]; ++c; } }
+                t += blk / SR;
+            }
+            return std::sqrt (e / std::max (1, c));
+        };
+        FxDesc lp; lp.ch = 0; lp.type = "filter"; lp.style = "Low-pass"; lp.p = { { "cutoff", 300 }, { "res", .1f }, { "mix", 1 } };
+        FxDesc ec; ec.ch = 0; ec.type = "echo"; ec.style = "Digital"; ec.p = { { "sec", .6f }, { "fb", .5f }, { "tone", 6000 }, { "send", 1 }, { "mix", .5f } };
+        const double dry = run ({}, {}, 2, .1, .45), dark = run ({ lp }, {}, 2, .1, .45), tail0 = run ({}, {}, 2, .7, .9), tail = run ({ ec }, {}, 2, .7, .9);
+        Lane open; open.ch = 0; open.fxSlot = 0; open.fxParam = 0; open.pts = { { 0, 16000.f } };
+        const double opened = run ({ lp }, { open }, 2, .1, .45);
+        if (dry <= 0 || dark > dry * .9 || opened < dark * 1.1 || tail < tail0 * 5 + .001) { printf ("FAIL fx: dry %.4f dark %.4f opened %.4f tail %.5f vs %.5f\n", dry, dark, opened, tail, tail0); return 1; }
+        FxDesc pl; pl.ch = 0; pl.type = "plate"; pl.p = { { "decay", 6 }, { "mix", 1 } };
+        FxDesc hot = ec; hot.slot = 1; hot.p["fb"] = .92f; hot.style = "Tape";
+        const double late = run ({ pl, hot }, {}, 20, 19, 20);
+        if (late < 0 || late > .5) { printf ("FAIL fx runaway %.4f\n", late); return 1; }
+        printf ("ok: part effects shape the sound, follow their lanes and stay stable\n");
+    }
+
     // automation lanes: a part's volume and pan follow the song position
     {
         Synth sy; sy.prepare (SR);
