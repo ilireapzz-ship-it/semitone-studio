@@ -760,6 +760,28 @@ kbd{font-family:var(--f-mono);font-size:.72rem;border:1px solid var(--line);bord
 .info-pop b,.info-pop strong{color:inherit}
 .otip-warn{margin:0;font-size:.74rem;grid-column:1/-1}.otip-warn .warn{color:var(--bad);font-weight:600}
 h2 .info-i{width:19px;height:19px;font-size:12px;margin-left:8px;position:relative;top:-2px}
+
+/* compose settings column: collapsible into a bar above the editor */
+.compose-grid > aside{position:relative}
+.side-toggle{position:absolute;top:8px;right:8px;font-size:.72rem!important;padding:2px 8px!important}
+.compose-grid > aside > .field:first-of-type{margin-top:14px}
+.compose-grid{transition:grid-template-columns .15s}
+.compose-grid.side-min{grid-template-columns:minmax(0,1fr)}
+.compose-grid.side-min > aside{display:flex;flex-direction:row;flex-wrap:wrap;align-items:flex-end;gap:8px 16px;padding:10px 14px}
+.compose-grid.side-min > aside > *{margin:0!important}
+.compose-grid.side-min > aside > .field{gap:3px;min-width:0}
+.compose-grid.side-min > aside > .field:first-of-type{margin-top:0!important}
+.compose-grid.side-min > aside .label{font-size:.64rem}
+.compose-grid.side-min > aside select{padding:4px 26px 4px 8px;font-size:.82rem;min-height:0;height:auto}
+.compose-grid.side-min > aside > .field input[type=range]{width:120px}
+.compose-grid.side-min > aside .ends{display:none}
+.compose-grid.side-min > aside .q-head{border-top:0;padding-top:0;gap:6px;align-self:center}
+.compose-grid.side-min > aside details.quirks{align-self:center}
+.compose-grid.side-min > aside details.quirks[open] > :not(summary){position:absolute;z-index:30;top:calc(100% + 6px);left:12px;width:min(360px,calc(100vw - 40px));max-height:70vh;overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.compose-grid.side-min > aside > label.check{align-self:center}
+.compose-grid.side-min > aside details.quirks.q-off[open] > .stack{opacity:1}.compose-grid.side-min > aside details.quirks.q-off[open] > .stack > *{opacity:.6}
+.compose-grid.side-min > aside > .info-i{align-self:center}
+.compose-grid.side-min .side-toggle{position:static;order:99;margin-left:auto!important;align-self:center}
 </style>
 
 <header class="topbar">
@@ -7069,6 +7091,13 @@ function initTidy(){
   const vc=$('#view-compose');
   // 1. style lanes fold into one line
   const sg=$('#styles'); if(sg){ const block=sg.parentElement; makePickFold(block,[block.querySelector(':scope > .panel-head'),sg,$('#dnaBox')],'Style',()=>({name:S.style&&S.style.name,lane:S.style&&S.style.lane,dna:($('#dnaSum')&&$('#dnaBox')&&!$('#dnaBox').hidden)?$('#dnaSum').textContent:(S.style&&S.style.desc)}),'Change style'); }
+  // compose settings: collapse the left column into a bar above the editor
+  { const grid=$('#view-compose .compose-grid'), aside=grid&&grid.querySelector(':scope > aside');
+    if(aside){ const b=document.createElement('button'); b.type='button'; b.className='btn mini-btn side-toggle'; aside.prepend(b);
+      const set=min=>{ grid.classList.toggle('side-min',min); b.textContent=min?'Expand ▾':'◂ Collapse'; b.title=min?'Show the settings as a column again':'Fold the settings into a bar and widen the editor'; b.setAttribute('aria-expanded',!min); tidyLS('ss_side',min?'1':'0'); requestAnimationFrame(()=>window.dispatchEvent(new Event('resize'))); };
+      b.onclick=()=>set(!grid.classList.contains('side-min'));
+      document.addEventListener('click',e=>{ const d=aside.querySelector('details.quirks'); if(d&&d.open&&grid.classList.contains('side-min')&&!e.target.closest('details.quirks')) d.open=false; });
+      set(tidyLS('ss_side')==='1'); } }
   // 2. piano-roll help tucked behind a button
   const rt=vc.querySelector('.roll-tools'), hint=rt&&rt.querySelector(':scope > .hint'); if(hint){ hint.classList.add('tucked'); const b=document.createElement('button'); b.type='button'; b.className='btn mini-btn tip-btn'; b.textContent='How to edit ?'; b.onclick=()=>hint.classList.toggle('open'); rt.insertBefore(b,hint); }
   // 3. everything below the rolls goes into one tabbed workspace
