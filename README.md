@@ -25,7 +25,8 @@ Events between the interface and the plugin: `st_ready`, `st_init`, `st_timeline
 ## Builds
 
 Every push builds Windows and macOS versions with GitHub Actions (`.github/workflows/build.yml`).
-Download them from the run's **Artifacts**. Local build:
+Download them from the run's **Artifacts**. On a Mac, `tools/build-mac.sh` builds, tests and installs
+everything in a few minutes (it fetches CMake itself if needed). Manual local build:
 
 ```
 cmake -B build -DCMAKE_BUILD_TYPE=Release
