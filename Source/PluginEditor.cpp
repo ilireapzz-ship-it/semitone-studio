@@ -22,11 +22,6 @@ SemitoneEditor::SemitoneEditor (SemitoneProcessor& p)
         h = juce::jmin (h, d->userArea.getHeight() - 140);
     }
     setSize (juce::jmax (720, w), juce::jmax (480, h));
-   #if JucePlugin_Build_Standalone
-    // the audio input only ever goes to take files, never to the speakers, so the feedback warning doesn't apply
-    if (auto* h = juce::StandalonePluginHolder::getInstance())
-        h->getMuteInputValue().setValue (false);
-   #endif
     browser.goToURL (juce::WebBrowserComponent::getResourceProviderRoot());
     incoming.reserve (1024);
     prepareMarkers();
@@ -350,12 +345,34 @@ void SemitoneEditor::scanDone (const juce::String& json)
 // Desktop app only: the page shows the take, the app records it. Inside a DAW the DAW records.
 void SemitoneEditor::takeStart()
 {
+    juce::Component::SafePointer<SemitoneEditor> self (this);
+    juce::RuntimePermissions::request (juce::RuntimePermissions::recordAudio, [self] (bool granted)
+    {
+        if (self != nullptr) self->takeOpenInput (granted);
+    });
+}
+
+// The input stays closed until the first take, so opening the app never waits on the microphone permission.
+void SemitoneEditor::takeOpenInput (bool granted)
+{
     auto* o = new juce::DynamicObject();
     bool ok = false;
    #if JucePlugin_Build_Standalone
-    if (auto* h = juce::StandalonePluginHolder::getInstance())
+    auto* h = juce::StandalonePluginHolder::getInstance();
+    if (granted && h != nullptr && proc.isStandalone())
+    {
+        if (proc.getTotalNumInputChannels() == 0)
+        {
+            h->stopPlaying();
+            if (auto* bus = proc.getBus (true, 0)) bus->enable (true);
+            auto setup = h->deviceManager.getAudioDeviceSetup();
+            setup.useDefaultInputChannels = true;
+            h->deviceManager.setAudioDeviceSetup (setup, true);
+            h->startPlaying();
+        }
         h->getMuteInputValue().setValue (false);    // the input only goes to the file: nothing reaches the speakers
-    ok = proc.isStandalone() && proc.getTotalNumInputChannels() > 0;
+        ok = proc.getTotalNumInputChannels() > 0;
+    }
    #endif
     if (ok)
     {

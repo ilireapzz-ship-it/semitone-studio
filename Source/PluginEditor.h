@@ -22,6 +22,7 @@ private:
     void sendMarkers (const juce::var& v);
     void scanLibrary();
     void takeStart();
+    void takeOpenInput (bool granted);
     void takeStop();
     void loadLibraryScan();
     void scanDone (const juce::String& json);

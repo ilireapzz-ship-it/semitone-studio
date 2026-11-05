@@ -4,7 +4,7 @@
 
 SemitoneProcessor::SemitoneProcessor()
     : AudioProcessor (juce::JUCEApplicationBase::isStandaloneApp()
-                          ? BusesProperties().withInput ("Input", juce::AudioChannelSet::stereo(), true).withOutput ("Output", juce::AudioChannelSet::stereo(), true)
+                          ? BusesProperties().withInput ("Input", juce::AudioChannelSet::stereo(), false).withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                           : BusesProperties().withOutput ("Output", juce::AudioChannelSet::stereo(), true))
 {
     events.reserve (4096);
