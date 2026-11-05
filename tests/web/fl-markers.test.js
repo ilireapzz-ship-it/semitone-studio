@@ -1,9 +1,9 @@
 const {chromium}=require('playwright');
 (async()=>{ const b=await chromium.launch(); const p=await b.newPage({viewport:{width:1300,height:900}}); const errs=[]; p.on('pageerror',e=>errs.push(e.message));
- await p.addInitScript(()=>{ window.__nlog=[]; const H={}; window.__JUCE__={backend:{emitEvent:(id,o)=>__nlog.push([id,o]),addEventListener:(id,fn)=>{(H[id]=H[id]||[]).push(fn);}}}; window.__fire=(id,o)=>(H[id]||[]).forEach(f=>f(o)); });
+ await p.addInitScript(()=>{ window.__noStart=1; window.__nlog=[]; const H={}; window.__JUCE__={backend:{emitEvent:(id,o)=>__nlog.push([id,o]),addEventListener:(id,fn)=>{(H[id]=H[id]||[]).push(fn);}}}; window.__fire=(id,o)=>(H[id]||[]).forEach(f=>f(o)); });
  await p.goto('file://'+require('path').resolve(__dirname,'../../web/semitone-studio.html')+''); await p.waitForTimeout(1500);
  await p.evaluate(()=>__fire('st_init',{plugin:true,host:'Fruity Loops',project:''})); await p.waitForTimeout(800);
- await p.click('#secDragHint .fl-mk'); await p.waitForTimeout(100);
+ await p.evaluate(()=>shellDock('daw')); await p.waitForTimeout(100); await p.click('#secDragHint .fl-mk'); await p.waitForTimeout(100);
  console.log('sent:',await p.evaluate(()=>JSON.stringify(__nlog.filter(x=>x[0]==='st_markers').pop()[1])));
  await p.evaluate(()=>__fire('st_markers_done',{script:1,port:true,sent:7})); await p.waitForTimeout(100);
  console.log('installed now → setup open:',await p.evaluate(()=>document.querySelector('#secDragHint .fl-setup').open),'|',await p.evaluate(()=>document.querySelector('.toast')?.textContent));

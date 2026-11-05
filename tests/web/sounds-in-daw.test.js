@@ -1,6 +1,6 @@
 const {chromium}=require('playwright');
 (async()=>{ const b=await chromium.launch({args:['--autoplay-policy=no-user-gesture-required']}); const p=await b.newPage({viewport:{width:1300,height:900}}); const errs=[]; p.on('pageerror',e=>errs.push('PAGEERR '+e.message+' '+(e.stack||'').split('\n')[1])); p.on('console',m=>{ if(m.type()==='warning'||m.type()==='error') errs.push(m.text()); });
- await p.addInitScript(()=>{ window.__nlog=[]; const H={}; window.__JUCE__={backend:{emitEvent:(id,o)=>__nlog.push([id,o]),addEventListener:(id,fn)=>{(H[id]=H[id]||[]).push(fn);}}}; window.__fire=(id,o)=>(H[id]||[]).forEach(f=>f(o)); });
+ await p.addInitScript(()=>{ window.__noStart=1; window.__nlog=[]; const H={}; window.__JUCE__={backend:{emitEvent:(id,o)=>__nlog.push([id,o]),addEventListener:(id,fn)=>{(H[id]=H[id]||[]).push(fn);}}}; window.__fire=(id,o)=>(H[id]||[]).forEach(f=>f(o)); });
  await p.goto('file://'+require('path').resolve(__dirname,'../../web/semitone-studio.html')+''); await p.waitForTimeout(1500);
  await p.evaluate(()=>__fire('st_init',{plugin:true,host:'FL Studio',project:'',soundMode:0,sr:44100})); await p.waitForTimeout(3500);
  const lay=await p.evaluate(()=>{ const L=__nlog.filter(x=>x[0]==='st_audio_layout'); return {count:L.length,last:L.pop()[1],secs:S.song.sections.map(s=>s.type+s.bars)}; });

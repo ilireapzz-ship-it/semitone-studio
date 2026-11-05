@@ -1,6 +1,6 @@
 const {chromium}=require('playwright');
 (async()=>{ const b=await chromium.launch(); const p=await b.newPage({viewport:{width:1300,height:900}}); const errs=[]; p.on('pageerror',e=>errs.push('PAGEERR '+e.message));
- await p.addInitScript(()=>{ window.__nlog=[]; const H={}; window.__JUCE__={backend:{emitEvent:(id,o)=>__nlog.push([id,o]),addEventListener:(id,fn)=>{(H[id]=H[id]||[]).push(fn);}}}; window.__fire=(id,o)=>(H[id]||[]).forEach(f=>f(o)); });
+ await p.addInitScript(()=>{ window.__noStart=1; window.__nlog=[]; const H={}; window.__JUCE__={backend:{emitEvent:(id,o)=>__nlog.push([id,o]),addEventListener:(id,fn)=>{(H[id]=H[id]||[]).push(fn);}}}; window.__fire=(id,o)=>(H[id]||[]).forEach(f=>f(o)); });
  await p.goto('file://'+require('path').resolve(__dirname,'../../web/semitone-studio.html')+'#orchestral'); await p.waitForTimeout(1500);
  await p.evaluate(()=>{ location.hash='#orch'; }); await p.waitForTimeout(300);
  await p.evaluate(()=>__fire('st_init',{plugin:true,host:'FL Studio',project:'',sr:44100})); await p.waitForTimeout(800);
