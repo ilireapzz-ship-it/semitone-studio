@@ -113,7 +113,7 @@ Done (first versions): 14 command palette (`CMDS`), 15 history list, 16 focus mo
 ### Recording (Phase 2)
 18. **Auto-comp.** (first version: `compAuto`, bar by bar, scores in-tune and on-time against semitones and the written melody; tone not scored yet) After several takes, pick the best take per line by pitch, timing and tone; Jamie swaps phrases.
     Flag pitchy or late spots.
-19. **Practice coach.** Track sing/play-along accuracy over sessions; turn weak spots into Classroom exercises
+19. **Practice coach.** (first version: `renderCoach`, trends and weak spots from Play along and recorded takes; exercises are a slow loop or another take, not yet Classroom lessons) Track sing/play-along accuracy over sessions; turn weak spots into Classroom exercises
     built from his own songs.
 
 ### Mixing (Phase 4)
