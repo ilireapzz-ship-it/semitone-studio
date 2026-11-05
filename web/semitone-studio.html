@@ -2341,7 +2341,7 @@ function initRollEditing(){
   document.addEventListener('keydown',e=>{
     if($('#view-compose').hidden) return; const tg=e.target.tagName; if(tg==='INPUT'||tg==='SELECT'||tg==='TEXTAREA') return;
     if((e.key==='Delete'||e.key==='Backspace')&&S.editLayer!=='chords'&&(S.selNote||S.selSet.size)){ e.preventDefault(); if(S.selSet.size>1) songDelete(); else deleteNote(S.selNote||[...S.selSet][0]); S.selSet=new Set(); selInfo(); }
-    if(e.code==='Space'&&!(tg==='BUTTON')){ e.preventDefault(); if(S.playing) stopPlay(); else play('section'); }
+    if(e.code==='Space'&&!(tg==='BUTTON')){ e.preventDefault(); if(S.playing) stopPlay(); else { play(S.demo?'song':'section'); if(S.demo){ S.demo=false; $('#restoreBar').hidden=true; } } }
   });
 }
 function deleteNote(src){ const mat=matOfSel(), i=mat.melody.indexOf(src); if(i<0) return; pushUndo(snapshotMel()); mat.melody.splice(i,1); if(S.selNote===src) S.selNote=null; refreshAfterEdit(true); }
@@ -7141,7 +7141,7 @@ function nativeInit(){ if(!NATIVE.on) return;
     const fo=$('#nbFollow'); if(fo) fo.onchange=e=>{ NATIVE.follow=e.target.checked; };
     $('#nbSetup').onclick=()=>{ const sc2=nativeScope(); const box=document.querySelector(`.mout-box[data-scope="${sc2==='orch'?'orch':'song'}"]`); if(box){ if(sc2==='song') location.hash='#compose'; box.scrollIntoView({behavior:'smooth',block:'center'}); } };
     $('#nbTempo').onclick=()=>{ const bpm=Math.round(NATIVE.hs.bpm); if(nativeScope()==='song'){ S.bpm=bpm; $('#bpm').value=bpm; $('#bpm').dispatchEvent(new Event('input')); } else { O.bpm=bpm; $('#oBpm').value=bpm; $('#oBpm').dispatchEvent(new Event('input')); } toast('Song tempo matched to '+bpm+' BPM'); };
-    NATIVE.recent=d.recent||[]; NATIVE.songFile=d.songFile||''; if(d.project) nativeRestore(d.project); NATIVE.inited=true; initNativeFiles(); if(NATIVE.songFile&&d.project) NATIVE.fileState=d.songFileSame?songStateJSON():null; if(NATIVE.songFile&&!d.songFileSame) NATIVE.fileState=''; renderMout(); nativeSync(); nativeSaveState(); try{ initNativeSound(d); }catch(e){ console.warn('native sound',e); } try{ initSectionDrag(); initFLMarkers(); }catch(e){ console.warn('section drag',e); } });
+    NATIVE.recent=d.recent||[]; NATIVE.songFile=d.songFile||''; if(d.project) nativeRestore(d.project); else if(!NATIVE.plugin) demoSong(); NATIVE.inited=true; initNativeFiles(); if(NATIVE.songFile&&d.project) NATIVE.fileState=d.songFileSame?songStateJSON():null; if(NATIVE.songFile&&!d.songFileSame) NATIVE.fileState=''; renderMout(); nativeSync(); nativeSaveState(); try{ initNativeSound(d); }catch(e){ console.warn('native sound',e); } try{ initSectionDrag(); initFLMarkers(); }catch(e){ console.warn('section drag',e); } });
   nOn('st_host',nativeHost);
   nOn('st_midiin',nativeMidiIn);
   nOn('st_saved',d=>toast(d.ok?'Saved to '+d.path:'Not saved'));
@@ -7556,6 +7556,10 @@ function initSounds(){ $('#soundBtn').onclick=()=>{ if(!FEEL.lib) return; $('#so
     if(e.target.id==='soundSketch'){ S.parts[part].sound=i.semitoneStandIn[0]; renderMixer(); toast(`${part} now sketches with ${i.semitoneStandIn[0].slice(2)}`); }
     if(e.target.id==='soundDaw') sndFiles([[`${i.id} ${part}.mid`,partMidi('song',part)],[`${i.id} ${part} recipe.txt`,sndNote(i,part)]]).then(()=>toast('Saved the part and its recipe')); });
   if(window.__JUCE__){ nOn('st_scan_done',d=>{ try{ SND.scan=JSON.parse(d.json); }catch(e){} const b=$('#soundScan'); b.disabled=false; b.textContent='Rescan my plug-ins'; if(!$('#soundView').hidden) sndRender(); }); nEmit('st_scan_load',{}); } }
+
+/* ---------- first launch of the desktop app: a finished demo song, ready for Space. Never starts sound by itself. ---------- */
+function demoSong(){ const st=STYLES.find(x=>x.id==='synth')||STYLES[0]; stopPlay(); S.seed=4127; S.structure='pop'; loadStyle(st,false); if($('#structSel')) $('#structSel').value='pop'; S.structure='pop'; generate(4127,false); S.tags=['genre:synth']; S.tagChoices={}; S.song.sections.forEach((x,i)=>{ S.secEmotion[i]=x.type==='chorus'?'euphoric':x.type==='pre'?'hopeful':'nostalgic'; }); S.project={...S.project,name:'Demo song'}; renderProjectBar(); tagSummary(); renderAll(); S.demo=true; H.reset=true;
+  const b=$('#restoreBar'); b.hidden=false; $('#restoreText').textContent='This is a demo song, made by Semitone. Press Space to hear all of it, then change anything.'; $('#restoreYes').textContent='Play it'; $('#restoreYes').onclick=()=>{ S.demo=false; b.hidden=true; location.hash='#compose'; play('song'); }; $('#restoreNo').textContent='Dismiss'; $('#restoreNo').onclick=()=>{ S.demo=false; b.hidden=true; }; }
 
 /* ---------- song history: undo and redo for every change ----------
    One list for the whole song, Compose and Orchestral together. After each settled change the song is

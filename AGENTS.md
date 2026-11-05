@@ -49,8 +49,7 @@ suggest and you accept, never surprise changes.
 ### Finish Phase 1 (the song-first app)
 1. **Undo for every action.** Done: one song-level history for Compose and Orchestral (⌘Z / ⇧⌘Z, plus buttons), labelled, last 100 steps.
    Notes, chords and lyrics restore in place so playback continues; other changes stop playback.
-2. **Open with a song ready.** First launch of the standalone app shows a finished demo song, ready to play
-   (Space plays). Later launches reopen the last song (autosave already does this). Don't start sound by itself.
+2. **Open with a song ready.** Done (`demoSong`).
 3. **Windows check.** The Windows build has never been run on a PC. Go through docs/INSTALL-WINDOWS.txt
    when a PC is available; fix what breaks. (FL markers need loopMIDI on Windows; nothing else should be Mac-only.)
 4. **Engine gaps** (Source/Synth.h), so the plugin sounds complete with its window closed: per-part effects,
