@@ -11,7 +11,7 @@ You can't open Jamie's claude.ai design canvas or plan doc, so copies are in the
 - **Data:** `data/style-library.json` (styles, producers, passes, eras, variants), `data/progressions.json` (chords per
   song), `data/catalog.json` (artists → albums → songs with tags), `data/sound-library.json` (real instruments,
   effects, emotion and vibe rules). After any data change run `python3 tools/build_style_matrices.py` and
-  `python3 tools/check_style_data.py` (ISSUES must be 0). Nothing in `data/` is used by the app yet: wiring it in is the job.
+  `python3 tools/check_style_data.py` (ISSUES must be 0), then `python3 tools/embed_data.py`, which copies `data/` into the HTML (the app only sees what is embedded).
 
 **Suggested order** (each step ships on its own, with tests and a plain-words note for Jamie):
 1. Phase 1 task 1, **undo for every action**: done (`H` / `histCheck` in the HTML, `tests/web/undo.test.js`). A new setting is undoable once it is in `projectData()`.

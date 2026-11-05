@@ -41,7 +41,7 @@ command -v ninja >/dev/null && GEN=(-G Ninja)
 
 # 3. Tests (sequencer, clip player and sound engine, no JUCE needed)
 say "Tests"
-python3 tools/embed_data.py --check
+python3 tools/embed_data.py
 clang++ -std=c++17 -O1 -Wall -ISource tests/sequencer_test.cpp -o build-local-seqtest
 ./build-local-seqtest | tail -3
 rm -f build-local-seqtest
