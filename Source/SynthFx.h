@@ -259,6 +259,127 @@ private:
     std::string style; double ph = 0, inc; float depth;
 };
 
+
+class CrushFx : public Fx
+{
+public:
+    CrushFx (const FxDesc& d, double rate) : sr (rate)
+    {
+        crush = d.get ("crush", .6f); mix = d.get ("mix", .5f); c.set (sr, -34, 20, .001f, .06f); f.lowpass (d.get ("dark", 7000), 1, sr);
+    }
+    int param (const std::string& k) const override { return k == "crush" ? 0 : k == "dark" ? 1 : k == "mix" ? 2 : -1; }
+    void set (int i, float v) override { if (i == 0) crush = v; else if (i == 1) f.lowpass (v, 1, sr); else if (i == 2) mix = v; }
+    void run (float& l, float& r) override
+    {
+        const float k = 1 + crush * 12; float a = l * k, b = r * k;
+        const float g = c.gain (std::max (std::abs (a), std::abs (b))); a *= g; b *= g;
+        const float wl = f.run (shape ("Tape", a), 0) * wetTrim, wr = f.run (shape ("Tape", b), 1) * wetTrim;
+        l = l * (1 - mix) + wl * mix; r = r * (1 - mix) + wr * mix;
+    }
+private:
+    static constexpr float wetTrim = .38f;   // matched by level against the page's compressor, on a sustained note
+    double sr; float crush; Compressor c; Biquad f;
+};
+
+class LofiFx : public Fx
+{
+public:
+    LofiFx (const FxDesc& d, double rate) : sr (rate)
+    {
+        steps = std::pow (2.0f, d.get ("bits", 8) - 1); wob = d.get ("wob", .35f); hiss = d.get ("noise", .2f); mix = d.get ("mix", 1);
+        hp.highpass (140, 1, sr); f.lowpass (d.get ("tone", 3800), .9, sr); nf.bandpass (4000, .6, sr); a.prepare ((int) (sr * .1)); b.prepare ((int) (sr * .1));
+    }
+    int param (const std::string& k) const override { return k == "tone" ? 0 : k == "wob" ? 1 : k == "noise" ? 2 : k == "mix" ? 3 : -1; }
+    void set (int i, float v) override { if (i == 0) f.lowpass (v, .9, sr); else if (i == 1) wob = v; else if (i == 2) hiss = v; else if (i == 3) mix = v; }
+    void run (float& l, float& r) override
+    {
+        t1 += .55 / sr; t2 += 7 / sr;
+        const float dl = (float) ((.008 + wob * .003 * std::sin (two() * t1) + wob * .0004 * std::sin (two() * t2)) * sr);
+        const float n = nf.run (rng.next()) * hiss * .025f;
+        auto chain = [this] (float x, int c) { x = std::clamp (hp.run (x, c) * 2, -1.0f, 1.0f); x = std::round (x * steps) / steps * .5f; return f.run (x, c); };
+        a.write (chain (l, 0)); b.write (chain (r, 1));
+        const float wl = a.read (dl) + n, wr = b.read (dl) + n;
+        l = l * (1 - mix) + wl * mix; r = r * (1 - mix) + wr * mix;
+    }
+private:
+    double sr, t1 = 0, t2 = 0; float steps, wob, hiss; Biquad hp, f, nf; DelayLine a, b; Noise rng;
+};
+
+class AutopanFx : public Fx
+{
+public:
+    AutopanFx (const FxDesc& d, double rate) : style (d.style.empty() ? "sine" : d.style) { depth = d.get ("depth", .8f); inc = 1 / (std::max (.01f, d.get ("sec", .5f)) * rate); }
+    int param (const std::string& k) const override { return k == "depth" ? 0 : -1; }
+    void set (int, float v) override { depth = v; }
+    void run (float& l, float& r) override
+    {
+        ph += inc; if (ph >= 1) ph -= 1;
+        const float o = style == "square" ? (ph < .5 ? 1.0f : -1.0f) : style == "triangle" ? (float) (1 - 4 * std::abs (ph - .5)) : (float) std::sin (two() * ph);
+        const float pan = std::clamp (o * depth, -1.0f, 1.0f), x = (pan + 1) * .5f * (float) synthPi * .5f, m = .5f * (l + r);
+        l = m * std::cos (x); r = m * std::sin (x);
+    }
+private:
+    std::string style; double ph = 0, inc; float depth;
+};
+
+class PhaserFx : public Fx
+{
+public:
+    PhaserFx (const FxDesc& d, double rate) : sr (rate)
+    {
+        n = std::clamp ((int) d.get ("stages", 4), 2, 8); hz = d.get ("rate", .35f); depth = d.get ("depth", .7f); center = d.get ("center", 900); fb = d.get ("fb", .4f); mix = d.get ("mix", .5f);
+    }
+    int param (const std::string& k) const override { return k == "rate" ? 0 : k == "depth" ? 1 : k == "center" ? 2 : k == "fb" ? 3 : k == "mix" ? 4 : -1; }
+    void set (int i, float v) override { if (i == 0) hz = v; else if (i == 1) depth = v; else if (i == 2) center = v; else if (i == 3) fb = v; else if (i == 4) mix = v; }
+    void run (float& l, float& r) override
+    {
+        ph += hz / sr; if (ph >= 1) ph -= 1;
+        if (tick++ % 32 == 0)
+        {
+            const double f = std::min (sr * .49, center * std::pow (2.0, depth * 2400 * std::sin (two() * ph) / 1200)), w = two() * f / sr, al = std::sin (w) / (2 * .7), c = std::cos (w);
+            for (int i = 0; i < n; ++i) { ap[(size_t) i].set (1 - al, -2 * c, 1 + al, 1 + al, -2 * c, 1 - al); }
+        }
+        float x = l + last[0] * fb, y = r + last[1] * fb;
+        for (int i = 0; i < n; ++i) { x = ap[(size_t) i].run (x, 0); y = ap[(size_t) i].run (y, 1); }
+        last[0] = x; last[1] = y;
+        l = l * (1 - mix) + x * mix; r = r * (1 - mix) + y * mix;
+    }
+private:
+    double sr, ph = 0; int n, tick = 0; float hz, depth, center, fb, last[2] { 0, 0 }; std::array<Biquad, 8> ap;
+};
+
+class WideFx : public Fx
+{
+public:
+    WideFx (const FxDesc& d, double rate) : sr (rate)
+    {
+        const std::string a = d.style; c = a == "Subtle" ? 5.f : a == "Wide" ? 15.f : 9.f; dl = (a == "Subtle" ? .007f : a == "Wide" ? .012f : .009f) * (float) sr; dr = (a == "Subtle" ? .011f : a == "Wide" ? .019f : .014f) * (float) sr;
+        mix = d.get ("width", .6f); len = .1f * (float) sr; x.prepare ((int) (sr * .3)); y.prepare ((int) (sr * .3)); slope = 1 - (float) std::pow (2.0, c / 1200.0);
+    }
+    int param (const std::string& k) const override { return k == "width" ? 0 : -1; }
+    void set (int, float v) override { mix = v; }
+    void run (float& l, float& r) override
+    {
+        const float in = .5f * (l + r); x.write (in); y.write (in);
+        ph += 1 / len; if (ph >= 1) ph -= 1;
+        auto tap = [this] (const DelayLine& d, float sign, float base)
+        {
+            float s = 0;
+            for (int k = 0; k < 2; ++k)
+            {
+                float p = ph + k * .5f; if (p >= 1) p -= 1;
+                const float g = std::sin ((float) synthPi * p);
+                s += d.read (base + 16 + (sign > 0 ? p : 1 - p) * len * std::abs (slope)) * g * g;
+            }
+            return s;
+        };
+        const float wl = tap (x, 1, dl), wr = tap (y, -1, dr);
+        l = l * (1 - mix) + wl * mix; r = r * (1 - mix) + wr * mix;
+    }
+private:
+    double sr; float c, dl, dr, len, ph = 0, slope; DelayLine x, y;
+};
+
 class FxBank
 {
 public:
@@ -284,6 +405,11 @@ inline std::shared_ptr<FxBank> makeFxBank (const std::vector<FxDesc>& list, doub
         else if (d.type == "plate") f = std::make_unique<PlateFx> (d, sr);
         else if (d.type == "chorus") f = std::make_unique<ChorusFx> (d, sr);
         else if (d.type == "trem") f = std::make_unique<TremFx> (d, sr);
+        else if (d.type == "crush") f = std::make_unique<CrushFx> (d, sr);
+        else if (d.type == "lofi") f = std::make_unique<LofiFx> (d, sr);
+        else if (d.type == "autopan") f = std::make_unique<AutopanFx> (d, sr);
+        else if (d.type == "phaser") f = std::make_unique<PhaserFx> (d, sr);
+        else if (d.type == "wide") f = std::make_unique<WideFx> (d, sr);
         if (f && d.ch >= 0 && d.ch < 17 && d.slot >= 0 && d.slot < 3) { b->slots[(size_t) d.ch][(size_t) d.slot] = std::move (f); b->any[(size_t) d.ch] = true; }
     }
     return b;

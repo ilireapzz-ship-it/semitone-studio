@@ -336,6 +336,12 @@ int main()
         FxDesc pl; pl.ch = 0; pl.type = "plate"; pl.p = { { "decay", 6 }, { "mix", 1 } };
         FxDesc hot = ec; hot.slot = 1; hot.p["fb"] = .92f; hot.style = "Tape";
         const double late = run ({ pl, hot }, {}, 20, 19, 20);
+        for (const char* t : { "crush", "lofi", "autopan", "phaser", "wide" })
+        {
+            FxDesc x; x.ch = 0; x.type = t; x.style = ""; x.p = { { "mix", 1 }, { "width", 1 }, { "sec", .5f }, { "depth", .8f }, { "rate", .35f }, { "stages", 4 }, { "bits", 8 }, { "fb", .8f } };
+            const double v = run ({ x }, {}, 2, .1, .45);
+            if (v <= 0 || v > 2) { printf ("FAIL fx %s: %.4f\n", t, v); return 1; }
+        }
         if (late < 0 || late > .5) { printf ("FAIL fx runaway %.4f\n", late); return 1; }
         printf ("ok: part effects shape the sound, follow their lanes and stay stable\n");
     }
