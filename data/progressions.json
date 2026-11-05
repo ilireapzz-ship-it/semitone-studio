@@ -2,57 +2,1543 @@
   "about": "Chord progressions per section from several songs per artist (Hooktheory TheoryTab unless noted), used to build each profile's chord habits (tools/build_style_matrices.py). Numerals are relative to the section's key and mode as the source gives them. Facts about songs (keys, tempos, chord functions), not copies of them.",
   "profiles": {
     "chappell": [
-      {"song": "Good Luck, Babe!", "key": "D major", "bpm": 117, "sections": {"intro": "IV V I vi", "verse": "IV V I vi", "chorus": "IV V I vi"}, "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/good-luck-babe"},
-      {"song": "Pink Pony Club", "key": "F# major", "bpm": 107, "sections": {"verse": "I ii vi IV", "chorus": "I ii vi IV", "bridge": "IV V vi ii"}, "src": "https://hooktheory.com/theorytab/view/chappell-roan/pink-pony-club"},
-      {"song": "Hot To Go!", "key": "F# major", "bpm": 140, "sections": {"verse": "I IV", "chorus": "I IV"}, "src": "https://hooktheory.com/theorytab/view/chappell-roan/hot-to-go"},
-      {"song": "Femininomenon", "key": "Eb major", "bpm": 125, "sections": {"verse": "I vi IV", "pre": "I vi IV vii IV", "chorus": "I vi IV vii IV"}, "src": "https://hooktheory.com/theorytab/view/chappell-roan/femininomenon"},
-      {"song": "Casual", "key": "Db major", "bpm": 131, "sections": {"pre": "V IV", "chorus": "I IV ii IV"}, "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/casual"},
-      {"song": "The Subway", "key": "Bb major", "bpm": 84, "sections": {"chorus": "IV I V", "leadout": "IV iv I", "outro": "I IV ii V"}, "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/the-subway"},
-      {"song": "My Kink Is Karma", "key": "A major", "bpm": 85, "sections": {"chorus": "I iii IV", "bridge (A mixolydian)": "bVII I IV bIII I"}, "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/my-kink-is-karma"},
-      {"song": "After Midnight", "key": "F major", "bpm": 110, "sections": {"chorus": "IV I V ii iii"}, "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/after-midnight"},
-      {"song": "The Giver", "key": "B mixolydian", "bpm": 94, "sections": {"intro": "bVII IV I IV I", "chorus": "bVII IV I IV I"}, "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/the-giver"}
+      {
+        "song": "Good Luck, Babe!",
+        "key": "D major",
+        "bpm": 117,
+        "sections": {
+          "intro": "IV V I vi",
+          "verse": "IV V I vi",
+          "chorus": "IV V I vi"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/good-luck-babe"
+      },
+      {
+        "song": "Pink Pony Club",
+        "key": "F# major",
+        "bpm": 107,
+        "sections": {
+          "verse": "I ii vi IV",
+          "chorus": "I ii vi IV",
+          "bridge": "IV V vi ii"
+        },
+        "src": "https://hooktheory.com/theorytab/view/chappell-roan/pink-pony-club"
+      },
+      {
+        "song": "Hot To Go!",
+        "key": "F# major",
+        "bpm": 140,
+        "sections": {
+          "verse": "I IV",
+          "chorus": "I IV"
+        },
+        "src": "https://hooktheory.com/theorytab/view/chappell-roan/hot-to-go"
+      },
+      {
+        "song": "Femininomenon",
+        "key": "Eb major",
+        "bpm": 125,
+        "sections": {
+          "verse": "I vi IV",
+          "pre": "I vi IV vii IV",
+          "chorus": "I vi IV vii IV"
+        },
+        "src": "https://hooktheory.com/theorytab/view/chappell-roan/femininomenon"
+      },
+      {
+        "song": "Casual",
+        "key": "Db major",
+        "bpm": 131,
+        "sections": {
+          "pre": "V IV",
+          "chorus": "I IV ii IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/casual"
+      },
+      {
+        "song": "The Subway",
+        "key": "Bb major",
+        "bpm": 84,
+        "sections": {
+          "chorus": "IV I V",
+          "leadout": "IV iv I",
+          "outro": "I IV ii V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/the-subway"
+      },
+      {
+        "song": "My Kink Is Karma",
+        "key": "A major",
+        "bpm": 85,
+        "sections": {
+          "chorus": "I iii IV",
+          "bridge (A mixolydian)": "bVII I IV bIII I"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/my-kink-is-karma"
+      },
+      {
+        "song": "After Midnight",
+        "key": "F major",
+        "bpm": 110,
+        "sections": {
+          "chorus": "IV I V ii iii"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/after-midnight"
+      },
+      {
+        "song": "The Giver",
+        "key": "B mixolydian",
+        "bpm": 94,
+        "sections": {
+          "intro": "bVII IV I IV I",
+          "chorus": "bVII IV I IV I"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/the-giver"
+      }
     ],
     "gaga": [
-      {"song": "Just Dance", "key": "C# minor", "bpm": 119, "sections": {"verse": "i III VII iv"}, "src": "https://en.wikipedia.org/wiki/Just_Dance_(song)"},
-      {"song": "Poker Face", "key": "G# minor", "bpm": 120, "sections": {"chorus": "i VI III VII"}, "src": "https://en.wikipedia.org/wiki/Poker_Face_(song)"},
-      {"song": "Bad Romance", "key": "A minor", "bpm": 119, "sections": {"verse": "i III VI i III", "chorus": "VI VII i III VI", "leadout": "i VI"}, "src": "https://hooktheory.com/theorytab/view/lady-gaga/bad-romance"},
-      {"song": "Applause", "key": "G minor", "bpm": 140, "sections": {"verse": "i VII VI iv VII", "chorus": "i VII VI iv VII"}, "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/applause"},
-      {"song": "Paparazzi", "key": "C minor / Ab major", "bpm": 115, "sections": {"verse": "i VI", "chorus (Ab major)": "I V vi IV"}, "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/paparazzi"},
-      {"song": "Rain On Me (with Ariana Grande)", "key": "C# minor", "bpm": 123, "sections": {"verse": "i VI", "chorus": "i III VI v"}, "src": "https://www.hooktheory.com/theorytab/view/lady-gaga-and-ariana-grande/rain-on-me"},
-      {"song": "Shallow (with Bradley Cooper)", "key": "G major / E dorian", "bpm": 96, "sections": {"pre": "vi V I IV I", "chorus": "ii V I V vi", "bridge (E dorian)": "v VII IV i"}, "src": "https://hooktheory.com/theorytab/view/lady-gaga-and-bradley-cooper/shallow"}
+      {
+        "song": "Just Dance",
+        "key": "C# minor",
+        "bpm": 119,
+        "sections": {
+          "verse": "i III VII iv"
+        },
+        "src": "https://en.wikipedia.org/wiki/Just_Dance_(song)"
+      },
+      {
+        "song": "Poker Face",
+        "key": "G# minor",
+        "bpm": 120,
+        "sections": {
+          "chorus": "i VI III VII"
+        },
+        "src": "https://en.wikipedia.org/wiki/Poker_Face_(song)"
+      },
+      {
+        "song": "Bad Romance",
+        "key": "A minor",
+        "bpm": 119,
+        "sections": {
+          "verse": "i III VI i III",
+          "chorus": "VI VII i III VI",
+          "leadout": "i VI"
+        },
+        "src": "https://hooktheory.com/theorytab/view/lady-gaga/bad-romance"
+      },
+      {
+        "song": "Applause",
+        "key": "G minor",
+        "bpm": 140,
+        "sections": {
+          "verse": "i VII VI iv VII",
+          "chorus": "i VII VI iv VII"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/applause"
+      },
+      {
+        "song": "Paparazzi",
+        "key": "C minor / Ab major",
+        "bpm": 115,
+        "sections": {
+          "verse": "i VI",
+          "chorus (Ab major)": "I V vi IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/paparazzi"
+      },
+      {
+        "song": "Rain On Me (with Ariana Grande)",
+        "key": "C# minor",
+        "bpm": 123,
+        "sections": {
+          "verse": "i VI",
+          "chorus": "i III VI v"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lady-gaga-and-ariana-grande/rain-on-me"
+      },
+      {
+        "song": "Shallow (with Bradley Cooper)",
+        "key": "G major / E dorian",
+        "bpm": 96,
+        "sections": {
+          "pre": "vi V I IV I",
+          "chorus": "ii V I V vi",
+          "bridge (E dorian)": "v VII IV i"
+        },
+        "src": "https://hooktheory.com/theorytab/view/lady-gaga-and-bradley-cooper/shallow"
+      }
     ],
     "fleetwood": [
-      {"song": "Dreams", "key": "A minor", "bpm": 120, "sections": {"verse": "VI VII", "chorus": "VI VII", "solo": "VI VII VI i VII"}, "src": "https://hooktheory.com/theorytab/view/fleetwood-mac/dreams"},
-      {"song": "Go Your Own Way", "key": "F major / D minor", "bpm": 136, "sections": {"verse": "I V IV", "chorus (D minor)": "i VI VII"}, "src": "https://hooktheory.com/theorytab/view/fleetwood-mac/go-your-own-way"},
-      {"song": "Rhiannon", "key": "A minor", "bpm": 129, "sections": {"verse": "i VI"}, "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/rhiannon"},
-      {"song": "Landslide", "key": "Bb major", "bpm": 159, "sections": {"verse": "IV I ii I", "chorus": "I V vi IV I"}, "src": "https://hooktheory.com/theorytab/view/fleetwood-mac/landslide"},
-      {"song": "Everywhere", "key": "E major", "bpm": 115, "sections": {"verse": "I V", "chorus": "V vi IV V vi"}, "src": "https://hooktheory.com/theorytab/view/fleetwood-mac/everywhere"},
-      {"song": "Don't Stop", "key": "E major", "bpm": 119, "sections": {"verse": "I IV", "chorus": "I V IV"}, "src": "https://hooktheory.com/theorytab/view/fleetwood-mac/dont-stop"}
+      {
+        "song": "Dreams",
+        "key": "A minor",
+        "bpm": 120,
+        "sections": {
+          "verse": "VI VII",
+          "chorus": "VI VII",
+          "solo": "VI VII VI i VII"
+        },
+        "src": "https://hooktheory.com/theorytab/view/fleetwood-mac/dreams"
+      },
+      {
+        "song": "Go Your Own Way",
+        "key": "F major / D minor",
+        "bpm": 136,
+        "sections": {
+          "verse": "I V IV",
+          "chorus (D minor)": "i VI VII"
+        },
+        "src": "https://hooktheory.com/theorytab/view/fleetwood-mac/go-your-own-way"
+      },
+      {
+        "song": "Rhiannon",
+        "key": "A minor",
+        "bpm": 129,
+        "sections": {
+          "verse": "i VI"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/rhiannon"
+      },
+      {
+        "song": "Landslide",
+        "key": "Bb major",
+        "bpm": 159,
+        "sections": {
+          "verse": "IV I ii I",
+          "chorus": "I V vi IV I"
+        },
+        "src": "https://hooktheory.com/theorytab/view/fleetwood-mac/landslide"
+      },
+      {
+        "song": "Everywhere",
+        "key": "E major",
+        "bpm": 115,
+        "sections": {
+          "verse": "I V",
+          "chorus": "V vi IV V vi"
+        },
+        "src": "https://hooktheory.com/theorytab/view/fleetwood-mac/everywhere"
+      },
+      {
+        "song": "Don't Stop",
+        "key": "E major",
+        "bpm": 119,
+        "sections": {
+          "verse": "I IV",
+          "chorus": "I V IV"
+        },
+        "src": "https://hooktheory.com/theorytab/view/fleetwood-mac/dont-stop"
+      }
     ],
     "rhcp": [
-      {"song": "Californication", "key": "A minor", "bpm": 95, "sections": {"verse": "i VI", "pre": "i VI", "chorus": "III VII iv i"}, "src": "https://hooktheory.com/theorytab/view/red-hot-chili-peppers/californication"},
-      {"song": "Under the Bridge", "key": "E major / A minor", "bpm": 84, "sections": {"verse": "I V vi iii IV", "chorus": "ii I V", "bridge (A minor)": "I i v VI"}, "src": "https://hooktheory.com/theorytab/view/red-hot-chili-peppers/under-the-bridge"},
-      {"song": "Otherside", "key": "A minor", "bpm": 122, "sections": {"intro": "i VI III VII", "verse": "i v", "chorus": "i VI III VII", "bridge (E minor)": "i VI III"}, "src": "https://hooktheory.com/theorytab/view/red-hot-chili-peppers/otherside"},
-      {"song": "Dani California", "key": "A minor", "bpm": 96, "sections": {"verse": "i VII iv", "chorus": "i VII iv", "bridge (B minor)": "i VI III v"}, "src": "https://hooktheory.com/theorytab/view/red-hot-chili-peppers/dani-california"}
+      {
+        "song": "Californication",
+        "key": "A minor",
+        "bpm": 95,
+        "sections": {
+          "verse": "i VI",
+          "pre": "i VI",
+          "chorus": "III VII iv i"
+        },
+        "src": "https://hooktheory.com/theorytab/view/red-hot-chili-peppers/californication"
+      },
+      {
+        "song": "Under the Bridge",
+        "key": "E major / A minor",
+        "bpm": 84,
+        "sections": {
+          "verse": "I V vi iii IV",
+          "chorus": "ii I V",
+          "bridge (A minor)": "I i v VI"
+        },
+        "src": "https://hooktheory.com/theorytab/view/red-hot-chili-peppers/under-the-bridge"
+      },
+      {
+        "song": "Otherside",
+        "key": "A minor",
+        "bpm": 122,
+        "sections": {
+          "intro": "i VI III VII",
+          "verse": "i v",
+          "chorus": "i VI III VII",
+          "bridge (E minor)": "i VI III"
+        },
+        "src": "https://hooktheory.com/theorytab/view/red-hot-chili-peppers/otherside"
+      },
+      {
+        "song": "Dani California",
+        "key": "A minor",
+        "bpm": 96,
+        "sections": {
+          "verse": "i VII iv",
+          "chorus": "i VII iv",
+          "bridge (B minor)": "i VI III v"
+        },
+        "src": "https://hooktheory.com/theorytab/view/red-hot-chili-peppers/dani-california"
+      }
     ],
     "charli": [
-      {"song": "360", "key": "A minor", "bpm": 120, "sections": {"chorus": "v VI"}, "src": "https://hooktheory.com/theorytab/view/charli-xcx/360"},
-      {"song": "I Think About It All The Time", "key": "A minor", "sections": {"loop": "i VI VII III"}, "note": "Am, a stacked-fourths chord, F major, G–C (voicings vary)", "src": "https://www.musicradar.com/news/charli-xcx-brat-theory"},
-      {"song": "Sympathy Is a Knife", "key": "Eb major (Lydian colour)", "sections": {"chorus": "iii II V"}, "note": "Gm, F, Bb in Eb with a raised 4th", "src": "https://www.musicradar.com/news/charli-xcx-brat-theory"},
-      {"song": "B2B", "key": "D# minor", "bpm": 116, "sections": {"verse": "i v iv III", "chorus": "i ii VII iv VI"}, "src": "https://hooktheory.com/theorytab/view/charli-xcx/b2b"},
-      {"song": "Apple", "key": "C major", "bpm": 126, "sections": {"verse": "V vi IV", "leadout": "ii vi I IV"}, "src": "https://hooktheory.com/theorytab/view/charli-xcx/apple"},
-      {"song": "Track 10", "key": "F major", "bpm": 100, "sections": {"pre": "IV V iii IV V", "chorus": "ii iii IV V vi", "bridge": "V vi bVII I", "outro": "IV iii vi V"}, "src": "https://hooktheory.com/theorytab/view/charli-xcx/track-10"},
-      {"song": "Boom Clap", "key": "E major", "bpm": 92, "sections": {"verse": "IV V I vi", "chorus": "IV V I vi"}, "src": "https://hooktheory.com/theorytab/view/charli-xcx/boom-clap"},
-      {"song": "Speed Drive", "key": "D minor", "bpm": 173, "sections": {"chorus": "VI III iv i"}, "src": "https://hooktheory.com/theorytab/view/charli-xcx/speed-drive"}
+      {
+        "song": "360",
+        "key": "A minor",
+        "bpm": 120,
+        "sections": {
+          "chorus": "v VI"
+        },
+        "src": "https://hooktheory.com/theorytab/view/charli-xcx/360"
+      },
+      {
+        "song": "I Think About It All The Time",
+        "key": "A minor",
+        "sections": {
+          "loop": "i VI VII III"
+        },
+        "note": "Am, a stacked-fourths chord, F major, G–C (voicings vary)",
+        "src": "https://www.musicradar.com/news/charli-xcx-brat-theory"
+      },
+      {
+        "song": "Sympathy Is a Knife",
+        "key": "Eb major (Lydian colour)",
+        "sections": {
+          "chorus": "iii II V"
+        },
+        "note": "Gm, F, Bb in Eb with a raised 4th",
+        "src": "https://www.musicradar.com/news/charli-xcx-brat-theory"
+      },
+      {
+        "song": "B2B",
+        "key": "D# minor",
+        "bpm": 116,
+        "sections": {
+          "verse": "i v iv III",
+          "chorus": "i ii VII iv VI"
+        },
+        "src": "https://hooktheory.com/theorytab/view/charli-xcx/b2b"
+      },
+      {
+        "song": "Apple",
+        "key": "C major",
+        "bpm": 126,
+        "sections": {
+          "verse": "V vi IV",
+          "leadout": "ii vi I IV"
+        },
+        "src": "https://hooktheory.com/theorytab/view/charli-xcx/apple"
+      },
+      {
+        "song": "Track 10",
+        "key": "F major",
+        "bpm": 100,
+        "sections": {
+          "pre": "IV V iii IV V",
+          "chorus": "ii iii IV V vi",
+          "bridge": "V vi bVII I",
+          "outro": "IV iii vi V"
+        },
+        "src": "https://hooktheory.com/theorytab/view/charli-xcx/track-10"
+      },
+      {
+        "song": "Boom Clap",
+        "key": "E major",
+        "bpm": 92,
+        "sections": {
+          "verse": "IV V I vi",
+          "chorus": "IV V I vi"
+        },
+        "src": "https://hooktheory.com/theorytab/view/charli-xcx/boom-clap"
+      },
+      {
+        "song": "Speed Drive",
+        "key": "D minor",
+        "bpm": 173,
+        "sections": {
+          "chorus": "VI III iv i"
+        },
+        "src": "https://hooktheory.com/theorytab/view/charli-xcx/speed-drive"
+      }
     ],
     "tiersen": [
-      {"song": "La Valse d'Amélie", "key": "A minor", "meter": "6/8", "bpm": 191, "sections": {"instrumental": "iv VII i v i"}, "src": "https://hooktheory.com/theorytab/view/yann-tiersen/la-valse-damelie"},
-      {"song": "Comptine d'un autre été, l'après-midi", "key": "E minor", "meter": "4/4", "bpm": 100, "sections": {"verse": "i III v VII"}, "src": "https://www.hooktheory.com/theorytab/view/yann-tiersen/comptine-dun-autre-ete-lapres-midi"},
-      {"song": "J'y suis jamais allé", "key": "E minor", "meter": "4/4", "bpm": 102, "sections": {"intro": "i iv v"}, "src": "https://hooktheory.com/theorytab/view/yann-tiersen/jy-suis-jamais-alle"},
-      {"song": "La Maison", "key": "G mixolydian / F# minor / Ab lydian", "meter": "4/4", "bpm": 150, "sections": {"intro (G mixolydian)": "I bVII", "chorus (F# minor)": "i VII III", "leadout (Ab lydian)": "I II"}, "src": "https://www.hooktheory.com/theorytab/view/yann-tiersen/amelie---la-maison"}
+      {
+        "song": "La Valse d'Amélie",
+        "key": "A minor",
+        "meter": "6/8",
+        "bpm": 191,
+        "sections": {
+          "instrumental": "iv VII i v i"
+        },
+        "src": "https://hooktheory.com/theorytab/view/yann-tiersen/la-valse-damelie"
+      },
+      {
+        "song": "Comptine d'un autre été, l'après-midi",
+        "key": "E minor",
+        "meter": "4/4",
+        "bpm": 100,
+        "sections": {
+          "verse": "i III v VII"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/yann-tiersen/comptine-dun-autre-ete-lapres-midi"
+      },
+      {
+        "song": "J'y suis jamais allé",
+        "key": "E minor",
+        "meter": "4/4",
+        "bpm": 102,
+        "sections": {
+          "intro": "i iv v"
+        },
+        "src": "https://hooktheory.com/theorytab/view/yann-tiersen/jy-suis-jamais-alle"
+      },
+      {
+        "song": "La Maison",
+        "key": "G mixolydian / F# minor / Ab lydian",
+        "meter": "4/4",
+        "bpm": 150,
+        "sections": {
+          "intro (G mixolydian)": "I bVII",
+          "chorus (F# minor)": "i VII III",
+          "leadout (Ab lydian)": "I II"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/yann-tiersen/amelie---la-maison"
+      }
     ],
     "strangerthings": [
-      {"song": "Stranger Things (main title)", "key": "C major", "bpm": 84, "sections": {"instrumental": "I iii"}, "note": "Imaj7 to iii with an added 13th", "src": "https://hooktheory.com/theorytab/view/kyle-dixon-and-michael-stein/stranger-things"}
+      {
+        "song": "Stranger Things (main title)",
+        "key": "C major",
+        "bpm": 84,
+        "sections": {
+          "instrumental": "I iii"
+        },
+        "note": "Imaj7 to iii with an added 13th",
+        "src": "https://hooktheory.com/theorytab/view/kyle-dixon-and-michael-stein/stranger-things"
+      }
+    ],
+    "jazz": [
+      {
+        "song": "Autumn Leaves",
+        "key": "G minor",
+        "sections": {
+          "A (relative major ii–V–I, then minor ii–V–i)": "iv VII III VI ii V i"
+        },
+        "src": "https://www.learnjazzstandards.com/blog/autumn-leaves-chords/"
+      },
+      {
+        "song": "Autumn Leaves (Hooktheory)",
+        "key": "D minor",
+        "bpm": 125,
+        "sections": {
+          "chorus": "iv VII III VI ii"
+        },
+        "src": "https://hooktheory.com/theorytab/view/joseph-kosma/autumn-leaves---les-feuilles-mortes"
+      },
+      {
+        "song": "The Girl from Ipanema",
+        "key": "Db major",
+        "bpm": 128,
+        "sections": {
+          "verse": "I II bVII vii I"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/stan-getz---joao-gilberto/the-girl-from-ipanema"
+      },
+      {
+        "song": "Honeysuckle Rose",
+        "key": "major",
+        "sections": {
+          "A": "ii V ii V I"
+        },
+        "src": "https://en.wikipedia.org/wiki/Ii%E2%80%93V%E2%80%93I_progression"
+      },
+      {
+        "song": "ii–V–I (the standard cadence)",
+        "key": "major",
+        "sections": {
+          "cadence": "ii V I",
+          "turnaround": "I vi ii V"
+        },
+        "src": "https://en.wikipedia.org/wiki/Ii%E2%80%93V%E2%80%93I_progression"
+      },
+      {
+        "song": "minor ii–V–i",
+        "key": "minor",
+        "sections": {
+          "cadence": "ii V i"
+        },
+        "src": "https://en.wikipedia.org/wiki/Ii%E2%80%93V%E2%80%93I_progression"
+      }
+    ]
+  },
+  "existingStyles": {
+    "sadcore": [
+      {
+        "song": "Born to Die",
+        "key": "E minor",
+        "sections": {
+          "intro": "VI i VII",
+          "verse (G major)": "I V",
+          "chorus": "VI i VII"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/born-to-die",
+        "bpm": 86,
+        "artist": "Lana Del Rey"
+      },
+      {
+        "song": "Young and Beautiful",
+        "key": "B minor",
+        "sections": {
+          "verse": "VI VII i",
+          "chorus": "VI VII i III",
+          "bridge": "VI VII i III"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/young-and-beautiful",
+        "bpm": 57,
+        "artist": "Lana Del Rey"
+      },
+      {
+        "song": "Ride",
+        "key": "C major / A minor",
+        "sections": {
+          "verse": "I IV I V vi",
+          "chorus (A minor)": "VI i VII iv v",
+          "bridge (A minor)": "VI i VII iv v"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/ride",
+        "bpm": 94,
+        "artist": "Lana Del Rey"
+      },
+      {
+        "song": "Summertime Sadness",
+        "key": "C# minor",
+        "sections": {
+          "verse": "VI i VII iv",
+          "chorus": "VI i VII iv",
+          "bridge": "v i VI iv v"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/summertime-sadness",
+        "bpm": 112,
+        "artist": "Lana Del Rey"
+      },
+      {
+        "song": "National Anthem",
+        "key": "C minor",
+        "sections": {
+          "intro": "VI i VII VI III",
+          "verse (G minor)": "VI iv i",
+          "chorus": "VI i VII VI III",
+          "bridge (G minor)": "i VI VII iv"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/national-anthem",
+        "bpm": 85,
+        "artist": "Lana Del Rey"
+      },
+      {
+        "song": "The Next Best American Record",
+        "key": "A major / B minor",
+        "sections": {
+          "verse": "I iii",
+          "pre": "vi IV I IV I",
+          "chorus (B minor)": "VI i VII III",
+          "bridge (B minor)": "VI VII VI V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/the-next-best-american-record",
+        "bpm": 108,
+        "artist": "Lana Del Rey"
+      },
+      {
+        "song": "Love Song",
+        "key": "F# minor / A major",
+        "sections": {
+          "verse": "VI i VII III",
+          "chorus (A major)": "I iii vi IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/love-song",
+        "bpm": 68,
+        "artist": "Lana Del Rey"
+      },
+      {
+        "song": "Shades of Cool",
+        "key": "D minor / F major",
+        "sections": {
+          "verse": "i VI VI",
+          "pre": "VI VII",
+          "chorus (F major)": "I v IV V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/shades-of-cool",
+        "bpm": 69,
+        "artist": "Lana Del Rey"
+      },
+      {
+        "song": "Ultraviolence",
+        "key": "D minor",
+        "sections": {
+          "verse": "i VI IV III v",
+          "chorus": "i III VII IV",
+          "bridge": "VI i VII IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/ultraviolence",
+        "bpm": 110,
+        "artist": "Lana Del Rey"
+      },
+      {
+        "song": "Venice Bitch",
+        "key": "G mixolydian / A minor",
+        "sections": {
+          "verse": "bVII I",
+          "chorus (A minor)": "v VI i VII",
+          "leadout (C mixolydian)": "I IV iv"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/venice-bitch",
+        "bpm": 79,
+        "artist": "Lana Del Rey"
+      },
+      {
+        "song": "13 Beaches",
+        "key": "A dorian",
+        "sections": {
+          "intro": "i VII v IV",
+          "chorus": "i VII v IV ii"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/13-beaches",
+        "bpm": 73,
+        "artist": "Lana Del Rey"
+      },
+      {
+        "song": "Queen of Disaster",
+        "key": "E minor / G major",
+        "sections": {
+          "verse": "iv i v IV",
+          "chorus (G major)": "I iii vi IV iv",
+          "bridge": "iv V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/queen-of-disaster",
+        "bpm": 64,
+        "artist": "Lana Del Rey"
+      },
+      {
+        "song": "Brooklyn Baby",
+        "key": "Ab major",
+        "sections": {
+          "verse": "I vi IV I bVII",
+          "pre": "vi IV vi",
+          "chorus (Ab mixolydian)": "IV I bVII IV bVII"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/brooklyn-baby",
+        "bpm": 108,
+        "artist": "Lana Del Rey"
+      },
+      {
+        "song": "Lucky Ones",
+        "key": "C major",
+        "sections": {
+          "verse": "ii V vi",
+          "chorus": "IV vi IV V I"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/lucky-ones",
+        "bpm": 67,
+        "artist": "Lana Del Rey"
+      },
+      {
+        "song": "Blue Jeans",
+        "key": "F dorian",
+        "sections": {
+          "loop": "i VII IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/artist/lana-del-rey",
+        "artist": "Lana Del Rey",
+        "note": "from the earlier research notes"
+      },
+      {
+        "song": "Fade Into You",
+        "key": "A major",
+        "sections": {
+          "verse": "I V ii",
+          "chorus": "I V ii"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/mazzy-star/fade-into-you",
+        "bpm": 52,
+        "artist": "Mazzy Star"
+      },
+      {
+        "song": "Blue Light",
+        "key": "major",
+        "sections": {
+          "loop": "I bVII IV"
+        },
+        "src": "fan chord charts (Ultimate Guitar, ukutabs)",
+        "artist": "Mazzy Star",
+        "c": "low"
+      },
+      {
+        "song": "Into Dust",
+        "key": "major",
+        "sections": {
+          "loop": "bVII IV I"
+        },
+        "src": "fan chord charts (Ultimate Guitar, ukutabs)",
+        "artist": "Mazzy Star",
+        "c": "low"
+      },
+      {
+        "song": "Rhymes of an Hour",
+        "key": "major",
+        "sections": {
+          "loop": "I bVII"
+        },
+        "src": "fan chord charts (Ultimate Guitar, ukutabs)",
+        "artist": "Mazzy Star",
+        "c": "low"
+      },
+      {
+        "song": "Flowers in December",
+        "key": "major",
+        "sections": {
+          "loop": "I vi IV V"
+        },
+        "src": "fan chord charts (Ultimate Guitar, ukutabs)",
+        "artist": "Mazzy Star",
+        "c": "low"
+      }
+    ],
+    "anthem": [
+      {
+        "song": "Love Story",
+        "key": "major",
+        "sections": {
+          "chorus": "I V vi IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/taylor-swift/love-story",
+        "artist": "Taylor Swift"
+      },
+      {
+        "song": "Anti-Hero",
+        "key": "major",
+        "sections": {
+          "loop": "IV I V vi"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/taylor-swift/anti-hero",
+        "artist": "Taylor Swift"
+      },
+      {
+        "song": "Blank Space",
+        "key": "major",
+        "sections": {
+          "verse": "I vi IV V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/taylor-swift/blank-space-(taylors-version)",
+        "artist": "Taylor Swift"
+      },
+      {
+        "song": "Bad Blood",
+        "key": "E minor / G major",
+        "sections": {
+          "chorus (G major)": "IV I V vi"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/taylor-swift/bad-blood-%28taylors-version%29",
+        "artist": "Taylor Swift"
+      },
+      {
+        "song": "cardigan",
+        "key": "major",
+        "sections": {
+          "loop": "I V IV V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/taylor-swift/cardigan",
+        "artist": "Taylor Swift"
+      },
+      {
+        "song": "Shake It Off",
+        "key": "major",
+        "sections": {
+          "loop": "ii IV I"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "Taylor Swift"
+      },
+      {
+        "song": "Welcome to New York",
+        "key": "major",
+        "sections": {
+          "loop": "I V IV"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "Taylor Swift"
+      },
+      {
+        "song": "Cruel Summer",
+        "key": "major",
+        "sections": {
+          "loop": "I iii vi IV"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "Taylor Swift"
+      },
+      {
+        "song": "Back to December",
+        "key": "major",
+        "sections": {
+          "loop": "I vi IV V"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "Taylor Swift"
+      },
+      {
+        "song": "Viva la Vida",
+        "key": "major",
+        "sections": {
+          "loop": "IV V I vi"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/coldplay/viva-la-vida",
+        "artist": "Coldplay"
+      },
+      {
+        "song": "A Sky Full of Stars",
+        "key": "major",
+        "sections": {
+          "loop": "vi V IV I iii"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/coldplay/sky-full-of-stars",
+        "artist": "Coldplay"
+      },
+      {
+        "song": "Paradise",
+        "key": "major",
+        "sections": {
+          "verse": "vi IV I V",
+          "chorus": "ii IV I V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/coldplay/paradise",
+        "artist": "Coldplay"
+      },
+      {
+        "song": "Fix You",
+        "key": "major",
+        "sections": {
+          "verse": "I vi",
+          "chorus": "IV I V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/coldplay/fix-you",
+        "artist": "Coldplay"
+      },
+      {
+        "song": "The Scientist",
+        "key": "major",
+        "sections": {
+          "loop": "vi IV I"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/coldplay/the-scientist",
+        "artist": "Coldplay"
+      },
+      {
+        "song": "Yellow",
+        "key": "major",
+        "sections": {
+          "loop": "I iii IV"
+        },
+        "src": "https://hooktheory.com/theorytab/view/coldplay/yellow",
+        "artist": "Coldplay"
+      }
+    ],
+    "rnb": [
+      {
+        "song": "Pyramids",
+        "key": "minor",
+        "sections": {
+          "loop": "i VI V iv"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "Frank Ocean"
+      },
+      {
+        "song": "Thinkin Bout You",
+        "key": "minor / relative major",
+        "sections": {
+          "verse": "VI iv v i",
+          "chorus (relative major)": "ii I V vi"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "Frank Ocean"
+      },
+      {
+        "song": "Super Rich Kids",
+        "key": "major",
+        "sections": {
+          "loop": "I v bVII V"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "Frank Ocean"
+      },
+      {
+        "song": "Self Control",
+        "key": "major",
+        "sections": {
+          "loop": "I vi ii V"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "Frank Ocean"
+      },
+      {
+        "song": "Nikes",
+        "key": "major",
+        "sections": {
+          "loop": "I iii bVII vi"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "Frank Ocean"
+      },
+      {
+        "song": "Godspeed",
+        "key": "major",
+        "sections": {
+          "loop": "I v IV"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "Frank Ocean"
+      },
+      {
+        "song": "Novacane",
+        "key": "minor",
+        "sections": {
+          "loop": "VI iv VI v"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "Frank Ocean"
+      },
+      {
+        "song": "Saturn",
+        "key": "major",
+        "sections": {
+          "loop": "I ii"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/sza/saturn",
+        "artist": "SZA"
+      },
+      {
+        "song": "Supermodel",
+        "key": "major",
+        "sections": {
+          "loop": "IV I"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "SZA"
+      },
+      {
+        "song": "Go Gina",
+        "key": "major",
+        "sections": {
+          "loop": "V iii"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "SZA"
+      },
+      {
+        "song": "Love Galore",
+        "key": "major",
+        "sections": {
+          "loop": "IV I"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "SZA"
+      },
+      {
+        "song": "Blind",
+        "key": "minor",
+        "sections": {
+          "loop": "iv v"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "SZA"
+      },
+      {
+        "song": "Snooze",
+        "key": "major",
+        "sections": {
+          "loop": "ii iii IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/sza/snooze",
+        "artist": "SZA"
+      },
+      {
+        "song": "Good Days",
+        "key": "major",
+        "sections": {
+          "loop": "I vi IV"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "SZA"
+      },
+      {
+        "song": "Broken Clocks",
+        "key": "minor",
+        "sections": {
+          "loop": "VI V i"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "SZA"
+      },
+      {
+        "song": "Shirt",
+        "key": "minor",
+        "sections": {
+          "loop": "VI v III iv"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "SZA"
+      },
+      {
+        "song": "Doves in the Wind",
+        "key": "minor",
+        "sections": {
+          "loop": "iv III v III"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "SZA"
+      },
+      {
+        "song": "Normal Girl",
+        "key": "major",
+        "sections": {
+          "loop": "I IV iii vi"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "SZA"
+      }
+    ],
+    "folk": [
+      {
+        "song": "Motion Sickness",
+        "key": "major",
+        "sections": {
+          "verse": "IV I",
+          "chorus": "IV I V IV vi"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/phoebe-bridgers/motion-sickness",
+        "artist": "Phoebe Bridgers"
+      },
+      {
+        "song": "Kyoto",
+        "key": "major",
+        "sections": {
+          "verse": "I IV",
+          "chorus": "ii IV I V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/phoebe-bridgers/kyoto",
+        "artist": "Phoebe Bridgers"
+      },
+      {
+        "song": "Scott Street",
+        "key": "major",
+        "sections": {
+          "loop": "ii IV I V IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/phoebe-bridgers/scott-street",
+        "artist": "Phoebe Bridgers"
+      },
+      {
+        "song": "Funeral",
+        "key": "major",
+        "sections": {
+          "loop": "vi IV I V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/phoebe-bridgers/funeral",
+        "artist": "Phoebe Bridgers"
+      },
+      {
+        "song": "I Know the End",
+        "key": "major",
+        "sections": {
+          "loop": "vi I IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/phoebe-bridgers/i-know-the-end",
+        "artist": "Phoebe Bridgers"
+      },
+      {
+        "song": "Smoke Signals",
+        "key": "major",
+        "sections": {
+          "loop": "I vi V IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/phoebe-bridgers/smoke-signals",
+        "artist": "Phoebe Bridgers"
+      },
+      {
+        "song": "Moon Song",
+        "key": "major",
+        "sections": {
+          "loop": "I V iii IV V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/phoebe-bridgers/moon-song",
+        "artist": "Phoebe Bridgers"
+      },
+      {
+        "song": "Savior Complex",
+        "key": "major",
+        "sections": {
+          "loop": "IV iv I II"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/phoebe-bridgers/savior-complex",
+        "artist": "Phoebe Bridgers"
+      },
+      {
+        "song": "Garden Song",
+        "key": "major",
+        "sections": {
+          "loop": "I vi ii IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/phoebe-bridgers/garden-song",
+        "artist": "Phoebe Bridgers"
+      },
+      {
+        "song": "Holocene",
+        "key": "major",
+        "sections": {
+          "loop": "I vi V vi IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/bon-iver/holocene",
+        "artist": "Bon Iver"
+      },
+      {
+        "song": "Perth",
+        "key": "major",
+        "sections": {
+          "loop": "IV V vi"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/bon-iver/perth",
+        "artist": "Bon Iver"
+      },
+      {
+        "song": "Skinny Love",
+        "key": "minor",
+        "sections": {
+          "loop": "i VII VI"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "Bon Iver"
+      },
+      {
+        "song": "715 - CRΣΣKS",
+        "key": "major",
+        "sections": {
+          "loop": "I iii V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/bon-iver/715---creeks",
+        "artist": "Bon Iver"
+      },
+      {
+        "song": "Wash.",
+        "key": "major",
+        "sections": {
+          "loop": "IV ii I vi ii"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/bon-iver/wash",
+        "artist": "Bon Iver"
+      }
+    ],
+    "darkpop": [
+      {
+        "song": "bad guy",
+        "key": "minor",
+        "sections": {
+          "loop": "i iv V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/billie-eilish/bad-guy",
+        "artist": "Billie Eilish"
+      },
+      {
+        "song": "bury a friend",
+        "key": "minor",
+        "sections": {
+          "loop": "i iv V"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "Billie Eilish"
+      },
+      {
+        "song": "everything i wanted",
+        "key": "minor",
+        "sections": {
+          "loop": "VI VII v"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "Billie Eilish"
+      },
+      {
+        "song": "Your Power",
+        "key": "minor",
+        "sections": {
+          "loop": "VI i v"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "Billie Eilish"
+      },
+      {
+        "song": "all the good girls go to hell",
+        "key": "minor",
+        "sections": {
+          "loop": "i VI iv V"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "Billie Eilish"
+      },
+      {
+        "song": "Happier Than Ever",
+        "key": "major",
+        "sections": {
+          "loop": "I vi IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/billie-eilish/happier-than-ever",
+        "artist": "Billie Eilish"
+      },
+      {
+        "song": "Halley's Comet",
+        "key": "major",
+        "sections": {
+          "loop": "I vi IV"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "Billie Eilish"
+      },
+      {
+        "song": "ocean eyes",
+        "key": "major",
+        "sections": {
+          "loop": "IV V vi"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "Billie Eilish"
+      },
+      {
+        "song": "when the party's over",
+        "key": "major",
+        "sections": {
+          "loop": "IV V vi"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "Billie Eilish"
+      },
+      {
+        "song": "Birds of a Feather",
+        "key": "major",
+        "sections": {
+          "loop": "I vi ii V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/billie-eilish/birds-of-a-feather",
+        "artist": "Billie Eilish"
+      },
+      {
+        "song": "wish you were gay",
+        "key": "major",
+        "sections": {
+          "loop": "ii V I vi"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "Billie Eilish"
+      },
+      {
+        "song": "What Was I Made For?",
+        "key": "major",
+        "sections": {
+          "loop": "I iii IV"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "Billie Eilish"
+      },
+      {
+        "song": "Getting Older",
+        "key": "major",
+        "sections": {
+          "loop": "I iii IV"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "Billie Eilish"
+      }
+    ],
+    "disco": [
+      {
+        "song": "Physical",
+        "key": "minor",
+        "sections": {
+          "loop": "i VI III VII"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/dua-lipa/physical",
+        "artist": "Dua Lipa"
+      },
+      {
+        "song": "Don't Start Now",
+        "key": "minor",
+        "sections": {
+          "verse": "iv i VI III VII",
+          "chorus": "i III iv v VI"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/dua-lipa/dont-start-now",
+        "artist": "Dua Lipa"
+      },
+      {
+        "song": "Levitating",
+        "key": "minor",
+        "sections": {
+          "loop": "i v iv"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/dua-lipa/levitating",
+        "artist": "Dua Lipa"
+      },
+      {
+        "song": "Dance the Night",
+        "key": "dorian",
+        "sections": {
+          "loop": "i IV"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "Dua Lipa"
+      },
+      {
+        "song": "Houdini",
+        "key": "minor",
+        "sections": {
+          "loop": "i iv"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "Dua Lipa"
+      },
+      {
+        "song": "Get Lucky",
+        "key": "minor (dorian IV)",
+        "sections": {
+          "loop": "IV i III v"
+        },
+        "src": "https://www.slate.com/articles/arts/culturebox/2014/03/daft_punk_s_get_lucky_explained_using_music_theory.html",
+        "artist": "Daft Punk"
+      },
+      {
+        "song": "One More Time",
+        "key": "minor",
+        "sections": {
+          "loop": "VI VII"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "Daft Punk"
+      },
+      {
+        "song": "Digital Love",
+        "key": "major",
+        "sections": {
+          "loop": "IV iii vi V"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "Daft Punk"
+      }
+    ],
+    "soul": [
+      {
+        "song": "Back to Black",
+        "key": "minor",
+        "sections": {
+          "chorus": "i iv VI V"
+        },
+        "src": "https://www.musicradar.com/news/back-to-black-theory",
+        "artist": "Amy Winehouse"
+      },
+      {
+        "song": "Me & Mr Jones",
+        "key": "major",
+        "sections": {
+          "loop": "I ii vii V"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "Amy Winehouse"
+      },
+      {
+        "song": "In My Bed",
+        "key": "minor",
+        "sections": {
+          "loop": "ii V i"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "Amy Winehouse"
+      },
+      {
+        "song": "Stronger Than Me",
+        "key": "major",
+        "sections": {
+          "loop": "I V"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "Amy Winehouse"
+      },
+      {
+        "song": "Hello",
+        "key": "minor",
+        "sections": {
+          "chorus": "i VI III VII"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/adele/hello",
+        "artist": "Adele"
+      },
+      {
+        "song": "Set Fire to the Rain",
+        "key": "minor",
+        "sections": {
+          "loop": "iv i III VII"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/adele/set-fire-to-the-rain",
+        "artist": "Adele"
+      },
+      {
+        "song": "Rolling in the Deep",
+        "key": "minor",
+        "sections": {
+          "loop": "i VII VI VII"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "Adele"
+      },
+      {
+        "song": "Someone Like You",
+        "key": "major",
+        "sections": {
+          "chorus": "I V vi IV"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "Adele"
+      },
+      {
+        "song": "Easy On Me",
+        "key": "major",
+        "sections": {
+          "loop": "I vi I IV"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "Adele"
+      },
+      {
+        "song": "Make You Feel My Love",
+        "key": "major",
+        "sections": {
+          "loop": "I V bVII IV iv"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "Adele"
+      },
+      {
+        "song": "Chasing Pavements",
+        "key": "major",
+        "sections": {
+          "loop": "IV iii vi ii"
+        },
+        "src": "Hooktheory (earlier research notes)",
+        "artist": "Adele"
+      }
+    ],
+    "synth": [
+      {
+        "song": "Blinding Lights",
+        "key": "minor (dorian IV)",
+        "sections": {
+          "loop": "i v VII IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/the-weeknd/blinding-lights",
+        "artist": "The Weeknd"
+      },
+      {
+        "song": "Can't Feel My Face",
+        "key": "minor",
+        "sections": {
+          "loop": "VII VI i"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/the-weeknd/cant-feel-my-face",
+        "artist": "The Weeknd"
+      },
+      {
+        "song": "Starboy",
+        "key": "minor",
+        "sections": {
+          "loop": "i VII VI VII"
+        },
+        "src": "https://hitsongsdeconstructed.com/downloads/1490806052Hit%20Songs%20Deconstructed%20Essentials-Starboy%20(3).pdf",
+        "artist": "The Weeknd"
+      },
+      {
+        "song": "In Your Eyes",
+        "key": "minor",
+        "sections": {
+          "loop": "iv VII i"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/the-weeknd/in-your-eyes",
+        "artist": "The Weeknd"
+      },
+      {
+        "song": "Out of Time",
+        "key": "minor",
+        "sections": {
+          "loop": "VI v i"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/the-weeknd/out-of-time",
+        "artist": "The Weeknd"
+      },
+      {
+        "song": "Save Your Tears",
+        "key": "major",
+        "sections": {
+          "loop": "I vi iii V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/the-weeknd/save-your-tears",
+        "artist": "The Weeknd"
+      },
+      {
+        "song": "Midnight City",
+        "key": "minor",
+        "sections": {
+          "loop": "VI i VII iv"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/m83/midnight-city",
+        "artist": "M83"
+      },
+      {
+        "song": "Wait",
+        "key": "major",
+        "sections": {
+          "verse": "IV I vi",
+          "chorus": "vi IV I"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/m83/wait",
+        "artist": "M83"
+      },
+      {
+        "song": "Outro",
+        "key": "major",
+        "sections": {
+          "loop": "I ii vi IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/m83/outro",
+        "artist": "M83"
+      },
+      {
+        "song": "Reunion",
+        "key": "major",
+        "sections": {
+          "verse": "ii V vi IV",
+          "chorus": "V iii IV vi"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/m83/reunion",
+        "artist": "M83"
+      },
+      {
+        "song": "Steve McQueen",
+        "key": "major",
+        "sections": {
+          "verse": "IV vi V vi",
+          "chorus": "IV I V iii vi"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/m83/steve-mcqueen",
+        "artist": "M83"
+      },
+      {
+        "song": "We Own the Sky",
+        "key": "major",
+        "sections": {
+          "loop": "vi vii I ii"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/m83/we-own-the-sky",
+        "artist": "M83"
+      }
     ]
   }
 }

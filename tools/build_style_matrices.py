@@ -69,6 +69,22 @@ def main():
         st['m'] = mats[main_fam]
         prof['songsAnalysed'] = [{'song': s['song'], 'key': s['key'], **({'bpm': s['bpm']} if 'bpm' in s else {}), 'src': s['src']} for s in pl]
         print(f"{prof['id']:15} songs {len(pl)}  sections major {share.get('major',0):.2f} minor {share.get('minor',0):.2f}  bpm {sorted(bpms)}  main {main_fam}")
+    # the original styles in web/semitone-studio.html: same tables, applied to STYLES by id
+    fam_of = {'aeolian': 'minor', 'dorian': 'minor', 'phrygian': 'minor', 'harmonic': 'minor', 'minpent': 'minor', 'locrian': 'minor'}
+    current = {}
+    html = (ROOT / 'web/semitone-studio.html').read_text()
+    for m in re.finditer(r"\{id:'([a-z0-9]+)',meter:'[^']*',comp:'[a-z]+',swing:\d+,name:'[^']*',lane:'[^']*',desc:'[^']*',mode:'([a-z]+)'", html):
+        current[m.group(1)] = m.group(2)
+    ex = json.loads((ROOT / 'data/progressions.json').read_text()).get('existingStyles', {})
+    lib['existingStyles'] = {'about': 'Chord habits for the original styles, rebuilt from many songs. Apply to STYLES in web/semitone-studio.html by id: m (for the style mode), mMajor, mMinor, modeShare. Keep each style mode; modeShare lets a new song switch family.'}
+    for sid, pl in ex.items():
+        mats, share, bpms = build(pl)
+        fam = fam_of.get(current.get(sid, 'ionian'), 'major')
+        artists = {}
+        for x in pl: artists[x.get('artist', '?')] = artists.get(x.get('artist', '?'), 0) + 1
+        lib['existingStyles'][sid] = {'m': mats[fam], 'mMajor': mats['major'], 'mMinor': mats['minor'], 'modeShare': share, 'styleMode': current.get(sid),
+                                       'songsAnalysed': len(pl), 'byArtist': artists, 'songs': [x['song'] for x in pl]}
+        print(f"{sid:10} mode {current.get(sid,'?'):9} songs {len(pl):2} {artists}  major {share.get('major',0):.2f} minor {share.get('minor',0):.2f}")
     libp.write_text(json.dumps(lib, ensure_ascii=False, indent=2) + '\n')
 
 if __name__ == '__main__':

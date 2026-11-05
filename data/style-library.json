@@ -2326,33 +2326,84 @@
         ],
         "m": {
           "0": {
-            "5": 3,
-            "1": 3,
+            "1": 4,
+            "5": 2
+          },
+          "1": {
+            "4": 6,
+            "6": 1
+          },
+          "2": {
+            "0": 1
+          },
+          "3": {
+            "0": 1
+          },
+          "4": {
+            "0": 5,
+            "1": 1
+          },
+          "5": {
+            "1": 2
+          },
+          "6": {
+            "0": 1
+          }
+        },
+        "mMajor": {
+          "0": {
+            "1": 4,
+            "5": 2
+          },
+          "1": {
+            "4": 6,
+            "6": 1
+          },
+          "2": {
+            "0": 1
+          },
+          "3": {
+            "0": 1
+          },
+          "4": {
+            "0": 5,
+            "1": 1
+          },
+          "5": {
+            "1": 2
+          },
+          "6": {
+            "0": 1
+          }
+        },
+        "mMinor": {
+          "0": {
+            "1": 4,
             "3": 2
           },
           "1": {
-            "4": 6
+            "4": 6,
+            "3": 3
           },
           "2": {
             "5": 4
           },
           "3": {
-            "6": 2,
-            "1": 2,
-            "4": 2
+            "6": 4
           },
           "4": {
-            "0": 6,
-            "5": 1
+            "0": 6
           },
           "5": {
-            "1": 5,
-            "3": 1
+            "1": 4
           },
           "6": {
-            "2": 3,
-            "0": 1
+            "2": 4
           }
+        },
+        "modeShare": {
+          "major": 0.57,
+          "minor": 0.43
         }
       },
       "bass": "walk",
@@ -2433,7 +2484,7 @@
         "stats": [
           [
             "Core progression",
-            "ii7–V7–Imaj7"
+            "ii7–V7–Imaj7 (minor: iiø7–V7–i)"
           ],
           [
             "Feel",
@@ -2441,33 +2492,94 @@
           ],
           [
             "Forms",
-            "32-bar AABA, 12-bar blues"
+            "32-bar AABA / ABAC / AABC, 12-bar blues"
           ]
         ],
         "points": [
           {
-            "c": "med",
-            "t": "The ii–V–I is the most common progression in jazz standards.",
-            "used": "chord matrix: ii→V→I strongest"
+            "c": "high",
+            "t": "ii–V–I progressions are extremely common in jazz and imply passing key centres; Honeysuckle Rose goes back and forth between ii and V before resolving, and Satin Doll is built on them.",
+            "used": "chord matrix: ii→V→I strongest",
+            "src": [
+              "https://en.wikipedia.org/wiki/Ii%E2%80%93V%E2%80%93I_progression"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "In minor the ii is half-diminished (iiø7–V7–i); the V7 can be swapped for ♭II7 (tritone substitution) for chromatic root motion.",
+            "used": "minor matrix; tri weight 0.8 in Chord ideas",
+            "src": [
+              "https://en.wikipedia.org/wiki/Ii%E2%80%93V%E2%80%93I_progression"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Autumn Leaves in G minor: a ii–V–I into the relative major (Cm7–F7–B♭maj7), E♭maj7 as a link, then the minor ii–V–i (Am7♭5–D7–Gm); 32 bars in swing.",
+            "used": "circle-of-fifths motion in the minor matrix, form",
+            "src": [
+              "https://www.learnjazzstandards.com/blog/autumn-leaves-chords/",
+              "https://standardrepertoire.com/autumn-leaves.html",
+              "https://hooktheory.com/theorytab/view/joseph-kosma/autumn-leaves---les-feuilles-mortes"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Fly Me to the Moon is a 32-bar ABAC swing tune; Autumn Leaves is AABC.",
+            "used": "forms",
+            "src": [
+              "https://standardrepertoire.com/fly-me-to-the-moon.html",
+              "https://standardrepertoire.com/autumn-leaves.html"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "The Girl from Ipanema (bossa nova) opens on an added-9th I chord and moves to II7 (V7 of V) and ♭VII.",
+            "used": "bossa variant",
+            "src": [
+              "https://www.hooktheory.com/theorytab/view/stan-getz---joao-gilberto/the-girl-from-ipanema"
+            ]
           },
           {
             "c": "med",
-            "t": "Walking bass: one note per beat, chord tones on strong beats, passing tones leading to the next root.",
-            "used": "bass walk (exists)"
-          },
-          {
-            "c": "med",
-            "t": "Swing eighths are played long–short; the ride cymbal and the hi-hat on 2 and 4 keep time.",
-            "used": "swing 64, new swing groove"
-          },
-          {
-            "c": "med",
-            "t": "32-bar AABA and 12-bar blues are the standard forms.",
-            "used": "form"
+            "t": "Walking bass: one note per beat, chord tones on strong beats, passing tones into the next root. Swing eighths long–short, ride cymbal and hi-hat on 2 and 4 keep time.",
+            "used": "bass walk (exists), new swing groove"
           }
-        ],
-        "note": "Jazz points are general music-theory knowledge rather than one artist's habits; add sources when the Classroom jazz lesson is written."
-      }
+        ]
+      },
+      "songsAnalysed": [
+        {
+          "song": "Autumn Leaves",
+          "key": "G minor",
+          "src": "https://www.learnjazzstandards.com/blog/autumn-leaves-chords/"
+        },
+        {
+          "song": "Autumn Leaves (Hooktheory)",
+          "key": "D minor",
+          "bpm": 125,
+          "src": "https://hooktheory.com/theorytab/view/joseph-kosma/autumn-leaves---les-feuilles-mortes"
+        },
+        {
+          "song": "The Girl from Ipanema",
+          "key": "Db major",
+          "bpm": 128,
+          "src": "https://www.hooktheory.com/theorytab/view/stan-getz---joao-gilberto/the-girl-from-ipanema"
+        },
+        {
+          "song": "Honeysuckle Rose",
+          "key": "major",
+          "src": "https://en.wikipedia.org/wiki/Ii%E2%80%93V%E2%80%93I_progression"
+        },
+        {
+          "song": "ii–V–I (the standard cadence)",
+          "key": "major",
+          "src": "https://en.wikipedia.org/wiki/Ii%E2%80%93V%E2%80%93I_progression"
+        },
+        {
+          "song": "minor ii–V–i",
+          "key": "minor",
+          "src": "https://en.wikipedia.org/wiki/Ii%E2%80%93V%E2%80%93I_progression"
+        }
+      ]
     },
     {
       "id": "charli",
@@ -3578,6 +3690,14 @@
           },
           {
             "c": "med",
+            "t": "For Westworld he moved from Game of Thrones' dramatic sound to a more minimal, classic one built on piano (including an old western-style piano), with piano covers of rock songs such as Black Hole Sun and Paint It Black.",
+            "used": "a 'Minimal piano' variant (user's own songs only for covers)",
+            "src": [
+              "https://kcr.sdsu.edu/exploring-work-westworld-composer-ramin-djawadi/"
+            ]
+          },
+          {
+            "c": "med",
             "t": "Westworld's score features player-piano style covers of rock songs.",
             "used": "variant (user's own songs only)",
             "src": [
@@ -3589,7 +3709,8 @@
             "t": "Tempo and exact meter of the main title not confirmed from a source; set as a starting point.",
             "used": "bpm 84, meter to check"
           }
-        ]
+        ],
+        "note": "Only the Game of Thrones main title has published chord analysis; Westworld traits are descriptive. Add more cues to data/progressions.json when analyses turn up."
       }
     }
   ],
@@ -3667,5 +3788,1027 @@
       "lyrics",
       "MIDI"
     ]
+  },
+  "existingStyles": {
+    "about": "Chord habits for the original styles, rebuilt from many songs. Apply to STYLES in web/semitone-studio.html by id: m (for the style mode), mMajor, mMinor, modeShare. Keep each style mode; modeShare lets a new song switch family.",
+    "sadcore": {
+      "m": {
+        "0": {
+          "6": 6,
+          "5": 3,
+          "2": 1,
+          "4": 1
+        },
+        "1": {
+          "0": 1
+        },
+        "2": {
+          "5": 2,
+          "6": 1,
+          "4": 1
+        },
+        "3": {
+          "0": 3,
+          "4": 2,
+          "5": 1,
+          "2": 1,
+          "1": 1
+        },
+        "4": {
+          "3": 2,
+          "5": 1,
+          "0": 1
+        },
+        "5": {
+          "0": 5,
+          "6": 3,
+          "3": 1,
+          "2": 1,
+          "4": 1
+        },
+        "6": {
+          "3": 3,
+          "5": 3,
+          "0": 1,
+          "4": 1,
+          "2": 1
+        }
+      },
+      "mMajor": {
+        "0": {
+          "6": 5,
+          "4": 4,
+          "2": 2,
+          "3": 2,
+          "5": 2
+        },
+        "1": {
+          "0": 2,
+          "4": 1
+        },
+        "2": {
+          "0": 1,
+          "5": 1
+        },
+        "3": {
+          "0": 6,
+          "4": 2,
+          "5": 1,
+          "6": 1
+        },
+        "4": {
+          "0": 3,
+          "1": 2,
+          "5": 1,
+          "3": 1
+        },
+        "5": {
+          "3": 4,
+          "1": 1,
+          "0": 1
+        },
+        "6": {
+          "0": 3,
+          "3": 3
+        }
+      },
+      "mMinor": {
+        "0": {
+          "6": 6,
+          "5": 3,
+          "2": 1,
+          "4": 1
+        },
+        "1": {
+          "0": 1
+        },
+        "2": {
+          "5": 2,
+          "6": 1,
+          "4": 1
+        },
+        "3": {
+          "0": 3,
+          "4": 2,
+          "5": 1,
+          "2": 1,
+          "1": 1
+        },
+        "4": {
+          "3": 2,
+          "5": 1,
+          "0": 1
+        },
+        "5": {
+          "0": 5,
+          "6": 3,
+          "3": 1,
+          "2": 1,
+          "4": 1
+        },
+        "6": {
+          "3": 3,
+          "5": 3,
+          "0": 1,
+          "4": 1,
+          "2": 1
+        }
+      },
+      "modeShare": {
+        "major": 0.42,
+        "minor": 0.58
+      },
+      "styleMode": "aeolian",
+      "songsAnalysed": 20,
+      "byArtist": {
+        "Lana Del Rey": 15,
+        "Mazzy Star": 5
+      },
+      "songs": [
+        "Born to Die",
+        "Young and Beautiful",
+        "Ride",
+        "Summertime Sadness",
+        "National Anthem",
+        "The Next Best American Record",
+        "Love Song",
+        "Shades of Cool",
+        "Ultraviolence",
+        "Venice Bitch",
+        "13 Beaches",
+        "Queen of Disaster",
+        "Brooklyn Baby",
+        "Lucky Ones",
+        "Blue Jeans",
+        "Fade Into You",
+        "Blue Light",
+        "Into Dust",
+        "Rhymes of an Hour",
+        "Flowers in December"
+      ]
+    },
+    "anthem": {
+      "m": {
+        "0": {
+          "4": 4,
+          "5": 3,
+          "2": 1,
+          "1": 1
+        },
+        "1": {
+          "3": 1
+        },
+        "2": {
+          "5": 1,
+          "3": 1
+        },
+        "3": {
+          "0": 6,
+          "4": 2
+        },
+        "4": {
+          "3": 2,
+          "5": 2,
+          "0": 2,
+          "1": 1
+        },
+        "5": {
+          "3": 4,
+          "0": 1,
+          "4": 1
+        },
+        "6": {
+          "0": 1
+        }
+      },
+      "mMajor": {
+        "0": {
+          "4": 4,
+          "5": 3,
+          "2": 1,
+          "1": 1
+        },
+        "1": {
+          "3": 1
+        },
+        "2": {
+          "5": 1,
+          "3": 1
+        },
+        "3": {
+          "0": 6,
+          "4": 2
+        },
+        "4": {
+          "3": 2,
+          "5": 2,
+          "0": 2,
+          "1": 1
+        },
+        "5": {
+          "3": 4,
+          "0": 1,
+          "4": 1
+        },
+        "6": {
+          "0": 1
+        }
+      },
+      "mMinor": {
+        "0": {
+          "0": 1
+        },
+        "1": {
+          "0": 1
+        },
+        "2": {
+          "0": 1
+        },
+        "3": {
+          "0": 1
+        },
+        "4": {
+          "0": 1
+        },
+        "5": {
+          "0": 1
+        },
+        "6": {
+          "0": 1
+        }
+      },
+      "modeShare": {
+        "major": 1.0,
+        "minor": 0.0
+      },
+      "styleMode": "ionian",
+      "songsAnalysed": 15,
+      "byArtist": {
+        "Taylor Swift": 9,
+        "Coldplay": 6
+      },
+      "songs": [
+        "Love Story",
+        "Anti-Hero",
+        "Blank Space",
+        "Bad Blood",
+        "cardigan",
+        "Shake It Off",
+        "Welcome to New York",
+        "Cruel Summer",
+        "Back to December",
+        "Viva la Vida",
+        "A Sky Full of Stars",
+        "Paradise",
+        "Fix You",
+        "The Scientist",
+        "Yellow"
+      ]
+    },
+    "rnb": {
+      "m": {
+        "0": {
+          "3": 4,
+          "4": 3,
+          "5": 2,
+          "1": 2,
+          "2": 1
+        },
+        "1": {
+          "0": 3,
+          "2": 1,
+          "4": 1
+        },
+        "2": {
+          "4": 2,
+          "3": 1,
+          "6": 1,
+          "5": 1
+        },
+        "3": {
+          "0": 6,
+          "1": 1,
+          "2": 1
+        },
+        "4": {
+          "0": 2,
+          "2": 2,
+          "3": 1,
+          "5": 1,
+          "6": 1
+        },
+        "5": {
+          "1": 2,
+          "0": 2,
+          "3": 1
+        },
+        "6": {
+          "4": 1,
+          "5": 1
+        }
+      },
+      "mMajor": {
+        "0": {
+          "3": 4,
+          "4": 3,
+          "5": 2,
+          "1": 2,
+          "2": 1
+        },
+        "1": {
+          "0": 3,
+          "2": 1,
+          "4": 1
+        },
+        "2": {
+          "4": 2,
+          "3": 1,
+          "6": 1,
+          "5": 1
+        },
+        "3": {
+          "0": 6,
+          "1": 1,
+          "2": 1
+        },
+        "4": {
+          "0": 2,
+          "2": 2,
+          "3": 1,
+          "5": 1,
+          "6": 1
+        },
+        "5": {
+          "1": 2,
+          "0": 2,
+          "3": 1
+        },
+        "6": {
+          "4": 1,
+          "5": 1
+        }
+      },
+      "mMinor": {
+        "0": {
+          "5": 5
+        },
+        "1": {
+          "0": 1
+        },
+        "2": {
+          "3": 3,
+          "4": 1
+        },
+        "3": {
+          "4": 4,
+          "5": 3,
+          "0": 1,
+          "2": 1
+        },
+        "4": {
+          "3": 4,
+          "0": 3,
+          "2": 3,
+          "5": 1
+        },
+        "5": {
+          "4": 6,
+          "3": 3
+        },
+        "6": {
+          "0": 1
+        }
+      },
+      "modeShare": {
+        "major": 0.63,
+        "minor": 0.37
+      },
+      "styleMode": "ionian",
+      "songsAnalysed": 18,
+      "byArtist": {
+        "Frank Ocean": 7,
+        "SZA": 11
+      },
+      "songs": [
+        "Pyramids",
+        "Thinkin Bout You",
+        "Super Rich Kids",
+        "Self Control",
+        "Nikes",
+        "Godspeed",
+        "Novacane",
+        "Saturn",
+        "Supermodel",
+        "Go Gina",
+        "Love Galore",
+        "Blind",
+        "Snooze",
+        "Good Days",
+        "Broken Clocks",
+        "Shirt",
+        "Doves in the Wind",
+        "Normal Girl"
+      ]
+    },
+    "folk": {
+      "m": {
+        "0": {
+          "3": 3,
+          "4": 2,
+          "5": 2,
+          "2": 1,
+          "1": 1
+        },
+        "1": {
+          "3": 2,
+          "0": 1
+        },
+        "2": {
+          "4": 1,
+          "3": 1
+        },
+        "3": {
+          "0": 6,
+          "5": 1,
+          "4": 1,
+          "1": 1
+        },
+        "4": {
+          "5": 2,
+          "3": 1,
+          "0": 1,
+          "1": 1,
+          "2": 1
+        },
+        "5": {
+          "3": 2,
+          "4": 1,
+          "1": 1,
+          "0": 1
+        },
+        "6": {
+          "0": 1
+        }
+      },
+      "mMajor": {
+        "0": {
+          "3": 3,
+          "4": 2,
+          "5": 2,
+          "2": 1,
+          "1": 1
+        },
+        "1": {
+          "3": 2,
+          "0": 1
+        },
+        "2": {
+          "4": 1,
+          "3": 1
+        },
+        "3": {
+          "0": 6,
+          "5": 1,
+          "4": 1,
+          "1": 1
+        },
+        "4": {
+          "5": 2,
+          "3": 1,
+          "0": 1,
+          "1": 1,
+          "2": 1
+        },
+        "5": {
+          "3": 2,
+          "4": 1,
+          "1": 1,
+          "0": 1
+        },
+        "6": {
+          "0": 1
+        }
+      },
+      "mMinor": {
+        "0": {
+          "6": 6
+        },
+        "1": {
+          "0": 1
+        },
+        "2": {
+          "0": 1
+        },
+        "3": {
+          "0": 1
+        },
+        "4": {
+          "0": 1
+        },
+        "5": {
+          "0": 6
+        },
+        "6": {
+          "5": 6
+        }
+      },
+      "modeShare": {
+        "major": 0.94,
+        "minor": 0.06
+      },
+      "styleMode": "ionian",
+      "songsAnalysed": 14,
+      "byArtist": {
+        "Phoebe Bridgers": 9,
+        "Bon Iver": 5
+      },
+      "songs": [
+        "Motion Sickness",
+        "Kyoto",
+        "Scott Street",
+        "Funeral",
+        "I Know the End",
+        "Smoke Signals",
+        "Moon Song",
+        "Savior Complex",
+        "Garden Song",
+        "Holocene",
+        "Perth",
+        "Skinny Love",
+        "715 - CRΣΣKS",
+        "Wash."
+      ]
+    },
+    "darkpop": {
+      "m": {
+        "0": {
+          "3": 4,
+          "4": 2,
+          "5": 2
+        },
+        "1": {
+          "0": 1
+        },
+        "2": {
+          "0": 1
+        },
+        "3": {
+          "4": 6
+        },
+        "4": {
+          "0": 6,
+          "5": 4
+        },
+        "5": {
+          "6": 2,
+          "0": 2,
+          "3": 2
+        },
+        "6": {
+          "4": 2
+        }
+      },
+      "mMajor": {
+        "0": {
+          "5": 5,
+          "2": 3
+        },
+        "1": {
+          "4": 2
+        },
+        "2": {
+          "3": 3
+        },
+        "3": {
+          "0": 6,
+          "4": 3
+        },
+        "4": {
+          "5": 3,
+          "0": 2
+        },
+        "5": {
+          "3": 6,
+          "1": 2
+        },
+        "6": {
+          "0": 1
+        }
+      },
+      "mMinor": {
+        "0": {
+          "3": 4,
+          "4": 2,
+          "5": 2
+        },
+        "1": {
+          "0": 1
+        },
+        "2": {
+          "0": 1
+        },
+        "3": {
+          "4": 6
+        },
+        "4": {
+          "0": 6,
+          "5": 4
+        },
+        "5": {
+          "6": 2,
+          "0": 2,
+          "3": 2
+        },
+        "6": {
+          "4": 2
+        }
+      },
+      "modeShare": {
+        "major": 0.62,
+        "minor": 0.38
+      },
+      "styleMode": "harmonic",
+      "songsAnalysed": 13,
+      "byArtist": {
+        "Billie Eilish": 13
+      },
+      "songs": [
+        "bad guy",
+        "bury a friend",
+        "everything i wanted",
+        "Your Power",
+        "all the good girls go to hell",
+        "Happier Than Ever",
+        "Halley's Comet",
+        "ocean eyes",
+        "when the party's over",
+        "Birds of a Feather",
+        "wish you were gay",
+        "What Was I Made For?",
+        "Getting Older"
+      ]
+    },
+    "disco": {
+      "m": {
+        "0": {
+          "3": 3,
+          "5": 2,
+          "2": 2,
+          "4": 1
+        },
+        "1": {
+          "0": 1
+        },
+        "2": {
+          "6": 2,
+          "4": 1,
+          "3": 1
+        },
+        "3": {
+          "0": 6,
+          "4": 1
+        },
+        "4": {
+          "3": 2,
+          "5": 1
+        },
+        "5": {
+          "6": 2,
+          "2": 2,
+          "0": 1
+        },
+        "6": {
+          "5": 2,
+          "0": 1,
+          "3": 1
+        }
+      },
+      "mMajor": {
+        "0": {
+          "0": 1
+        },
+        "1": {
+          "0": 1
+        },
+        "2": {
+          "5": 6
+        },
+        "3": {
+          "2": 6
+        },
+        "4": {
+          "3": 6
+        },
+        "5": {
+          "4": 6
+        },
+        "6": {
+          "0": 1
+        }
+      },
+      "mMinor": {
+        "0": {
+          "3": 3,
+          "5": 2,
+          "2": 2,
+          "4": 1
+        },
+        "1": {
+          "0": 1
+        },
+        "2": {
+          "6": 2,
+          "4": 1,
+          "3": 1
+        },
+        "3": {
+          "0": 6,
+          "4": 1
+        },
+        "4": {
+          "3": 2,
+          "5": 1
+        },
+        "5": {
+          "6": 2,
+          "2": 2,
+          "0": 1
+        },
+        "6": {
+          "5": 2,
+          "0": 1,
+          "3": 1
+        }
+      },
+      "modeShare": {
+        "major": 0.11,
+        "minor": 0.89
+      },
+      "styleMode": "aeolian",
+      "songsAnalysed": 8,
+      "byArtist": {
+        "Dua Lipa": 5,
+        "Daft Punk": 3
+      },
+      "songs": [
+        "Physical",
+        "Don't Start Now",
+        "Levitating",
+        "Dance the Night",
+        "Houdini",
+        "Get Lucky",
+        "One More Time",
+        "Digital Love"
+      ]
+    },
+    "soul": {
+      "m": {
+        "0": {
+          "1": 3,
+          "3": 3,
+          "5": 3,
+          "2": 3,
+          "6": 3
+        },
+        "1": {
+          "4": 3
+        },
+        "2": {
+          "6": 5
+        },
+        "3": {
+          "5": 3,
+          "0": 3
+        },
+        "4": {
+          "0": 6
+        },
+        "5": {
+          "4": 3,
+          "2": 3,
+          "6": 3
+        },
+        "6": {
+          "0": 5,
+          "3": 3,
+          "5": 3
+        }
+      },
+      "mMajor": {
+        "0": {
+          "4": 6,
+          "1": 2,
+          "5": 2,
+          "3": 2
+        },
+        "1": {
+          "6": 2,
+          "3": 2
+        },
+        "2": {
+          "5": 2
+        },
+        "3": {
+          "0": 4,
+          "2": 2
+        },
+        "4": {
+          "0": 5,
+          "5": 2,
+          "6": 1
+        },
+        "5": {
+          "3": 2,
+          "0": 2,
+          "1": 2
+        },
+        "6": {
+          "4": 2,
+          "3": 1
+        }
+      },
+      "mMinor": {
+        "0": {
+          "1": 3,
+          "3": 3,
+          "5": 3,
+          "2": 3,
+          "6": 3
+        },
+        "1": {
+          "4": 3
+        },
+        "2": {
+          "6": 5
+        },
+        "3": {
+          "5": 3,
+          "0": 3
+        },
+        "4": {
+          "0": 6
+        },
+        "5": {
+          "4": 3,
+          "2": 3,
+          "6": 3
+        },
+        "6": {
+          "0": 5,
+          "3": 3,
+          "5": 3
+        }
+      },
+      "modeShare": {
+        "major": 0.55,
+        "minor": 0.45
+      },
+      "styleMode": "aeolian",
+      "songsAnalysed": 11,
+      "byArtist": {
+        "Amy Winehouse": 4,
+        "Adele": 7
+      },
+      "songs": [
+        "Back to Black",
+        "Me & Mr Jones",
+        "In My Bed",
+        "Stronger Than Me",
+        "Hello",
+        "Set Fire to the Rain",
+        "Rolling in the Deep",
+        "Someone Like You",
+        "Easy On Me",
+        "Make You Feel My Love",
+        "Chasing Pavements"
+      ]
+    },
+    "synth": {
+      "m": {
+        "0": {
+          "6": 6,
+          "3": 2,
+          "5": 2,
+          "4": 2
+        },
+        "1": {
+          "0": 1
+        },
+        "2": {
+          "0": 1
+        },
+        "3": {
+          "6": 2,
+          "0": 2,
+          "5": 2
+        },
+        "4": {
+          "0": 2,
+          "6": 2
+        },
+        "5": {
+          "0": 4,
+          "4": 2,
+          "6": 2
+        },
+        "6": {
+          "5": 4,
+          "0": 4,
+          "3": 4
+        }
+      },
+      "mMajor": {
+        "0": {
+          "5": 3,
+          "1": 2,
+          "4": 1
+        },
+        "1": {
+          "5": 2,
+          "4": 1
+        },
+        "2": {
+          "4": 1,
+          "3": 1,
+          "5": 1
+        },
+        "3": {
+          "0": 4,
+          "5": 2,
+          "1": 1
+        },
+        "4": {
+          "5": 2,
+          "2": 2,
+          "0": 1
+        },
+        "5": {
+          "3": 6,
+          "4": 2,
+          "2": 1,
+          "6": 1
+        },
+        "6": {
+          "0": 1
+        }
+      },
+      "mMinor": {
+        "0": {
+          "6": 6,
+          "3": 2,
+          "5": 2,
+          "4": 2
+        },
+        "1": {
+          "0": 1
+        },
+        "2": {
+          "0": 1
+        },
+        "3": {
+          "6": 2,
+          "0": 2,
+          "5": 2
+        },
+        "4": {
+          "0": 2,
+          "6": 2
+        },
+        "5": {
+          "0": 4,
+          "4": 2,
+          "6": 2
+        },
+        "6": {
+          "5": 4,
+          "0": 4,
+          "3": 4
+        }
+      },
+      "modeShare": {
+        "major": 0.6,
+        "minor": 0.4
+      },
+      "styleMode": "aeolian",
+      "songsAnalysed": 12,
+      "byArtist": {
+        "The Weeknd": 6,
+        "M83": 6
+      },
+      "songs": [
+        "Blinding Lights",
+        "Can't Feel My Face",
+        "Starboy",
+        "In Your Eyes",
+        "Out of Time",
+        "Save Your Tears",
+        "Midnight City",
+        "Wait",
+        "Outro",
+        "Reunion",
+        "Steve McQueen",
+        "We Own the Sky"
+      ]
+    }
   }
 }

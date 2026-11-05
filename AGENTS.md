@@ -139,5 +139,7 @@ target look (Start, Song view, Record, Mix). Rules for every one of them:
    user's choice), set the mode (the style's own mode if it is in that family, else ionian / aeolian) and use
    that family's matrix. `bpmRange` gives the tempo range to draw from. To add songs: edit progressions.json,
    re-run the script, never hand-edit `m`.
+   The **original 8 styles** get the same treatment: `existingStyles` in style-library.json holds their rebuilt
+   `m` / `mMajor` / `mMinor` / `modeShare` from 8–20 songs each (both lane artists); apply them to STYLES by id.
 - Rules: profiles describe habits across many songs, never one song; no copied melodies, lyrics or recordings;
   no voice imitation. Points marked `"c":"low"` are starting guesses: tune them with the song analyser and say so.
