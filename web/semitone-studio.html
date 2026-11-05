@@ -7272,7 +7272,7 @@ function structureMarkers(orch){ const secs=orch?O.sections:S.song.sections, B=o
 function flSetupHTML(){ return `<details class="fl-setup"${NATIVE.flSetupOpen?' open':''}><summary>One-time setup in FL Studio</summary><ol>
   <li>In FL: <b>Options → MIDI Settings</b>.</li>
   <li>In the <b>Input</b> list, click <b>Semitone Studio markers</b> and tick <b>Enable</b>.</li>
-  <li>Set <b>Controller type</b> to <b>Semitone Studio (user)</b>. Not in the list? Quit and reopen FL once, so it finds the script Semitone just installed.</li>
+  <li>Set <b>Controller type</b> to <b>Semitone Studio</b> (under Scripts). Not in the list? Quit and reopen FL once, so it finds the script Semitone just installed.</li>
   <li>Close the window and press <b>⚑ Send structure to FL</b> again.</li></ol>
   <p class="muted">The markers start at bar 1 of the Playlist. FL can add markers but not remove them, so before sending a changed structure, delete the old ones (right-click a marker → Delete). Make FL’s tempo match the song first so the bars line up.</p></details>`; }
 function initFLMarkers(){ if(!NATIVE.plugin||NATIVE.host!=='FL Studio') return;

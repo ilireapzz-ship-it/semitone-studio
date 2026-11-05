@@ -48,6 +48,7 @@ In the HTML, the bridge is the `NATIVE` / `nativeInit()` / `NSND` code (only act
 - MIDI routing: Semitone gear → MIDI → Output port N; the instrument's Input port N. Use SONG mode (PAT loops the pattern).
 - Omnisphere STACK MODE ignores part channels. Single-part MIDI exports use channel 1. Pitch-bend range is 12.
 - Clicking inside the plugin's web view by computer use needs full-screen control.
+- Playlist markers: `Source/FLMarkers.h` installs `device_SemitoneStudio.py` in Documents/Image-Line/FL Studio/Settings/Hardware and sends SysEx on the virtual port "Semitone Studio markers". FL only lists a new script after a restart. Tested working in FL 2026 (Mac).
 - Never delete Jamie's files: move them to a `_to_delete/` folder instead and tell him.
 
 ## Roadmap (Phase 1 of the DAW plan)
