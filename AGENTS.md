@@ -118,10 +118,10 @@ target look (Start, Song view, Record, Mix). Rules for every one of them:
 2. **Blend rules** (`blendRules` in the JSON): the first base tag sets the core; more base tags blend in at 0.35;
    a producer replaces only the production layer (kit, groove, instruments, sound, articulation, mix moves);
    modifiers apply deltas; conflicts are asked, never silently resolved; a card lists what each tag changed, with Undo.
-3. **New profiles:** artists Chappell Roan, Lady Gaga, Fleetwood Mac, Red Hot Chili Peppers; composer Yann Tiersen
+3. **New profiles:** artists Chappell Roan, Lady Gaga, Fleetwood Mac, Red Hot Chili Peppers, Charli XCX; composer Yann Tiersen
    (Compose, 3/4 waltz); soundtrack Stranger Things; genre Jazz (swing, with ballad / bossa / waltz variants);
    producers Jack Antonoff, Max Martin, Finneas, Mike Dean, RedOne, Rick Rubin (adds a 'Reduce' suggestion that strips each
-   section back), Dan Nigro (adds a 'Build it up' suggestion: piano → band → double-time last chorus); orchestral composer Ramin Djawadi
+   section back), Dan Nigro (adds a 'Build it up' suggestion: piano → band → double-time last chorus), A. G. Cook (hyperpop); orchestral composer Ramin Djawadi
    (a new OT template). Each `profiles[]` entry carries every table a style needs (STYLES, STYLE_BASS,
    STYLE_GROOVE, STYLE_KIT, STYLE_INSTR, STYLE_QUIRKS, STYLE_FEEL, SUGSTYLE, TRANS_STYLE, ARTSTYLE, STYLE_DNA);
    write a STYLE_MIX entry for each from its `mixHint` and producer `mixMoves`. Load the JSON at build time

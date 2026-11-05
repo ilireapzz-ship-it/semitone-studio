@@ -1838,6 +1838,253 @@
         ],
         "note": "Jazz points are general music-theory knowledge rather than one artist's habits; add sources when the Classroom jazz lesson is written."
       }
+    },
+    {
+      "id": "charli",
+      "kind": "artist",
+      "tags": [
+        "Charli XCX"
+      ],
+      "alsoTags": [
+        "genre:club-pop",
+        "genre:hyperpop",
+        "producer:A. G. Cook",
+        "era:2000s"
+      ],
+      "style": {
+        "id": "charli",
+        "meter": "4/4",
+        "comp": "stabs",
+        "swing": 50,
+        "name": "Brat club-pop",
+        "lane": "Charli XCX",
+        "desc": "Loud minimalism for the club: two- and three-chord loops that never quite name their key, unusual voicings, a morphing bit-crushed synth, sudden silences and stutters, Auto-Tuned vocals.",
+        "mode": "aeolian",
+        "key": 9,
+        "bpm": 128,
+        "sevenths": true,
+        "density": 0.5,
+        "leap": 0.26,
+        "register": [
+          55,
+          76
+        ],
+        "sound": "saw",
+        "drums": true,
+        "structure": "pop",
+        "contour": 0,
+        "space": 1.0,
+        "mopts": {
+          "chorus": {
+            "shift": 3
+          }
+        },
+        "rhythms": [
+          [
+            0.5,
+            0.5,
+            1,
+            2
+          ],
+          [
+            1,
+            0.5,
+            0.5,
+            1,
+            1
+          ],
+          [
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            1,
+            1
+          ],
+          [
+            1.5,
+            0.5,
+            2
+          ],
+          [
+            1,
+            1,
+            2
+          ]
+        ],
+        "m": {
+          "0": {
+            "5": 3,
+            "2": 2,
+            "6": 1
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "0": 2,
+            "5": 2
+          },
+          "3": {
+            "0": 1
+          },
+          "4": {
+            "0": 1
+          },
+          "5": {
+            "6": 3,
+            "0": 2,
+            "2": 1
+          },
+          "6": {
+            "2": 3,
+            "0": 2
+          }
+        }
+      },
+      "bass": "held",
+      "groove": "fourfloor",
+      "kit": "electro",
+      "instr": {
+        "chords": "i:propolymod",
+        "bass": "i:probass",
+        "lead": "i:prolead"
+      },
+      "quirks": "punchy",
+      "feel": {
+        "kick": 0,
+        "snare": 0,
+        "hat": 0,
+        "jit": 0.001,
+        "vj": 0.04,
+        "ghost": 0,
+        "acc": 0.5
+      },
+      "sug": {
+        "ext": 0.6,
+        "borrow": 0.8,
+        "sec": 0.2,
+        "tri": 0.3,
+        "sus": 0.6
+      },
+      "trans": {
+        "chorus": [
+          "riser",
+          "impact",
+          "drop"
+        ],
+        "verse": [
+          "down"
+        ],
+        "bridge": [
+          "sweep"
+        ],
+        "pre": [
+          "rev"
+        ],
+        "outro": [
+          "down"
+        ]
+      },
+      "art": {
+        "legato": 0.3,
+        "vibLong": 0.1,
+        "scoopStart": 0.05,
+        "fallEnd": 0.1,
+        "slideLeap": 0.2,
+        "ghost": 0.1,
+        "stacc": 0.55,
+        "accent": 0.5,
+        "grace": 0.05,
+        "tenuto": 0.3,
+        "info": "Talk-sung, clipped lines with Auto-Tune polish: almost no vibrato, accented hooks."
+      },
+      "arrangement": {
+        "process": "start from a loop and build structure by muting and deleting (subtraction)",
+        "silence": "drop the music out where a downbeat is expected (a sudden gap, maybe just claps)",
+        "stutter": "copy and repeat a 16th note of vocal for a stutter",
+        "voicings": "stacked fourths and close clashes (a minor second inside a chord)",
+        "harmony": "hint at two or three keys without settling; a raised 4th can tint a major chorus Lydian",
+        "needs": [
+          "a vocal Auto-Tune effect for the guide vocal",
+          "the stutter-edit effect (also for RedOne)",
+          "random filter cutoff per chord on the lead synth"
+        ]
+      },
+      "mixHint": "'Very loud and bold' minimalism: few parts, all huge; bit-crushed, formant-filtered saw synths; dry, upfront, Auto-Tuned vocal.",
+      "dna": {
+        "tagline": "loud minimal club-pop that never quite names its key",
+        "intro": "On Brat, Charli XCX and producers including A. G. Cook made what she called 'a unique minimalism that is very loud and bold': club-pop rooted in 2000s English rave, built from loops by subtraction, with Auto-Tuned vocals and ambiguous harmony.",
+        "stats": [
+          [
+            "Genres",
+            "electropop, club-pop, hyperpop, electroclash"
+          ],
+          [
+            "Roots",
+            "2000s English rave"
+          ],
+          [
+            "Vocals",
+            "real-time Auto-Tune"
+          ]
+        ],
+        "points": [
+          {
+            "c": "high",
+            "t": "Genres listed as electropop, synth-pop, club-pop, hyperpop, dance and electroclash; drawn from the London rave scene and 2000s English rave music.",
+            "used": "groove fourfloor, kit electro",
+            "src": [
+              "https://en.wikipedia.org/wiki/Brat_(album)"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "She described the sound as 'a unique minimalism that is very loud and bold'; more aggressive and club-oriented than Crash.",
+            "used": "density 0.5, punchy quirks",
+            "src": [
+              "https://en.wikipedia.org/wiki/Brat_(album)"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "360 hints at C major, F major and A minor without settling; I Think About It All The Time uses simple chords with unusual voicings (stacked fourths, a minor-second clash); Sympathy Is a Knife's chorus has a raised 4th (Lydian colour).",
+            "used": "chord matrix (A minor / C / F / G), voicings, borrow weight",
+            "src": [
+              "https://www.musicradar.com/news/charli-xcx-brat-theory"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Built in Logic with Serum synths, starting from loops and shaping structure by muting and deleting; abrupt silences replace expected downbeats; a stutter is made by repeating a 16th note of vocal.",
+            "used": "arrangement",
+            "src": [
+              "https://www.musicradar.com/news/charli-xcx-brat-theory"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "A morphing lead: saw wave into a formant filter with the cutoff randomised on each chord, then a low-pass and bit-crushing distortion.",
+            "used": "lead synth (needs random cutoff per chord)",
+            "src": [
+              "https://www.musicradar.com/news/charli-xcx-brat-theory"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Charli records melodies with real-time Auto-Tune in her headphones; songs are likely improvised straight into the computer.",
+            "used": "articulation, guide vocal effect",
+            "src": [
+              "https://www.musicradar.com/news/charli-xcx-brat-theory"
+            ]
+          },
+          {
+            "c": "low",
+            "t": "Club tempos around 120–135 BPM.",
+            "used": "bpm 128 (check with the song analyser)"
+          }
+        ]
+      }
     }
   ],
   "producers": [
@@ -2275,6 +2522,80 @@
             "used": "links to the Chappell Roan profile",
             "src": [
               "https://www.musicradar.com/news/chappell-roan-good-luck-babe-theory"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "agcook",
+      "tags": [
+        "A. G. Cook",
+        "AG Cook"
+      ],
+      "layer": {
+        "kit": "electro",
+        "groove": "fourfloor",
+        "instr": {
+          "chords": "i:junopoly",
+          "bass": "i:probass",
+          "lead": "i:prolead"
+        },
+        "sound": "bright",
+        "quirks": "punchy",
+        "mixMoves": [
+          "vocals pitched up or chopped into rhythmic parts (the Pitch shift effect)",
+          "sugary, plastic-bright synths and big Eurodance or happy-hardcore synth blasts",
+          "grime-style sub-bass underneath",
+          "glossy polish pushed to the point of exaggeration",
+          "a dark undertone: dissonant inversions under the bright surface"
+        ],
+        "arrangement": [
+          "sudden switches of sound and rhythm mid-song, as if the song has several personalities",
+          "stack clashing layers for a chaotic peak, then snap back to clean pop",
+          "exaggerate familiar 90s and 2000s pop moves"
+        ]
+      },
+      "dna": {
+        "tagline": "hyperpop: pitched-up vocals, sugary synths, exaggerated pop",
+        "intro": "A. G. Cook founded PC Music, whose sound (later called hyperpop) takes 1990s and 2000s pop to surreal extremes: pitched-up, chopped vocals, sugary synths, grime sub-bass and sudden shifts. He is Charli XCX's longtime executive producer.",
+        "points": [
+          {
+            "c": "high",
+            "t": "Vocals heavily processed, usually pitched up or chopped into rhythmic elements; bright, sugary, artificial-sounding synths.",
+            "used": "mixMoves, sound bright",
+            "src": [
+              "https://en.wikipedia.org/wiki/PC_Music"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Big synth blasts and high vocals recall Eurodance and happy hardcore; grime-style sub-bass anchors the low end.",
+            "used": "kit electro, groove fourfloor, bass probass",
+            "src": [
+              "https://en.wikipedia.org/wiki/PC_Music"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Abrupt changes in timbre and rhythm; stacked discordant layers; glossy polish deliberately overstated; dissonant inversions give a sinister edge.",
+            "used": "arrangement",
+            "src": [
+              "https://en.wikipedia.org/wiki/PC_Music"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Influences include K-pop and J-pop and the production of Max Martin and Jimmy Jam & Terry Lewis.",
+            "src": [
+              "https://en.wikipedia.org/wiki/PC_Music"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Charli XCX's longtime executive producer, credited on Brat.",
+            "src": [
+              "https://en.wikipedia.org/wiki/Brat_(album)"
             ]
           }
         ]
