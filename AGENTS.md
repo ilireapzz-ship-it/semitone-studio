@@ -133,5 +133,11 @@ target look (Start, Song view, Record, Mix). Rules for every one of them:
 5. **Soundtrack library** (`soundtrackLibrary`): media tags map to a profile or a blend of tags; blends are
    labelled "approximate". **Your reference** (`referenceTag`): the song analyser reads the user's own files
    locally and keeps only numbers, never audio, melodies, lyrics or MIDI.
+6. **Chord variety from many songs.** Each profile's chord habits come from several songs
+   (`data/progressions.json`, 4–9 songs each, sourced) built by `tools/build_style_matrices.py` into `mMajor`,
+   `mMinor` and `modeShare`. When a new song is made in a profile, pick major or minor by `modeShare` (or the
+   user's choice), set the mode (the style's own mode if it is in that family, else ionian / aeolian) and use
+   that family's matrix. `bpmRange` gives the tempo range to draw from. To add songs: edit progressions.json,
+   re-run the script, never hand-edit `m`.
 - Rules: profiles describe habits across many songs, never one song; no copied melodies, lyrics or recordings;
   no voice imitation. Points marked `"c":"low"` are starting guesses: tune them with the song analyser and say so.

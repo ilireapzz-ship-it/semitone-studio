@@ -1,0 +1,58 @@
+{
+  "about": "Chord progressions per section from several songs per artist (Hooktheory TheoryTab unless noted), used to build each profile's chord habits (tools/build_style_matrices.py). Numerals are relative to the section's key and mode as the source gives them. Facts about songs (keys, tempos, chord functions), not copies of them.",
+  "profiles": {
+    "chappell": [
+      {"song": "Good Luck, Babe!", "key": "D major", "bpm": 117, "sections": {"intro": "IV V I vi", "verse": "IV V I vi", "chorus": "IV V I vi"}, "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/good-luck-babe"},
+      {"song": "Pink Pony Club", "key": "F# major", "bpm": 107, "sections": {"verse": "I ii vi IV", "chorus": "I ii vi IV", "bridge": "IV V vi ii"}, "src": "https://hooktheory.com/theorytab/view/chappell-roan/pink-pony-club"},
+      {"song": "Hot To Go!", "key": "F# major", "bpm": 140, "sections": {"verse": "I IV", "chorus": "I IV"}, "src": "https://hooktheory.com/theorytab/view/chappell-roan/hot-to-go"},
+      {"song": "Femininomenon", "key": "Eb major", "bpm": 125, "sections": {"verse": "I vi IV", "pre": "I vi IV vii IV", "chorus": "I vi IV vii IV"}, "src": "https://hooktheory.com/theorytab/view/chappell-roan/femininomenon"},
+      {"song": "Casual", "key": "Db major", "bpm": 131, "sections": {"pre": "V IV", "chorus": "I IV ii IV"}, "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/casual"},
+      {"song": "The Subway", "key": "Bb major", "bpm": 84, "sections": {"chorus": "IV I V", "leadout": "IV iv I", "outro": "I IV ii V"}, "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/the-subway"},
+      {"song": "My Kink Is Karma", "key": "A major", "bpm": 85, "sections": {"chorus": "I iii IV", "bridge (A mixolydian)": "bVII I IV bIII I"}, "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/my-kink-is-karma"},
+      {"song": "After Midnight", "key": "F major", "bpm": 110, "sections": {"chorus": "IV I V ii iii"}, "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/after-midnight"},
+      {"song": "The Giver", "key": "B mixolydian", "bpm": 94, "sections": {"intro": "bVII IV I IV I", "chorus": "bVII IV I IV I"}, "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/the-giver"}
+    ],
+    "gaga": [
+      {"song": "Just Dance", "key": "C# minor", "bpm": 119, "sections": {"verse": "i III VII iv"}, "src": "https://en.wikipedia.org/wiki/Just_Dance_(song)"},
+      {"song": "Poker Face", "key": "G# minor", "bpm": 120, "sections": {"chorus": "i VI III VII"}, "src": "https://en.wikipedia.org/wiki/Poker_Face_(song)"},
+      {"song": "Bad Romance", "key": "A minor", "bpm": 119, "sections": {"verse": "i III VI i III", "chorus": "VI VII i III VI", "leadout": "i VI"}, "src": "https://hooktheory.com/theorytab/view/lady-gaga/bad-romance"},
+      {"song": "Applause", "key": "G minor", "bpm": 140, "sections": {"verse": "i VII VI iv VII", "chorus": "i VII VI iv VII"}, "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/applause"},
+      {"song": "Paparazzi", "key": "C minor / Ab major", "bpm": 115, "sections": {"verse": "i VI", "chorus (Ab major)": "I V vi IV"}, "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/paparazzi"},
+      {"song": "Rain On Me (with Ariana Grande)", "key": "C# minor", "bpm": 123, "sections": {"verse": "i VI", "chorus": "i III VI v"}, "src": "https://www.hooktheory.com/theorytab/view/lady-gaga-and-ariana-grande/rain-on-me"},
+      {"song": "Shallow (with Bradley Cooper)", "key": "G major / E dorian", "bpm": 96, "sections": {"pre": "vi V I IV I", "chorus": "ii V I V vi", "bridge (E dorian)": "v VII IV i"}, "src": "https://hooktheory.com/theorytab/view/lady-gaga-and-bradley-cooper/shallow"}
+    ],
+    "fleetwood": [
+      {"song": "Dreams", "key": "A minor", "bpm": 120, "sections": {"verse": "VI VII", "chorus": "VI VII", "solo": "VI VII VI i VII"}, "src": "https://hooktheory.com/theorytab/view/fleetwood-mac/dreams"},
+      {"song": "Go Your Own Way", "key": "F major / D minor", "bpm": 136, "sections": {"verse": "I V IV", "chorus (D minor)": "i VI VII"}, "src": "https://hooktheory.com/theorytab/view/fleetwood-mac/go-your-own-way"},
+      {"song": "Rhiannon", "key": "A minor", "bpm": 129, "sections": {"verse": "i VI"}, "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/rhiannon"},
+      {"song": "Landslide", "key": "Bb major", "bpm": 159, "sections": {"verse": "IV I ii I", "chorus": "I V vi IV I"}, "src": "https://hooktheory.com/theorytab/view/fleetwood-mac/landslide"},
+      {"song": "Everywhere", "key": "E major", "bpm": 115, "sections": {"verse": "I V", "chorus": "V vi IV V vi"}, "src": "https://hooktheory.com/theorytab/view/fleetwood-mac/everywhere"},
+      {"song": "Don't Stop", "key": "E major", "bpm": 119, "sections": {"verse": "I IV", "chorus": "I V IV"}, "src": "https://hooktheory.com/theorytab/view/fleetwood-mac/dont-stop"}
+    ],
+    "rhcp": [
+      {"song": "Californication", "key": "A minor", "bpm": 95, "sections": {"verse": "i VI", "pre": "i VI", "chorus": "III VII iv i"}, "src": "https://hooktheory.com/theorytab/view/red-hot-chili-peppers/californication"},
+      {"song": "Under the Bridge", "key": "E major / A minor", "bpm": 84, "sections": {"verse": "I V vi iii IV", "chorus": "ii I V", "bridge (A minor)": "I i v VI"}, "src": "https://hooktheory.com/theorytab/view/red-hot-chili-peppers/under-the-bridge"},
+      {"song": "Otherside", "key": "A minor", "bpm": 122, "sections": {"intro": "i VI III VII", "verse": "i v", "chorus": "i VI III VII", "bridge (E minor)": "i VI III"}, "src": "https://hooktheory.com/theorytab/view/red-hot-chili-peppers/otherside"},
+      {"song": "Dani California", "key": "A minor", "bpm": 96, "sections": {"verse": "i VII iv", "chorus": "i VII iv", "bridge (B minor)": "i VI III v"}, "src": "https://hooktheory.com/theorytab/view/red-hot-chili-peppers/dani-california"}
+    ],
+    "charli": [
+      {"song": "360", "key": "A minor", "bpm": 120, "sections": {"chorus": "v VI"}, "src": "https://hooktheory.com/theorytab/view/charli-xcx/360"},
+      {"song": "I Think About It All The Time", "key": "A minor", "sections": {"loop": "i VI VII III"}, "note": "Am, a stacked-fourths chord, F major, G–C (voicings vary)", "src": "https://www.musicradar.com/news/charli-xcx-brat-theory"},
+      {"song": "Sympathy Is a Knife", "key": "Eb major (Lydian colour)", "sections": {"chorus": "iii II V"}, "note": "Gm, F, Bb in Eb with a raised 4th", "src": "https://www.musicradar.com/news/charli-xcx-brat-theory"},
+      {"song": "B2B", "key": "D# minor", "bpm": 116, "sections": {"verse": "i v iv III", "chorus": "i ii VII iv VI"}, "src": "https://hooktheory.com/theorytab/view/charli-xcx/b2b"},
+      {"song": "Apple", "key": "C major", "bpm": 126, "sections": {"verse": "V vi IV", "leadout": "ii vi I IV"}, "src": "https://hooktheory.com/theorytab/view/charli-xcx/apple"},
+      {"song": "Track 10", "key": "F major", "bpm": 100, "sections": {"pre": "IV V iii IV V", "chorus": "ii iii IV V vi", "bridge": "V vi bVII I", "outro": "IV iii vi V"}, "src": "https://hooktheory.com/theorytab/view/charli-xcx/track-10"},
+      {"song": "Boom Clap", "key": "E major", "bpm": 92, "sections": {"verse": "IV V I vi", "chorus": "IV V I vi"}, "src": "https://hooktheory.com/theorytab/view/charli-xcx/boom-clap"},
+      {"song": "Speed Drive", "key": "D minor", "bpm": 173, "sections": {"chorus": "VI III iv i"}, "src": "https://hooktheory.com/theorytab/view/charli-xcx/speed-drive"}
+    ],
+    "tiersen": [
+      {"song": "La Valse d'Amélie", "key": "A minor", "meter": "6/8", "bpm": 191, "sections": {"instrumental": "iv VII i v i"}, "src": "https://hooktheory.com/theorytab/view/yann-tiersen/la-valse-damelie"},
+      {"song": "Comptine d'un autre été, l'après-midi", "key": "E minor", "meter": "4/4", "bpm": 100, "sections": {"verse": "i III v VII"}, "src": "https://www.hooktheory.com/theorytab/view/yann-tiersen/comptine-dun-autre-ete-lapres-midi"},
+      {"song": "J'y suis jamais allé", "key": "E minor", "meter": "4/4", "bpm": 102, "sections": {"intro": "i iv v"}, "src": "https://hooktheory.com/theorytab/view/yann-tiersen/jy-suis-jamais-alle"},
+      {"song": "La Maison", "key": "G mixolydian / F# minor / Ab lydian", "meter": "4/4", "bpm": 150, "sections": {"intro (G mixolydian)": "I bVII", "chorus (F# minor)": "i VII III", "leadout (Ab lydian)": "I II"}, "src": "https://www.hooktheory.com/theorytab/view/yann-tiersen/amelie---la-maison"}
+    ],
+    "strangerthings": [
+      {"song": "Stranger Things (main title)", "key": "C major", "bpm": 84, "sections": {"instrumental": "I iii"}, "note": "Imaj7 to iii with an added 13th", "src": "https://hooktheory.com/theorytab/view/kyle-dixon-and-michael-stein/stranger-things"}
+    ]
+  }
+}

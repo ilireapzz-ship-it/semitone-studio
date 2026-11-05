@@ -320,10 +320,10 @@
         "swing": 50,
         "name": "Camp synth-pop",
         "lane": "Chappell Roan",
-        "desc": "Big major IV–V–I–vi loops coloured with added 6ths and 9ths, 80s synths and drums, a theatrical voice that saves its top notes for the chorus.",
+        "desc": "Major-key pop that moves between big four-chord loops (IV–V–I–vi, I–ii–vi–IV, I–vi–IV), two-chord stomps (I–IV) and mixolydian ♭VII–IV–I turns, coloured with added 6ths and 9ths; 80s synths and drums; a theatrical voice that saves its top notes for the chorus.",
         "mode": "ionian",
         "key": 2,
-        "bpm": 117,
+        "bpm": 110,
         "sevenths": false,
         "density": 0.6,
         "leap": 0.34,
@@ -377,36 +377,113 @@
         ],
         "m": {
           "0": {
-            "5": 4,
             "3": 3,
-            "4": 1
+            "5": 2,
+            "6": 1,
+            "4": 1,
+            "1": 1,
+            "2": 1
           },
           "1": {
-            "4": 3,
-            "3": 2
+            "5": 1,
+            "3": 1,
+            "4": 1,
+            "2": 1
           },
           "2": {
-            "3": 2,
-            "5": 1
+            "3": 1
           },
           "3": {
-            "4": 5,
-            "0": 2,
-            "1": 1
+            "0": 6,
+            "4": 2,
+            "1": 1,
+            "6": 1
           },
           "4": {
-            "0": 4,
-            "5": 3
+            "0": 1,
+            "3": 1,
+            "5": 1,
+            "1": 1
           },
           "5": {
-            "3": 5,
-            "1": 2,
-            "4": 1
+            "3": 3,
+            "1": 1
+          },
+          "6": {
+            "3": 1,
+            "0": 1
+          }
+        },
+        "mMajor": {
+          "0": {
+            "3": 3,
+            "5": 2,
+            "6": 1,
+            "4": 1,
+            "1": 1,
+            "2": 1
+          },
+          "1": {
+            "5": 1,
+            "3": 1,
+            "4": 1,
+            "2": 1
+          },
+          "2": {
+            "3": 1
+          },
+          "3": {
+            "0": 6,
+            "4": 2,
+            "1": 1,
+            "6": 1
+          },
+          "4": {
+            "0": 1,
+            "3": 1,
+            "5": 1,
+            "1": 1
+          },
+          "5": {
+            "3": 3,
+            "1": 1
+          },
+          "6": {
+            "3": 1,
+            "0": 1
+          }
+        },
+        "mMinor": {
+          "0": {
+            "0": 1
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "0": 1
+          },
+          "3": {
+            "0": 1
+          },
+          "4": {
+            "0": 1
+          },
+          "5": {
+            "0": 1
           },
           "6": {
             "0": 1
           }
-        }
+        },
+        "modeShare": {
+          "major": 1.0,
+          "minor": 0.0
+        },
+        "bpmRange": [
+          84,
+          140
+        ]
       },
       "bass": "eighths",
       "groove": "backbeat",
@@ -478,19 +555,29 @@
         "intro": "Chappell Roan's songs, produced and co-written by Dan Nigro, pair simple major-key loops with jazzy colours, 80s drums and synths, and a theatrical vocal.",
         "stats": [
           [
-            "Key (example)",
-            "D major"
+            "Songs analysed",
+            "9"
           ],
           [
-            "Tempo (example)",
-            "113–121 BPM, drifting"
+            "Tempo range",
+            "84–140 BPM"
           ],
           [
-            "Main loop",
-            "IV–V–I–vi"
+            "Harmony",
+            "all major-family; some mixolydian"
           ]
         ],
         "points": [
+          {
+            "c": "high",
+            "t": "Across nine songs her harmony is all major-family but varied: IV–V–I–vi (Good Luck, Babe!), I–ii–vi–IV (Pink Pony Club), I–IV (Hot To Go!), I–vi–IV with a vii° (Femininomenon), I–IV–ii–IV with 9ths and 11ths (Casual), IV–I–V and a minor iv (The Subway), and mixolydian ♭VII–IV–I (The Giver, My Kink Is Karma). Tempos run from about 84 to 140 BPM.",
+            "used": "chord matrix from all nine songs, bpm range",
+            "src": [
+              "https://www.hooktheory.com/theorytab/view/chappell-roan/pink-pony-club",
+              "https://www.hooktheory.com/theorytab/view/chappell-roan/femininomenon",
+              "https://www.hooktheory.com/theorytab/view/chappell-roan/the-giver"
+            ]
+          },
           {
             "c": "high",
             "t": "Good Luck, Babe! loops IV–V–I–vi in D major, with an added 6th and 9th on the V and a 9th on the vi for jazzy colour.",
@@ -539,7 +626,63 @@
             ]
           }
         ]
-      }
+      },
+      "songsAnalysed": [
+        {
+          "song": "Good Luck, Babe!",
+          "key": "D major",
+          "bpm": 117,
+          "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/good-luck-babe"
+        },
+        {
+          "song": "Pink Pony Club",
+          "key": "F# major",
+          "bpm": 107,
+          "src": "https://hooktheory.com/theorytab/view/chappell-roan/pink-pony-club"
+        },
+        {
+          "song": "Hot To Go!",
+          "key": "F# major",
+          "bpm": 140,
+          "src": "https://hooktheory.com/theorytab/view/chappell-roan/hot-to-go"
+        },
+        {
+          "song": "Femininomenon",
+          "key": "Eb major",
+          "bpm": 125,
+          "src": "https://hooktheory.com/theorytab/view/chappell-roan/femininomenon"
+        },
+        {
+          "song": "Casual",
+          "key": "Db major",
+          "bpm": 131,
+          "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/casual"
+        },
+        {
+          "song": "The Subway",
+          "key": "Bb major",
+          "bpm": 84,
+          "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/the-subway"
+        },
+        {
+          "song": "My Kink Is Karma",
+          "key": "A major",
+          "bpm": 85,
+          "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/my-kink-is-karma"
+        },
+        {
+          "song": "After Midnight",
+          "key": "F major",
+          "bpm": 110,
+          "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/after-midnight"
+        },
+        {
+          "song": "The Giver",
+          "key": "B mixolydian",
+          "bpm": 94,
+          "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/the-giver"
+        }
+      ]
     },
     {
       "id": "gaga",
@@ -559,7 +702,7 @@
         "swing": 50,
         "name": "Electro dance-pop",
         "lane": "Lady Gaga",
-        "desc": "Minor-key dance-pop at about 120 BPM: i–III–VII–iv and i–VI–VII loops, robotic verses, a chorus that opens up, stutter hooks.",
+        "desc": "Mostly minor-key dance-pop around 115–125 BPM: i–VI, i–III–VI, VI–VII–i and i–VII–VI–iv loops, with major-key choruses now and then (I–V–vi–IV); robotic verses, choruses that open up, stutter hooks.",
         "mode": "aeolian",
         "key": 8,
         "bpm": 120,
@@ -621,34 +764,112 @@
         ],
         "m": {
           "0": {
-            "2": 3,
-            "5": 3,
-            "6": 2
-          },
-          "1": {
+            "5": 6,
+            "2": 4,
+            "6": 1,
             "4": 1
           },
+          "1": {
+            "0": 1
+          },
           "2": {
-            "6": 4,
-            "3": 1
+            "5": 2,
+            "6": 2,
+            "0": 1
           },
           "3": {
-            "0": 4,
+            "0": 2,
             "6": 1
           },
           "4": {
-            "0": 2
+            "0": 1,
+            "6": 1
           },
           "5": {
-            "6": 4,
-            "2": 1
+            "0": 6,
+            "3": 1,
+            "2": 1,
+            "4": 1,
+            "6": 1
           },
           "6": {
-            "3": 3,
             "0": 3,
+            "3": 2,
             "5": 1
           }
-        }
+        },
+        "mMajor": {
+          "0": {
+            "4": 6,
+            "3": 3,
+            "5": 3
+          },
+          "1": {
+            "4": 3
+          },
+          "2": {
+            "0": 1
+          },
+          "3": {
+            "0": 6
+          },
+          "4": {
+            "5": 6,
+            "0": 5
+          },
+          "5": {
+            "3": 3,
+            "4": 3,
+            "1": 3
+          },
+          "6": {
+            "0": 1
+          }
+        },
+        "mMinor": {
+          "0": {
+            "5": 6,
+            "2": 4,
+            "6": 1,
+            "4": 1
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "5": 2,
+            "6": 2,
+            "0": 1
+          },
+          "3": {
+            "0": 2,
+            "6": 1
+          },
+          "4": {
+            "0": 1,
+            "6": 1
+          },
+          "5": {
+            "0": 6,
+            "3": 1,
+            "2": 1,
+            "4": 1,
+            "6": 1
+          },
+          "6": {
+            "0": 3,
+            "3": 2,
+            "5": 1
+          }
+        },
+        "modeShare": {
+          "major": 0.21,
+          "minor": 0.79
+        },
+        "bpmRange": [
+          96,
+          140
+        ]
       },
       "bass": "octave",
       "groove": "fourfloor",
@@ -717,19 +938,29 @@
         "intro": "Lady Gaga's early hits with RedOne set dark minor loops at a dance tempo under 80s-inspired synths, with robotic verses and big, clear choruses.",
         "stats": [
           [
-            "Tempo",
-            "119–120 BPM"
+            "Songs analysed",
+            "7"
           ],
           [
-            "Keys (examples)",
-            "C♯ minor, G♯ minor"
+            "Tempo range",
+            "96–140 BPM, mostly 115–125"
           ],
           [
-            "Vocal range (example)",
-            "F♯3–B4"
+            "Mode share",
+            "about 79% minor"
           ]
         ],
         "points": [
+          {
+            "c": "high",
+            "t": "Across seven songs she leans minor (about 4 in 5 sections): i–III–VI and VI–VII–i (Bad Romance), i–VII–VI–iv (Applause), i–VI and i–III–VI–v (Rain On Me), with major-key choruses in Paparazzi (I–V–vi–IV) and Shallow (ii–V–I).",
+            "used": "major/minor matrices and mode share",
+            "src": [
+              "https://www.hooktheory.com/theorytab/view/lady-gaga/bad-romance",
+              "https://www.hooktheory.com/theorytab/view/lady-gaga/applause",
+              "https://www.hooktheory.com/theorytab/view/lady-gaga/paparazzi"
+            ]
+          },
           {
             "c": "high",
             "t": "Just Dance: C♯ minor, 119 BPM, C♯m–E–B–F♯m (i–III–VII–iv), uptempo dance-pop with electropop and synth-pop elements.",
@@ -763,7 +994,51 @@
             ]
           }
         ]
-      }
+      },
+      "songsAnalysed": [
+        {
+          "song": "Just Dance",
+          "key": "C# minor",
+          "bpm": 119,
+          "src": "https://en.wikipedia.org/wiki/Just_Dance_(song)"
+        },
+        {
+          "song": "Poker Face",
+          "key": "G# minor",
+          "bpm": 120,
+          "src": "https://en.wikipedia.org/wiki/Poker_Face_(song)"
+        },
+        {
+          "song": "Bad Romance",
+          "key": "A minor",
+          "bpm": 119,
+          "src": "https://hooktheory.com/theorytab/view/lady-gaga/bad-romance"
+        },
+        {
+          "song": "Applause",
+          "key": "G minor",
+          "bpm": 140,
+          "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/applause"
+        },
+        {
+          "song": "Paparazzi",
+          "key": "C minor / Ab major",
+          "bpm": 115,
+          "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/paparazzi"
+        },
+        {
+          "song": "Rain On Me (with Ariana Grande)",
+          "key": "C# minor",
+          "bpm": 123,
+          "src": "https://www.hooktheory.com/theorytab/view/lady-gaga-and-ariana-grande/rain-on-me"
+        },
+        {
+          "song": "Shallow (with Bradley Cooper)",
+          "key": "G major / E dorian",
+          "bpm": 96,
+          "src": "https://hooktheory.com/theorytab/view/lady-gaga-and-bradley-cooper/shallow"
+        }
+      ]
     },
     {
       "id": "fleetwood",
@@ -782,10 +1057,10 @@
         "swing": 50,
         "name": "70s soft rock",
         "lane": "Fleetwood Mac",
-        "desc": "Few chords used three ways, a hypnotic steady groove, Rhodes and layered guitars, three-part harmonies on every chorus.",
-        "mode": "mixolydian",
-        "key": 5,
-        "bpm": 118,
+        "desc": "Few chords used three ways: major-key I–V–IV and V–vi–IV loops, and minor two-chord vamps (VI–VII, i–VI) under a hypnotic steady groove; Rhodes and layered guitars, three-part harmonies on every chorus.",
+        "mode": "ionian",
+        "key": 4,
+        "bpm": 120,
         "sevenths": true,
         "density": 0.48,
         "leap": 0.24,
@@ -834,36 +1109,96 @@
         ],
         "m": {
           "0": {
-            "6": 3,
-            "3": 4,
-            "1": 1,
-            "5": 1
+            "4": 5,
+            "3": 3,
+            "1": 1
           },
           "1": {
-            "3": 2,
-            "4": 1
+            "0": 1
           },
           "2": {
-            "5": 1
+            "0": 1
           },
           "3": {
-            "0": 4,
-            "6": 2,
+            "0": 6,
             "4": 1
           },
           "4": {
             "3": 2,
+            "5": 2,
+            "0": 2
+          },
+          "5": {
+            "3": 1,
+            "4": 1
+          },
+          "6": {
+            "0": 1
+          }
+        },
+        "mMajor": {
+          "0": {
+            "4": 5,
+            "3": 3,
+            "1": 1
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "0": 1
+          },
+          "3": {
+            "0": 6,
+            "4": 1
+          },
+          "4": {
+            "3": 2,
+            "5": 2,
+            "0": 2
+          },
+          "5": {
+            "3": 1,
+            "4": 1
+          },
+          "6": {
+            "0": 1
+          }
+        },
+        "mMinor": {
+          "0": {
+            "5": 3,
+            "6": 1
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "0": 1
+          },
+          "3": {
+            "0": 1
+          },
+          "4": {
             "0": 1
           },
           "5": {
-            "3": 2,
-            "6": 1
+            "6": 6,
+            "0": 3
           },
           "6": {
-            "3": 3,
-            "0": 3
+            "5": 5,
+            "0": 1
           }
-        }
+        },
+        "modeShare": {
+          "major": 0.58,
+          "minor": 0.42
+        },
+        "bpmRange": [
+          115,
+          136
+        ]
       },
       "bass": "rootfifth",
       "groove": "backbeat",
@@ -925,19 +1260,29 @@
         "intro": "On Rumours, Fleetwood Mac built rich records from very few chords: Lindsey Buckingham changed texture, not harmony, to make sections feel different, over steady grooves and three-part harmonies.",
         "stats": [
           [
-            "Era",
-            "1970s"
+            "Songs analysed",
+            "6"
           ],
           [
-            "Keys",
-            "Rhodes, Hammond, Clavinet, Wurlitzer"
+            "Tempo",
+            "about 115–136 BPM"
           ],
           [
-            "Vocals",
-            "three-part harmonies, doubled"
+            "Mode share",
+            "about 58% major, 42% minor"
           ]
         ],
         "points": [
+          {
+            "c": "high",
+            "t": "Across six songs: two-chord minor vamps (Dreams VI–VII, Rhiannon i–VI), major loops (Go Your Own Way I–V–IV, Everywhere V–vi–IV, Don't Stop I–IV / I–V–IV, Landslide IV–I–ii), and a switch to the relative minor for a chorus (Go Your Own Way). Mid-tempo songs run about 115–136 BPM.",
+            "used": "major/minor matrices, bpm 120",
+            "src": [
+              "https://www.hooktheory.com/theorytab/view/fleetwood-mac/dreams",
+              "https://www.hooktheory.com/theorytab/view/fleetwood-mac/go-your-own-way",
+              "https://www.hooktheory.com/theorytab/view/fleetwood-mac/everywhere"
+            ]
+          },
           {
             "c": "high",
             "t": "Dreams began as 'just three chords'; Buckingham made three sections from identical chords that each sound different.",
@@ -977,14 +1322,47 @@
             "src": [
               "https://producelikeapro.com/blog/rumours-fleetwood-mac/"
             ]
-          },
-          {
-            "c": "low",
-            "t": "Tempo around 115–125 BPM for the mid-tempo songs; ballads slower.",
-            "used": "bpm 118 (check against the song analyser)"
           }
         ]
-      }
+      },
+      "songsAnalysed": [
+        {
+          "song": "Dreams",
+          "key": "A minor",
+          "bpm": 120,
+          "src": "https://hooktheory.com/theorytab/view/fleetwood-mac/dreams"
+        },
+        {
+          "song": "Go Your Own Way",
+          "key": "F major / D minor",
+          "bpm": 136,
+          "src": "https://hooktheory.com/theorytab/view/fleetwood-mac/go-your-own-way"
+        },
+        {
+          "song": "Rhiannon",
+          "key": "A minor",
+          "bpm": 129,
+          "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/rhiannon"
+        },
+        {
+          "song": "Landslide",
+          "key": "Bb major",
+          "bpm": 159,
+          "src": "https://hooktheory.com/theorytab/view/fleetwood-mac/landslide"
+        },
+        {
+          "song": "Everywhere",
+          "key": "E major",
+          "bpm": 115,
+          "src": "https://hooktheory.com/theorytab/view/fleetwood-mac/everywhere"
+        },
+        {
+          "song": "Don't Stop",
+          "key": "E major",
+          "bpm": 119,
+          "src": "https://hooktheory.com/theorytab/view/fleetwood-mac/dont-stop"
+        }
+      ]
     },
     {
       "id": "rhcp",
@@ -1004,10 +1382,10 @@
         "swing": 54,
         "name": "Funk rock",
         "lane": "Red Hot Chili Peppers",
-        "desc": "Dorian minor riffs built from jams: a busy, melodic bass that knows when to lay out, clean bright guitar, half-rapped verses and sung choruses.",
-        "mode": "dorian",
-        "key": 4,
-        "bpm": 96,
+        "desc": "Natural-minor riffs built from jams (i–VI, i–VI–III–VII, i–VII–iv, III–VII–iv–i), with the odd major-key ballad; a busy, melodic bass that knows when to lay out, clean bright guitar, half-rapped verses and sung choruses.",
+        "mode": "aeolian",
+        "key": 9,
+        "bpm": 95,
         "sevenths": true,
         "density": 0.68,
         "leap": 0.26,
@@ -1066,32 +1444,98 @@
         ],
         "m": {
           "0": {
-            "3": 5,
+            "5": 6,
+            "4": 2,
             "6": 2,
-            "4": 1
+            "2": 1
           },
           "1": {
             "0": 1
           },
           "2": {
-            "3": 1
+            "6": 2,
+            "0": 1,
+            "4": 1
           },
           "3": {
-            "0": 5,
-            "6": 1
+            "0": 3
           },
           "4": {
-            "0": 2
+            "0": 2,
+            "5": 1
           },
           "5": {
-            "6": 1,
-            "0": 1
+            "0": 4,
+            "2": 3
           },
           "6": {
-            "0": 3,
-            "3": 2
+            "3": 3,
+            "0": 1
           }
-        }
+        },
+        "mMajor": {
+          "0": {
+            "4": 6
+          },
+          "1": {
+            "0": 4
+          },
+          "2": {
+            "3": 2
+          },
+          "3": {
+            "0": 2
+          },
+          "4": {
+            "1": 4,
+            "5": 2
+          },
+          "5": {
+            "2": 2
+          },
+          "6": {
+            "0": 1
+          }
+        },
+        "mMinor": {
+          "0": {
+            "5": 6,
+            "4": 2,
+            "6": 2,
+            "2": 1
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "6": 2,
+            "0": 1,
+            "4": 1
+          },
+          "3": {
+            "0": 3
+          },
+          "4": {
+            "0": 2,
+            "5": 1
+          },
+          "5": {
+            "0": 4,
+            "2": 3
+          },
+          "6": {
+            "3": 3,
+            "0": 1
+          }
+        },
+        "modeShare": {
+          "major": 0.15,
+          "minor": 0.85
+        },
+        "bpmRange": [
+          84,
+          122
+        ]
       },
       "bass": "syncop",
       "groove": "backbeat",
@@ -1152,19 +1596,37 @@
         "intro": "On Blood Sugar Sex Magik, produced by Rick Rubin, the band moved from funk-metal toward melodic funk rock: Flea played fewer, more melodic notes and John Frusciante favoured clear lines over noise.",
         "stats": [
           [
-            "Genres",
-            "funk rock, alternative, rap rock"
+            "Songs analysed",
+            "4 (+3 described)"
+          ],
+          [
+            "Mode",
+            "mostly natural minor"
           ],
           [
             "Producer",
             "Rick Rubin"
-          ],
-          [
-            "Approach",
-            "songs from jams"
           ]
         ],
         "points": [
+          {
+            "c": "high",
+            "t": "Their hits are mostly natural minor: i–VI and III–VII–iv–i (Californication), i–VI–III–VII and i–v (Otherside), i–VII–iv (Dani California); Under the Bridge is the major-key exception (I–V–vi–iii–IV) with a minor bridge. Tempos about 84–122 BPM.",
+            "used": "mode aeolian, matrices, bpm 95",
+            "src": [
+              "https://www.hooktheory.com/theorytab/view/red-hot-chili-peppers/californication",
+              "https://www.hooktheory.com/theorytab/view/red-hot-chili-peppers/otherside",
+              "https://www.hooktheory.com/theorytab/view/red-hot-chili-peppers/dani-california",
+              "https://www.hooktheory.com/theorytab/view/red-hot-chili-peppers/under-the-bridge"
+            ]
+          },
+          {
+            "c": "med",
+            "t": "Californication, Otherside and Snow are four-chord songs; the band and Rick Rubin keep it simple.",
+            "src": [
+              "https://americansongwriter.com/these-4-songs-reveal-how-red-hot-chili-peppers-created-iconic-hits-with-a-simple-formula"
+            ]
+          },
           {
             "c": "high",
             "t": "Flea cut back the slap technique for melodic bass lines and a minimalist approach: fewer notes so the busy moments stand out.",
@@ -1195,14 +1657,35 @@
             "src": [
               "https://en.wikipedia.org/wiki/Blood_Sugar_Sex_Magik"
             ]
-          },
-          {
-            "c": "low",
-            "t": "Riffs often sit in a minor key with a major IV (Dorian colour).",
-            "used": "mode dorian"
           }
         ]
-      }
+      },
+      "songsAnalysed": [
+        {
+          "song": "Californication",
+          "key": "A minor",
+          "bpm": 95,
+          "src": "https://hooktheory.com/theorytab/view/red-hot-chili-peppers/californication"
+        },
+        {
+          "song": "Under the Bridge",
+          "key": "E major / A minor",
+          "bpm": 84,
+          "src": "https://hooktheory.com/theorytab/view/red-hot-chili-peppers/under-the-bridge"
+        },
+        {
+          "song": "Otherside",
+          "key": "A minor",
+          "bpm": 122,
+          "src": "https://hooktheory.com/theorytab/view/red-hot-chili-peppers/otherside"
+        },
+        {
+          "song": "Dani California",
+          "key": "A minor",
+          "bpm": 96,
+          "src": "https://hooktheory.com/theorytab/view/red-hot-chili-peppers/dani-california"
+        }
+      ]
     },
     {
       "id": "tiersen",
@@ -1223,7 +1706,7 @@
         "swing": 50,
         "name": "Parisian waltz",
         "lane": "Yann Tiersen",
-        "desc": "Waltzes that turn like a merry-go-round: rippling piano arpeggios, an accordion tune, simple repeating patterns and small toy-like colours.",
+        "desc": "Waltzes and repeating piano figures in minor keys (i–III–v–VII, i–iv–v, iv–VII–i–v), with sudden bright turns to mixolydian or Lydian colour; rippling piano arpeggios, an accordion tune, small toy-like colours.",
         "mode": "aeolian",
         "key": 4,
         "bpm": 100,
@@ -1272,32 +1755,91 @@
         ],
         "m": {
           "0": {
-            "5": 4,
-            "2": 2,
-            "6": 1
+            "3": 6,
+            "6": 4,
+            "2": 3,
+            "4": 2
           },
           "1": {
-            "4": 1
+            "0": 1
           },
           "2": {
-            "6": 4,
-            "5": 1
+            "0": 4,
+            "4": 3
           },
           "3": {
-            "0": 3
+            "4": 4,
+            "6": 2
           },
           "4": {
-            "0": 3
+            "0": 6,
+            "6": 3
           },
           "5": {
-            "2": 4,
-            "0": 1,
-            "3": 1
+            "0": 1
           },
           "6": {
             "0": 5,
-            "2": 1
+            "2": 4
           }
+        },
+        "mMajor": {
+          "0": {
+            "6": 6,
+            "1": 6
+          },
+          "1": {
+            "0": 6
+          },
+          "2": {
+            "0": 1
+          },
+          "3": {
+            "0": 1
+          },
+          "4": {
+            "0": 1
+          },
+          "5": {
+            "0": 1
+          },
+          "6": {
+            "0": 6
+          }
+        },
+        "mMinor": {
+          "0": {
+            "3": 6,
+            "6": 4,
+            "2": 3,
+            "4": 2
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "0": 4,
+            "4": 3
+          },
+          "3": {
+            "4": 4,
+            "6": 2
+          },
+          "4": {
+            "0": 6,
+            "6": 3
+          },
+          "5": {
+            "0": 1
+          },
+          "6": {
+            "0": 5,
+            "2": 4
+          }
+        },
+        "modeShare": {
+          "major": 0.33,
+          "minor": 0.67
         }
       },
       "bass": "root",
@@ -1359,19 +1901,29 @@
         "intro": "Yann Tiersen's Amélie score is built from waltzes and simple repeating patterns, with the accordion giving it its French character and small colours (chimes, mandolin, a typewriter) adding charm.",
         "stats": [
           [
+            "Pieces analysed",
+            "4"
+          ],
+          [
             "Meter",
-            "3/4 waltz"
+            "3/4 and 6/8 waltzes, 4/4 piano pieces"
           ],
           [
             "Lead colour",
             "accordion, piano"
-          ],
-          [
-            "Texture",
-            "repeating patterns"
           ]
         ],
         "points": [
+          {
+            "c": "high",
+            "t": "Minor-key pieces with simple loops: La Valse d'Amélie iv–VII–i–v–i (in 6/8), Comptine d'un autre été i–III–v–VII, J'y suis jamais allé i–iv–v; La Maison turns to G mixolydian (I–♭VII) and A♭ Lydian (I–II) for bright moments.",
+            "used": "matrices, Lydian/mixolydian colour",
+            "src": [
+              "https://www.hooktheory.com/theorytab/view/yann-tiersen/la-valse-damelie",
+              "https://www.hooktheory.com/theorytab/view/yann-tiersen/comptine-dun-autre-ete-lapres-midi",
+              "https://www.hooktheory.com/theorytab/view/yann-tiersen/amelie---la-maison"
+            ]
+          },
           {
             "c": "high",
             "t": "The accordion is the most prominent instrument and gives the score its French character.",
@@ -1403,14 +1955,35 @@
             "src": [
               "https://www.mfiles.co.uk/reviews/amelie.htm"
             ]
-          },
-          {
-            "c": "low",
-            "t": "Harmony mostly simple diatonic minor and major loops.",
-            "used": "low extension weights"
           }
         ]
-      }
+      },
+      "songsAnalysed": [
+        {
+          "song": "La Valse d'Amélie",
+          "key": "A minor",
+          "bpm": 191,
+          "src": "https://hooktheory.com/theorytab/view/yann-tiersen/la-valse-damelie"
+        },
+        {
+          "song": "Comptine d'un autre été, l'après-midi",
+          "key": "E minor",
+          "bpm": 100,
+          "src": "https://www.hooktheory.com/theorytab/view/yann-tiersen/comptine-dun-autre-ete-lapres-midi"
+        },
+        {
+          "song": "J'y suis jamais allé",
+          "key": "E minor",
+          "bpm": 102,
+          "src": "https://hooktheory.com/theorytab/view/yann-tiersen/jy-suis-jamais-alle"
+        },
+        {
+          "song": "La Maison",
+          "key": "G mixolydian / F# minor / Ab lydian",
+          "bpm": 150,
+          "src": "https://www.hooktheory.com/theorytab/view/yann-tiersen/amelie---la-maison"
+        }
+      ]
     },
     {
       "id": "strangerthings",
@@ -1431,9 +2004,9 @@
         "swing": 50,
         "name": "Analog synth score",
         "lane": "Stranger Things (Survive)",
-        "desc": "Warm analog synth arpeggios and pads, a slow pulse, dissonance used to build dread; few or no drums.",
-        "mode": "aeolian",
-        "key": 9,
+        "desc": "Warm analog synths: the main title rocks between a major-7th I chord and iii at 84 BPM under a running arpeggio; slow pulse, dissonance to build dread, few or no drums.",
+        "mode": "ionian",
+        "key": 0,
         "bpm": 84,
         "sevenths": true,
         "density": 0.4,
@@ -1478,31 +2051,76 @@
         ],
         "m": {
           "0": {
-            "5": 3,
-            "6": 2,
-            "3": 2
+            "2": 6
           },
           "1": {
             "0": 1
           },
           "2": {
-            "6": 2
+            "0": 6
           },
           "3": {
-            "0": 3,
-            "5": 1
+            "0": 1
           },
           "4": {
             "0": 1
           },
           "5": {
-            "6": 3,
-            "0": 2
+            "0": 1
           },
           "6": {
-            "0": 4,
-            "5": 1
+            "0": 1
           }
+        },
+        "mMajor": {
+          "0": {
+            "2": 6
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "0": 6
+          },
+          "3": {
+            "0": 1
+          },
+          "4": {
+            "0": 1
+          },
+          "5": {
+            "0": 1
+          },
+          "6": {
+            "0": 1
+          }
+        },
+        "mMinor": {
+          "0": {
+            "0": 1
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "0": 1
+          },
+          "3": {
+            "0": 1
+          },
+          "4": {
+            "0": 1
+          },
+          "5": {
+            "0": 1
+          },
+          "6": {
+            "0": 1
+          }
+        },
+        "modeShare": {
+          "major": 1.0,
+          "minor": 0.0
         }
       },
       "bass": "held",
@@ -1570,12 +2188,12 @@
         "intro": "Kyle Dixon and Michael Stein of the band Survive scored Stranger Things on analog synths; the show was pitched to them as John Carpenter meets Italian giallo and Giorgio Moroder.",
         "stats": [
           [
-            "Instruments",
-            "analog synths (e.g. Roland SH-101), modular"
+            "Main title",
+            "C major, 84 BPM"
           ],
           [
-            "Influences",
-            "John Carpenter, Goblin, Moroder, Tangerine Dream"
+            "Harmony",
+            "Imaj7 ↔ iii"
           ],
           [
             "Drums",
@@ -1583,6 +2201,14 @@
           ]
         ],
         "points": [
+          {
+            "c": "high",
+            "t": "The main title is in C major at 84 BPM, alternating a major-7th I chord with iii (with an added 13th).",
+            "used": "mode ionian, key C, bpm 84, I↔iii matrix",
+            "src": [
+              "https://www.hooktheory.com/theorytab/view/kyle-dixon-and-michael-stein/stranger-things"
+            ]
+          },
           {
             "c": "high",
             "t": "Analog synths throughout; Stein's SH-101 is on nearly every record, plus kit-built modular gear.",
@@ -1614,14 +2240,18 @@
             "src": [
               "https://www.synthtopia.com/content/2017/05/14/the-iconic-soundtrack-of-stranger-things/"
             ]
-          },
-          {
-            "c": "low",
-            "t": "Slow tempos, roughly 80–90 BPM for the main cues.",
-            "used": "bpm 84"
           }
-        ]
-      }
+        ],
+        "note": "Only the main title is analysed; other cues may differ. Add more cues to data/progressions.json and re-run tools/build_style_matrices.py."
+      },
+      "songsAnalysed": [
+        {
+          "song": "Stranger Things (main title)",
+          "key": "C major",
+          "bpm": 84,
+          "src": "https://hooktheory.com/theorytab/view/kyle-dixon-and-michael-stein/stranger-things"
+        }
+      ]
     },
     {
       "id": "jazz",
@@ -1858,10 +2488,10 @@
         "swing": 50,
         "name": "Brat club-pop",
         "lane": "Charli XCX",
-        "desc": "Loud minimalism for the club: two- and three-chord loops that never quite name their key, unusual voicings, a morphing bit-crushed synth, sudden silences and stutters, Auto-Tuned vocals.",
-        "mode": "aeolian",
-        "key": 9,
-        "bpm": 128,
+        "desc": "Loud minimal club-pop that slips between major and minor: IV–V–I–vi and V–vi–IV loops, minor i–v–iv–III and VI–III–iv–i, and two-chord vamps that never name their key; unusual voicings, a morphing bit-crushed synth, sudden silences and stutters, Auto-Tuned vocals.",
+        "mode": "ionian",
+        "key": 0,
+        "bpm": 120,
         "sevenths": true,
         "density": 0.5,
         "leap": 0.26,
@@ -1914,33 +2544,121 @@
         ],
         "m": {
           "0": {
-            "5": 3,
-            "2": 2,
-            "6": 1
+            "5": 2,
+            "3": 1,
+            "4": 1
           },
           "1": {
-            "0": 1
+            "4": 1,
+            "5": 1,
+            "2": 1
           },
           "2": {
-            "0": 2,
-            "5": 2
+            "3": 2,
+            "1": 1,
+            "5": 1
           },
           "3": {
-            "0": 1
+            "4": 6,
+            "1": 1,
+            "2": 1
           },
           "4": {
-            "0": 1
+            "5": 3,
+            "2": 2,
+            "0": 2,
+            "3": 2
           },
           "5": {
-            "6": 3,
-            "0": 2,
+            "3": 3,
+            "0": 1,
+            "6": 1,
+            "4": 1,
+            "1": 1
+          },
+          "6": {
+            "0": 1
+          }
+        },
+        "mMajor": {
+          "0": {
+            "5": 2,
+            "3": 1,
+            "4": 1
+          },
+          "1": {
+            "4": 1,
+            "5": 1,
             "2": 1
+          },
+          "2": {
+            "3": 2,
+            "1": 1,
+            "5": 1
+          },
+          "3": {
+            "4": 6,
+            "1": 1,
+            "2": 1
+          },
+          "4": {
+            "5": 3,
+            "2": 2,
+            "0": 2,
+            "3": 2
+          },
+          "5": {
+            "3": 3,
+            "0": 1,
+            "6": 1,
+            "4": 1,
+            "1": 1
+          },
+          "6": {
+            "0": 1
+          }
+        },
+        "mMinor": {
+          "0": {
+            "5": 6,
+            "4": 3,
+            "1": 2
+          },
+          "1": {
+            "6": 2
+          },
+          "2": {
+            "0": 6,
+            "3": 3
+          },
+          "3": {
+            "2": 3,
+            "0": 3,
+            "5": 2
+          },
+          "4": {
+            "5": 6,
+            "3": 3
+          },
+          "5": {
+            "4": 6,
+            "6": 3,
+            "2": 3,
+            "0": 2
           },
           "6": {
             "2": 3,
-            "0": 2
+            "3": 2
           }
-        }
+        },
+        "modeShare": {
+          "major": 0.64,
+          "minor": 0.36
+        },
+        "bpmRange": [
+          92,
+          173
+        ]
       },
       "bass": "held",
       "groove": "fourfloor",
@@ -2017,12 +2735,12 @@
         "intro": "On Brat, Charli XCX and producers including A. G. Cook made what she called 'a unique minimalism that is very loud and bold': club-pop rooted in 2000s English rave, built from loops by subtraction, with Auto-Tuned vocals and ambiguous harmony.",
         "stats": [
           [
-            "Genres",
-            "electropop, club-pop, hyperpop, electroclash"
+            "Songs analysed",
+            "8"
           ],
           [
-            "Roots",
-            "2000s English rave"
+            "Mode share",
+            "about 64% major, 36% minor"
           ],
           [
             "Vocals",
@@ -2030,6 +2748,17 @@
           ]
         ],
         "points": [
+          {
+            "c": "high",
+            "t": "Across eight songs she moves between major loops (Boom Clap IV–V–I–vi, Apple V–vi–IV, Track 10 ii–iii–IV–V–vi) and minor ones (B2B i–v–iv–III, Speed Drive VI–III–iv–i, 360 v–VI), about 64% major-family sections; tempos about 92–173 BPM.",
+            "used": "major/minor matrices and mode share",
+            "src": [
+              "https://www.hooktheory.com/theorytab/view/charli-xcx/boom-clap",
+              "https://www.hooktheory.com/theorytab/view/charli-xcx/b2b",
+              "https://www.hooktheory.com/theorytab/view/charli-xcx/track-10",
+              "https://www.hooktheory.com/theorytab/view/charli-xcx/speed-drive"
+            ]
+          },
           {
             "c": "high",
             "t": "Genres listed as electropop, synth-pop, club-pop, hyperpop, dance and electroclash; drawn from the London rave scene and 2000s English rave music.",
@@ -2077,14 +2806,57 @@
             "src": [
               "https://www.musicradar.com/news/charli-xcx-brat-theory"
             ]
-          },
-          {
-            "c": "low",
-            "t": "Club tempos around 120–135 BPM.",
-            "used": "bpm 128 (check with the song analyser)"
           }
         ]
-      }
+      },
+      "songsAnalysed": [
+        {
+          "song": "360",
+          "key": "A minor",
+          "bpm": 120,
+          "src": "https://hooktheory.com/theorytab/view/charli-xcx/360"
+        },
+        {
+          "song": "I Think About It All The Time",
+          "key": "A minor",
+          "src": "https://www.musicradar.com/news/charli-xcx-brat-theory"
+        },
+        {
+          "song": "Sympathy Is a Knife",
+          "key": "Eb major (Lydian colour)",
+          "src": "https://www.musicradar.com/news/charli-xcx-brat-theory"
+        },
+        {
+          "song": "B2B",
+          "key": "D# minor",
+          "bpm": 116,
+          "src": "https://hooktheory.com/theorytab/view/charli-xcx/b2b"
+        },
+        {
+          "song": "Apple",
+          "key": "C major",
+          "bpm": 126,
+          "src": "https://hooktheory.com/theorytab/view/charli-xcx/apple"
+        },
+        {
+          "song": "Track 10",
+          "key": "F major",
+          "bpm": 100,
+          "src": "https://hooktheory.com/theorytab/view/charli-xcx/track-10"
+        },
+        {
+          "song": "Boom Clap",
+          "key": "E major",
+          "bpm": 92,
+          "src": "https://hooktheory.com/theorytab/view/charli-xcx/boom-clap"
+        },
+        {
+          "song": "Speed Drive",
+          "key": "D minor",
+          "bpm": 173,
+          "src": "https://hooktheory.com/theorytab/view/charli-xcx/speed-drive"
+        }
+      ]
     }
   ],
   "producers": [
