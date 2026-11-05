@@ -5091,43 +5091,138 @@
         ]
       },
       "pass": {
-        "name": "80s machines",
-        "summary": "LinnDrum-style drums, Juno arpeggios, pulsing pads and a wide room.",
+        "name": "Big and intimate",
+        "summary": "A sound world per record: 80s machines and analog synths stacked huge in the chorus, pulled right back for the vulnerable parts; dry vocals, tape-style slapback.",
+        "firstListen": "Looks for the one hook (often a synth figure) to build the whole production around, and for the moments that should go quiet.",
+        "asks": [
+          "What is the hardest thing behind this song?",
+          "Which sound is this record's world? Pick one synth family and stay in it."
+        ],
         "moves": [
           {
-            "id": "machine-drums",
+            "id": "sound-world",
             "level": "sound",
-            "what": "Drums to an 80s drum machine",
-            "why": "His LinnDrum-driven beats",
-            "op": "kit:electro; groove:drive"
+            "what": "Pick one sound family for the whole song (Juno low end, Moog top, LinnDrum-style machine) and use it everywhere",
+            "why": "He builds each album around specific synths, like the Juno-6 on 1989",
+            "op": "instr:chords=i:junopoly,bass=i:junobass,lead=i:prolead; kit:electro",
+            "c": "high",
+            "src": [
+              "https://abbeyroadinstitute.nl/blog/jack-antonoff-brutal-honesty/",
+              "https://mixdownmag.com.au/features/jack-antonoff-on-recording-new-bleachers-album-bruce-springsteen-and-daring-to-suck"
+            ],
+            "onByDefault": true
           },
           {
-            "id": "juno-arp",
-            "level": "sound",
-            "what": "Juno arpeggio carries the chorus low end",
-            "why": "A favourite Juno-6 move",
-            "op": "swapSound:bass->i:junobass,arp@chorus"
+            "id": "hook-figure",
+            "level": "arrangement",
+            "what": "Turn the main hook into a looping synth figure and build the chorus around it",
+            "why": "Green Light: a looping synth hook with a big sound built around it",
+            "op": "addPart:synthFigure(from chorus melody)@chorus",
+            "c": "high",
+            "src": [
+              "https://www.grammy.com/news/lorde-melodrama-album-anniversary-jack-antonoff-producer-star-pure-heroine-green-light"
+            ],
+            "onByDefault": true
           },
           {
-            "id": "tremolo-pads",
+            "id": "piano-to-huge",
+            "level": "arrangement",
+            "what": "Open on sparse piano, explode into a dense synth chorus",
+            "why": "Green Light's piano-to-euphoria build",
+            "op": "mute:all-but(vocal,piano)@intro,verse1; layer:i:propad,i:junopoly@chorus",
+            "c": "high",
+            "src": [
+              "https://www.grammy.com/news/lorde-melodrama-album-anniversary-jack-antonoff-producer-star-pure-heroine-green-light"
+            ],
+            "onByDefault": true
+          },
+          {
+            "id": "pull-back",
+            "level": "arrangement",
+            "what": "Pull a reflective section right back (bridge or verse 2)",
+            "why": "On Liability and Writer in the Dark he reduces production for vulnerability",
+            "op": "thin:@bridge amount=0.6",
+            "c": "high",
+            "src": [
+              "https://www.grammy.com/news/lorde-melodrama-album-anniversary-jack-antonoff-producer-star-pure-heroine-green-light"
+            ],
+            "onByDefault": true
+          },
+          {
+            "id": "stack-contrast",
+            "level": "sound",
+            "what": "Layer an old sound with a new one, synths with real instruments",
+            "why": "Contrast between vintage and modern, synth and acoustic",
+            "op": "layer:i:piano+i:prokeys@chorus",
+            "c": "high",
+            "src": [
+              "https://www.musicradar.com/how-to/how-to-sound-like-jack-antonoff-he-puts-minimoog-through-a-fuzz-pedal-for-an-absolutely-massive-sound",
+              "https://mixdownmag.com.au/features/gear-rundown-jack-antonoff/"
+            ],
+            "onByDefault": true
+          },
+          {
+            "id": "wall-guitars",
+            "level": "sound",
+            "what": "Walls of 6- and 12-string guitars panned left and right; dry strings panned hard",
+            "why": "His layering on The Greatest (Lana Del Rey)",
+            "op": "layer:i:steel L/R@chorus; fx:strings=dry,wide",
+            "c": "high",
+            "src": [
+              "https://www.musicradar.com/how-to/how-to-sound-like-jack-antonoff-he-puts-minimoog-through-a-fuzz-pedal-for-an-absolutely-massive-sound"
+            ],
+            "onByDefault": true,
+            "needs": "12-string guitar (steel stand-in)"
+          },
+          {
+            "id": "dry-vocal",
             "level": "mix",
-            "what": "16th-note tremolo on held pads",
-            "why": "Held chords pulse",
-            "op": "fx:pad=tremolo16"
+            "what": "Vocal dry and close: light compression, almost no reverb, slapback and short tape delays slightly off-sync",
+            "why": "His vocal sound: little reverb, slapback, tape echo",
+            "op": "fx:vocal=comp-light+slapback+tapeDelay(offsync); reverb*0.2",
+            "c": "high",
+            "src": [
+              "https://mixdownmag.com.au/features/jack-antonoff-on-recording-new-bleachers-album-bruce-springsteen-and-daring-to-suck",
+              "https://www.musicradar.com/how-to/how-to-sound-like-jack-antonoff-he-puts-minimoog-through-a-fuzz-pedal-for-an-absolutely-massive-sound"
+            ],
+            "onByDefault": true
+          },
+          {
+            "id": "pulse-pads",
+            "level": "mix",
+            "what": "16th-note tremolo on held pads; delay pumping and rising into the chorus",
+            "why": "Tremolator on pads; delay mix automated like a riser",
+            "op": "fx:pad=tremolo16; automate:delayMix rise@pre",
+            "c": "high",
+            "src": [
+              "https://mixdownmag.com.au/features/gear-rundown-jack-antonoff/",
+              "https://www.musicradar.com/how-to/how-to-sound-like-jack-antonoff-he-puts-minimoog-through-a-fuzz-pedal-for-an-absolutely-massive-sound"
+            ],
+            "onByDefault": true
           },
           {
             "id": "room",
             "level": "mix",
-            "what": "Wide room sound on drums and backing vocals",
-            "why": "His two-corner room mics",
-            "op": "fx:drums,bv=room-wide"
+            "what": "A wide room sound on drums and backing vocals",
+            "why": "He keeps two room mics high in the corners wherever he works",
+            "op": "fx:drums,bv=room-wide",
+            "c": "high",
+            "src": [
+              "https://mixdownmag.com.au/features/jack-antonoff-on-recording-new-bleachers-album-bruce-springsteen-and-daring-to-suck"
+            ],
+            "onByDefault": true
           },
           {
-            "id": "vintage-modern",
+            "id": "fuzz-moog",
             "level": "sound",
-            "what": "Layer a vintage sound with a modern one in the chorus",
-            "why": "Contrast",
-            "op": "layer:i:prokeys@chorus"
+            "what": "A fuzzed Moog-style synth for one huge moment",
+            "why": "Minimoog through a fuzz pedal for a massive sound",
+            "op": "layer:i:prolead+fuzz@lastChorus",
+            "c": "med",
+            "src": [
+              "https://www.musicradar.com/how-to/how-to-sound-like-jack-antonoff-he-puts-minimoog-through-a-fuzz-pedal-for-an-absolutely-massive-sound"
+            ],
+            "onByDefault": false
           }
         ]
       }
@@ -5185,43 +5280,123 @@
         "note": "These are songwriting rules, so this tag shapes structure and the A&R check more than sound."
       },
       "pass": {
-        "name": "Tighten the hook",
-        "summary": "One new element at a time; the hook gets the most space; melody repeats more.",
+        "name": "Melodic math",
+        "summary": "Tighten the song: syllables that match, a hook early and often (but not too often), sections that contrast, one new element at a time.",
+        "firstListen": "Times when the chorus arrives and counts syllables line by line against the line before.",
+        "asks": [
+          "Does the chorus arrive before about 50 seconds?",
+          "Do matching lines have matching syllable counts?"
+        ],
         "moves": [
+          {
+            "id": "hook-early",
+            "level": "structure",
+            "what": "Chorus within the first ~50 seconds: shorten the intro or first verse",
+            "why": "Hook timing from dance-floor pop",
+            "op": "cutBars:intro|verse1 until chorus<50s",
+            "c": "high",
+            "src": [
+              "https://americansongwriter.com/all-those-pop-songs-you-love-thats-not-magic-thats-melodic-math-and-this-is-how-it-works"
+            ],
+            "onByDefault": true
+          },
+          {
+            "id": "syllable-match",
+            "level": "writing",
+            "what": "Match each line's syllable count and rhythm to the line it answers",
+            "why": "Melodic math: phrasing mirrors itself and the song stays balanced",
+            "op": "melodyMatch:lineB<-lineA (rhythm), flag lyric lines that break it",
+            "c": "high",
+            "src": [
+              "https://americansongwriter.com/all-those-pop-songs-you-love-thats-not-magic-thats-melodic-math-and-this-is-how-it-works",
+              "https://www.theringer.com/2020/12/17/music/60-songs-backstreet-boys-i-want-it-that-way-history"
+            ],
+            "onByDefault": true
+          },
+          {
+            "id": "glue-hook",
+            "level": "writing",
+            "what": "Reuse a chorus phrase earlier (end of the pre-chorus or verse) as a preview",
+            "why": "The \"glue hook\": familiarity before the chorus lands",
+            "op": "melodyPreview:chorus.phrase1@pre.end",
+            "c": "high",
+            "src": [
+              "https://americansongwriter.com/all-those-pop-songs-you-love-thats-not-magic-thats-melodic-math-and-this-is-how-it-works"
+            ],
+            "onByDefault": false
+          },
           {
             "id": "one-new",
             "level": "arrangement",
-            "what": "Bring in one new element per section",
-            "why": "Keeps the ear interested",
-            "op": "layerRamp:one-per-section"
+            "what": "Bring in one new element per section, never several at once",
+            "why": "Each element is established before the next arrives",
+            "op": "layerRamp:one-per-section",
+            "c": "high",
+            "src": [
+              "https://americansongwriter.com/all-those-pop-songs-you-love-thats-not-magic-thats-melodic-math-and-this-is-how-it-works"
+            ],
+            "onByDefault": true
+          },
+          {
+            "id": "contrast",
+            "level": "arrangement",
+            "what": "Make the chorus contrast hard with the verse: different density, rhythm and register",
+            "why": "Strong section contrast; verse and chorus can even share a melody with different energy",
+            "op": "contrast:chorus vs verse (density+, register+3, rhythm change)",
+            "c": "high",
+            "src": [
+              "https://americansongwriter.com/all-those-pop-songs-you-love-thats-not-magic-thats-melodic-math-and-this-is-how-it-works",
+              "https://www.musicradar.com/tutorials/music-theory-songwriting/the-verse-and-chorus-of-that-song-are-exactly-the-same-but-you-dont-really-notice-since-the-energy-of-the-chorus-is-completely-different-cracking-open-max-martins-uber-succesful-songwriting-formula"
+            ],
+            "onByDefault": true
           },
           {
             "id": "hook-space",
             "level": "arrangement",
-            "what": "Thin the parts under the chorus hook",
-            "why": "The hook gets the most space",
-            "op": "thin:@chorus-under-melody"
+            "what": "Thin everything under the hook; do not repeat it so often it tires",
+            "why": "The strongest hook gets the most space without being overused",
+            "op": "thin:@chorus-under-melody; capHookRepeats:4",
+            "c": "high",
+            "src": [
+              "https://americansongwriter.com/all-those-pop-songs-you-love-thats-not-magic-thats-melodic-math-and-this-is-how-it-works"
+            ],
+            "onByDefault": true
           },
           {
-            "id": "repeat-hook",
+            "id": "melody-first",
             "level": "writing",
-            "what": "Make the chorus melody repeat its first phrase",
-            "why": "Melodic repetition makes it stick (changes your melody)",
-            "op": "melodyRepeat:chorus,phrase1"
+            "what": "Melody before lyric: fit words to the tune, sound over sense where they clash",
+            "why": "He writes melody first; syllables matter more than literal meaning",
+            "op": "lyricFit:flag words that fight the melody",
+            "c": "med",
+            "src": [
+              "https://www.theringer.com/2020/12/17/music/60-songs-backstreet-boys-i-want-it-that-way-history"
+            ],
+            "onByDefault": false
           },
           {
-            "id": "syllables",
-            "level": "writing",
-            "what": "Match verse 2 syllable counts to verse 1",
-            "why": "Familiar shape the second time (changes your melody)",
-            "op": "melodyMatch:verse2<-verse1"
+            "id": "simple",
+            "level": "arrangement",
+            "what": "Simplify: drop the part that makes the idea sound complicated",
+            "why": "\"Make complex ideas sound simple\" (from Denniz Pop)",
+            "op": "muteMostComplexPart:@chorus",
+            "c": "med",
+            "src": [
+              "https://www.theringer.com/2020/12/17/music/60-songs-backstreet-boys-i-want-it-that-way-history"
+            ],
+            "onByDefault": false
           },
           {
-            "id": "early-hook",
+            "id": "short-gaps",
             "level": "structure",
-            "what": "Hook before 0:45: shorten the intro or first verse",
-            "why": "Gets to the point",
-            "op": "cutBars:intro|verse1 until hook<45s"
+            "what": "Cut dead air: shorter intro and outro, no empty bars before choruses",
+            "why": "Shorter intros and less downtime",
+            "op": "cutBars:intro->4,outro->4; removeEmptyBars",
+            "c": "high",
+            "src": [
+              "https://qz.com/923149/the-alchemy-of-the-perfect-pop-song-according-to-max-martin-the-genius-songwriter-behind-hits-for-britney-spears-taylor-swift-and-the-weeknd"
+            ],
+            "onByDefault": true
           }
         ]
       }
@@ -5290,42 +5465,135 @@
       },
       "pass": {
         "name": "Close and intimate",
-        "summary": "Sparse, close vocal and harmonies, found-sound percussion, tremolo chops.",
+        "summary": "A bedroom-close vocal with harmonies as loud as the lead, almost no reverb, deep locked bass, chopping tremolo and real-world sounds as percussion.",
+        "firstListen": "Listens for where the vocal could be closer and where a harmony could do the chords' job.",
+        "asks": [
+          "Could the harmonies carry the chords instead of the piano?",
+          "What everyday sound in your room could be the hi-hat?"
+        ],
         "moves": [
           {
             "id": "close-vocal",
             "level": "mix",
-            "what": "Vocal very close; harmonies almost as loud as the lead",
-            "why": "His intimate vocal sound",
-            "op": "fx:vocal=close; harmonies+3dB"
+            "what": "Vocal very close and dry, as if recorded in a small dead room",
+            "why": "Billie's vocals were tracked in a bedroom for a tight, intimate sound",
+            "op": "fx:vocal=close,dry; reverb*0.2",
+            "c": "high",
+            "src": [
+              "https://www.mixonline.com/recording/finneas-on-producing-billie-eilishs-number-one-album-in-his-bedroom"
+            ],
+            "onByDefault": true
           },
           {
-            "id": "sparse",
+            "id": "harmonies-loud",
             "level": "arrangement",
-            "what": "Remove busy parts; keep rhythm and harmonies",
-            "why": "Space over density",
-            "op": "muteDoubles:@all; density*0.7"
+            "what": "Three-part harmonies at about the lead's level; let them carry chords and rhythm",
+            "why": "Stacked harmonies drive the rhythm; much of the chord information sits in her harmonies",
+            "op": "vocalStack:3-part@chorus level=lead; thin:chords@chorus",
+            "c": "high",
+            "src": [
+              "https://www.mixonline.com/recording/finneas-on-producing-billie-eilishs-number-one-album-in-his-bedroom",
+              "https://mixingaband.com/vocal-production-for-billie-eilish-by-finneas/"
+            ],
+            "onByDefault": true,
+            "needs": "harmony takes"
           },
           {
-            "id": "found-sounds",
+            "id": "little-reverb",
+            "level": "mix",
+            "what": "Almost no reverb and little top end; bass prominent",
+            "why": "The album is nearly devoid of reverb, with prominent low end",
+            "op": "fx:reverb*0.2@all; eq:air-2dB; bass+2dB",
+            "c": "high",
+            "src": [
+              "https://www.soundonsound.com/people/billie-eilish"
+            ],
+            "onByDefault": true
+          },
+          {
+            "id": "locked-low",
             "level": "sound",
-            "what": "Found-sound percussion (clicks, taps) replaces the hi-hat",
-            "why": "Household sounds as drums (needs the found-sound set)",
-            "op": "kit:found"
+            "what": "Quantise drums and synth bass so they lock together",
+            "why": "He quantises drums and bass synths to lock",
+            "op": "quantize:drums,bass 1.0",
+            "c": "high",
+            "src": [
+              "https://www.soundonsound.com/people/billie-eilish"
+            ],
+            "onByDefault": true
           },
           {
             "id": "tremolo-chop",
             "level": "mix",
-            "what": "Chopping tremolo on a synth or vocal",
-            "why": "Rhythmic movement without more parts",
-            "op": "fx:lead=tremoloChop8"
+            "what": "Hard tremolo (no smoothing) synced to 8ths or 16ths on a synth or vocal",
+            "why": "His chopped-tremolo trick",
+            "op": "fx:lead|vocal=tremoloChop(1/16,smooth0)",
+            "c": "high",
+            "src": [
+              "https://www.mixonline.com/recording/finneas-on-producing-billie-eilishs-number-one-album-in-his-bedroom"
+            ],
+            "onByDefault": true
           },
           {
-            "id": "upright",
+            "id": "found-sounds",
             "level": "sound",
-            "what": "Chords to piano",
-            "why": "Upright piano as the writing instrument",
-            "op": "swapSound:chords->i:piano"
+            "what": "Swap the hi-hat or a percussion part for a recorded everyday sound",
+            "why": "He recorded a crosswalk signal and a dentist drill for bad guy",
+            "op": "kit:found (user records or picks a sound)",
+            "c": "high",
+            "src": [
+              "https://g105.iheart.com/alternate/amp/2020-02-04-finneas-used-crosswalk-dentist-drill-sounds-w-billie-eilish-in-bad-guy"
+            ],
+            "onByDefault": true,
+            "needs": "found-sound percussion set"
+          },
+          {
+            "id": "sparse",
+            "level": "arrangement",
+            "what": "Sparse arrangement: few parts, each clear",
+            "why": "Minimalist arrangements of a few instruments",
+            "op": "muteDoubles:@all; density*0.7",
+            "c": "high",
+            "src": [
+              "https://www.soundonsound.com/people/billie-eilish"
+            ],
+            "onByDefault": true
+          },
+          {
+            "id": "groove-shift",
+            "level": "arrangement",
+            "what": "Change the rhythm under verse 2 (e.g. a sparse synth bass) so the vocal phrasing changes",
+            "why": "A new groove in bad guy's verse 2 pushed the vocal into a different phrasing",
+            "op": "groove:alt@verse2; swapSound:bass->i:probass",
+            "c": "high",
+            "src": [
+              "https://mixingaband.com/vocal-production-for-billie-eilish-by-finneas/"
+            ],
+            "onByDefault": true
+          },
+          {
+            "id": "vocal-transform",
+            "level": "mix",
+            "what": "One vocal line through a heavy transformer (pitch/formant) as a character voice",
+            "why": "Vocal Transformer textures like the bad guy \"rattlesnake\" vocal",
+            "op": "fx:vocal@1 phrase=pitch-12,formant",
+            "c": "med",
+            "src": [
+              "https://www.mixonline.com/recording/finneas-on-producing-billie-eilishs-number-one-album-in-his-bedroom"
+            ],
+            "onByDefault": false
+          },
+          {
+            "id": "print-fx",
+            "level": "mix",
+            "what": "Set reverbs, delays, panning and compression now, so the mix only needs balancing",
+            "why": "He hands mixers sessions ready to balance, not repair",
+            "op": "markMixReady",
+            "c": "med",
+            "src": [
+              "https://www.mixonline.com/recording/finneas-on-producing-billie-eilishs-number-one-album-in-his-bedroom"
+            ],
+            "onByDefault": false
           }
         ]
       }
@@ -5387,36 +5655,99 @@
         ]
       },
       "pass": {
-        "name": "Synth-solo outro",
-        "summary": "Big analog pads, throbbing synth bass, an expressive synth solo over a new outro.",
+        "name": "Synth god",
+        "summary": "Minor-key harmony with brief lifts, analog synths everywhere, an 808 locked to the key, and an ending that takes the song somewhere new: often a long synth solo.",
+        "firstListen": "Checks the key first (so tuning and 808 are in key), then asks how the song ends.",
+        "asks": [
+          "Does the song just stop, or does it go somewhere at the end?",
+          "Is any 808 note fighting the key?"
+        ],
         "moves": [
           {
-            "id": "solo-outro",
+            "id": "new-ending",
             "level": "structure",
-            "what": "Add an 8-bar outro with a synth solo",
-            "why": "His signature ending",
-            "op": "addSection:outro(8)+synthSolo"
+            "what": "Add an ending section that carries the song somewhere new; a synth solo over it",
+            "why": "He finishes tracks with extra sections or endings rather than letting them stop (5% Tint)",
+            "op": "addSection:outro(8)+synthSolo",
+            "c": "high",
+            "src": [
+              "https://thefader.com/2018/10/08/mike-dean-interview-travis-scott-and-kanye-west"
+            ],
+            "onByDefault": true
           },
           {
-            "id": "big-pads",
+            "id": "synth-solo",
             "level": "sound",
-            "what": "Big analog pad under the chorus",
-            "why": "Size",
-            "op": "layer:i:propad@chorus"
+            "what": "An expressive analog synth lead with bends and glides",
+            "why": "Known for synth-heavy production, playing parts live",
+            "op": "addPart:solo i:prolead glide,bend@outro",
+            "c": "high",
+            "src": [
+              "https://en.wikipedia.org/wiki/Mike_Dean_(music_producer)",
+              "https://reverb.com/featured/in-the-studio-with-super-producer-mike-dean"
+            ],
+            "onByDefault": true
+          },
+          {
+            "id": "major-lift",
+            "level": "writing",
+            "what": "A brief move to the relative major for lift, then back to minor",
+            "why": "His minor progressions with a short major lift before returning sad",
+            "op": "chordBorrow:relativeMajor@pre|bridge 2 bars",
+            "c": "high",
+            "src": [
+              "https://thefader.com/2018/10/08/mike-dean-interview-travis-scott-and-kanye-west"
+            ],
+            "onByDefault": false
+          },
+          {
+            "id": "key-lock",
+            "level": "mix",
+            "what": "Check the key: set the vocal tuning scale and fix any 808 note that clashes",
+            "why": "He sets Auto-Tune to the song's key and listens for clashing 808 notes",
+            "op": "tuneScale:songKey; fix808Clashes",
+            "c": "high",
+            "src": [
+              "https://thefader.com/2018/10/08/mike-dean-interview-travis-scott-and-kanye-west"
+            ],
+            "onByDefault": true
+          },
+          {
+            "id": "analog-stack",
+            "level": "sound",
+            "what": "Big analog pads and polysynths (Juno, Jupiter, Moog style) under the chorus",
+            "why": "His analog synth rig",
+            "op": "layer:i:propad,i:junopad@chorus",
+            "c": "high",
+            "src": [
+              "https://reverb.com/featured/in-the-studio-with-super-producer-mike-dean"
+            ],
+            "onByDefault": true
           },
           {
             "id": "throb-bass",
             "level": "sound",
-            "what": "Throbbing synth bass",
+            "what": "Throbbing synth bass or 808 under the verse",
             "why": "Low-end movement",
-            "op": "swapSound:bass->i:probass"
+            "op": "swapSound:bass->i:probass",
+            "c": "med",
+            "src": [
+              "https://reverb.com/featured/in-the-studio-with-super-producer-mike-dean"
+            ],
+            "onByDefault": true
           },
           {
-            "id": "gaps",
+            "id": "live-keys",
             "level": "arrangement",
-            "what": "Leave gaps where an extra layer can fit",
-            "why": "Room for the solo and ad-libs",
-            "op": "thin:@verse"
+            "what": "Leave space for played keys and guitar layers; play them by hand (no quantise)",
+            "why": "He adds guitar and keys to the tracks he produces, thinking about how they play live",
+            "op": "thin:@verse; humanize:keys 0.5",
+            "c": "high",
+            "src": [
+              "https://en.wikipedia.org/wiki/Mike_Dean_(music_producer)",
+              "https://www.complex.com/music/2015/07/mike-dean-beat-construction-interview"
+            ],
+            "onByDefault": true
           }
         ]
       }
@@ -5481,36 +5812,100 @@
         ]
       },
       "pass": {
-        "name": "Club-pop",
-        "summary": "Marching four-on-the-floor beat, synth stabs, a stuttering post-chorus hook.",
+        "name": "Rock-dance",
+        "summary": "Rock songs played by synths: big drums, synth chords that hit like guitar, a melody-first hook that works in any language, chopped and stuttered vocal hooks.",
+        "firstListen": "Asks whether you could sing the hook without knowing the words.",
+        "asks": [
+          "Is the melody catchy even without the lyric?",
+          "Where is the second hook after the chorus?"
+        ],
         "moves": [
           {
-            "id": "four-floor",
+            "id": "synth-as-guitar",
             "level": "sound",
-            "what": "Clipped marching dance beat",
-            "why": "Big, simple, memorable",
-            "op": "groove:fourfloor; kit:electro"
+            "what": "Synth chords that hit like a rock guitar chord",
+            "why": "Just Dance: rock-style, big drums, synths in place of guitars",
+            "op": "swapSound:chords->i:junobrass,stabs; distortion:light",
+            "c": "high",
+            "src": [
+              "https://ladygaganow.net/news/redone-and-akon-interviewed-by-ew-about-lady-gagas-just-dance-for-its-10th-anniversary-r99"
+            ],
+            "onByDefault": true
           },
           {
-            "id": "stabs",
+            "id": "big-drums",
             "level": "sound",
-            "what": "80s synth stabs on the chords",
-            "why": "His synth sound",
-            "op": "swapSound:chords->i:junobrass,stabs"
+            "what": "Big, simple drums: driving four-on-the-floor or a marching beat",
+            "why": "Big drums with an 80s feel",
+            "op": "groove:fourfloor; kit:electro",
+            "c": "high",
+            "src": [
+              "https://ladygaganow.net/news/redone-and-akon-interviewed-by-ew-about-lady-gagas-just-dance-for-its-10th-anniversary-r99",
+              "https://en.wikipedia.org/wiki/Poker_Face_(song)"
+            ],
+            "onByDefault": true
           },
           {
-            "id": "stutter",
-            "level": "arrangement",
-            "what": "Post-chorus: stutter the hook",
-            "why": "A second hook after the chorus (needs the stutter effect)",
-            "op": "addSection:postChorus+stutter(hook)"
-          },
-          {
-            "id": "chant-intro",
+            "id": "chopped-intro",
             "level": "structure",
-            "what": "Open with a chanted hook",
-            "why": "Hook in the first seconds",
-            "op": "addSection:intro(chant-hook)"
+            "what": "Open with a chopped, repeated vocal hook before anything else",
+            "why": "Poker Face opens on a repeated chopped vocal hook",
+            "op": "addSection:intro(vocalChop hook)",
+            "c": "high",
+            "src": [
+              "https://en.wikipedia.org/wiki/Poker_Face_(song)"
+            ],
+            "onByDefault": true,
+            "needs": "vocal chop"
+          },
+          {
+            "id": "stutter-post",
+            "level": "arrangement",
+            "what": "After the chorus, a stuttering vocal hook (post-chorus)",
+            "why": "Poker Face's stuttering hook follows the chorus",
+            "op": "addSection:postChorus+stutter(hook)",
+            "c": "high",
+            "src": [
+              "https://en.wikipedia.org/wiki/Poker_Face_(song)"
+            ],
+            "onByDefault": true,
+            "needs": "stutter effect"
+          },
+          {
+            "id": "robot-verse",
+            "level": "mix",
+            "what": "Verses darker and more robotic, chorus vocal clear and open",
+            "why": "Poker Face: robotic verses, clear chorus",
+            "op": "fx:vocal@verse=robotic; fx:vocal@chorus=clean",
+            "c": "high",
+            "src": [
+              "https://en.wikipedia.org/wiki/Poker_Face_(song)"
+            ],
+            "onByDefault": true
+          },
+          {
+            "id": "melody-first",
+            "level": "writing",
+            "what": "Make the chorus melody work on its own, singable in any language",
+            "why": "He writes melody first, for melodies that cross languages",
+            "op": "melodyCheck:chorus singability (stepwise, repeated rhythm)",
+            "c": "med",
+            "src": [
+              "https://www.songwriteruniverse.com/redone-songwriter-interview-2016/"
+            ],
+            "onByDefault": false
+          },
+          {
+            "id": "80s-synths",
+            "level": "sound",
+            "what": "80s-style synths and electronic chord stabs",
+            "why": "Poker Face's 80s-inspired synths",
+            "op": "layer:i:junopoly stabs@chorus",
+            "c": "high",
+            "src": [
+              "https://en.wikipedia.org/wiki/Poker_Face_(song)"
+            ],
+            "onByDefault": true
           }
         ]
       }
@@ -5584,56 +5979,122 @@
       },
       "pass": {
         "name": "Reduce",
-        "summary": "Strip each section back to what the song needs; the vocal and words carry it.",
+        "summary": "Hear the song stripped to its essentials, then add back only what earns its place. Performance and feeling over polish.",
+        "firstListen": "Plays the song with everything but the vocal and one instrument muted, so you hear what the song is before the production.",
+        "asks": [
+          "Could this song stand up with just voice and one instrument?",
+          "Which part would you miss if it were gone? Keep that, question the rest."
+        ],
         "moves": [
+          {
+            "id": "bare-test",
+            "level": "arrangement",
+            "what": "Bare version first: vocal plus one instrument for the whole song",
+            "why": "He strips a song to its essentials to see what is truly needed; that bare version is the starting point",
+            "op": "mute:all-but(vocal,chords)@all; label:'bare test'",
+            "c": "high",
+            "src": [
+              "https://webflow.rev.com/transcripts/rick-rubin-the-60-minutes-interview-transcript",
+              "https://www.loudersound.com/bands-artists/johnny-cash-american-recordings-rick-rubin-story-behind-album"
+            ],
+            "onByDefault": true
+          },
+          {
+            "id": "add-back",
+            "level": "arrangement",
+            "what": "Add back only the parts that earn it, one at a time, section by section",
+            "why": "He calls himself a reducer more than a producer: nothing stays by default",
+            "op": "addBackOneByOne:@all (user hears each one)",
+            "c": "high",
+            "src": [
+              "https://webflow.rev.com/transcripts/rick-rubin-the-60-minutes-interview-transcript"
+            ],
+            "onByDefault": true
+          },
           {
             "id": "verse1-bare",
             "level": "arrangement",
-            "what": "First verse: vocal plus one instrument",
-            "why": "So the song starts from the voice",
-            "op": "mute:all-but(vocal,lead-harmony-instrument)@verse1"
+            "what": "Verse 1 stays bare: voice and one instrument",
+            "why": "So the song begins as a performance, not a production",
+            "op": "mute:all-but(vocal,chords)@verse1",
+            "c": "high",
+            "src": [
+              "https://webflow.rev.com/transcripts/rick-rubin-the-60-minutes-interview-transcript",
+              "https://www.loudersound.com/bands-artists/johnny-cash-american-recordings-rick-rubin-story-behind-album"
+            ],
+            "onByDefault": true
           },
           {
-            "id": "mute-nonessential",
+            "id": "mute-doubles",
             "level": "arrangement",
-            "what": "Mute any part that doubles another in the same range",
+            "what": "Mute parts that double another in the same range",
             "why": "Fewer parts, each one clearer",
-            "op": "muteDoubles:@all"
+            "op": "muteDoubles:@all",
+            "c": "med",
+            "src": [
+              "https://webflow.rev.com/transcripts/rick-rubin-the-60-minutes-interview-transcript"
+            ],
+            "onByDefault": true
           },
           {
-            "id": "short-intro",
-            "level": "structure",
-            "what": "Shorten the intro to 2 bars, or start on the vocal",
-            "why": "Get to the voice sooner",
-            "op": "cutBars:intro->2"
-          },
-          {
-            "id": "drop-before-peak",
+            "id": "live-feel",
             "level": "arrangement",
-            "what": "Drums out for the first half of the last chorus",
-            "why": "A gap before the last lift makes it hit harder",
-            "op": "dropDrums:lastChorus,firstHalf"
-          },
-          {
-            "id": "dry-mix",
-            "level": "mix",
-            "what": "Dry and upfront: less reverb and effects",
-            "why": "Performance over polish",
-            "op": "fx:reverb*0.4,delay*0.5@all"
+            "what": "Loosen the grid: humanise drums, bass and keys as if played together in one room",
+            "why": "He records bands playing live with the singer and reacting to the vocal (Adele 21 sessions)",
+            "op": "humanize:drums,bass,chords amount=0.6; followVocalDynamics",
+            "c": "high",
+            "src": [
+              "https://en.wikipedia.org/wiki/21_(Adele_album)"
+            ],
+            "onByDefault": true
           },
           {
             "id": "natural-take",
             "level": "mix",
-            "what": "Use the take with the fewest edits; less pitch correction",
-            "why": "Feel over perfection",
-            "op": "vocalTake:mostNatural; tune*0.5"
+            "what": "Pick the take with the most feeling, not the cleanest; turn pitch correction down",
+            "why": "Spontaneity and emotion over perfection",
+            "op": "vocalTake:mostExpressive; tune*0.4",
+            "c": "high",
+            "src": [
+              "https://en.wikipedia.org/wiki/21_(Adele_album)"
+            ],
+            "onByDefault": true
           },
           {
-            "id": "plain-sound",
+            "id": "dry-mix",
+            "level": "mix",
+            "what": "Dry and upfront: much less reverb and effects; no samples or electronic layers unless essential",
+            "why": "His Adele sessions avoided samples and electronic instruments",
+            "op": "fx:reverb*0.4,delay*0.5@all; mute:samples,synthLayers",
+            "c": "med",
+            "src": [
+              "https://en.wikipedia.org/wiki/21_(Adele_album)"
+            ],
+            "onByDefault": true
+          },
+          {
+            "id": "acoustic-version",
             "level": "sound",
-            "what": "Swap a synth pad for piano or acoustic guitar",
-            "why": "A plainer sound leaves room for the vocal",
-            "op": "swapSound:pad->i:piano"
+            "what": "Try an acoustic version: voice and one acoustic guitar or piano",
+            "why": "American Recordings was built from solo acoustic demos, chosen over versions with a band",
+            "op": "swapSound:chords->i:steel|i:piano; mute:all-but(vocal,chords)@all",
+            "c": "high",
+            "src": [
+              "https://www.loudersound.com/bands-artists/johnny-cash-american-recordings-rick-rubin-story-behind-album"
+            ],
+            "onByDefault": false
+          },
+          {
+            "id": "short-intro",
+            "level": "structure",
+            "what": "Get to the voice sooner: intro down to 1–2 bars",
+            "why": "Follows from reduction: nothing before the song that the song does not need",
+            "op": "cutBars:intro->2",
+            "c": "low",
+            "src": [
+              "https://webflow.rev.com/transcripts/rick-rubin-the-60-minutes-interview-transcript"
+            ],
+            "onByDefault": true
           }
         ]
       }
@@ -5712,49 +6173,135 @@
       },
       "pass": {
         "name": "Build it up",
-        "summary": "Start on piano and voice and build to a full band; the last chorus goes bigger.",
+        "summary": "Start subtle and end big: piano and voice grow into a full band, the chorus keeps gaining vocal layers, the tempo and drums push at the end.",
+        "firstListen": "Focuses on the move from verse into chorus, where he says he can spend days, and asks whether the song starts small enough to grow.",
+        "asks": [
+          "Does the verse lead into the chorus, or just stop before it?",
+          "Which notes are full voice and which are falsetto?"
+        ],
         "moves": [
           {
             "id": "piano-start",
             "level": "arrangement",
-            "what": "Intro and verse 1: piano and voice only",
-            "why": "The ballad-to-rock arc starts small",
-            "op": "mute:all-but(vocal,piano)@intro,verse1"
+            "what": "Intro and verse 1: piano and voice",
+            "why": "vampire began as piano and phone demo and builds from a subtle start to a big end",
+            "op": "mute:all-but(vocal,piano)@intro,verse1",
+            "c": "high",
+            "src": [
+              "https://www.soundonsound.com/techniques/inside-track-olivia-rodrigo-vampire"
+            ],
+            "onByDefault": true
           },
           {
-            "id": "band-in",
+            "id": "build-layers",
             "level": "arrangement",
-            "what": "Band enters at chorus 1, fuller each section",
-            "why": "Each section adds one layer",
-            "op": "layerRamp:@chorus1..end"
+            "what": "Each section adds a layer; band in by chorus 1",
+            "why": "The arrangement grows as the song goes",
+            "op": "layerRamp:@verse1..lastChorus",
+            "c": "high",
+            "src": [
+              "https://www.soundonsound.com/techniques/inside-track-olivia-rodrigo-vampire"
+            ],
+            "onByDefault": true
           },
           {
             "id": "double-time",
             "level": "arrangement",
-            "what": "Last chorus switches to double-time drums",
-            "why": "The classic lift into the end",
-            "op": "drumFeel:double@lastChorus"
+            "what": "Last chorus (or from the bridge) switches to double-time drums",
+            "why": "On vampire he swapped the half-time groove for double-time for intensity",
+            "op": "drumFeel:double@bridge..end",
+            "c": "high",
+            "src": [
+              "https://www.soundonsound.com/techniques/inside-track-olivia-rodrigo-vampire"
+            ],
+            "onByDefault": true
           },
           {
-            "id": "push-tempo",
+            "id": "tempo-push",
             "level": "arrangement",
-            "what": "Tempo pushes up a few BPM towards the end",
-            "why": "Builds urgency (uses the tempo curve)",
-            "op": "tempoCurve:+3@lastChorus"
+            "what": "Tempo nudges: verse 1 a touch slower, the end slightly faster",
+            "why": "He slowed vampire's first verse by 1 BPM and tested tempos 132–135",
+            "op": "tempoCurve:verse1-1,end+2",
+            "c": "high",
+            "src": [
+              "https://www.soundonsound.com/techniques/inside-track-olivia-rodrigo-vampire"
+            ],
+            "onByDefault": true,
+            "needs": "tempo curve per section"
+          },
+          {
+            "id": "vocal-stack",
+            "level": "arrangement",
+            "what": "More vocal layers each chorus (about 9 → 11 → 13 parts)",
+            "why": "How Good Luck, Babe!'s choruses grow",
+            "op": "vocalStack:chorus1=9,chorus2=11,lastChorus=13",
+            "c": "high",
+            "src": [
+              "https://www.musicradar.com/artists/producers-engineers/chappell-is-one-of-the-greatest-singers-ive-ever-worked-with-her-voice-can-do-things-that-most-singers-can-never-do-producer-dan-nigro-breaks-down-chappell-roans-iconic-good-luck-babe-vocal-flips"
+            ],
+            "onByDefault": true,
+            "needs": "vocal stacks (duplicate + harmony takes)"
+          },
+          {
+            "id": "chest-falsetto",
+            "level": "writing",
+            "what": "Mark each chorus note full voice or falsetto; hit some words hard, float others",
+            "why": "His register \"dance\" with Chappell Roan",
+            "op": "melodyRegisterMarks:chorus (shown on the piano roll, sung by the user)",
+            "c": "high",
+            "src": [
+              "https://www.musicradar.com/artists/producers-engineers/chappell-is-one-of-the-greatest-singers-ive-ever-worked-with-her-voice-can-do-things-that-most-singers-can-never-do-producer-dan-nigro-breaks-down-chappell-roans-iconic-good-luck-babe-vocal-flips"
+            ],
+            "onByDefault": false
+          },
+          {
+            "id": "drum-size",
+            "level": "sound",
+            "what": "Programmed drums layered with extra kicks, snares, clicks and cymbals, then nudged off the grid",
+            "why": "His drum method on vampire; nudging parts off grid is a signature",
+            "op": "layer:drums+samples; humanize:drums 0.4",
+            "c": "high",
+            "src": [
+              "https://www.soundonsound.com/techniques/inside-track-olivia-rodrigo-vampire"
+            ],
+            "onByDefault": true
           },
           {
             "id": "colour",
             "level": "sound",
-            "what": "Stacked strings and Mellotron in the bridge",
-            "why": "Colour layers for size",
-            "op": "layer:i:strings@bridge"
+            "what": "Mellotron in verse 2, Juno organ and strings in the bridge",
+            "why": "Colour layers he used on vampire",
+            "op": "layer:mellotron@verse2; layer:i:organ,i:strings@bridge",
+            "c": "high",
+            "src": [
+              "https://www.soundonsound.com/techniques/inside-track-olivia-rodrigo-vampire"
+            ],
+            "onByDefault": true,
+            "needs": "mellotron (strings stand-in)"
           },
           {
             "id": "vocal-chain",
             "level": "mix",
-            "what": "Vocal compressed twice, vintage reverb",
-            "why": "His documented vocal sound",
-            "op": "fx:vocal=comp2+vintageVerb"
+            "what": "Vocal: low cut, two compressors in a row (1176-style), de-esser, vintage plate reverb as the song's flavour",
+            "why": "His vampire vocal chain",
+            "op": "fx:vocal=hpf+comp+comp+deess+vintageVerb",
+            "c": "high",
+            "src": [
+              "https://www.soundonsound.com/techniques/inside-track-olivia-rodrigo-vampire"
+            ],
+            "onByDefault": true
+          },
+          {
+            "id": "fresh-ears",
+            "level": "mix",
+            "what": "Suggest coming back tomorrow and pulling the chorus back if it is too big",
+            "why": "He steps away for weeks and often finds choruses he made too big",
+            "op": "reminder:+1day \"listen fresh\"; offer:thin@chorus",
+            "c": "med",
+            "src": [
+              "https://www.uaudio.com/blogs/ua/apollo-creators-daniel-nigro"
+            ],
+            "onByDefault": false
           }
         ]
       }
@@ -5834,42 +6381,125 @@
       },
       "pass": {
         "name": "Hyperpop",
-        "summary": "Pitched and chopped vocals, plastic-bright synths, sudden switches, a dark undertone.",
+        "summary": "Familiar pop made glossy to the point of exaggeration: bright synthetic sounds, vocals chopped into rhythms, abrupt mutes and switches, odd chord voicings under a bright surface.",
+        "firstListen": "Listens to every single sound on its own: is this kick, this synth patch, as characterful as it could be?",
+        "asks": [
+          "Is it Brat? If an idea is boring, move on.",
+          "Which pop cliché could be pushed further?"
+        ],
         "moves": [
           {
-            "id": "pitch-vocal",
+            "id": "timbre",
+            "level": "sound",
+            "what": "Push each sound's character: pitch-enveloped kick, detuned bright pads, gritty FM bass",
+            "why": "On Brat the producers obsess over each sound's timbre",
+            "op": "kit:electro kick=pitchEnv; swapSound:chords->i:propolymod; bass=fm-grit",
+            "c": "high",
+            "src": [
+              "https://www.musicradar.com/news/charli-xcx-brat-theory",
+              "https://www.internettattoo.com/blog/ag-cook-hyperpop-plugin-svst"
+            ],
+            "onByDefault": true
+          },
+          {
+            "id": "vocal-chops",
+            "level": "arrangement",
+            "what": "Build a part out of chopped and pitched vocal slices",
+            "why": "He chops vocals into rhythmic parts; some Brat instrumentals are made from vocal chops",
+            "op": "addPart:vocalChop(pitch+5)@chorus",
+            "c": "high",
+            "src": [
+              "https://en.wikipedia.org/wiki/A._G._Cook",
+              "https://www.musicradar.com/news/charli-xcx-brat-theory"
+            ],
+            "onByDefault": true,
+            "needs": "vocal chop"
+          },
+          {
+            "id": "subtract",
+            "level": "arrangement",
+            "what": "Mute parts suddenly to open abrupt silences",
+            "why": "Brat builds structure by subtraction, leaving abrupt gaps",
+            "op": "muteSudden:1 bar before chorus; gap:@chorus.mid",
+            "c": "high",
+            "src": [
+              "https://www.musicradar.com/news/charli-xcx-brat-theory"
+            ],
+            "onByDefault": true
+          },
+          {
+            "id": "stutter",
+            "level": "arrangement",
+            "what": "Copy a 16th-note slice of the vocal and repeat it as a stutter",
+            "why": "Sympathy Is a Knife's stutter at 2:22",
+            "op": "stutter:vocal 1/16@bridge",
+            "c": "high",
+            "src": [
+              "https://www.musicradar.com/news/charli-xcx-brat-theory"
+            ],
+            "onByDefault": true,
+            "needs": "stutter effect"
+          },
+          {
+            "id": "odd-voicing",
+            "level": "writing",
+            "what": "Unusual voicings: stacked fourths, a bare minor second, a held clashing note above",
+            "why": "I Think About It All The Time voices chords in fourths and seconds; a held high note clashes in Sympathy Is a Knife",
+            "op": "voicing:quartal@chorus; pedalTone:high clash",
+            "c": "high",
+            "src": [
+              "https://www.musicradar.com/news/charli-xcx-brat-theory"
+            ],
+            "onByDefault": false
+          },
+          {
+            "id": "autotune-write",
             "level": "mix",
-            "what": "Pitch the vocal up and chop it into a rhythm",
-            "why": "His signature vocal treatment",
-            "op": "fx:vocal=pitch+5,chop16@chorus"
+            "what": "Hard-tuned vocal (robotic but expressive) in the chorus",
+            "why": "Auto-Tune on Charli's vocals; she writes with it in her headphones",
+            "op": "fx:vocal=hardTune@chorus",
+            "c": "high",
+            "src": [
+              "https://www.musicradar.com/news/charli-xcx-brat-theory",
+              "https://www.internettattoo.com/blog/ag-cook-hyperpop-plugin-svst"
+            ],
+            "onByDefault": true
+          },
+          {
+            "id": "exaggerate",
+            "level": "sound",
+            "what": "Take a 90s/2000s pop move (Eurodance stab, donk bass) and make it shinier and bigger",
+            "why": "He exaggerates pop clichés: glossy and over the top",
+            "op": "layer:eurodanceStab@chorus; fx:master=ott",
+            "c": "high",
+            "src": [
+              "https://en.wikipedia.org/wiki/A._G._Cook"
+            ],
+            "onByDefault": true
           },
           {
             "id": "switch",
             "level": "arrangement",
             "what": "Bridge switches sound and rhythm completely",
-            "why": "The song has several personalities",
-            "op": "swapSoundAll@bridge; groove:random"
+            "why": "Several personalities in one song",
+            "op": "swapSoundAll@bridge; groove:alt",
+            "c": "med",
+            "src": [
+              "https://en.wikipedia.org/wiki/A._G._Cook"
+            ],
+            "onByDefault": false
           },
           {
-            "id": "chaos-peak",
-            "level": "arrangement",
-            "what": "Stack clashing layers for a peak, then snap back",
-            "why": "Chaos then clean pop",
-            "op": "layer:clash@lastChorus,firstHalf"
-          },
-          {
-            "id": "sub",
-            "level": "sound",
-            "what": "Grime-style sub-bass",
-            "why": "Weight under the bright top",
-            "op": "swapSound:bass->i:probass,sub"
-          },
-          {
-            "id": "dark-chord",
-            "level": "writing",
-            "what": "One dissonant inversion under the bright chorus",
-            "why": "A dark undertone (changes your chords)",
-            "op": "chordColor:dissonantInversion@chorus,1"
+            "id": "fast",
+            "level": "structure",
+            "what": "Keep the song short and decisive; cut anything that bores you",
+            "why": "Charli works fast; if an idea bored them, they moved on",
+            "op": "cutBars:longest repeated section by half",
+            "c": "med",
+            "src": [
+              "https://musicradar.com/artists/she-was-the-one-to-say-if-it-was-brat-or-not-she-works-really-really-fast-and-if-were-bored-by-something-well-just-move-on-charli-xcx-producers-finn-keane-and-a-g-cook-on-the-pop-stars-relentless-creative-process"
+            ],
+            "onByDefault": false
           }
         ]
       }
@@ -7214,7 +7844,7 @@
     }
   },
   "producerPass": {
-    "about": "A producer pass runs on a finished song: Semitone proposes what that producer would likely do, as session notes. Each move is one line with a reason and its own on/off switch; A/B compares your version and the pass while it plays; the pass is one undo step and so is each move. \"How far\" picks the levels: sounds & mix (sound, mix) / + arrangement (arrangement, structure) / + writing (writing: only these touch melody or chords, and say so). \"Try another take\" draws a different subset and variant of the moves. Wording is always \"<name>-style pass, based on how they are known to work\": never quotes or first-person lines in the producer's voice. op strings are a small action language for the engine (mute, muteDoubles, cutBars, dropDrums, drumFeel, tempoCurve, layer, layerRamp, thin, swapSound, kit, groove, fx, vocalTake, addSection, melodyRepeat, melodyMatch, chordColor); moves the engine cannot do yet stay listed but greyed with \"coming soon\".",
+    "about": "A producer pass runs on a finished song: Semitone proposes what that producer would likely do, as session notes. Each move is one line with a reason and its own on/off switch; A/B compares your version and the pass while it plays; the pass is one undo step and so is each move. \"How far\" picks the levels: sounds & mix (sound, mix) / + arrangement (arrangement, structure) / + writing (writing: only these touch melody or chords, and say so). \"Try another take\" draws a different subset and variant of the moves. Wording is always \"<name>-style pass, based on how they are known to work\": never quotes or first-person lines in the producer's voice. op strings are a small action language for the engine (mute, muteDoubles, cutBars, dropDrums, drumFeel, tempoCurve, layer, layerRamp, thin, swapSound, kit, groove, fx, vocalTake, addSection, melodyRepeat, melodyMatch, chordColor); moves the engine cannot do yet stay listed but greyed with \"coming soon\". Each pass also has firstListen (what the pass looks at first, said about the producer, never in their voice) and asks (questions the card puts to the user). Moves carry c (confidence) and src; onByDefault=false moves are offered but start switched off.",
     "levels": {
       "sounds & mix": [
         "sound",
@@ -7233,6 +7863,7 @@
         "structure",
         "writing"
       ]
-    }
+    },
+    "researched": "2026-11-05"
   }
 }

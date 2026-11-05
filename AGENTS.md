@@ -116,6 +116,10 @@ target look (Start, Song view, Record, Mix). Rules for every one of them:
     - Wording: "Rick Rubin-style pass, based on how he's known to work". Never quotes or lines in the producer's voice.
     - Producer tags picked *before* generating still set the production layer (blend rules); the pass is the after-the-fact version.
     - Moves the engine can't do yet (stutter, found sounds, tempo curve per section) stay listed, greyed, "coming soon".
+    - Each pass also has **firstListen** (shown first, with a button to hear it, e.g. Rubin's bare version) and **asks**
+      (two questions for the user). Moves carry `c` and `src`; `onByDefault: false` moves are offered but start off.
+    - The card shows where each move comes from in a few words ("from his live-band Adele sessions"), and low-confidence
+      moves say so.
 
 ### Needs Jamie's decision first: don't start without asking
 24. **Built-in assistant.** A chat panel that sees the whole song and answers "why does the bridge feel weak?"
