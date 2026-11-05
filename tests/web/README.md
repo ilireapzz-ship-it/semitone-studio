@@ -22,5 +22,6 @@ node tests/web/regression.test.js
 | `producer-pass.test.js` | all 8 producers, A/B returns your version exactly, Discard, Keep as labelled undo steps, muted sections leave the MIDI |
 | `emotion-vibe.test.js` | emotion per section, suggested moves, lanes change the sound, one undo step, saved with the song |
 | `real-sounds.test.js` | suggestions, recipes, scan results shown only from real names, MIDI + note export |
+| `engine-additions.test.js` | swing, shuffle and train grooves, snare roll, silence, accordion, upright bass, Jazz and Country tags use them |
 | `undo.test.js` | every kind of change undoes and redoes exactly, labels, no ghost steps, playing song keeps playing, 100-step cap, plugin |
 | `fl-markers.test.js` | Send structure to FL: marker list, setup panel |

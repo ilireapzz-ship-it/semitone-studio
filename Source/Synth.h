@@ -23,7 +23,7 @@ constexpr double synthPi = 3.14159265358979323846;
 
 enum class Wave { sine, triangle, saw, square, pulse };
 enum class Kind { voice, fm, buffer, juno, prophet };
-enum class Pluck { nylon, steel, harp, pizz, bassgtr };
+enum class Pluck { nylon, steel, harp, pizz, bassgtr, upright };
 
 struct Layer { float ratio = 1, gain = 0; Wave wave = Wave::sine; };
 
@@ -257,7 +257,7 @@ inline NoteBuffer renderPianoNote (int m, double sr)
 
 inline NoteBuffer renderPluckNote (int m, double sr, Pluck kind)
 {
-    static constexpr double t60s[] { 2.2, 3.2, 3.4, .45, 2.4 }, brights[] { .4, .8, .55, .35, .28 };
+    static constexpr double t60s[] { 2.2, 3.2, 3.4, .45, 2.4, 1.2 }, brights[] { .4, .8, .55, .35, .28, .2 };
     const double f0 = 440 * std::pow (2.0, (m - 69) / 12.0), per = sr / f0;
     const int N = std::max (2, (int) std::floor (per - .5));
     const double frac = per - .5 - N, C = (1 - frac) / (1 + frac);

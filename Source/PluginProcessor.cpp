@@ -182,7 +182,7 @@ static st::PartPatch partFrom (const juce::var& o)
         p.bufRelease = num (o, "rel", .22f); p.holdMin = num (o, "holdMin", 0); p.holdMax = num (o, "holdMax", 0);
         p.velCutoff = kind == "piano";
         const auto id = o.getProperty ("instr", "").toString();
-        p.instr = kind == "piano" ? 0 : 1 + (int) (id == "steel" ? st::Pluck::steel : id == "harp" ? st::Pluck::harp : id == "pizz" ? st::Pluck::pizz : id == "bassgtr" ? st::Pluck::bassgtr : st::Pluck::nylon);
+        p.instr = kind == "piano" ? 0 : 1 + (int) (id == "steel" ? st::Pluck::steel : id == "harp" ? st::Pluck::harp : id == "pizz" ? st::Pluck::pizz : id == "bassgtr" ? st::Pluck::bassgtr : id == "upright" ? st::Pluck::upright : st::Pluck::nylon);
     }
     else if (kind == "juno" || kind == "pro" || kind == "prophet")
     {

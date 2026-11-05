@@ -97,6 +97,7 @@ int main()
     store.push_back (renderPianoNote (69, SR));  const NoteBuffer* piano = &store.back();
     store.push_back (renderPluckNote (57, SR, Pluck::nylon)); const NoteBuffer* nylon = &store.back();
     store.push_back (renderPluckNote (45, SR, Pluck::bassgtr)); const NoteBuffer* bassgtr = &store.back();
+    { const auto up = renderPluckNote (33, SR, Pluck::upright), fi = renderPluckNote (33, SR, Pluck::bassgtr); if (up.empty() || up.size() >= fi.size()) { std::printf ("FAIL upright bass should ring shorter than the fingered bass\n"); return 1; } }
 
     auto pianoP = part (0, Kind::buffer); pianoP.vol = .12f; pianoP.velCutoff = true; pianoP.bufRelease = .22f;
     auto pluckP = part (0, Kind::buffer); pluckP.vol = .32f; pluckP.bufRelease = .35f; pluckP.holdMin = .4f;
