@@ -23,7 +23,7 @@ bool SemitoneProcessor::isBusesLayoutSupported (const BusesLayout& layouts) cons
 void SemitoneProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midi)
 {
     juce::ScopedNoDenormals noDenormals;
-    buffer.clear();      // Milestone 1 makes no sound of its own: your DAW's instruments do
+    buffer.clear();
     // pass notes you play to the interface (it uses them for play-along and live recording)
     for (const auto meta : midi)
     {
@@ -66,8 +66,19 @@ void SemitoneProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
 
     events.clear();
     sequencer.process (playing, ppq, bpm, sr, n, events);
-    for (const auto& e : events)
-        midi.addEvent (juce::MidiMessage (e.status, e.d1, e.d2), e.offset);
+    const int mode = soundMode.load();
+    if (mode != 1)
+        for (const auto& e : events)
+            midi.addEvent (juce::MidiMessage (e.status, e.d1, e.d2), e.offset);
+
+    // Semitone's own instruments, rendered by the interface, played on the DAW's timeline
+    // (the standalone app plays its sound in the interface itself)
+    if (mode != 2 && ! isStandalone() && buffer.getNumChannels() > 0)
+    {
+        float* L = buffer.getWritePointer (0);
+        float* R = buffer.getNumChannels() > 1 ? buffer.getWritePointer (1) : L;
+        clipPlayer.process (playing, ppq, bpm, sr, n, tlLength.load(), tlOffset.load(), L, R);
+    }
 
     uiPlaying = playing; uiPpq = ppq; uiBpm = bpm; uiHostHasTransport = hostTransport;
 }
@@ -93,6 +104,8 @@ void SemitoneProcessor::setTimelineFromVar (const juce::var& v)
         }
     }
     tl->bendRange = (int) v.getProperty ("bendRange", 0);
+    tlLength = tl->length;
+    tlOffset = (double) v.getProperty ("offset", 0.0);
     if (auto* ev = v.getProperty ("ev", juce::var()).getArray())
     {
         const int count = ev->size() / 4;
@@ -125,6 +138,8 @@ void SemitoneProcessor::getStateInformation (juce::MemoryBlock& dest)
     // The whole Semitone song is saved inside the DAW project.
     juce::ValueTree t ("SemitoneState");
     { const juce::ScopedLock sl (stateLock); t.setProperty ("project", projectJson, nullptr); t.setProperty ("timeline", timelineJson, nullptr); t.setProperty ("songFile", songFile, nullptr); }
+    t.setProperty ("soundMode", soundMode.load(), nullptr);
+    t.setProperty ("audioLayout", juce::JSON::toString (audioLayout, true), nullptr);
     t.setProperty ("version", 1, nullptr);
     juce::MemoryOutputStream mo (dest, false);
     t.writeToStream (mo);
@@ -143,6 +158,117 @@ void SemitoneProcessor::setStateInformation (const void* data, int size)
         if (t.hasProperty ("songFile")) songFile = t.getProperty ("songFile").toString();
     }
     if (tl.isNotEmpty()) setTimelineFromVar (juce::JSON::parse (tl)); // plays even before the window is opened
+    if (t.hasProperty ("soundMode")) setSoundMode ((int) t.getProperty ("soundMode"));
+    if (t.hasProperty ("audioLayout")) setAudioLayout (juce::JSON::parse (t.getProperty ("audioLayout").toString())); // sound from the clip cache
+}
+
+// ---- Semitone's own sounds ----
+// Clips are cached on disk by id (a hash of everything that shapes the section's sound),
+// so a reopened DAW project plays at once, without opening the Semitone window.
+static juce::File clipCacheDir()
+{
+    auto d = st::files::appData().getChildFile ("AudioCache");
+    d.createDirectory();
+    return d;
+}
+
+static juce::String safeId (const juce::String& id) { return id.retainCharacters ("0123456789abcdefABCDEF-_").substring (0, 40); }
+
+std::shared_ptr<st::Clip> SemitoneProcessor::loadCachedClip (const juce::String& id)
+{
+    const auto f = clipCacheDir().getChildFile (safeId (id) + ".stclip");
+    juce::FileInputStream in (f);
+    if (! in.openedOk() || in.readInt() != 0x53544331) return nullptr; // "STC1"
+    auto c = std::make_shared<st::Clip>();
+    c->sr = in.readInt(); c->frames = in.readInt();
+    const int nm = in.readInt();
+    if (c->sr < 8000 || c->sr > 384000 || c->frames < 2 || c->frames > 384000 * 900 || nm < 0 || nm > 100000) return nullptr;
+    for (int i = 0; i < nm; ++i) { c->mb.push_back (in.readDouble()); c->ms.push_back (in.readDouble()); }
+    c->pcm.resize ((size_t) c->frames * 2);
+    const auto bytes = (int) (c->pcm.size() * sizeof (int16_t));
+    if (in.read (c->pcm.data(), bytes) != bytes) return nullptr;
+    f.setLastAccessTime (juce::Time::getCurrentTime());
+    return c;
+}
+
+static void saveCachedClip (const juce::String& id, const st::Clip& c)
+{
+    const auto f = clipCacheDir().getChildFile (safeId (id) + ".stclip");
+    juce::TemporaryFile tmp (f);
+    {
+        juce::FileOutputStream out (tmp.getFile());
+        if (! out.openedOk()) return;
+        out.writeInt (0x53544331); out.writeInt (c.sr); out.writeInt (c.frames); out.writeInt ((int) c.mb.size());
+        for (size_t i = 0; i < c.mb.size(); ++i) { out.writeDouble (c.mb[i]); out.writeDouble (c.ms[i]); }
+        out.write (c.pcm.data(), c.pcm.size() * sizeof (int16_t));
+        out.flush();
+        if (out.getStatus().failed()) return;
+    }
+    tmp.overwriteTargetFileWithTemporary();
+}
+
+static void pruneClipCache()
+{
+    static bool done = false;
+    if (done) return;
+    done = true;
+    const auto cutoff = juce::Time::getCurrentTime() - juce::RelativeTime::days (45);
+    for (const auto& f : clipCacheDir().findChildFiles (juce::File::findFiles, false, "*.stclip"))
+        if (f.getLastModificationTime() < cutoff && f.getLastAccessTime() < cutoff) f.deleteFile();
+}
+
+juce::StringArray SemitoneProcessor::setAudioLayout (const juce::var& items)
+{
+    pruneClipCache();
+    audioLayout = items.isArray() ? items : juce::var (juce::Array<juce::var>());
+    juce::StringArray need;
+    if (auto* arr = audioLayout.getArray())
+        for (const auto& it : *arr)
+        {
+            const auto id = it.getProperty ("id", "").toString();
+            if (id.isEmpty() || clips.count (id) || need.contains (id)) continue;
+            if (auto c = loadCachedClip (id)) clips[id] = c;
+            else need.add (id);
+        }
+    rebuildBank();
+    return need;
+}
+
+void SemitoneProcessor::addClip (const juce::String& id, std::shared_ptr<st::Clip> clip)
+{
+    if (! clip || id.isEmpty()) return;
+    saveCachedClip (id, *clip);
+    clips[id] = std::move (clip);
+    rebuildBank();
+}
+
+void SemitoneProcessor::rebuildBank()
+{
+    auto b = std::make_shared<st::Bank>();
+    juce::StringArray used;
+    if (auto* arr = audioLayout.getArray())
+        for (const auto& it : *arr)
+        {
+            const auto id = it.getProperty ("id", "").toString();
+            auto f = clips.find (id);
+            if (f == clips.end()) continue;
+            b->items.push_back ({ f->second, (double) it.getProperty ("at", 0.0) });
+            used.add (id);
+        }
+    // forget clips the song no longer uses (they stay in the disk cache)
+    for (auto it = clips.begin(); it != clips.end();)
+        it = used.contains (it->first) ? std::next (it) : clips.erase (it);
+    // the audio thread may still hold the previous bank: keep it alive a little while
+    if (auto old = std::atomic_load (&bankNow)) retired.push_back ({ old, juce::Time::getMillisecondCounter() });
+    std::shared_ptr<const st::Bank> cb = b;
+    std::atomic_store (&bankNow, cb);
+    clipPlayer.setBank (cb);
+}
+
+void SemitoneProcessor::releaseRetired()
+{
+    const auto now = juce::Time::getMillisecondCounter();
+    retired.erase (std::remove_if (retired.begin(), retired.end(), [now] (const auto& r) { return now - r.second > 5000; }), retired.end());
 }
 
 int SemitoneProcessor::popIncomingMidi (std::vector<juce::uint32>& dest)

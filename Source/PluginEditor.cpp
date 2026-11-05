@@ -49,6 +49,8 @@ juce::WebBrowserComponent::Options SemitoneEditor::makeOptions()
             o->setProperty ("project", proc.getProjectState());
             o->setProperty ("recent", st::files::recentVar());
             o->setProperty ("songFile", proc.songFile);
+            o->setProperty ("soundMode", proc.getSoundMode());
+            o->setProperty ("sr", proc.getSampleRateNow());
             { const juce::File sf (proc.songFile); o->setProperty ("songFileSame", sf.existsAsFile() && sf.loadFileAsString() == proc.getProjectState()); }
             browser.emitEventIfBrowserIsVisible ("st_init", juce::var (o));
         })
@@ -57,6 +59,18 @@ juce::WebBrowserComponent::Options SemitoneEditor::makeOptions()
             const auto path = v.getProperty ("path", "").toString();
             if (path.isNotEmpty()) openSongAt (juce::File (path)); else openSong();
         })
+        // Semitone's own sounds: the interface sends the section layout, renders what is missing, sends it in chunks
+        .withEventListener ("st_soundmode", [this] (const juce::var& v) { proc.setSoundMode ((int) v.getProperty ("mode", 0)); })
+        .withEventListener ("st_audio_layout", [this] (const juce::var& v) {
+            const auto need = proc.setAudioLayout (v.getProperty ("items", juce::var()));
+            auto* o = new juce::DynamicObject();
+            juce::Array<juce::var> ids; for (auto& s : need) ids.add (s);
+            o->setProperty ("ids", ids);
+            o->setProperty ("sr", proc.getSampleRateNow());
+            o->setProperty ("seq", v.getProperty ("seq", 0));
+            browser.emitEventIfBrowserIsVisible ("st_audio_need", juce::var (o));
+        })
+        .withEventListener ("st_audio_clip", [this] (const juce::var& v) { clipChunk (v); })
         .withEventListener ("st_title", [this] (const juce::var& v) { setTitle (v.getProperty ("title", "Semitone Studio").toString()); })
         .withEventListener ("st_timeline", [this] (const juce::var& v) { proc.setTimelineFromVar (v); })
         .withEventListener ("st_state", [this] (const juce::var& v) { proc.setProjectState (v.getProperty ("json", "").toString()); })
@@ -78,8 +92,45 @@ std::optional<juce::WebBrowserComponent::Resource> SemitoneEditor::getResource (
     return std::nullopt;
 }
 
+void SemitoneEditor::clipChunk (const juce::var& v)
+{
+    // {id, sr, frames, marks:[beat, sec, ...], part, parts, b64 (interleaved stereo int16, little endian)}
+    const auto id = v.getProperty ("id", "").toString();
+    const int part = (int) v.getProperty ("part", 0), parts = (int) v.getProperty ("parts", 1);
+    if (id.isEmpty()) return;
+    if (part == 0 || ! building || buildingId != id)
+    {
+        building = std::make_shared<st::Clip>();
+        buildingId = id;
+        building->sr = (int) v.getProperty ("sr", 48000);
+        building->frames = juce::jlimit (0, 384000 * 900, (int) v.getProperty ("frames", 0));
+        building->pcm.assign ((size_t) building->frames * 2, 0);
+        building->mb.clear(); building->ms.clear();
+        if (auto* mk = v.getProperty ("marks", juce::var()).getArray())
+            for (int i = 0; i + 1 < mk->size(); i += 2) { building->mb.push_back ((double) (*mk)[i]); building->ms.push_back ((double) (*mk)[i + 1]); }
+        buildingAt = 0;
+    }
+    const auto data = decode (v.getProperty ("b64", "").toString());
+    const size_t n = juce::jmin ((size_t) data.getSize() / sizeof (int16_t), building->pcm.size() - (size_t) buildingAt);
+    for (size_t i = 0; i < n; ++i)
+    {
+        const auto* b = static_cast<const juce::uint8*> (data.getData()) + i * 2;
+        building->pcm[(size_t) buildingAt + i] = (int16_t) (b[0] | (b[1] << 8));
+    }
+    buildingAt += (juce::int64) n;
+    if (part >= parts - 1)
+    {
+        proc.addClip (id, building);
+        building.reset(); buildingId.clear();
+        auto* o = new juce::DynamicObject();
+        o->setProperty ("id", id);
+        browser.emitEventIfBrowserIsVisible ("st_audio_got", juce::var (o));
+    }
+}
+
 void SemitoneEditor::timerCallback()
 {
+    if ((ticks % 60) == 0) proc.releaseRetired();
     // standalone app: keep a crash-safe autosave of the song, every couple of seconds while it changes
     if (proc.isStandalone() && (ticks % 120) == 0)
     {

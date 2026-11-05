@@ -1,5 +1,6 @@
 // Unit test for st::Sequencer (no JUCE needed): g++ -std=c++17 -I../Source sequencer_test.cpp
 #include "Sequencer.h"
+#include "ClipPlayer.h"
 #include <cassert>
 #include <cstdio>
 #include <map>
@@ -55,6 +56,31 @@ int main()
         bool reset = false; for (auto& e : out) if (e.status == 0xE0 && e.d2 == 64) reset = true;
         if (! reset) { std::printf ("FAIL bend reset\n"); return 1; }
         std::printf ("ok: pitch bends\n");
+    }
+    // clips play locked to PPQ: section at beat 4, clip has a click at beat 0 of the section (0.1 s pre-roll)
+    {
+        auto c = std::make_shared<st::Clip>();
+        c->sr = 48000; c->frames = 48000 * 4; c->pcm.assign ((size_t) c->frames * 2, 0);
+        const int clickAt = (int) (0.1 * 48000); c->pcm[(size_t) clickAt * 2] = 16000; c->pcm[(size_t) clickAt * 2 + 1] = 16000;
+        c->mb = { 0.0, 4.0 }; c->ms = { 0.1, 2.1 };               // 4 beats at 120 bpm
+        auto b = std::make_shared<st::Bank>(); b->items.push_back ({ c, 4.0 });
+        st::ClipPlayer pl; pl.setBank (b);
+        // host at 120 bpm: beat 4 is 2 s in = sample 96000. Render 3 s in one go, song looped every 16 beats.
+        std::vector<float> L (144000, 0.0f), R (144000, 0.0f);
+        pl.process (true, 0.0, 120.0, 48000.0, 144000, 16.0, 0.0, L.data(), R.data());
+        int peak = -1; float mx = 0; for (int i = 0; i < 144000; ++i) if (L[(size_t) i] > mx) { mx = L[(size_t) i]; peak = i; }
+        if (std::abs (peak - 96000) > 2 || mx < 0.2f) { std::printf ("FAIL clip lock peak=%d mx=%f\n", peak, mx); return 1; }
+        // host at 60 bpm: beat 4 is 4 s in, still on the click (varispeed)
+        std::vector<float> L2 (240000, 0.0f);
+        for (int o = 0; o < 240000; o += 480) pl.process (true, o * (1.0 / 48000.0), 60.0, 48000.0, 480, 16.0, 0.0, L2.data() + o, L2.data() + o);
+        peak = -1; mx = 0; for (int i = 0; i < 240000; ++i) if (L2[(size_t) i] > mx) { mx = L2[(size_t) i]; peak = i; }
+        if (std::abs (peak - 192000) > 3) { std::printf ("FAIL clip tempo peak=%d\n", peak); return 1; }
+        // looped section mode (offset 4, length 4): the click lands at the start of every loop
+        std::vector<float> L3 (96000 * 2, 0.0f);
+        pl.process (true, 0.0, 120.0, 48000.0, 96000 * 2, 4.0, 4.0, L3.data(), nullptr);
+        int hits = 0; for (int i = 0; i < 96000 * 2; ++i) if (L3[(size_t) i] > 0.2f) ++hits;
+        if (hits != 2) { std::printf ("FAIL clip loop hits=%d\n", hits); return 1; }
+        std::printf ("ok: clips locked to the playhead\n");
     }
     return 0;
 }

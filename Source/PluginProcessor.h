@@ -2,6 +2,8 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_audio_utils/juce_audio_utils.h>
 #include "Sequencer.h"
+#include "ClipPlayer.h"
+#include <map>
 #include <array>
 
 // The plugin: plays the song from the Semitone interface as MIDI, in time with the host.
@@ -40,6 +42,15 @@ public:
     juce::String getProjectState() const { const juce::ScopedLock sl (stateLock); return projectJson; }
     void setStandaloneTransport (bool play, double startBeat, double bpm);
     bool isStandalone() const { return wrapperType == wrapperType_Standalone; }
+    // ---- Semitone's own sounds inside the DAW (message thread) ----
+    // soundMode: 0 = Semitone's sounds + MIDI, 1 = Semitone's sounds only, 2 = MIDI only
+    void setSoundMode (int m) { soundMode = juce::jlimit (0, 2, m); }
+    int getSoundMode() const { return soundMode.load(); }
+    // layout: [{id, at}] — returns the clip ids this plugin still needs rendered
+    juce::StringArray setAudioLayout (const juce::var& items);
+    void addClip (const juce::String& id, std::shared_ptr<st::Clip> clip);
+    void releaseRetired();
+    double getSampleRateNow() const { return sr; }
     juce::String songFile; // the .semitone file this song was last opened from or saved to (message thread)
 
     // ---- read by the editor's timer ----
@@ -61,6 +72,16 @@ private:
     std::atomic<double> stBpm { 120.0 };
     double stPpq = 0.0;
     std::atomic<double> stStartRequest { -1.0 };
+
+    st::ClipPlayer clipPlayer;
+    std::atomic<int> soundMode { 0 };
+    std::atomic<double> tlLength { 0.0 }, tlOffset { 0.0 };
+    std::map<juce::String, std::shared_ptr<st::Clip>> clips;   // message thread
+    juce::var audioLayout;                                       // message thread
+    std::vector<std::pair<std::shared_ptr<const st::Bank>, juce::uint32>> retired;
+    std::shared_ptr<const st::Bank> bankNow;
+    void rebuildBank();
+    std::shared_ptr<st::Clip> loadCachedClip (const juce::String& id);
 
     juce::AbstractFifo inFifo { 1024 };
     std::array<juce::uint32, 1024> inBuf {};

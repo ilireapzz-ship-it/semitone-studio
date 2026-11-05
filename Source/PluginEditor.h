@@ -23,6 +23,7 @@ private:
     void openSongAt (const juce::File& f);
     void songOpened (const juce::File& f, const juce::String& json);
     void setTitle (const juce::String& t);
+    void clipChunk (const juce::var& v);
     static juce::MemoryBlock decode (const juce::String& base64);
 
     SemitoneProcessor& proc;
@@ -32,6 +33,9 @@ private:
     juce::String lastAutosaved;
     bool lastPlaying = false;
     int ticks = 0;
+    std::shared_ptr<st::Clip> building;   // the clip arriving in chunks
+    juce::String buildingId;
+    juce::int64 buildingAt = 0;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SemitoneEditor)
 };
