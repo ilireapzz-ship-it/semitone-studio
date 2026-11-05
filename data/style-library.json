@@ -2540,8 +2540,8 @@
             ]
           },
           {
-            "c": "med",
-            "t": "Walking bass: one note per beat, chord tones on strong beats, passing tones into the next root. Swing eighths long–short, ride cymbal and hi-hat on 2 and 4 keep time.",
+            "c": "low",
+            "t": "Walking bass: one note per beat, chord tones on strong beats, passing tones into the next root. Swing eighths long–short, ride cymbal and hi-hat on 2 and 4 keep time. (general jazz practice; no single source)",
             "used": "bass walk (exists), new swing groove"
           }
         ]
@@ -2579,7 +2579,12 @@
           "key": "minor",
           "src": "https://en.wikipedia.org/wiki/Ii%E2%80%93V%E2%80%93I_progression"
         }
-      ]
+      ],
+      "arrangement": {
+        "form": "32-bar AABA (A = 8 bars) is the default; also 12-bar blues. Sections are named A, A, B (bridge), A, then solo choruses over the same form.",
+        "solos": "head – solos over the form – head out",
+        "comping": "piano comps on off-beats, bass walks, drums on ride"
+      }
     },
     {
       "id": "charli",
@@ -7017,7 +7022,7 @@
               "https://americansongwriter.com/all-those-pop-songs-you-love-thats-not-magic-thats-melodic-math-and-this-is-how-it-works",
               "https://www.theringer.com/2020/12/17/music/60-songs-backstreet-boys-i-want-it-that-way-history"
             ],
-            "onByDefault": true
+            "onByDefault": false
           },
           {
             "id": "glue-hook",
