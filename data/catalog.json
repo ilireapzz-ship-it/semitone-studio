@@ -1,0 +1,1073 @@
+{
+  "about": "Every artist and composer, song by song, grouped by album (an era). Tags describe how each song sounds (mood, tempo feel, instruments, production), so Semitone can pick an era, or songs whose tags match what the user asks for. Chord data lives in progressions.json under the era profile id. Tags are descriptive notes written for Semitone, not copied text; edit them freely. Covers are listed but never analysed.",
+  "tagVocab": {
+    "mood": [
+      "melancholy",
+      "tender",
+      "nostalgic",
+      "dreamy",
+      "hazy",
+      "dark",
+      "noir",
+      "sultry",
+      "playful",
+      "wry",
+      "sardonic",
+      "defiant",
+      "triumphant",
+      "cinematic",
+      "romantic",
+      "mournful",
+      "confessional",
+      "hushed",
+      "warm",
+      "raw",
+      "restless",
+      "hopeful",
+      "glamorous",
+      "devotional",
+      "elegiac",
+      "yearning",
+      "lonely",
+      "weary",
+      "reflective",
+      "intimate"
+    ],
+    "tempo": [
+      "slow",
+      "mid-tempo",
+      "upbeat",
+      "6/8",
+      "tempo drop in chorus",
+      "tempo changes",
+      "slow build",
+      "long jam"
+    ],
+    "instruments": [
+      "piano",
+      "strings",
+      "harp",
+      "choir",
+      "mellotron",
+      "acoustic guitar",
+      "reverb electric guitar",
+      "clean electric guitar",
+      "slide guitar",
+      "pedal steel",
+      "guitar solo",
+      "organ",
+      "saxophone",
+      "flute",
+      "brass",
+      "horns",
+      "celesta",
+      "synth",
+      "synth bass",
+      "808"
+    ],
+    "production": [
+      "hip-hop beat",
+      "trip-hop beat",
+      "trap hi-hats",
+      "live band",
+      "drum machine",
+      "no drums",
+      "sparse",
+      "lush",
+      "spoken section",
+      "two-chord vamp",
+      "old Hollywood",
+      "psychedelic",
+      "70s soft rock",
+      "Americana",
+      "jazzy",
+      "folk"
+    ]
+  },
+  "artists": {
+    "Lana Del Rey": {
+      "profileDefault": "sadcore",
+      "albums": [
+        {
+          "album": "Born to Die",
+          "year": 2012,
+          "era": "lana-btd",
+          "producers": [
+            "Emile Haynie",
+            "Rick Nowels",
+            "Justin Parker",
+            "Al Shux",
+            "Jeff Bhasker"
+          ],
+          "sound": [
+            "orchestral strings",
+            "hip-hop and trip-hop beats",
+            "baroque pop",
+            "low, \"chatty\" vocal plus a high girlish voice"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Born_to_Die"
+          ],
+          "songs": [
+            {
+              "title": "Born to Die",
+              "tags": [
+                "melancholy",
+                "cinematic",
+                "strings",
+                "hip-hop beat",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Off to the Races",
+              "tags": [
+                "playful",
+                "glamorous",
+                "strings",
+                "hip-hop beat",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Blue Jeans",
+              "tags": [
+                "noir",
+                "yearning",
+                "reverb electric guitar",
+                "strings",
+                "hip-hop beat",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Video Games",
+              "tags": [
+                "tender",
+                "nostalgic",
+                "piano",
+                "harp",
+                "strings",
+                "slow",
+                "no drums"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Diet Mountain Dew",
+              "tags": [
+                "playful",
+                "piano",
+                "hip-hop beat",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "National Anthem",
+              "tags": [
+                "glamorous",
+                "wry",
+                "strings",
+                "hip-hop beat",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Dark Paradise",
+              "tags": [
+                "mournful",
+                "strings",
+                "trip-hop beat",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Radio",
+              "tags": [
+                "triumphant",
+                "strings",
+                "hip-hop beat",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Carmen",
+              "tags": [
+                "dark",
+                "cinematic",
+                "strings",
+                "slow",
+                "spoken section"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Million Dollar Man",
+              "tags": [
+                "sultry",
+                "jazzy",
+                "6/8",
+                "piano",
+                "strings",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Summertime Sadness",
+              "tags": [
+                "melancholy",
+                "synth",
+                "strings",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "This Is What Makes Us Girls",
+              "tags": [
+                "nostalgic",
+                "strings",
+                "hip-hop beat",
+                "mid-tempo"
+              ],
+              "chords": false,
+              "note": "no chord source found yet: tags and the album sound still apply; fill in with the song analyser"
+            }
+          ]
+        },
+        {
+          "album": "Paradise",
+          "year": 2012,
+          "era": "lana-btd",
+          "kind": "EP",
+          "producers": [
+            "Rick Nowels",
+            "Rick Rubin",
+            "Emile Haynie",
+            "Dan Heath"
+          ],
+          "sound": [
+            "glacial strings",
+            "mellotron",
+            "old-Hollywood glamour",
+            "slower and darker than Born to Die"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Paradise_(Lana_Del_Rey_EP)"
+          ],
+          "songs": [
+            {
+              "title": "Ride",
+              "tags": [
+                "cinematic",
+                "Americana",
+                "strings",
+                "piano",
+                "slow build"
+              ],
+              "chords": true
+            },
+            {
+              "title": "American",
+              "tags": [
+                "dreamy",
+                "nostalgic",
+                "piano",
+                "strings",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Cola",
+              "tags": [
+                "sultry",
+                "strings",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Body Electric",
+              "tags": [
+                "dark",
+                "two-chord vamp",
+                "strings",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Blue Velvet",
+              "tags": [
+                "noir",
+                "strings",
+                "slow"
+              ],
+              "cover": true,
+              "note": "a cover of another writer's song: listed, not analysed",
+              "chords": false
+            },
+            {
+              "title": "Gods & Monsters",
+              "tags": [
+                "dark",
+                "glamorous",
+                "strings",
+                "mellotron",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Yayo",
+              "tags": [
+                "hazy",
+                "intimate",
+                "sparse",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Bel Air",
+              "tags": [
+                "dreamy",
+                "strings",
+                "harp",
+                "choir",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Burning Desire",
+              "tags": [
+                "sultry",
+                "strings",
+                "synth bass",
+                "mid-tempo"
+              ],
+              "chords": true
+            }
+          ]
+        },
+        {
+          "album": "Ultraviolence",
+          "year": 2014,
+          "era": "lana-uv",
+          "producers": [
+            "Dan Auerbach",
+            "Paul Epworth",
+            "Rick Nowels",
+            "Greg Kurstin",
+            "Daniel Heath"
+          ],
+          "sound": [
+            "psychedelic and desert rock",
+            "heavy reverb electric guitars",
+            "live band recorded together",
+            "vocals sung live",
+            "slow-motion tempos"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Ultraviolence_(album)"
+          ],
+          "songs": [
+            {
+              "title": "Cruel World",
+              "tags": [
+                "hazy",
+                "psychedelic",
+                "reverb electric guitar",
+                "live band",
+                "slow",
+                "long jam"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Ultraviolence",
+              "tags": [
+                "dark",
+                "romantic",
+                "strings",
+                "reverb electric guitar",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Shades of Cool",
+              "tags": [
+                "noir",
+                "psychedelic",
+                "guitar solo",
+                "slow",
+                "tempo changes"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Brooklyn Baby",
+              "tags": [
+                "wry",
+                "clean electric guitar",
+                "live band",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "West Coast",
+              "tags": [
+                "hazy",
+                "sultry",
+                "psychedelic",
+                "reverb electric guitar",
+                "tempo drop in chorus"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Sad Girl",
+              "tags": [
+                "sultry",
+                "jazzy",
+                "organ",
+                "reverb electric guitar",
+                "slow",
+                "two-chord vamp"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Pretty When You Cry",
+              "tags": [
+                "raw",
+                "mournful",
+                "reverb electric guitar",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Money Power Glory",
+              "tags": [
+                "sardonic",
+                "reverb electric guitar",
+                "choir",
+                "slow"
+              ],
+              "chords": false,
+              "note": "no chord source found yet: tags and the album sound still apply; fill in with the song analyser"
+            },
+            {
+              "title": "Fucked My Way Up to the Top",
+              "tags": [
+                "sardonic",
+                "piano",
+                "reverb electric guitar",
+                "slow"
+              ],
+              "chords": false,
+              "note": "no chord source found yet: tags and the album sound still apply; fill in with the song analyser"
+            },
+            {
+              "title": "Old Money",
+              "tags": [
+                "tender",
+                "cinematic",
+                "piano",
+                "strings",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "The Other Woman",
+              "tags": [
+                "noir",
+                "jazzy",
+                "strings",
+                "slow"
+              ],
+              "cover": true,
+              "note": "a cover of another writer's song: listed, not analysed",
+              "chords": false
+            },
+            {
+              "title": "Black Beauty",
+              "tags": [
+                "melancholy",
+                "reverb electric guitar",
+                "mid-tempo"
+              ],
+              "deluxe": true,
+              "chords": true
+            },
+            {
+              "title": "Guns and Roses",
+              "tags": [
+                "hazy",
+                "yearning",
+                "reverb electric guitar",
+                "mid-tempo"
+              ],
+              "deluxe": true,
+              "chords": true
+            },
+            {
+              "title": "Florida Kilos",
+              "tags": [
+                "sultry",
+                "dreamy",
+                "reverb electric guitar",
+                "mid-tempo"
+              ],
+              "deluxe": true,
+              "chords": false,
+              "note": "no chord source found yet: tags and the album sound still apply; fill in with the song analyser"
+            }
+          ]
+        },
+        {
+          "album": "Honeymoon",
+          "year": 2015,
+          "era": "lana-honeymoon",
+          "producers": [
+            "Lana Del Rey",
+            "Rick Nowels",
+            "Kieron Menzies"
+          ],
+          "sound": [
+            "swirling orchestral strings",
+            "old-Hollywood and film-noir",
+            "jazz drums and saxophone",
+            "trap hi-hats and 808 under strings",
+            "psychedelic haze",
+            "slow"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Honeymoon_(Lana_Del_Rey_album)"
+          ],
+          "songs": [
+            {
+              "title": "Honeymoon",
+              "tags": [
+                "cinematic",
+                "old Hollywood",
+                "strings",
+                "no drums",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Music to Watch Boys To",
+              "tags": [
+                "hazy",
+                "flute",
+                "strings",
+                "trap hi-hats",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Terrence Loves You",
+              "tags": [
+                "lonely",
+                "jazzy",
+                "saxophone",
+                "piano",
+                "strings",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "God Knows I Tried",
+              "tags": [
+                "weary",
+                "reverb electric guitar",
+                "strings",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "High by the Beach",
+              "tags": [
+                "defiant",
+                "hazy",
+                "808",
+                "trap hi-hats",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Freak",
+              "tags": [
+                "hazy",
+                "psychedelic",
+                "trap hi-hats",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Art Deco",
+              "tags": [
+                "noir",
+                "jazzy",
+                "saxophone",
+                "trap hi-hats",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Burnt Norton",
+              "tags": [
+                "spoken section",
+                "strings",
+                "no drums"
+              ],
+              "interlude": true,
+              "chords": false,
+              "note": "no chord source found yet: tags and the album sound still apply; fill in with the song analyser"
+            },
+            {
+              "title": "Religion",
+              "tags": [
+                "devotional",
+                "strings",
+                "harp",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Salvatore",
+              "tags": [
+                "romantic",
+                "cinematic",
+                "old Hollywood",
+                "strings",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "The Blackest Day",
+              "tags": [
+                "mournful",
+                "slow build",
+                "reverb electric guitar",
+                "strings"
+              ],
+              "chords": true
+            },
+            {
+              "title": "24",
+              "tags": [
+                "dark",
+                "cinematic",
+                "strings",
+                "brass",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Swan Song",
+              "tags": [
+                "hushed",
+                "cinematic",
+                "strings",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Don't Let Me Be Misunderstood",
+              "tags": [
+                "noir",
+                "strings",
+                "slow"
+              ],
+              "cover": true,
+              "note": "a cover of another writer's song: listed, not analysed",
+              "chords": false
+            }
+          ]
+        },
+        {
+          "album": "Norman Fucking Rockwell!",
+          "year": 2019,
+          "era": "lana-nfr",
+          "producers": [
+            "Jack Antonoff",
+            "Rick Nowels",
+            "Andrew Watt",
+            "Zach Dawes"
+          ],
+          "sound": [
+            "70s Laurel Canyon soft rock",
+            "piano ballads",
+            "psychedelic jams with guitar solos",
+            "mellotron and warm analog synths",
+            "lush but live"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Norman_Fucking_Rockwell!"
+          ],
+          "songs": [
+            {
+              "title": "Norman Fucking Rockwell",
+              "tags": [
+                "wry",
+                "tender",
+                "piano",
+                "strings",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Mariners Apartment Complex",
+              "tags": [
+                "warm",
+                "acoustic guitar",
+                "slide guitar",
+                "70s soft rock",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Venice Bitch",
+              "tags": [
+                "psychedelic",
+                "long jam",
+                "acoustic guitar",
+                "guitar solo",
+                "mellotron"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Fuck It I Love You",
+              "tags": [
+                "dreamy",
+                "hazy",
+                "synth",
+                "drum machine",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Doin' Time",
+              "tags": [
+                "hazy",
+                "mid-tempo"
+              ],
+              "cover": true,
+              "note": "a cover of another writer's song: listed, not analysed",
+              "chords": false
+            },
+            {
+              "title": "Love Song",
+              "tags": [
+                "tender",
+                "piano",
+                "sparse",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Cinnamon Girl",
+              "tags": [
+                "dreamy",
+                "lush",
+                "piano",
+                "synth",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "How to Disappear",
+              "tags": [
+                "nostalgic",
+                "piano",
+                "strings",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "California",
+              "tags": [
+                "yearning",
+                "piano",
+                "strings",
+                "70s soft rock",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "The Next Best American Record",
+              "tags": [
+                "hazy",
+                "70s soft rock",
+                "clean electric guitar",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "The Greatest",
+              "tags": [
+                "elegiac",
+                "70s soft rock",
+                "guitar solo",
+                "piano",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Bartender",
+              "tags": [
+                "intimate",
+                "piano",
+                "sparse",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Happiness Is a Butterfly",
+              "tags": [
+                "tender",
+                "piano",
+                "sparse",
+                "slow"
+              ],
+              "chords": false,
+              "note": "no chord source found yet: tags and the album sound still apply; fill in with the song analyser"
+            },
+            {
+              "title": "Hope Is a Dangerous Thing",
+              "tags": [
+                "confessional",
+                "piano",
+                "no drums",
+                "sparse",
+                "slow"
+              ],
+              "chords": true
+            }
+          ]
+        },
+        {
+          "album": "Blue Banisters",
+          "year": 2021,
+          "era": "lana-bb",
+          "producers": [
+            "Gabe Simon",
+            "Zach Dawes",
+            "Drew Erickson",
+            "Mike Dean",
+            "Rick Nowels",
+            "Barrie-James O'Neill"
+          ],
+          "sound": [
+            "piano-led",
+            "Americana and folk",
+            "jazz-band horns",
+            "strings",
+            "pedal steel, Mellotron and Rhodes",
+            "intimate, unpolished"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Blue_Banisters"
+          ],
+          "songs": [
+            {
+              "title": "Text Book",
+              "tags": [
+                "reflective",
+                "piano",
+                "strings",
+                "tempo changes"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Blue Banisters",
+              "tags": [
+                "confessional",
+                "piano",
+                "sparse",
+                "no drums",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Arcadia",
+              "tags": [
+                "hushed",
+                "piano",
+                "strings",
+                "no drums",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Interlude – The Trio",
+              "tags": [
+                "cinematic",
+                "808"
+              ],
+              "interlude": true,
+              "chords": false,
+              "note": "instrumental built on another composer's theme: listed, not analysed"
+            },
+            {
+              "title": "Black Bathing Suit",
+              "tags": [
+                "restless",
+                "tempo changes",
+                "piano"
+              ],
+              "chords": true
+            },
+            {
+              "title": "If You Lie Down with Me",
+              "tags": [
+                "warm",
+                "jazzy",
+                "horns",
+                "piano",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Beautiful",
+              "tags": [
+                "hopeful",
+                "piano",
+                "sparse",
+                "slow"
+              ],
+              "chords": false,
+              "note": "no chord source found yet: tags and the album sound still apply; fill in with the song analyser"
+            },
+            {
+              "title": "Violets for Roses",
+              "tags": [
+                "tender",
+                "piano",
+                "sparse",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Dealer",
+              "tags": [
+                "raw",
+                "restless",
+                "jazzy",
+                "brass",
+                "mid-tempo"
+              ],
+              "chords": false,
+              "note": "no chord source found yet: tags and the album sound still apply; fill in with the song analyser"
+            },
+            {
+              "title": "Thunder",
+              "tags": [
+                "warm",
+                "Americana",
+                "piano",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Wildflower Wildfire",
+              "tags": [
+                "confessional",
+                "piano",
+                "strings",
+                "slow"
+              ],
+              "chords": false,
+              "note": "no chord source found yet: tags and the album sound still apply; fill in with the song analyser"
+            },
+            {
+              "title": "Nectar of the Gods",
+              "tags": [
+                "hazy",
+                "folk",
+                "acoustic guitar",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Living Legend",
+              "tags": [
+                "nostalgic",
+                "Americana",
+                "piano",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Cherry Blossom",
+              "tags": [
+                "tender",
+                "piano",
+                "celesta",
+                "sparse",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Sweet Carolina",
+              "tags": [
+                "tender",
+                "piano",
+                "sparse",
+                "slow"
+              ],
+              "chords": true
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

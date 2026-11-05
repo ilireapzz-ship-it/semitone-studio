@@ -67,7 +67,8 @@ def main():
         st['mMajor'], st['mMinor'], st['modeShare'] = mats['major'], mats['minor'], share
         main_fam = 'minor' if share.get('minor', 0) > share.get('major', 0) else 'major'
         st['m'] = mats[main_fam]
-        prof['songsAnalysed'] = [{'song': s['song'], 'key': s['key'], **({'bpm': s['bpm']} if 'bpm' in s else {}), 'src': s['src']} for s in pl]
+        prof['songsAnalysed'] = [{'song': s['song'], **({'album': s['album']} if 'album' in s else {}), 'key': s['key'], **({'bpm': s['bpm']} if 'bpm' in s else {}),
+                                  **({'c': s['c']} if 'c' in s else {}), 'src': s['src']} for s in pl]
         print(f"{prof['id']:15} songs {len(pl)}  sections major {share.get('major',0):.2f} minor {share.get('minor',0):.2f}  bpm {sorted(bpms)}  main {main_fam}")
     # the original styles in web/semitone-studio.html: same tables, applied to STYLES by id
     fam_of = {'aeolian': 'minor', 'dorian': 'minor', 'phrygian': 'minor', 'harmonic': 'minor', 'minpent': 'minor', 'locrian': 'minor'}
@@ -85,7 +86,24 @@ def main():
         lib['existingStyles'][sid] = {'m': mats[fam], 'mMajor': mats['major'], 'mMinor': mats['minor'], 'modeShare': share, 'styleMode': current.get(sid),
                                        'songsAnalysed': len(pl), 'byArtist': artists, 'songs': [x['song'] for x in pl]}
         print(f"{sid:10} mode {current.get(sid,'?'):9} songs {len(pl):2} {artists}  major {share.get('major',0):.2f} minor {share.get('minor',0):.2f}")
+    check_catalog(progs)
     libp.write_text(json.dumps(lib, ensure_ascii=False, indent=2) + '\n')
+
+def check_catalog(progs):
+    """data/catalog.json lists every song by album with tags; songs marked chords:true must have chord data in their era."""
+    cp = ROOT / 'data/catalog.json'
+    if not cp.exists(): return
+    cat = json.loads(cp.read_text())
+    vocab = {t for v in cat['tagVocab'].values() for t in v}
+    problems = []
+    for artist, a in cat['artists'].items():
+        for al in a['albums']:
+            names = {s['song'] for s in progs.get(al['era'], [])}
+            for s in al['songs']:
+                problems += [f"{artist} / {s['title']}: unknown tag '{t}' (add it to tagVocab)" for t in s['tags'] if t not in vocab]
+                if s.get('chords') and s['title'] not in names: problems.append(f"{artist} / {s['title']}: chords:true but not in progressions.json '{al['era']}'")
+    for p in problems: print('catalog:', p)
+    if problems: sys.exit(1)
 
 if __name__ == '__main__':
     main()

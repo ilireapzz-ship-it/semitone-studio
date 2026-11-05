@@ -141,5 +141,17 @@ target look (Start, Song view, Record, Mix). Rules for every one of them:
    re-run the script, never hand-edit `m`.
    The **original 8 styles** get the same treatment: `existingStyles` in style-library.json holds their rebuilt
    `m` / `mMajor` / `mMinor` / `modeShare` from 8–20 songs each (both lane artists); apply them to STYLES by id.
+7. **Artists by album, songs by tag** (`data/catalog.json`, agreed with Jamie 5 Nov 2026). Every artist and composer is
+   listed album by album; each song carries descriptive tags from `tagVocab` (mood, tempo feel, instruments, production).
+   An artist whose albums sound very different gets **one profile per era** (`artistEras` in style-library.json; first one:
+   Lana Del Rey, 5 eras, 64 songs with chords). In the tag picker, the artist chip opens its era chips (design canvas,
+   "5 · Style tags"). No era picked → the artist's default profile; one era → only that era's chords, tempo, sounds and mix;
+   two or more → normal blend rules. Never mix eras silently. A song-tag filter ("only songs tagged piano") rebuilds the
+   matrix from the matching songs of the chosen era(s) at run time (same counting as build_style_matrices.py), only if at
+   least 4 match; otherwise say so and keep the full era. Covers and interludes are listed, never analysed.
+   `chords: false` songs still count for tags and the album sound. `tools/build_style_matrices.py` checks the catalog
+   (unknown tags, songs marked as having chords but missing) and fails if anything is off.
+   New instruments the eras ask for: reverb/tremolo electric guitar, pedal steel, tenor saxophone, brass section, mellotron;
+   and a per-section tempo change (Ultraviolence-style chorus that slows down). Use the stand-ins named in each profile until then.
 - Rules: profiles describe habits across many songs, never one song; no copied melodies, lyrics or recordings;
   no voice imitation. Points marked `"c":"low"` are starting guesses: tune them with the song analyser and say so.

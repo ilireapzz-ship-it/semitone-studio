@@ -269,7 +269,7 @@
       "synth": "Neon synthwave"
     },
     "artist": {
-      "Lana Del Rey": "sadcore",
+      "Lana Del Rey": "sadcore (or one of artistEras[\"Lana Del Rey\"])",
       "Mazzy Star": "sadcore",
       "Taylor Swift": "anthem",
       "Coldplay": "anthem",
@@ -2969,6 +2969,2060 @@
           "src": "https://hooktheory.com/theorytab/view/charli-xcx/speed-drive"
         }
       ]
+    },
+    {
+      "id": "lana-btd",
+      "kind": "artist",
+      "tags": [
+        "Lana Del Rey"
+      ],
+      "alsoTags": [
+        "genre:baroque pop",
+        "genre:trip hop",
+        "mood:cinematic",
+        "producer:Emile Haynie"
+      ],
+      "style": {
+        "id": "lana-btd",
+        "meter": "4/4",
+        "comp": "sustain",
+        "swing": 50,
+        "name": "Lana Del Rey · Born to Die / Paradise (2012)",
+        "lane": "Lana Del Rey",
+        "desc": "Minor loops (♭VI–i–♭VII, i–VII–VI) and a few bright major songs, over slow hip-hop and trip-hop beats with big orchestral strings; a low, close vocal that jumps up for the chorus.",
+        "mode": "aeolian",
+        "key": 4,
+        "bpm": 86,
+        "sevenths": false,
+        "density": 0.34,
+        "leap": 0.3,
+        "register": [
+          50,
+          74
+        ],
+        "sound": "dreamy",
+        "drums": true,
+        "structure": "pop",
+        "contour": -0.4,
+        "space": 1.4,
+        "mopts": {
+          "verse": {
+            "shift": -4
+          },
+          "chorus": {
+            "shift": 6
+          }
+        },
+        "rhythms": [
+          [
+            2,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            2
+          ],
+          [
+            1.5,
+            0.5,
+            2
+          ],
+          [
+            3,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1
+          ]
+        ],
+        "bpmRange": [
+          66,
+          112
+        ],
+        "mMajor": {
+          "0": {
+            "4": 6,
+            "2": 5,
+            "3": 1,
+            "5": 1
+          },
+          "1": {
+            "3": 4,
+            "2": 1,
+            "4": 1
+          },
+          "2": {
+            "0": 3,
+            "3": 2,
+            "5": 1
+          },
+          "3": {
+            "0": 6,
+            "1": 2
+          },
+          "4": {
+            "0": 3,
+            "1": 3,
+            "5": 1
+          },
+          "5": {
+            "1": 1,
+            "0": 1,
+            "3": 1
+          },
+          "6": {
+            "0": 1
+          }
+        },
+        "mMinor": {
+          "0": {
+            "6": 6,
+            "5": 4,
+            "2": 2,
+            "3": 1,
+            "4": 1
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "0": 2,
+            "5": 1,
+            "4": 1,
+            "3": 1,
+            "1": 1
+          },
+          "3": {
+            "0": 2,
+            "4": 1,
+            "5": 1,
+            "6": 1,
+            "2": 1
+          },
+          "4": {
+            "0": 2,
+            "5": 1
+          },
+          "5": {
+            "0": 6,
+            "6": 3,
+            "2": 2,
+            "3": 2,
+            "4": 1
+          },
+          "6": {
+            "5": 4,
+            "3": 3,
+            "0": 2,
+            "2": 1
+          }
+        },
+        "modeShare": {
+          "major": 0.24,
+          "minor": 0.76
+        },
+        "m": {
+          "0": {
+            "6": 6,
+            "5": 4,
+            "2": 2,
+            "3": 1,
+            "4": 1
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "0": 2,
+            "5": 1,
+            "4": 1,
+            "3": 1,
+            "1": 1
+          },
+          "3": {
+            "0": 2,
+            "4": 1,
+            "5": 1,
+            "6": 1,
+            "2": 1
+          },
+          "4": {
+            "0": 2,
+            "5": 1
+          },
+          "5": {
+            "0": 6,
+            "6": 3,
+            "2": 2,
+            "3": 2,
+            "4": 1
+          },
+          "6": {
+            "5": 4,
+            "3": 3,
+            "0": 2,
+            "2": 1
+          }
+        }
+      },
+      "bass": "held",
+      "groove": "halftime",
+      "kit": "lofi",
+      "instr": {
+        "chords": "i:strings",
+        "pad": "i:piano",
+        "bass": "i:junobass"
+      },
+      "quirks": "ballad",
+      "feel": {
+        "kick": 0,
+        "snare": 0.012,
+        "hat": 0.006,
+        "jit": 0.004,
+        "vj": 0.08,
+        "ghost": 0,
+        "acc": 0.3
+      },
+      "sug": {
+        "ext": 0.4,
+        "borrow": 0.8,
+        "sec": 0.35,
+        "tri": 0.05,
+        "sus": 0.35
+      },
+      "trans": {
+        "chorus": [
+          "rev",
+          "sweep",
+          "impact"
+        ],
+        "verse": [],
+        "bridge": [
+          "sweep"
+        ],
+        "pre": [
+          "rev"
+        ],
+        "outro": [
+          "down"
+        ]
+      },
+      "art": {
+        "legato": 0.8,
+        "vibLong": 0.75,
+        "scoopStart": 0.35,
+        "fallEnd": 0.45,
+        "slideLeap": 0.3,
+        "ghost": 0,
+        "stacc": 0.05,
+        "accent": 0.2,
+        "grace": 0.05,
+        "tenuto": 0.25,
+        "info": "Low and close in the verse, a jump to a lighter, higher voice in the chorus; long held notes with vibrato and sighing fall-offs."
+      },
+      "arrangement": {
+        "drums": "slow hip-hop beat: heavy kick, snare on 3, sparse hats; drums drop out for the intro and first verse",
+        "strings": "big string section doubling the chord loop, swelling into each chorus",
+        "voice": "verse an octave below the chorus"
+      },
+      "mixHint": "Strings wide and loud, beat dry and punchy in the middle, vocal close and up front with a long plate reverb.",
+      "dna": {
+        "tagline": "hip-hop beats under Hollywood strings",
+        "intro": "The first era: Born to Die and the Paradise EP. Producers mixed orchestral strings with hip-hop and trip-hop beats.",
+        "stats": [
+          [
+            "Songs analysed",
+            "19"
+          ],
+          [
+            "Tempo range",
+            "mostly 66–112 BPM, a few up to 144"
+          ],
+          [
+            "Harmony",
+            "mostly minor loops, some bright major songs"
+          ]
+        ],
+        "points": [
+          {
+            "c": "high",
+            "t": "Born to Die, Blue Jeans, National Anthem and Summertime Sadness loop ♭VI–i–♭VII-type minor progressions; Radio, American and Bel Air are bright major songs.",
+            "used": "chord matrix",
+            "src": [
+              "https://www.hooktheory.com/theorytab/view/lana-del-rey/born-to-die",
+              "https://www.hooktheory.com/theorytab/view/lana-del-rey/national-anthem"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Baroque and orchestral pop with trip-hop and hip-hop beats; strings arranged by Larry Gold.",
+            "used": "kit, groove, instruments",
+            "src": [
+              "https://en.wikipedia.org/wiki/Born_to_Die"
+            ]
+          },
+          {
+            "c": "med",
+            "t": "Paradise (Rick Nowels, Rick Rubin) is slower and darker, with glacial strings and mellotron.",
+            "used": "mix, space",
+            "src": [
+              "https://en.wikipedia.org/wiki/Paradise_(Lana_Del_Rey_EP)"
+            ]
+          },
+          {
+            "c": "low",
+            "t": "Chords for ten songs come from guitar chord sites, not Hooktheory: tune with the song analyser."
+          }
+        ]
+      },
+      "songsAnalysed": [
+        {
+          "song": "Born to Die",
+          "album": "Born to Die",
+          "key": "E minor",
+          "bpm": 86,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/born-to-die"
+        },
+        {
+          "song": "Blue Jeans",
+          "album": "Born to Die",
+          "key": "F dorian",
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/artist/lana-del-rey"
+        },
+        {
+          "song": "National Anthem",
+          "album": "Born to Die",
+          "key": "C minor",
+          "bpm": 85,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/national-anthem"
+        },
+        {
+          "song": "Summertime Sadness",
+          "album": "Born to Die",
+          "key": "C# minor",
+          "bpm": 112,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/summertime-sadness"
+        },
+        {
+          "song": "Video Games",
+          "album": "Born to Die",
+          "key": "F# minor",
+          "c": "med",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/video-games"
+        },
+        {
+          "song": "Off to the Races",
+          "album": "Born to Die",
+          "key": "E minor",
+          "c": "low",
+          "src": "https://www.guitartabsexplorer.com/del-rey-lana/off-to-the-races-chords"
+        },
+        {
+          "song": "Diet Mountain Dew",
+          "album": "Born to Die",
+          "key": "Bb minor",
+          "c": "low",
+          "src": "https://www.guitartabsexplorer.com/del-rey-lana/diet-mtn-dew-chords"
+        },
+        {
+          "song": "Radio",
+          "album": "Born to Die",
+          "key": "D major",
+          "c": "low",
+          "src": "https://www.guitartabsexplorer.com/del-rey-lana/radio-chords"
+        },
+        {
+          "song": "Dark Paradise",
+          "album": "Born to Die",
+          "key": "D minor",
+          "c": "low",
+          "src": "https://www.guitartabsexplorer.com/del-rey-lana/dark-paradise-chords"
+        },
+        {
+          "song": "Carmen",
+          "album": "Born to Die",
+          "key": "C# minor",
+          "c": "low",
+          "src": "https://www.guitartabsexplorer.com/del-rey-lana/carmen-chords"
+        },
+        {
+          "song": "Million Dollar Man",
+          "album": "Born to Die",
+          "key": "G# minor / B major",
+          "bpm": 66,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/million-dollar-man"
+        },
+        {
+          "song": "Ride",
+          "album": "Paradise",
+          "key": "C major / A minor",
+          "bpm": 94,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/ride"
+        },
+        {
+          "song": "American",
+          "album": "Paradise",
+          "key": "G major",
+          "bpm": 144,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/american"
+        },
+        {
+          "song": "Gods & Monsters",
+          "album": "Paradise",
+          "key": "G# minor",
+          "bpm": 95,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/gods-and-monsters"
+        },
+        {
+          "song": "Bel Air",
+          "album": "Paradise",
+          "key": "C major",
+          "bpm": 126,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/bel-air"
+        },
+        {
+          "song": "Burning Desire",
+          "album": "Paradise",
+          "key": "G dorian",
+          "bpm": 132,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/burning-desire"
+        },
+        {
+          "song": "Cola",
+          "album": "Paradise",
+          "key": "C# dorian",
+          "c": "low",
+          "src": "https://www.guitartabsexplorer.com/del-rey-lana/paradise-album-chords"
+        },
+        {
+          "song": "Body Electric",
+          "album": "Paradise",
+          "key": "C# minor",
+          "c": "low",
+          "src": "https://www.guitartabsexplorer.com/del-rey-lana/paradise-album-chords"
+        },
+        {
+          "song": "Yayo",
+          "album": "Paradise",
+          "key": "A minor",
+          "c": "low",
+          "src": "https://www.guitartabsexplorer.com/del-rey-lana/paradise-album-chords"
+        }
+      ],
+      "artist": "Lana Del Rey",
+      "eraOf": "Lana Del Rey",
+      "eraName": "Born to Die / Paradise (2012)",
+      "catalog": {
+        "artist": "Lana Del Rey",
+        "albums": [
+          "Born to Die",
+          "Paradise"
+        ]
+      }
+    },
+    {
+      "id": "lana-uv",
+      "kind": "artist",
+      "tags": [
+        "Lana Del Rey"
+      ],
+      "alsoTags": [
+        "genre:psychedelic rock",
+        "genre:dream pop",
+        "instrument:electric guitar",
+        "producer:Dan Auerbach"
+      ],
+      "style": {
+        "id": "lana-uv",
+        "meter": "4/4",
+        "comp": "arp",
+        "swing": 50,
+        "name": "Lana Del Rey · Ultraviolence (2014)",
+        "lane": "Lana Del Rey",
+        "desc": "A psychedelic guitar record: a live band in slow motion, heavy reverb electric guitars, minor vamps (i–VII–VI) and mixolydian I–♭VII–IV, choruses that slow down instead of lifting.",
+        "mode": "aeolian",
+        "key": 4,
+        "bpm": 76,
+        "sevenths": false,
+        "density": 0.3,
+        "leap": 0.3,
+        "register": [
+          52,
+          74
+        ],
+        "sound": "pluck",
+        "drums": true,
+        "structure": "pop",
+        "contour": -0.4,
+        "space": 1.7,
+        "mopts": {
+          "verse": {
+            "shift": -3
+          },
+          "chorus": {
+            "shift": 3
+          }
+        },
+        "rhythms": [
+          [
+            2,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            2
+          ],
+          [
+            1.5,
+            0.5,
+            2
+          ],
+          [
+            3,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1
+          ]
+        ],
+        "bpmRange": [
+          60,
+          123
+        ],
+        "mMajor": {
+          "0": {
+            "6": 6,
+            "4": 3,
+            "5": 2
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "0": 1
+          },
+          "3": {
+            "0": 6,
+            "4": 3,
+            "5": 1,
+            "6": 1
+          },
+          "4": {
+            "3": 4,
+            "5": 2,
+            "0": 2
+          },
+          "5": {
+            "3": 3,
+            "4": 2
+          },
+          "6": {
+            "3": 4,
+            "0": 3
+          }
+        },
+        "mMinor": {
+          "0": {
+            "6": 6,
+            "5": 4,
+            "3": 2,
+            "4": 2,
+            "2": 1
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "6": 3,
+            "4": 2
+          },
+          "3": {
+            "0": 4,
+            "5": 2,
+            "4": 2,
+            "2": 1,
+            "6": 1
+          },
+          "4": {
+            "0": 4,
+            "5": 2,
+            "6": 1
+          },
+          "5": {
+            "0": 4,
+            "2": 3,
+            "6": 3,
+            "3": 2,
+            "4": 1
+          },
+          "6": {
+            "3": 6,
+            "5": 5,
+            "0": 3
+          }
+        },
+        "modeShare": {
+          "major": 0.43,
+          "minor": 0.57
+        },
+        "m": {
+          "0": {
+            "6": 6,
+            "5": 4,
+            "3": 2,
+            "4": 2,
+            "2": 1
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "6": 3,
+            "4": 2
+          },
+          "3": {
+            "0": 4,
+            "5": 2,
+            "4": 2,
+            "2": 1,
+            "6": 1
+          },
+          "4": {
+            "0": 4,
+            "5": 2,
+            "6": 1
+          },
+          "5": {
+            "0": 4,
+            "2": 3,
+            "6": 3,
+            "3": 2,
+            "4": 1
+          },
+          "6": {
+            "3": 6,
+            "5": 5,
+            "0": 3
+          }
+        }
+      },
+      "bass": "rootfifth",
+      "groove": "halftime",
+      "kit": "acoustic",
+      "instr": {
+        "chords": "i:steel",
+        "bass": "i:bassgtr",
+        "lead": "reverb electric guitar (needs a new instrument; steel guitar with long reverb is the stand-in)"
+      },
+      "quirks": "natural",
+      "feel": {
+        "kick": 0,
+        "snare": 0.018,
+        "hat": 0.01,
+        "jit": 0.008,
+        "vj": 0.14,
+        "ghost": 0.15,
+        "acc": 0.3
+      },
+      "sug": {
+        "ext": 0.45,
+        "borrow": 0.7,
+        "sec": 0.3,
+        "tri": 0.05,
+        "sus": 0.4
+      },
+      "trans": {
+        "chorus": [
+          "tempo-drop",
+          "rev"
+        ],
+        "verse": [],
+        "bridge": [
+          "sweep"
+        ],
+        "pre": [],
+        "outro": [
+          "down"
+        ]
+      },
+      "art": {
+        "legato": 0.8,
+        "vibLong": 0.75,
+        "scoopStart": 0.35,
+        "fallEnd": 0.45,
+        "slideLeap": 0.3,
+        "ghost": 0.1,
+        "stacc": 0.05,
+        "accent": 0.15,
+        "grace": 0.05,
+        "tenuto": 0.25,
+        "info": "Sung live with the band: relaxed, a little behind the beat, smoky low notes, fall-offs at phrase ends."
+      },
+      "arrangement": {
+        "band": "a live band playing together: drums, bass, two electric guitars, organ; little editing",
+        "chorusTrick": "West Coast-style: the chorus drops to a slower tempo instead of getting bigger (needs a tempo change per section)",
+        "solos": "long reverb-soaked guitar solos and outros",
+        "extras": [
+          "pedal steel",
+          "strings only on a few songs"
+        ]
+      },
+      "mixHint": "Warm and roomy, like a band in one room: guitars drenched in reverb and tremolo, drums soft and natural, vocal slightly back in the mix.",
+      "dna": {
+        "tagline": "psychedelic desert rock in slow motion",
+        "intro": "Produced by Dan Auerbach with a live band, Ultraviolence trades the beats and strings for reverb-heavy electric guitars.",
+        "stats": [
+          [
+            "Songs analysed",
+            "10"
+          ],
+          [
+            "Tempo range",
+            "slow to mid (about 60–123 BPM)"
+          ],
+          [
+            "Harmony",
+            "minor vamps, mixolydian rock moves"
+          ]
+        ],
+        "points": [
+          {
+            "c": "high",
+            "t": "Psychedelic rock, dream pop and desert rock; recorded with a seven-piece live band and vocals sung live.",
+            "used": "band, kit, articulation",
+            "src": [
+              "https://en.wikipedia.org/wiki/Ultraviolence_(album)"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "West Coast's chorus drops from about 123 to 100 BPM.",
+            "used": "arrangement.chorusTrick",
+            "src": [
+              "https://www.hooktheory.com/theorytab/view/lana-del-rey/west-coast"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Ultraviolence and Shades of Cool move between D minor and F major, with a guitar solo section.",
+            "used": "chord matrix",
+            "src": [
+              "https://www.hooktheory.com/theorytab/view/lana-del-rey/ultraviolence",
+              "https://www.hooktheory.com/theorytab/view/lana-del-rey/shades-of-cool"
+            ]
+          },
+          {
+            "c": "low",
+            "t": "Chords for six songs come from guitar chord sites: tune with the song analyser."
+          }
+        ]
+      },
+      "songsAnalysed": [
+        {
+          "song": "Shades of Cool",
+          "album": "Ultraviolence",
+          "key": "D minor / F major",
+          "bpm": 69,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/shades-of-cool"
+        },
+        {
+          "song": "Ultraviolence",
+          "album": "Ultraviolence",
+          "key": "D minor",
+          "bpm": 110,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/ultraviolence"
+        },
+        {
+          "song": "Brooklyn Baby",
+          "album": "Ultraviolence",
+          "key": "Ab major",
+          "bpm": 108,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/brooklyn-baby"
+        },
+        {
+          "song": "West Coast",
+          "album": "Ultraviolence",
+          "key": "F# minor",
+          "bpm": 123,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/west-coast"
+        },
+        {
+          "song": "Cruel World",
+          "album": "Ultraviolence",
+          "key": "F mixolydian",
+          "c": "low",
+          "src": "https://www.guitartabsexplorer.com/del-rey-lana/cruel-world-chords"
+        },
+        {
+          "song": "Sad Girl",
+          "album": "Ultraviolence",
+          "key": "D dorian",
+          "c": "low",
+          "src": "https://tabs.ultimate-guitar.com/l/lana_del_rey/sad_girl_crd.htm"
+        },
+        {
+          "song": "Pretty When You Cry",
+          "album": "Ultraviolence",
+          "key": "A minor",
+          "c": "low",
+          "src": "https://www.guitartabsexplorer.com/del-rey-lana/pretty-when-you-cry-chords"
+        },
+        {
+          "song": "Old Money",
+          "album": "Ultraviolence",
+          "key": "E minor",
+          "c": "low",
+          "src": "https://www.guitartabsexplorer.com/del-rey-lana/old-money-chords"
+        },
+        {
+          "song": "Black Beauty",
+          "album": "Ultraviolence",
+          "key": "F major",
+          "c": "low",
+          "src": "https://www.guitartabsexplorer.com/del-rey-lana/black-beauty-crd"
+        },
+        {
+          "song": "Guns and Roses",
+          "album": "Ultraviolence",
+          "key": "E mixolydian",
+          "c": "low",
+          "src": "https://www.guitartabsexplorer.com/del-rey-lana/guns-and-roses-chords"
+        }
+      ],
+      "artist": "Lana Del Rey",
+      "eraOf": "Lana Del Rey",
+      "eraName": "Ultraviolence (2014)",
+      "catalog": {
+        "artist": "Lana Del Rey",
+        "albums": [
+          "Ultraviolence"
+        ]
+      }
+    },
+    {
+      "id": "lana-honeymoon",
+      "kind": "artist",
+      "tags": [
+        "Lana Del Rey"
+      ],
+      "alsoTags": [
+        "genre:baroque pop",
+        "genre:jazz",
+        "mood:cinematic",
+        "era:old Hollywood"
+      ],
+      "style": {
+        "id": "lana-honeymoon",
+        "meter": "4/4",
+        "comp": "sustain",
+        "swing": 50,
+        "name": "Lana Del Rey · Honeymoon (2015)",
+        "lane": "Lana Del Rey",
+        "desc": "The most cinematic era: slow minor songs (i–VI, i–VI–iv–V) with swirling strings, jazz colours and saxophone, sometimes over trap hi-hats and 808; old-Hollywood and spy-film moods.",
+        "mode": "aeolian",
+        "key": 4,
+        "bpm": 72,
+        "sevenths": true,
+        "density": 0.26,
+        "leap": 0.3,
+        "register": [
+          50,
+          72
+        ],
+        "sound": "dreamy",
+        "drums": true,
+        "structure": "pop",
+        "contour": -0.4,
+        "space": 1.8,
+        "mopts": {
+          "verse": {
+            "shift": -4
+          },
+          "chorus": {
+            "shift": 3
+          }
+        },
+        "rhythms": [
+          [
+            2,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            2
+          ],
+          [
+            1.5,
+            0.5,
+            2
+          ],
+          [
+            3,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1
+          ]
+        ],
+        "bpmRange": [
+          60,
+          118
+        ],
+        "mMajor": {
+          "0": {
+            "6": 5,
+            "5": 4,
+            "4": 3
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "0": 4
+          },
+          "3": {
+            "0": 1
+          },
+          "4": {
+            "6": 3
+          },
+          "5": {
+            "0": 6,
+            "2": 4
+          },
+          "6": {
+            "5": 6,
+            "0": 3
+          }
+        },
+        "mMinor": {
+          "0": {
+            "5": 6,
+            "2": 3,
+            "6": 2,
+            "4": 1,
+            "3": 1
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "0": 3,
+            "5": 1,
+            "6": 1,
+            "3": 1
+          },
+          "3": {
+            "4": 2,
+            "0": 1,
+            "5": 1,
+            "6": 1,
+            "2": 1
+          },
+          "4": {
+            "0": 4,
+            "3": 1,
+            "2": 1
+          },
+          "5": {
+            "4": 3,
+            "0": 2,
+            "6": 2,
+            "3": 2,
+            "2": 1
+          },
+          "6": {
+            "0": 1,
+            "5": 1,
+            "4": 1,
+            "3": 1
+          }
+        },
+        "modeShare": {
+          "major": 0.14,
+          "minor": 0.86
+        },
+        "m": {
+          "0": {
+            "5": 6,
+            "2": 3,
+            "6": 2,
+            "4": 1,
+            "3": 1
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "0": 3,
+            "5": 1,
+            "6": 1,
+            "3": 1
+          },
+          "3": {
+            "4": 2,
+            "0": 1,
+            "5": 1,
+            "6": 1,
+            "2": 1
+          },
+          "4": {
+            "0": 4,
+            "3": 1,
+            "2": 1
+          },
+          "5": {
+            "4": 3,
+            "0": 2,
+            "6": 2,
+            "3": 2,
+            "2": 1
+          },
+          "6": {
+            "0": 1,
+            "5": 1,
+            "4": 1,
+            "3": 1
+          }
+        }
+      },
+      "bass": "held",
+      "groove": "halftime",
+      "kit": "808",
+      "instr": {
+        "chords": "i:strings",
+        "pad": "i:harp",
+        "lead": "tenor saxophone (needs a new instrument; prolead is the stand-in)",
+        "bass": "i:junobass"
+      },
+      "quirks": "ballad",
+      "feel": {
+        "kick": 0,
+        "snare": 0.01,
+        "hat": 0.004,
+        "jit": 0.004,
+        "vj": 0.08,
+        "ghost": 0,
+        "acc": 0.2
+      },
+      "sug": {
+        "ext": 0.7,
+        "borrow": 0.8,
+        "sec": 0.45,
+        "tri": 0.15,
+        "sus": 0.3
+      },
+      "trans": {
+        "chorus": [
+          "sweep",
+          "rev"
+        ],
+        "verse": [],
+        "bridge": [
+          "sweep"
+        ],
+        "pre": [
+          "rev"
+        ],
+        "outro": [
+          "down"
+        ]
+      },
+      "art": {
+        "legato": 0.8,
+        "vibLong": 0.85,
+        "scoopStart": 0.35,
+        "fallEnd": 0.45,
+        "slideLeap": 0.4,
+        "ghost": 0,
+        "stacc": 0.05,
+        "accent": 0.1,
+        "grace": 0.05,
+        "tenuto": 0.25,
+        "info": "Slow and languid: very long notes, wide vibrato, glides between notes, nothing accented."
+      },
+      "arrangement": {
+        "strings": "full string section carries the song; harp and celesta glitter on top",
+        "drums": "often no drums; otherwise slow trap hi-hats and 808 under the strings (High by the Beach, Art Deco)",
+        "jazz": "saxophone or jazz-drum colour on some songs (Terrence Loves You, Art Deco)",
+        "extras": [
+          "spoken-word interlude",
+          "spy-film brass on 24"
+        ]
+      },
+      "mixHint": "Huge, slow string reverb; vocal soft and close with long delays; 808 low and round when it appears.",
+      "dna": {
+        "tagline": "old-Hollywood strings, jazz smoke and slow 808s",
+        "intro": "Honeymoon, produced with Rick Nowels and Kieron Menzies, is slow, orchestral and cinematic, with jazz and trap touches.",
+        "stats": [
+          [
+            "Songs analysed",
+            "12"
+          ],
+          [
+            "Tempo",
+            "mostly slow"
+          ],
+          [
+            "Harmony",
+            "almost all minor"
+          ]
+        ],
+        "points": [
+          {
+            "c": "high",
+            "t": "Baroque pop, dream pop, jazz and trip hop, with trap beats on some songs; orchestral strings and saxophone.",
+            "used": "instruments, kit",
+            "src": [
+              "https://en.wikipedia.org/wiki/Honeymoon_(Lana_Del_Rey_album)"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Honeymoon (the song) sits on i–VI in F minor at about 77 BPM; Salvatore uses an augmented chord between i and VI.",
+            "used": "chord matrix, bpm",
+            "src": [
+              "https://www.hooktheory.com/theorytab/view/lana-del-rey/honeymoon",
+              "https://www.hooktheory.com/theorytab/view/lana-del-rey/salvatore"
+            ]
+          },
+          {
+            "c": "low",
+            "t": "Chords for ten songs come from one album chord chart: tune with the song analyser.",
+            "src": [
+              "https://www.guitartabsexplorer.com/del-rey-lana/honeymoon-album-chords"
+            ]
+          }
+        ]
+      },
+      "songsAnalysed": [
+        {
+          "song": "Honeymoon",
+          "album": "Honeymoon",
+          "key": "F minor",
+          "bpm": 77,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/honeymoon"
+        },
+        {
+          "song": "Salvatore",
+          "album": "Honeymoon",
+          "key": "B minor",
+          "bpm": 118,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/salvatore"
+        },
+        {
+          "song": "Music to Watch Boys To",
+          "album": "Honeymoon",
+          "key": "Bb minor",
+          "c": "low",
+          "src": "https://www.guitartabsexplorer.com/del-rey-lana/honeymoon-album-chords"
+        },
+        {
+          "song": "Terrence Loves You",
+          "album": "Honeymoon",
+          "key": "D mixolydian",
+          "c": "low",
+          "src": "https://www.chordintel.com/songs/terrence-loves-you-lana-del-rey/?lang=en"
+        },
+        {
+          "song": "God Knows I Tried",
+          "album": "Honeymoon",
+          "key": "F minor",
+          "c": "low",
+          "src": "https://www.guitartabsexplorer.com/del-rey-lana/honeymoon-album-chords"
+        },
+        {
+          "song": "High by the Beach",
+          "album": "Honeymoon",
+          "key": "Bb minor",
+          "c": "low",
+          "src": "https://www.guitartabsexplorer.com/del-rey-lana/honeymoon-album-chords"
+        },
+        {
+          "song": "Freak",
+          "album": "Honeymoon",
+          "key": "F minor",
+          "c": "low",
+          "src": "https://www.guitartabsexplorer.com/del-rey-lana/honeymoon-album-chords"
+        },
+        {
+          "song": "Art Deco",
+          "album": "Honeymoon",
+          "key": "G major",
+          "c": "low",
+          "src": "https://www.guitartabsexplorer.com/del-rey-lana/honeymoon-album-chords"
+        },
+        {
+          "song": "Religion",
+          "album": "Honeymoon",
+          "key": "A minor",
+          "c": "low",
+          "src": "https://www.guitartabsexplorer.com/del-rey-lana/honeymoon-album-chords"
+        },
+        {
+          "song": "The Blackest Day",
+          "album": "Honeymoon",
+          "key": "F# minor",
+          "c": "low",
+          "src": "https://www.guitartabsexplorer.com/del-rey-lana/honeymoon-album-chords"
+        },
+        {
+          "song": "24",
+          "album": "Honeymoon",
+          "key": "F minor",
+          "c": "low",
+          "src": "https://www.guitartabsexplorer.com/del-rey-lana/honeymoon-album-chords"
+        },
+        {
+          "song": "Swan Song",
+          "album": "Honeymoon",
+          "key": "Bb minor",
+          "c": "low",
+          "src": "https://www.guitartabsexplorer.com/del-rey-lana/honeymoon-album-chords"
+        }
+      ],
+      "artist": "Lana Del Rey",
+      "eraOf": "Lana Del Rey",
+      "eraName": "Honeymoon (2015)",
+      "catalog": {
+        "artist": "Lana Del Rey",
+        "albums": [
+          "Honeymoon"
+        ]
+      }
+    },
+    {
+      "id": "lana-nfr",
+      "kind": "artist",
+      "tags": [
+        "Lana Del Rey"
+      ],
+      "alsoTags": [
+        "genre:soft rock",
+        "era:70s",
+        "producer:Jack Antonoff"
+      ],
+      "style": {
+        "id": "lana-nfr",
+        "meter": "4/4",
+        "comp": "sustain",
+        "swing": 50,
+        "name": "Lana Del Rey · Norman Fucking Rockwell! (2019)",
+        "lane": "Lana Del Rey",
+        "desc": "70s soft rock and piano ballads: major and mixolydian keys (I–v–IV, I–♭VII–vi), Laurel Canyon guitars, mellotron and long psychedelic jams with guitar solos.",
+        "mode": "ionian",
+        "key": 4,
+        "bpm": 80,
+        "sevenths": true,
+        "density": 0.38,
+        "leap": 0.3,
+        "register": [
+          52,
+          76
+        ],
+        "sound": "keys",
+        "drums": true,
+        "structure": "pop",
+        "contour": -0.1,
+        "space": 1.3,
+        "mopts": {
+          "chorus": {
+            "shift": 3
+          }
+        },
+        "rhythms": [
+          [
+            2,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            2
+          ],
+          [
+            1.5,
+            0.5,
+            2
+          ],
+          [
+            3,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1
+          ]
+        ],
+        "bpmRange": [
+          65,
+          110
+        ],
+        "mMajor": {
+          "0": {
+            "4": 6,
+            "2": 3,
+            "3": 2,
+            "6": 2,
+            "5": 1
+          },
+          "1": {
+            "0": 3,
+            "3": 1
+          },
+          "2": {
+            "5": 2,
+            "0": 1
+          },
+          "3": {
+            "0": 6,
+            "5": 1,
+            "1": 1,
+            "6": 1,
+            "4": 1
+          },
+          "4": {
+            "3": 3,
+            "1": 2,
+            "6": 1,
+            "5": 1,
+            "0": 1
+          },
+          "5": {
+            "3": 2,
+            "0": 1,
+            "6": 1,
+            "1": 1,
+            "4": 1
+          },
+          "6": {
+            "0": 2,
+            "1": 1,
+            "5": 1
+          }
+        },
+        "mMinor": {
+          "0": {
+            "6": 6,
+            "3": 2,
+            "5": 2,
+            "2": 2
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "6": 3,
+            "5": 2,
+            "0": 1
+          },
+          "3": {
+            "5": 2,
+            "2": 1
+          },
+          "4": {
+            "0": 3,
+            "5": 2
+          },
+          "5": {
+            "0": 4,
+            "6": 3,
+            "4": 3,
+            "2": 1
+          },
+          "6": {
+            "0": 4,
+            "2": 2,
+            "5": 2,
+            "4": 2,
+            "3": 1
+          }
+        },
+        "modeShare": {
+          "major": 0.65,
+          "minor": 0.35
+        },
+        "m": {
+          "0": {
+            "4": 6,
+            "2": 3,
+            "3": 2,
+            "6": 2,
+            "5": 1
+          },
+          "1": {
+            "0": 3,
+            "3": 1
+          },
+          "2": {
+            "5": 2,
+            "0": 1
+          },
+          "3": {
+            "0": 6,
+            "5": 1,
+            "1": 1,
+            "6": 1,
+            "4": 1
+          },
+          "4": {
+            "3": 3,
+            "1": 2,
+            "6": 1,
+            "5": 1,
+            "0": 1
+          },
+          "5": {
+            "3": 2,
+            "0": 1,
+            "6": 1,
+            "1": 1,
+            "4": 1
+          },
+          "6": {
+            "0": 2,
+            "1": 1,
+            "5": 1
+          }
+        }
+      },
+      "bass": "rootfifth",
+      "groove": "halftime",
+      "kit": "acoustic",
+      "instr": {
+        "chords": "i:piano",
+        "pad": "i:strings",
+        "bass": "i:bassgtr",
+        "lead": "i:steel"
+      },
+      "quirks": "natural",
+      "feel": {
+        "kick": 0,
+        "snare": 0.012,
+        "hat": 0.006,
+        "jit": 0.006,
+        "vj": 0.12,
+        "ghost": 0.1,
+        "acc": 0.25
+      },
+      "sug": {
+        "ext": 0.55,
+        "borrow": 0.5,
+        "sec": 0.4,
+        "tri": 0.05,
+        "sus": 0.5
+      },
+      "trans": {
+        "chorus": [
+          "rev"
+        ],
+        "verse": [],
+        "bridge": [
+          "sweep"
+        ],
+        "pre": [
+          "rev"
+        ],
+        "outro": [
+          "down"
+        ]
+      },
+      "art": {
+        "legato": 0.7,
+        "vibLong": 0.55,
+        "scoopStart": 0.35,
+        "fallEnd": 0.45,
+        "slideLeap": 0.3,
+        "ghost": 0,
+        "stacc": 0.05,
+        "accent": 0.1,
+        "grace": 0.05,
+        "tenuto": 0.25,
+        "info": "Conversational and warm; more of her middle voice, light vibrato, long held endings."
+      },
+      "arrangement": {
+        "piano": "piano-led ballads with strings",
+        "jams": "some songs stretch into long instrumental jams and guitar solos (Venice Bitch, The Greatest)",
+        "extras": [
+          "mellotron",
+          "slide guitar",
+          "warm analog synths",
+          "drums enter late"
+        ]
+      },
+      "mixHint": "Warm 70s tape sound: soft drums, piano and acoustic guitar close, mellotron and strings behind, a little tape saturation.",
+      "dna": {
+        "tagline": "Laurel Canyon soft rock with psychedelic jams",
+        "intro": "Produced with Jack Antonoff and Rick Nowels, NFR leans on piano, 70s soft rock and folk rock, with long psychedelic passages.",
+        "stats": [
+          [
+            "Songs analysed",
+            "12"
+          ],
+          [
+            "Tempo",
+            "slow to mid"
+          ],
+          [
+            "Harmony",
+            "major and mixolydian, a few minor songs"
+          ]
+        ],
+        "points": [
+          {
+            "c": "high",
+            "t": "Soft rock and folk rock with psychedelia; produced mostly with Jack Antonoff and Rick Nowels.",
+            "used": "instruments, kit, mix",
+            "src": [
+              "https://en.wikipedia.org/wiki/Norman_Fucking_Rockwell!"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Venice Bitch moves between G mixolydian and A minor and stretches into a long jam.",
+            "used": "chord matrix, arrangement",
+            "src": [
+              "https://www.hooktheory.com/theorytab/view/lana-del-rey/venice-bitch"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "The Next Best American Record and Love Song move between a major key and its relative minor.",
+            "used": "chord matrix",
+            "src": [
+              "https://www.hooktheory.com/theorytab/view/lana-del-rey/the-next-best-american-record",
+              "https://www.hooktheory.com/theorytab/view/lana-del-rey/love-song"
+            ]
+          },
+          {
+            "c": "low",
+            "t": "Chords for nine songs come from guitar chord sites: tune with the song analyser."
+          }
+        ]
+      },
+      "songsAnalysed": [
+        {
+          "song": "The Next Best American Record",
+          "album": "Norman Fucking Rockwell!",
+          "key": "A major / B minor",
+          "bpm": 108,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/the-next-best-american-record"
+        },
+        {
+          "song": "Love Song",
+          "album": "Norman Fucking Rockwell!",
+          "key": "F# minor / A major",
+          "bpm": 68,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/love-song"
+        },
+        {
+          "song": "Venice Bitch",
+          "album": "Norman Fucking Rockwell!",
+          "key": "G mixolydian / A minor",
+          "bpm": 79,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/venice-bitch"
+        },
+        {
+          "song": "Fuck It I Love You",
+          "album": "Norman Fucking Rockwell!",
+          "key": "A minor / C major",
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/fuck-it-i-love-you"
+        },
+        {
+          "song": "Norman Fucking Rockwell",
+          "album": "Norman Fucking Rockwell!",
+          "key": "C mixolydian",
+          "c": "low",
+          "src": "https://www.guitartabsexplorer.com/del-rey-lana/norman-fucking-rockwell-chords"
+        },
+        {
+          "song": "Mariners Apartment Complex",
+          "album": "Norman Fucking Rockwell!",
+          "key": "E mixolydian",
+          "c": "low",
+          "src": "https://www.guitartabsexplorer.com/del-rey-lana/mariners-apartment-complex-chords"
+        },
+        {
+          "song": "Cinnamon Girl",
+          "album": "Norman Fucking Rockwell!",
+          "key": "E mixolydian",
+          "c": "low",
+          "src": "https://guitartabsexplorer.com/del-rey-lana/cinnamon-girl-chords"
+        },
+        {
+          "song": "How to Disappear",
+          "album": "Norman Fucking Rockwell!",
+          "key": "G major",
+          "c": "low",
+          "src": "https://www.guitartabsexplorer.com/del-rey-lana/how-to-disappear-chords"
+        },
+        {
+          "song": "California",
+          "album": "Norman Fucking Rockwell!",
+          "key": "A minor",
+          "c": "low",
+          "src": "https://guitartabsexplorer.com/del-rey-lana/california-chords"
+        },
+        {
+          "song": "The Greatest",
+          "album": "Norman Fucking Rockwell!",
+          "key": "F major",
+          "c": "low",
+          "src": "https://www.guitartabsexplorer.com/del-rey-lana/the-greatest-(ver2)-chords"
+        },
+        {
+          "song": "Bartender",
+          "album": "Norman Fucking Rockwell!",
+          "key": "D dorian",
+          "c": "low",
+          "src": "https://www.guitartabsexplorer.com/del-rey-lana/bartender-chords"
+        },
+        {
+          "song": "Hope Is a Dangerous Thing",
+          "album": "Norman Fucking Rockwell!",
+          "key": "G major",
+          "c": "low",
+          "src": "https://www.guitartabsexplorer.com/del-rey-lana/hope-is-a-dangerous-thing-for-a-woman-like-me-to-have---but-i-have-it-chords"
+        }
+      ],
+      "artist": "Lana Del Rey",
+      "eraOf": "Lana Del Rey",
+      "eraName": "Norman Fucking Rockwell! (2019)",
+      "catalog": {
+        "artist": "Lana Del Rey",
+        "albums": [
+          "Norman Fucking Rockwell!"
+        ]
+      }
+    },
+    {
+      "id": "lana-bb",
+      "kind": "artist",
+      "tags": [
+        "Lana Del Rey"
+      ],
+      "alsoTags": [
+        "genre:americana",
+        "genre:folk",
+        "instrument:piano"
+      ],
+      "style": {
+        "id": "lana-bb",
+        "meter": "4/4",
+        "comp": "sustain",
+        "swing": 50,
+        "name": "Lana Del Rey · Blue Banisters (2021)",
+        "lane": "Lana Del Rey",
+        "desc": "Piano-led Americana and folk with jazz-band horns: mostly major keys (I–iii–vi–IV, I–ii–IV), songs that change tempo and mood midway, intimate and unpolished.",
+        "mode": "ionian",
+        "key": 4,
+        "bpm": 78,
+        "sevenths": true,
+        "density": 0.34,
+        "leap": 0.3,
+        "register": [
+          52,
+          76
+        ],
+        "sound": "keys",
+        "drums": true,
+        "structure": "pop",
+        "contour": -0.1,
+        "space": 1.4,
+        "mopts": {
+          "chorus": {
+            "shift": 2
+          }
+        },
+        "rhythms": [
+          [
+            2,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            2
+          ],
+          [
+            1.5,
+            0.5,
+            2
+          ],
+          [
+            3,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1
+          ]
+        ],
+        "bpmRange": [
+          57,
+          122
+        ],
+        "mMajor": {
+          "0": {
+            "4": 4,
+            "2": 4,
+            "1": 2,
+            "5": 2,
+            "6": 1,
+            "3": 1
+          },
+          "1": {
+            "4": 2,
+            "0": 1,
+            "3": 1,
+            "5": 1
+          },
+          "2": {
+            "3": 3,
+            "5": 2,
+            "4": 2,
+            "1": 1
+          },
+          "3": {
+            "0": 6,
+            "4": 3,
+            "1": 1,
+            "5": 1,
+            "2": 1
+          },
+          "4": {
+            "0": 6,
+            "3": 4,
+            "5": 1,
+            "2": 1,
+            "1": 1
+          },
+          "5": {
+            "3": 2,
+            "2": 2,
+            "4": 2,
+            "0": 1
+          },
+          "6": {
+            "0": 1
+          }
+        },
+        "mMinor": {
+          "0": {
+            "3": 5,
+            "6": 3,
+            "2": 2
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "5": 2,
+            "6": 2
+          },
+          "3": {
+            "0": 6,
+            "6": 2,
+            "5": 2
+          },
+          "4": {
+            "0": 1
+          },
+          "5": {
+            "0": 4,
+            "3": 2,
+            "6": 2
+          },
+          "6": {
+            "5": 4,
+            "3": 3,
+            "2": 2
+          }
+        },
+        "modeShare": {
+          "major": 0.81,
+          "minor": 0.19
+        },
+        "m": {
+          "0": {
+            "4": 4,
+            "2": 4,
+            "1": 2,
+            "5": 2,
+            "6": 1,
+            "3": 1
+          },
+          "1": {
+            "4": 2,
+            "0": 1,
+            "3": 1,
+            "5": 1
+          },
+          "2": {
+            "3": 3,
+            "5": 2,
+            "4": 2,
+            "1": 1
+          },
+          "3": {
+            "0": 6,
+            "4": 3,
+            "1": 1,
+            "5": 1,
+            "2": 1
+          },
+          "4": {
+            "0": 6,
+            "3": 4,
+            "5": 1,
+            "2": 1,
+            "1": 1
+          },
+          "5": {
+            "3": 2,
+            "2": 2,
+            "4": 2,
+            "0": 1
+          },
+          "6": {
+            "0": 1
+          }
+        }
+      },
+      "bass": "held",
+      "groove": "halftime",
+      "kit": "acoustic",
+      "instr": {
+        "chords": "i:piano",
+        "pad": "i:strings",
+        "bass": "i:bassgtr",
+        "lead": "brass and pedal steel (need new instruments; organ is the stand-in)"
+      },
+      "quirks": "natural",
+      "feel": {
+        "kick": 0,
+        "snare": 0.014,
+        "hat": 0.008,
+        "jit": 0.007,
+        "vj": 0.12,
+        "ghost": 0.1,
+        "acc": 0.25
+      },
+      "sug": {
+        "ext": 0.55,
+        "borrow": 0.45,
+        "sec": 0.45,
+        "tri": 0.05,
+        "sus": 0.5
+      },
+      "trans": {
+        "chorus": [
+          "rev"
+        ],
+        "verse": [],
+        "bridge": [
+          "sweep"
+        ],
+        "pre": [],
+        "outro": [
+          "down"
+        ]
+      },
+      "art": {
+        "legato": 0.6,
+        "vibLong": 0.4,
+        "scoopStart": 0.35,
+        "fallEnd": 0.45,
+        "slideLeap": 0.3,
+        "ghost": 0,
+        "stacc": 0.05,
+        "accent": 0.15,
+        "grace": 0.05,
+        "tenuto": 0.25,
+        "info": "Close and diary-like: plain middle-voice lines, little vibrato, phrases that run on."
+      },
+      "arrangement": {
+        "piano": "solo piano carries most songs; band joins late or not at all",
+        "tempo": "some songs change tempo and mood midway (Text Book, Black Bathing Suit)",
+        "extras": [
+          "jazz-band horns",
+          "pedal steel",
+          "Mellotron",
+          "Rhodes"
+        ]
+      },
+      "mixHint": "Dry and close: piano in the room, vocal very close with little reverb, horns and strings natural.",
+      "dna": {
+        "tagline": "piano diaries with Americana and jazz horns",
+        "intro": "Blue Banisters, made with several producers, is piano-led, folky and jazzy, and less polished than NFR.",
+        "stats": [
+          [
+            "Songs analysed",
+            "11"
+          ],
+          [
+            "Tempo",
+            "slow, with mid-song changes"
+          ],
+          [
+            "Harmony",
+            "mostly major"
+          ]
+        ],
+        "points": [
+          {
+            "c": "high",
+            "t": "Americana, folk, jazz and pop; piano-led with strings, horns, pedal steel, Mellotron and Rhodes.",
+            "used": "instruments, mix",
+            "src": [
+              "https://en.wikipedia.org/wiki/Blue_Banisters"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Text Book and Black Bathing Suit change key and tempo between sections (Black Bathing Suit goes from 83 to 153 BPM in the pre-chorus).",
+            "used": "arrangement.tempo",
+            "src": [
+              "https://www.hooktheory.com/theorytab/view/lana-del-rey/text-book",
+              "https://www.hooktheory.com/theorytab/view/lana-del-rey/black-bathing-suit"
+            ]
+          },
+          {
+            "c": "low",
+            "t": "Chords for nine songs come from guitar chord sites: tune with the song analyser."
+          }
+        ]
+      },
+      "songsAnalysed": [
+        {
+          "song": "Text Book",
+          "album": "Blue Banisters",
+          "key": "D minor / F major",
+          "bpm": 97,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/text-book"
+        },
+        {
+          "song": "Black Bathing Suit",
+          "album": "Blue Banisters",
+          "key": "B major / G# minor",
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/black-bathing-suit"
+        },
+        {
+          "song": "Blue Banisters",
+          "album": "Blue Banisters",
+          "key": "G mixolydian",
+          "c": "low",
+          "src": "https://www.guitartabsexplorer.com/del-rey-lana/blue-banisters-chords"
+        },
+        {
+          "song": "Arcadia",
+          "album": "Blue Banisters",
+          "key": "Bb major",
+          "c": "low",
+          "src": "https://guitartabsexplorer.com/del-rey-lana/arcadia-chords"
+        },
+        {
+          "song": "If You Lie Down with Me",
+          "album": "Blue Banisters",
+          "key": "C major",
+          "c": "low",
+          "src": "https://www.guitartabsexplorer.com/del-rey-lana/if-you-lie-down-with-me-chords"
+        },
+        {
+          "song": "Violets for Roses",
+          "album": "Blue Banisters",
+          "key": "A major",
+          "c": "low",
+          "src": "https://www.guitartabsexplorer.com/del-rey-lana/violets-for-roses-chords"
+        },
+        {
+          "song": "Thunder",
+          "album": "Blue Banisters",
+          "key": "Eb major",
+          "c": "low",
+          "src": "https://www.guitartabsexplorer.com/del-rey-lana/thunder-chords"
+        },
+        {
+          "song": "Nectar of the Gods",
+          "album": "Blue Banisters",
+          "key": "E minor",
+          "c": "low",
+          "src": "https://www.guitartabsexplorer.com/del-rey-lana/nectar-of-the-gods-chords"
+        },
+        {
+          "song": "Living Legend",
+          "album": "Blue Banisters",
+          "key": "G major",
+          "c": "low",
+          "src": "https://www.guitartabsexplorer.com/del-rey-lana/living-legend-chords"
+        },
+        {
+          "song": "Cherry Blossom",
+          "album": "Blue Banisters",
+          "key": "A major",
+          "c": "low",
+          "src": "https://www.guitartabsexplorer.com/del-rey-lana/cherry-blossom-chords"
+        },
+        {
+          "song": "Sweet Carolina",
+          "album": "Blue Banisters",
+          "key": "C major",
+          "c": "low",
+          "src": "https://guitartabsexplorer.com/del-rey-lana/sweet-carolina-chords"
+        }
+      ],
+      "artist": "Lana Del Rey",
+      "eraOf": "Lana Del Rey",
+      "eraName": "Blue Banisters (2021)",
+      "catalog": {
+        "artist": "Lana Del Rey",
+        "albums": [
+          "Blue Banisters"
+        ]
+      }
     }
   ],
   "producers": [
@@ -4808,6 +6862,19 @@
         "Reunion",
         "Steve McQueen",
         "We Own the Sky"
+      ]
+    }
+  },
+  "artistEras": {
+    "about": "Artists whose albums sound very different get one profile per era. Picking the artist tag shows the eras as chips; with none picked, Semitone uses the artist's default profile. Picking one era uses only that era's chords, tempo, sounds and mix. Picking two or more blends them by the normal blend rules (first is the core). Eras are never mixed silently. A song tag (\"piano\", \"cinematic\") can also narrow the songs used: the matrix is rebuilt from only the matching songs in data/catalog.json, if at least 4 match.",
+    "Lana Del Rey": {
+      "default": "sadcore",
+      "eras": [
+        "lana-btd",
+        "lana-uv",
+        "lana-honeymoon",
+        "lana-nfr",
+        "lana-bb"
       ]
     }
   }
