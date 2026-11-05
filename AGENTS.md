@@ -19,7 +19,7 @@ You can't open Jamie's claude.ai design canvas or plan doc, so copies are in the
    "what your tags do" card. Then the new profiles, artist eras and genre variants (steps 3, 7, 29), applying
    `existingStyles` to the original 8 (step 6).
 3. **Producer pass** (25): first version done (`PASS`, `passOp`). `S.secLayer` layers up to 2 extra sounds on a section's chords (page audio only, not MIDI or the native engine). A move runs when `passOp` understands its op; the rest show "coming soon". Parts mute per section through `S.secMute`. Still to do: the other ops, `fxStyle`, the emotion rules (28).
-4. **Emotion and vibe** (28): first version done (`FEEL`, `FEEL_DO`): 5 of the 20 moves draw real volume/pan lanes, the rest show "coming soon" until effects can be automated generally.
+4. **Emotion and vibe** (28): first version done (`FEEL`, `FEEL_DO`): 10 of the 20 moves draw real lanes; effect moves take a free effect slot (`feelSlot`, marked `emo`), the rest show "coming soon".
 5. **Real sounds**: first version done (`SND`, `Source/LibraryScan.h`): suggestions, recipes, opt-in scan, part + recipe export. Sample packs are not scanned yet.
 6. Engine additions the styles ask for. Done: swing, shuffle and train grooves, snare roll and silence transitions, accordion, upright bass. Still to do: real ride cymbal (swing uses the hat), drones, flanger, stutter, tempo-drop, other instruments.
 7. The rest of Phase 1, then the "Smarter" ideas (1–11) and Phase 2.

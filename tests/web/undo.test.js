@@ -33,6 +33,7 @@ const url='file://'+require('path').resolve(__dirname,'../../web/semitone-studio
   await p.evaluate(()=>histUndo()); await p.waitForTimeout(50); ok(await state()===before,`${name}: undo restores it exactly`);
   await p.evaluate(()=>histRedo()); await p.waitForTimeout(50); ok(await state()===after,`${name}: redo puts it back exactly`);
   await p.evaluate(()=>{ H.quietUntil=0; }); await p.waitForTimeout(1900); const [n2]=await steps(); ok(n2===n1,`${name}: no ghost step afterwards`); }
+ const gh=await p.evaluate(async()=>{ await new Promise(f=>setTimeout(f,1700)); H.quietUntil=0; const n=H.past.length, r=H.future.length; for(const k of Object.keys(S.mix)) if(!S.mix[k].fx.some(Boolean)&&S.mix[k].vol===1&&!S.mix[k].pan) delete S.mix[k]; await renderSongBuffer(3); histCheck(); return [H.past.length-n,H.future.length-r]; }); ok(gh[0]===0&&gh[1]===0,'rendering or playing leaves no ghost step '+gh);
  // walking all the way back and forward again
  const back=await p.evaluate(()=>{ let n=0; while(H.past.length){ histUndo(); n++; } return n; }); const fwd=await p.evaluate(()=>{ let n=0; while(H.future.length){ histRedo(); n++; } return n; }); ok(back===fwd&&back===changes.length,`all the way back and forward: ${back} steps`);
  // a new change clears redo
