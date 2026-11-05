@@ -100,6 +100,7 @@ First versions of 1–6 and 8–11 are done, mostly in the Song doctor (`doc*`, 
     the best key, show where the melody would strain. Notes and ranges only, never voices.
 
 ### Writing faster (Phase 1–2)
+Done (first versions): 14 command palette (`CMDS`), 15 history list, 16 focus mode, 17 section notes (one short note, no to-dos). 7 ranks palette actions and doctor fixes by use. Not started: 12 song versions side by side.
 12. **Song versions side by side.** Whole-song alternatives (Chorus A / Chorus B, ballad / uptempo), switch
     with one click while it plays. Builds on today's verse versions.
 13. **Rhyme and syllable help** in the lyrics lane: rhymes, near rhymes, syllable count per line vs the notes,
