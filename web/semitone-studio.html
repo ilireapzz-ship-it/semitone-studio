@@ -723,8 +723,6 @@ kbd{font-family:var(--f-mono);font-size:.72rem;border:1px solid var(--line);bord
 .dock-pane > details.lyr-box > summary{display:none}
 .dock-pane > details.lyr-box{border:0;padding:0;background:none}
 .dock-pane .panel-head h2{font-size:1.05rem}
-.dock .intro{font-size:.8rem!important;max-width:80ch;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}
-.dock .intro.open{-webkit-line-clamp:unset;display:block}
 .tip-btn{font-size:.74rem!important}
 .roll-tools > .hint.tucked{display:none}
 .roll-tools > .hint.tucked.open{display:block;flex-basis:100%;order:99}
@@ -734,8 +732,6 @@ kbd{font-family:var(--f-mono);font-size:.72rem;border:1px solid var(--line);bord
 .orow:not(.ruler-row):not(.tempo-row) .ohead{display:grid;grid-template-columns:1fr auto;gap:4px 6px;align-content:start}
 .orow:not(.ruler-row):not(.tempo-row) .ohead .ohname{grid-column:1/-1}
 .orow:not(.ruler-row):not(.tempo-row) .ohead .otip{display:none}
-.orow:not(.ruler-row):not(.tempo-row) .ohead .otip.has-warn{display:block;grid-column:1/-1}
-.orow:not(.ruler-row):not(.tempo-row) .ohead .otip.has-warn > :not(.warn){display:none}
 .orow .ohead > select[data-orole]{grid-column:1/2;min-width:0}
 .orow .ohead > .oart-sel{grid-column:2/3}
 .orow .obtns{grid-column:1/-1;gap:3px}
@@ -755,6 +751,15 @@ kbd{font-family:var(--f-mono);font-size:.72rem;border:1px solid var(--line);bord
 .fold-panel.open > .panel-head h2::before{content:'▾ '}
 .fold-panel:not(.open) > :not(.panel-head){display:none}
 
+
+/* (i) info tips */
+.info-src{display:none!important}
+.info-i{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--muted);font:600 11px/1 var(--f-mono);font-style:italic;cursor:pointer;padding:0;margin-left:6px;vertical-align:middle;flex:none}
+.info-i:hover,.info-i[aria-expanded="true"]{color:var(--accent-ink);background:var(--accent);border-color:var(--accent)}
+.info-pop{position:absolute;z-index:200;background:var(--ink);color:var(--paper);padding:10px 12px;border-radius:8px;font-size:.82rem;line-height:1.45;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+.info-pop b,.info-pop strong{color:inherit}
+.otip-warn{margin:0;font-size:.74rem;grid-column:1/-1}.otip-warn .warn{color:var(--bad);font-weight:600}
+h2 .info-i{width:19px;height:19px;font-size:12px;margin-left:8px;position:relative;top:-2px}
 </style>
 
 <header class="topbar">
@@ -7104,6 +7109,35 @@ function initTidy(){
     ph.addEventListener('click',e=>{ if(e.target.closest('button,select,input,label')) return; set(!mp.classList.contains('open')); }); set(tidyLS('ss_omix')==='1'); }
 }
 
+/* ---------- (i) info tips: explanatory subtext tucked behind a small button ---------- */
+const INFO={pop:null,btn:null};
+function infoClose(){ if(INFO.pop){ INFO.pop.remove(); INFO.pop=null; } if(INFO.btn){ INFO.btn.setAttribute('aria-expanded','false'); INFO.btn=null; } }
+function infoOpen(btn){ const src=btn._src; if(!src) return; if(INFO.btn===btn){ infoClose(); return; } infoClose();
+  const pop=document.createElement('div'); pop.className='info-pop'; pop.setAttribute('role','tooltip'); pop.innerHTML=src.innerHTML; document.body.appendChild(pop);
+  const r=btn.getBoundingClientRect(), w=Math.min(340,window.innerWidth-24); pop.style.maxWidth=w+'px';
+  const left=Math.max(12,Math.min(window.innerWidth-12-pop.offsetWidth,r.left+r.width/2-pop.offsetWidth/2));
+  let top=r.bottom+8+window.scrollY; if(r.bottom+8+pop.offsetHeight>window.innerHeight&&r.top-8-pop.offsetHeight>0) top=r.top-8-pop.offsetHeight+window.scrollY;
+  pop.style.left=left+'px'; pop.style.top=top+'px'; INFO.pop=pop; INFO.btn=btn; btn.setAttribute('aria-expanded','true'); }
+function infoBtn(src){ const b=document.createElement('button'); b.type='button'; b.className='info-i'; b.textContent='i'; b.setAttribute('aria-label','More info'); b.setAttribute('aria-expanded','false'); b._src=src; b.title=src.textContent.trim().slice(0,160); return b; }
+// tuck one element: hide it and put an (i) either into an anchor (heading) or where it was
+function infoize(el,anchor){ if(!el||el.dataset.info||!el.textContent.trim()) return; el.dataset.info='1'; el.classList.add('info-src'); const b=infoBtn(el);
+  if(anchor){ const old=anchor.querySelector(':scope > .info-i'); if(old) old.remove(); anchor.appendChild(b); } else el.before(b); }
+function infoScan(root){ if(!root) return;
+  root.querySelectorAll('.panel-head').forEach(h=>{ const t=h.querySelector(':scope > h2'); if(!t) return; const inner=h.querySelector(':scope > p.muted'); if(inner) infoize(inner,t); const nx=h.nextElementSibling; if(nx&&nx.matches('p.muted')) infoize(nx,t); });
+  root.querySelectorAll('h3.mix-h').forEach(h=>{ const nx=h.nextElementSibling; if(nx&&nx.matches('p.muted')) infoize(nx,h); });
+  root.querySelectorAll('.clane-tools > .qhint, .sug-head > .qhint, .lyr-tools > .qhint, .dawdrag-row .qhint, .auto-box > p.muted.hint, .compose-grid aside > p.muted, #view-orch .panel > p.muted.hint, .smart-box p.qhint, .mout-box > p.muted, .lib-box > p.muted, .perf-box > p.muted, .fin-box > p.muted').forEach(el=>infoize(el));
+  // orchestra: each instrument's description goes behind an (i) beside its name
+  root.querySelectorAll('.orow .ohead > .otip').forEach(t=>{ if(t.dataset.info) return; const name=t.parentElement.querySelector('.ohname'); const warn=t.querySelector('.warn');
+    if(warn){ const w=document.createElement('p'); w.className='otip-warn'; w.appendChild(warn.cloneNode(true)); t.after(w); }
+    infoize(t,name); });
+}
+function initInfo(){
+  document.addEventListener('click',e=>{ const b=e.target.closest('.info-i'); if(b){ e.preventDefault(); e.stopPropagation(); infoOpen(b); return; } if(INFO.pop&&!e.target.closest('.info-pop')) infoClose(); },true);
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape') infoClose(); });
+  window.addEventListener('resize',infoClose);
+  ['#view-compose','#view-orch'].forEach(q=>{ const r=$(q); if(!r) return; infoScan(r); let t=null; new MutationObserver(()=>{ clearTimeout(t); t=setTimeout(()=>infoScan(r),60); }).observe(r,{childList:true,subtree:true}); });
+}
+
 /* ---------- routing + boot ---------- */
 function route(){
   if(location.hash==='#classroom'){ let last='learn'; try{ last=localStorage.getItem('ss_lesson')||'learn'; }catch(e){} if(!['learn','time','read','play','ear'].includes(last)) last='learn'; history.replaceState(null,'','#'+last); }
@@ -7123,7 +7157,7 @@ const redraw=()=>{if(!S.playing)renderRoll();drawWave();renderRead();drawPlay();
 try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>setTimeout(redraw,30));}catch(e){}
 new MutationObserver(()=>setTimeout(redraw,30)).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
 
-buildStyles(); bindControls(); initExtras(); initTime(); initStudio2(); initQuirks(); initRead(); initPlay(); initProjects(); initOrch2(); initOrch(); initRoom(); initB3(); initEar(); initPractice(); initWeird(); initArt(); initMix(); initSmartView(); initCArt(); initCLane(); initSug(); initInstr(); initLyrics(); initPerf(); initEnergy(); initFinish(); initLive(); initSel(); initEdit2(); earUI(); initPro(); initDaw(); initBassRoll(); renderODrag(); try{ initTidy(); }catch(e){ console.warn('tidy',e); } nativeInit(); document.querySelectorAll('[data-meter]').forEach(el=>el.innerHTML=meterHTML()); $('#oPolishSel').value=O.polish||'off'; $('#oPolishSel').onchange=e=>{ O.polish=e.target.value; }; $('#oShowArt').onchange=drawAllORolls; renderNoteBar(); buildKeyboard(); buildClock();
+buildStyles(); bindControls(); initExtras(); initTime(); initStudio2(); initQuirks(); initRead(); initPlay(); initProjects(); initOrch2(); initOrch(); initRoom(); initB3(); initEar(); initPractice(); initWeird(); initArt(); initMix(); initSmartView(); initCArt(); initCLane(); initSug(); initInstr(); initLyrics(); initPerf(); initEnergy(); initFinish(); initLive(); initSel(); initEdit2(); earUI(); initPro(); initDaw(); initBassRoll(); renderODrag(); try{ initTidy(); }catch(e){ console.warn('tidy',e); } try{ initInfo(); }catch(e){ console.warn('info',e); } nativeInit(); document.querySelectorAll('[data-meter]').forEach(el=>el.innerHTML=meterHTML()); $('#oPolishSel').value=O.polish||'off'; $('#oPolishSel').onchange=e=>{ O.polish=e.target.value; }; $('#oShowArt').onchange=drawAllORolls; renderNoteBar(); buildKeyboard(); buildClock();
 S.seed=4127; loadStyle(STYLES[0],false);
 renderInterval(); renderClock(); renderFacts(); route();
 if(document.fonts&&document.fonts.ready) document.fonts.ready.then(redraw);
