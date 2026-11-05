@@ -46,3 +46,65 @@ suggest and you accept, never surprise changes.
 
 ### Later phases (see the plan doc)
 3 your VST3/AU plugins inside Semitone · 4 mix and master · 5 share everywhere (export to every DAW, iPad, share links).
+
+## Ideas to build (agreed with Jamie, 5 Nov 2026)
+Fit these into the phases as marked; the **design canvas** "Semitone Studio — song-first DAW redesign" shows the
+target look (Start, Song view, Record, Mix). Rules for every one of them:
+- **Suggest, explain, accept.** A smart feature shows a card with what it would change, why, Try it / Not now.
+  Nothing changes silently; everything is one undo step (needs Phase 1 task 1 first).
+- "In the style of" means musical features (chords, structure, tempo, sound). Never copy melodies or lyrics,
+  never imitate or clone a real singer's voice.
+- Learning about Jamie stays on his computer (local storage / project files), never sent anywhere.
+- Each idea ships with a test in `tests/web/` and a short plain-words note for Jamie.
+
+### Smarter: Semitone understands the song (Phase 1–2, interface only; start here)
+1. **Prosody check.** Flag stressed syllables on weak beats or short notes (needs syllable stress: a small
+   English stress dictionary plus rules), suggest moving the note or the word. Shown under the piano roll's lyrics.
+2. **Hook strength, explained.** Score the chorus on repetition, contour, rhythm and range lift over the verse;
+   always say why in words ("the chorus top note is the same as the verse's"). Part of the A&R check.
+3. **"Why does this section feel flat?"** Diagnose from harmony, note density, register and dynamics against
+   the energy plan; offer 2–3 concrete fixes as cards.
+4. **Arrangement clash detection.** Parts crowding the same range at the same time (e.g. pad and vocal in the
+   chorus) → musical fixes: move the pad an octave, thin the chords under the hook.
+5. **Fill this gap.** Write a new section (pre-chorus, bridge, intro) from its neighbours: start from the
+   previous section's last chord and lead into the next one's first; melody continues the song's motifs.
+6. **Change it by describing it.** A text box: "make chorus 2 bigger", "verse 2 different but familiar",
+   "darker chords in the bridge". First version is rule-based: map phrases onto existing controls (lift,
+   density, voicing, energy, melody variation) and show the result as an undoable card listing what changed.
+7. **Taste learning.** Remember which suggestions Jamie tries or skips and rank future ones by that.
+8. **Smart defaults.** New songs start from his usual tempo range, keys, sounds and structures.
+9. **"Why does this work?" everywhere.** Click any chord, leap or section change for a short, Classroom-style
+   explanation using his own song, with a link into the matching Classroom lesson.
+10. **Style DNA cards.** Per style: typical chords, tempo range, length, structure; mark where this song sits.
+11. **Key and range fit.** Enter a singer's range (or pick a saved singer: just a name and two notes), suggest
+    the best key, show where the melody would strain. Notes and ranges only, never voices.
+
+### Writing faster (Phase 1–2)
+12. **Song versions side by side.** Whole-song alternatives (Chorus A / Chorus B, ballad / uptempo), switch
+    with one click while it plays. Builds on today's verse versions.
+13. **Rhyme and syllable help** in the lyrics lane: rhymes, near rhymes, syllable count per line vs the notes,
+    a warning when a line has more syllables than notes.
+14. **Command palette (⌘K).** Type an action ("lift chorus", "export stems", "record guitar").
+15. **Undo history you can see.** A list of every change with labels; click to jump back (on top of task 1).
+16. **Focus mode.** Only the lyrics and the playing song, for writing sessions.
+17. **Section notes.** Sticky notes and to-dos on a section ("re-sing line 3"), shown on the timeline.
+
+### Recording (Phase 2)
+18. **Auto-comp.** After several takes, pick the best take per line by pitch, timing and tone; Jamie swaps phrases.
+    Flag pitchy or late spots.
+19. **Practice coach.** Track sing/play-along accuracy over sessions; turn weak spots into Classroom exercises
+    built from his own songs.
+
+### Mixing (Phase 4)
+20. **Reference matching.** Read a reference track's structure, energy curve, tempo, loudness and tonal balance
+    (the song analyser does part of this); line up the energy plan and mix targets; show the differences.
+
+### Pitching and sharing (Phase 5, some can come earlier)
+21. **Pitch mode.** One screen that builds a pitch package: demo mix, lyric sheet, chord chart, key (plus an
+    alternative key for the artist), a short note; one share link. Grows out of today's pitch pack.
+22. **Listen-and-comment links.** Co-writers and A&R open a link, listen, comment at a moment in the song.
+23. **Idea capture from the phone.** A voice memo that arrives as a new song sketch with key, tempo and melody detected.
+
+### Needs Jamie's decision first: don't start without asking
+24. **Built-in assistant.** A chat panel that sees the whole song and answers "why does the bridge feel weak?"
+    or "three alternate chorus melodies in my range". Needs an AI model through an API (internet, running cost).
