@@ -696,6 +696,65 @@ kbd{font-family:var(--f-mono);font-size:.72rem;border:1px solid var(--line);bord
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:8px 16px;border-radius:999px;font-size:.88rem;z-index:20}
 #copyFallback{width:100%;margin-top:8px;font-family:var(--f-mono);font-size:.8rem;background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:8px;color:var(--ink)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ===== tidy layout: classroom sub-nav, style fold, compose dock, compact orchestra ===== */
+.class-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:-8px 0 16px}
+.subtabs{display:flex;gap:2px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.subtabs a{text-decoration:none;color:var(--muted);padding:7px 12px;font-size:.88rem;font-weight:500;border-bottom:2px solid transparent;margin-bottom:-1px}
+.subtabs a[aria-current="page"]{color:var(--ink);border-bottom-color:var(--accent)}
+@media (max-width:700px){.subtabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;width:100%}.subtabs a{white-space:nowrap}}
+.pick-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 12px}
+.pick-bar .pk-label{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-family:var(--f-mono)}
+.pick-bar .pk-name{font-weight:700}
+.pick-bar .pk-lane{font-family:var(--f-mono);font-size:.76rem;color:var(--accent)}
+.pick-bar .pk-dna{font-size:.82rem;color:var(--muted);flex:1 1 220px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pick-fold:not(.open) > .pick-body{display:none}
+.pick-fold.open > .pick-body{margin-top:10px}
+.dock{background:var(--surface);border:1px solid var(--line);border-radius:10px;min-width:0}
+.dock-tabs{display:flex;gap:2px;flex-wrap:wrap;padding:6px 8px 0;border-bottom:1px solid var(--line);position:sticky;top:calc(var(--nb-h,0px) + var(--dock-top,58px));background:var(--surface);z-index:4;border-radius:10px 10px 0 0}
+.dock-tabs button{appearance:none;border:0;background:none;color:var(--muted);font:inherit;font-size:.86rem;font-weight:500;padding:8px 12px;border-bottom:2px solid transparent;margin-bottom:-1px;cursor:pointer;border-radius:6px 6px 0 0}
+.dock-tabs button:hover{color:var(--ink);background:var(--soft)}
+.dock-tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+@media (max-width:700px){.dock-tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}.dock-tabs button{white-space:nowrap}}
+.dock-pane{padding:16px 18px}
+.dock-pane[hidden]{display:none!important}
+.dock-pane > .panel,.dock-pane .panel.in-dock{border:0;padding:0;background:none;border-radius:0}
+.dock-pane > * + *{margin-top:16px}
+.dock-pane > details.lyr-box > summary{display:none}
+.dock-pane > details.lyr-box{border:0;padding:0;background:none}
+.dock-pane .panel-head h2{font-size:1.05rem}
+.dock .intro{font-size:.8rem!important;max-width:80ch;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;cursor:pointer}
+.dock .intro.open{-webkit-line-clamp:unset;display:block}
+.tip-btn{font-size:.74rem!important}
+.roll-tools > .hint.tucked{display:none}
+.roll-tools > .hint.tucked.open{display:block;flex-basis:100%;order:99}
+.compose-grid aside > p.muted:last-child{font-size:.76rem}
+/* orchestra rows: compact heads, slim resting rows */
+.orow{margin-top:4px}
+.orow:not(.ruler-row):not(.tempo-row) .ohead{display:grid;grid-template-columns:1fr auto;gap:4px 6px;align-content:start}
+.orow:not(.ruler-row):not(.tempo-row) .ohead .ohname{grid-column:1/-1}
+.orow:not(.ruler-row):not(.tempo-row) .ohead .otip{display:none}
+.orow:not(.ruler-row):not(.tempo-row) .ohead .otip.has-warn{display:block;grid-column:1/-1}
+.orow:not(.ruler-row):not(.tempo-row) .ohead .otip.has-warn > :not(.warn){display:none}
+.orow .ohead > select[data-orole]{grid-column:1/2;min-width:0}
+.orow .ohead > .oart-sel{grid-column:2/3}
+.orow .obtns{grid-column:1/-1;gap:3px}
+.orow .obtns .btn.mini-btn{padding:2px 7px;font-size:.72rem;min-height:0}
+.orow.resting .obtns > :not([data-osug]):not([data-osmp]),.orow.resting .oart-sel{display:none}
+.orow.resting .ohead{grid-template-columns:1fr auto!important}
+.orow.resting .obtns{grid-column:2/3!important;grid-row:2}
+.o-tools2{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line)}
+.guide-fold > summary{cursor:pointer;list-style:none;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;padding:6px 0}
+.guide-fold > summary::-webkit-details-marker{display:none}
+.guide-fold > summary::before{content:'▸';color:var(--muted)}
+.guide-fold[open] > summary::before{content:'▾'}
+.guide-fold > summary .gf-sum{font-size:.82rem;color:var(--muted)}
+.fold-panel > .panel-head{cursor:pointer;margin-bottom:0}
+.fold-panel > .panel-head h2::before{content:'▸ ';color:var(--muted)}
+.fold-panel.open > .panel-head{margin-bottom:14px}
+.fold-panel.open > .panel-head h2::before{content:'▾ '}
+.fold-panel:not(.open) > :not(.panel-head){display:none}
+
 </style>
 
 <header class="topbar">
@@ -705,16 +764,22 @@ kbd{font-family:var(--f-mono);font-size:.72rem;border:1px solid var(--line);bord
     <nav class="tabs" aria-label="Views">
       <a href="#compose" id="tab-compose">Compose</a>
       <a href="#orch" id="tab-orch">Orchestral</a>
-      <a href="#learn" id="tab-learn">Learn the maths</a>
-      <a href="#time" id="tab-time">Time &amp; rhythm</a>
-      <a href="#read" id="tab-read">Read music</a>
-      <a href="#play" id="tab-play">Play along</a>
-      <a href="#ear" id="tab-ear">Ear training</a>
+      <a href="#classroom" id="tab-classroom">Classroom</a>
     </nav>
   </div>
 </header>
 
 <main class="wrap">
+<div class="class-head" id="classNav" hidden>
+  <span class="label">Classroom</span>
+  <nav class="subtabs" aria-label="Lessons">
+    <a href="#learn" id="tab-learn">Learn the maths</a>
+    <a href="#time" id="tab-time">Time &amp; rhythm</a>
+    <a href="#read" id="tab-read">Read music</a>
+    <a href="#play" id="tab-play">Play along</a>
+    <a href="#ear" id="tab-ear">Ear training</a>
+  </nav>
+</div>
 <div class="restore-bar" id="restoreBar" hidden><span id="restoreText"></span><button class="btn mini-btn primary" id="restoreYes">Restore it</button><button class="btn mini-btn" id="restoreNo">Dismiss</button></div>
 <!-- =============== COMPOSE =============== -->
 <section id="view-compose" class="stack">
@@ -3947,7 +4012,7 @@ function drawORuler(){ const cv=$('#oRuler'); if(!cv) return; const s=sizeCanvas
 const ORS={};
 function drawORoll(id){
   const cv=document.querySelector(`.oroll[data-id="${id}"]`); if(!cv) return; const inst=OI[id], sec=O.sections[O.sel], ns=O.parts[O.sel][id]||[];
-  const [lo,hi]=inst.perc?[59,61]:oRange(id), rows=hi-lo+1, rp=inst.perc?0:O.tall[id]?9:3.2; cv.style.height=(inst.perc?46:Math.max(70,Math.min(O.tall[id]?430:190,rows*rp+16)))+'px';
+  const [lo,hi]=inst.perc?[59,61]:oRange(id), rows=hi-lo+1, rp=inst.perc?0:O.tall[id]?9:3.2; const resting=!ns.length&&((sec.roles[id]||{}).role||'rest')==='rest'; cv.style.height=(resting?34:inst.perc?46:Math.max(70,Math.min(O.tall[id]?430:190,rows*rp+16)))+'px';
   const s=sizeCanvas(cv); if(!s) return; const {g,W,H}=s, TB=sec.bars*4, X=b=>b/TB*W, rh=inst.perc?H-16:(H-14)/rows, Y=m=>inst.perc?12:12+(hi-m)*rh;
   const bad=css('--bad'), ratio=css('--ratio'), line=css('--line'), acc=css('--accent'), ink=css('--ink'), accInk=css('--accent-ink'), soft=css('--soft');
   g.clearRect(0,0,W,H);
@@ -6948,14 +7013,102 @@ function nativeInit(){ if(!NATIVE.on) return;
   addEventListener('hashchange',()=>setTimeout(nativeSync,50));
   nEmit('st_ready',{}); }
 
+
 /* ---------- one colour per part, everywhere ---------- */
 function partColor(p){ return ({lead:'#E8505B',chords:'#4E7CF6',bass:'#F2A541',drums:'#49B67A',vox:'#B45CE6',fx:'#8C8C8C'})[p]||'#8C8C8C'; }
 function chColor(scope,ch){ if(ch==='master') return null; if(scope==='song') return partColor(ch); if(typeof OI!=='undefined'&&OI[ch]) return orchColor(ch); const f=OFAMS.find(x=>famId(x)===ch); return f?FAM_COL[f][0]:null; }
 function inkOn(hex){ const r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16); return (r*299+g*587+b*114)/1000>165?'#1D2432':'#FFFFFF'; }
 function lighten(hex,a){ const c=[1,3,5].map(i=>parseInt(hex.slice(i,i+2),16)).map(v=>Math.round(v+(255-v)*a)); return '#'+c.map(v=>v.toString(16).padStart(2,'0')).join(''); }
+/* ---------- tidy layout: style fold, compose dock, compact orchestra ---------- */
+function tidyLS(k,v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v); }catch(e){ return null; } }
+function makePickFold(block,bodyEls,label,info,btnText){
+  if(!block||block.classList.contains('pick-fold')) return null;
+  block.classList.add('pick-fold');
+  const bar=document.createElement('div'); bar.className='pick-bar';
+  bar.innerHTML=`<span class="pk-label">${label}</span><b class="pk-name"></b><span class="pk-lane"></span><span class="pk-dna"></span><button class="btn mini-btn pk-btn" type="button" aria-expanded="false">${btnText}</button>`;
+  const body=document.createElement('div'); body.className='pick-body';
+  block.insertBefore(bar,block.firstChild); bar.after(body); bodyEls.filter(Boolean).forEach(el=>body.appendChild(el));
+  const btn=bar.querySelector('.pk-btn');
+  const set=open=>{ block.classList.toggle('open',open); btn.setAttribute('aria-expanded',open); btn.textContent=open?'Done':btnText; };
+  const upd=()=>{ try{ const r=info(); bar.querySelector('.pk-name').textContent=r.name||''; bar.querySelector('.pk-lane').textContent=r.lane||''; bar.querySelector('.pk-dna').textContent=r.dna||''; }catch(e){} };
+  btn.onclick=()=>set(!block.classList.contains('open'));
+  body.addEventListener('click',e=>{ const st=e.target.closest('.style'); if(st&&!st.classList.contains('add')) setTimeout(()=>{ set(false); upd(); },180); });
+  new MutationObserver(upd).observe(body,{subtree:true,childList:true,attributes:true,attributeFilter:['aria-pressed']});
+  upd(); set(false); return {set,upd};
+}
+const DOCK={};
+function makeDock(host,after,panes,key,def){
+  const dock=document.createElement('div'); dock.className='dock'; dock.id=key;
+  const tabs=document.createElement('div'); tabs.className='dock-tabs'; tabs.setAttribute('role','tablist'); dock.appendChild(tabs);
+  panes.forEach(pn=>{ const els=pn.els().filter(Boolean); if(!els.length) return;
+    const b=document.createElement('button'); b.type='button'; b.textContent=pn.name; b.dataset.pane=pn.id; b.setAttribute('role','tab'); tabs.appendChild(b);
+    const pane=document.createElement('div'); pane.className='dock-pane'; pane.dataset.pane=pn.id; pane.setAttribute('role','tabpanel'); pane.hidden=true;
+    els.forEach(el=>{ if(el.classList&&el.classList.contains('panel')) el.classList.add('in-dock'); if(el.tagName==='DETAILS') el.open=true; pane.appendChild(el); });
+    dock.appendChild(pane); });
+  after.after(dock);
+  const show=id=>{ if(!dock.querySelector(`.dock-pane[data-pane="${id}"]`)) id=dock.querySelector('.dock-pane').dataset.pane;
+    dock.querySelectorAll('.dock-tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.pane===id));
+    dock.querySelectorAll('.dock-pane').forEach(p=>p.hidden=p.dataset.pane!==id); tidyLS(key,id);
+    requestAnimationFrame(()=>{ window.dispatchEvent(new Event('resize')); try{ drawLanes('song'); }catch(e){} }); };
+  tabs.addEventListener('click',e=>{ const b=e.target.closest('button[data-pane]'); if(b) show(b.dataset.pane); });
+  show(tidyLS(key)||def); DOCK[key]=show; return dock;
+}
+function dockShow(key,id){ if(DOCK[key]) DOCK[key](id); }
+function revealEl(el){ if(!el||!el.closest) return;
+  const pane=el.closest('.dock-pane'); if(pane&&pane.hidden){ const d=pane.closest('.dock'); if(d) dockShow(d.id,pane.dataset.pane); }
+  const fp=el.closest('.fold-panel'); if(fp&&!fp.classList.contains('open')){ const h=fp.querySelector(':scope > .panel-head'); if(h) h.click(); }
+  const pf=el.closest('.pick-fold'); if(pf&&!pf.classList.contains('open')&&el.closest('.pick-body')){ const b=pf.querySelector('.pk-btn'); if(b) b.click(); }
+  const gd=el.closest('details.guide-fold'); if(gd&&!gd.open) gd.open=true; }
+function initTidy(){
+  { const orig=Element.prototype.scrollIntoView; Element.prototype.scrollIntoView=function(...a){ try{ revealEl(this); }catch(e){} return orig.apply(this,a); }; }
+  const vc=$('#view-compose');
+  // 1. style lanes fold into one line
+  const sg=$('#styles'); if(sg){ const block=sg.parentElement; makePickFold(block,[block.querySelector(':scope > .panel-head'),sg,$('#dnaBox')],'Style',()=>({name:S.style&&S.style.name,lane:S.style&&S.style.lane,dna:($('#dnaSum')&&$('#dnaBox')&&!$('#dnaBox').hidden)?$('#dnaSum').textContent:(S.style&&S.style.desc)}),'Change style'); }
+  // 2. piano-roll help tucked behind a button
+  const rt=vc.querySelector('.roll-tools'), hint=rt&&rt.querySelector(':scope > .hint'); if(hint){ hint.classList.add('tucked'); const b=document.createElement('button'); b.type='button'; b.className='btn mini-btn tip-btn'; b.textContent='How to edit ?'; b.onclick=()=>hint.classList.toggle('open'); rt.insertBefore(b,hint); }
+  // 3. everything below the rolls goes into one tabbed workspace
+  const sp=$('#soundsPanel'), grid=vc.querySelector('.compose-grid'), ri=$('#rhythmInfo');
+  const kids=sel=>sp?sp.querySelector(':scope > '+sel):null;
+  const stripsH=sp?[...sp.querySelectorAll(':scope > h3.mix-h')].find(h=>/Channel strips/i.test(h.textContent)):null;
+  const after=el=>el?el.nextElementSibling:null;
+  makeDock(vc,grid,[
+    {id:'lyrics',name:'Lyrics',els:()=>[$('#cLyrics')]},
+    {id:'chords',name:'Chord ideas',els:()=>[grid.querySelector('.sug-box')]},
+    {id:'beat',name:'Beat',els:()=>[$('#beatPanel')]},
+    {id:'sound',name:'Sounds',els:()=>[kids('p.muted'),kids('.room-row'),$('#mixer'),$('#perfBox'),kids('.lib-box'),$('#sampleFile')]},
+    {id:'mix',name:'Mixer & FX',els:()=>[stripsH,after(stripsH),$('#cMix'),$('#finishBox')]},
+    {id:'auto',name:'Automation',els:()=>[grid.querySelector('.auto-box')]},
+    {id:'record',name:'Record & listen',els:()=>[$('#liveBox'),$('#keyBox')]},
+    {id:'daw',name:'DAW & MIDI',els:()=>[kids('.mout-box')]},
+    {id:'theory',name:'Theory',els:()=>[ri,ri&&ri.nextElementSibling&&ri.nextElementSibling.matches('p.muted')?ri.nextElementSibling:null,$('#cards'),$('#shapes')&&$('#shapes').closest('.panel'),$('#matrix')&&$('#matrix').closest('.panel')]},
+  ],'ss_dock','lyrics');
+  if(sp&&!sp.querySelector(':scope > :not(.panel-head)')) sp.remove();
+  // intro paragraphs in the workspace: two lines, click to read more
+  vc.addEventListener('click',e=>{ const p=e.target.closest('.dock .intro'); if(p) p.classList.toggle('open'); });
+  const markIntros=()=>vc.querySelectorAll('.dock .panel-head + p.muted, .dock-pane > p.muted:first-child, .dock-pane > h3.mix-h + p.muted, .dock .live-panel > p.muted, .dock #keyBox > p.muted').forEach(p=>p.classList.add('intro'));
+  markIntros(); new MutationObserver(markIntros).observe(vc.querySelector('.dock'),{childList:true,subtree:true});
+  // sticky workspace tabs sit under the top bar
+  const setTop=()=>{ const tb=document.querySelector('.topbar'); document.documentElement.style.setProperty('--dock-top',((tb?tb.offsetHeight:58))+'px'); }; setTop(); window.addEventListener('resize',setTop);
+  // 4. orchestral: template fold, two tool rows, guide fold, mixer fold
+  const ot=$('#oTpls'); if(ot){ const block=ot.parentElement; makePickFold(block,[block.querySelector(':scope > .panel-head'),ot,$('#oDnaBox')],'Template',()=>({name:OT[O.tpl]&&OT[O.tpl].name,lane:OT[O.tpl]&&OT[O.tpl].like,dna:(typeof CUE_DNA!=='undefined'&&CUE_DNA[O.tpl])?CUE_DNA[O.tpl].tagline:(OT[O.tpl]&&OT[O.tpl].mood)}),'Change template'); }
+  const otr=$('#oPlaySec')&&$('#oPlaySec').closest('.transport');
+  if(otr){ const row=document.createElement('div'); row.className='o-tools2'; otr.after(row);
+    ['#oSugAll','#oClrAll','#oSlice','#oChop','#oSmartArt'].forEach(q=>{ const el=$(q); if(el) row.appendChild(el); });
+    [$('#oShowArt')&&$('#oShowArt').closest('label'),$('#oSnap')&&$('#oSnap').closest('label'),$('#oScoreBtn'),otr.querySelector('.room-sel')&&otr.querySelector('.room-sel').closest('label')].forEach(el=>{ if(el) row.appendChild(el); }); }
+  const og=$('#oGuide'); if(og){ const d=document.createElement('details'); d.className='guide-fold'; d.innerHTML='<summary><span class="label">Section guide &amp; coach</span><span class="gf-sum" id="oGuideSum"></span></summary>'; og.before(d);
+    const hintP=$('#oCoach')&&$('#oCoach').nextElementSibling; d.appendChild(og); if($('#oCoach')) d.appendChild($('#oCoach')); if(hintP&&hintP.matches('p.hint')) d.appendChild(hintP);
+    d.open=tidyLS('ss_oguide')!=='0'; d.addEventListener('toggle',()=>tidyLS('ss_oguide',d.open?'1':'0'));
+    const gs=()=>{ try{ const f=oProgress(O.sel), probs=coachSection(O.sel).filter(c=>c.sev==='problem').length; $('#oGuideSum').textContent=`${f.done} of ${f.total} parts written${probs?` · ${probs} problem${probs>1?'s':''}`:' · all clear'}`; }catch(e){} };
+    new MutationObserver(gs).observe(og,{childList:true,subtree:true}); gs(); }
+  const mp=$('#oMixPanel'); if(mp){ mp.classList.add('fold-panel'); const ph=mp.querySelector(':scope > .panel-head'); const set=o=>{ mp.classList.toggle('open',o); tidyLS('ss_omix',o?'1':'0'); if(o) requestAnimationFrame(()=>window.dispatchEvent(new Event('resize'))); };
+    ph.addEventListener('click',e=>{ if(e.target.closest('button,select,input,label')) return; set(!mp.classList.contains('open')); }); set(tidyLS('ss_omix')==='1'); }
+}
+
 /* ---------- routing + boot ---------- */
 function route(){
+  if(location.hash==='#classroom'){ let last='learn'; try{ last=localStorage.getItem('ss_lesson')||'learn'; }catch(e){} if(!['learn','time','read','play','ear'].includes(last)) last='learn'; history.replaceState(null,'','#'+last); }
   const v=['#learn','#time','#read','#play','#orch','#ear'].includes(location.hash)?location.hash.slice(1):'compose';
+  { const inClass=['learn','time','read','play','ear'].includes(v); $('#classNav').hidden=!inClass; const ct=$('#tab-classroom'); if(inClass){ ct.setAttribute('aria-current','page'); try{ localStorage.setItem('ss_lesson',v); }catch(e){} } else ct.removeAttribute('aria-current'); }
   ['compose','learn','time','read','play','orch','ear'].forEach(k=>{ $('#view-'+k).hidden=v!==k; const t=$('#tab-'+k); if(v===k) t.setAttribute('aria-current','page'); else t.removeAttribute('aria-current'); });
   if(v!=='compose') stopPlay();
   if(Loop.id) stopAll();
@@ -6970,7 +7123,7 @@ const redraw=()=>{if(!S.playing)renderRoll();drawWave();renderRead();drawPlay();
 try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>setTimeout(redraw,30));}catch(e){}
 new MutationObserver(()=>setTimeout(redraw,30)).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
 
-buildStyles(); bindControls(); initExtras(); initTime(); initStudio2(); initQuirks(); initRead(); initPlay(); initProjects(); initOrch2(); initOrch(); initRoom(); initB3(); initEar(); initPractice(); initWeird(); initArt(); initMix(); initSmartView(); initCArt(); initCLane(); initSug(); initInstr(); initLyrics(); initPerf(); initEnergy(); initFinish(); initLive(); initSel(); initEdit2(); earUI(); initPro(); initDaw(); initBassRoll(); renderODrag(); nativeInit(); document.querySelectorAll('[data-meter]').forEach(el=>el.innerHTML=meterHTML()); $('#oPolishSel').value=O.polish||'off'; $('#oPolishSel').onchange=e=>{ O.polish=e.target.value; }; $('#oShowArt').onchange=drawAllORolls; renderNoteBar(); buildKeyboard(); buildClock();
+buildStyles(); bindControls(); initExtras(); initTime(); initStudio2(); initQuirks(); initRead(); initPlay(); initProjects(); initOrch2(); initOrch(); initRoom(); initB3(); initEar(); initPractice(); initWeird(); initArt(); initMix(); initSmartView(); initCArt(); initCLane(); initSug(); initInstr(); initLyrics(); initPerf(); initEnergy(); initFinish(); initLive(); initSel(); initEdit2(); earUI(); initPro(); initDaw(); initBassRoll(); renderODrag(); try{ initTidy(); }catch(e){ console.warn('tidy',e); } nativeInit(); document.querySelectorAll('[data-meter]').forEach(el=>el.innerHTML=meterHTML()); $('#oPolishSel').value=O.polish||'off'; $('#oPolishSel').onchange=e=>{ O.polish=e.target.value; }; $('#oShowArt').onchange=drawAllORolls; renderNoteBar(); buildKeyboard(); buildClock();
 S.seed=4127; loadStyle(STYLES[0],false);
 renderInterval(); renderClock(); renderFacts(); route();
 if(document.fonts&&document.fonts.ready) document.fonts.ready.then(redraw);
