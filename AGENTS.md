@@ -3,6 +3,30 @@
 **Read `CLAUDE.md` first.** It is the project guide shared by every agent: layout, the web ⇄ native bridge,
 how to build and test, the sound engine rules, and FL Studio lessons learned the hard way. Everything there applies to you.
 
+## Start here (handover, 5 Nov 2026)
+You can't open Jamie's claude.ai design canvas or plan doc, so copies are in the repo:
+- **Design:** `docs/design/1-Start.png` … `7-Sounds.png` are the target screens (Start, Song view, Record, Mix,
+  Style tags, Producer pass, Real sounds). Where this file says "design canvas board N", it means `docs/design/N-*.png`.
+- **Plan:** the product decisions and ideas below are the complete plan; nothing else is needed from the plan doc.
+- **Data:** `data/style-library.json` (styles, producers, passes, eras, variants), `data/progressions.json` (chords per
+  song), `data/catalog.json` (artists → albums → songs with tags), `data/sound-library.json` (real instruments,
+  effects, emotion and vibe rules). After any data change run `python3 tools/build_style_matrices.py` and
+  `python3 tools/check_style_data.py` (ISSUES must be 0). Nothing in `data/` is used by the app yet: wiring it in is the job.
+
+**Suggested order** (each step ships on its own, with tests and a plain-words note for Jamie):
+1. Phase 1 task 1, **undo for every action**: almost everything below depends on it.
+2. **Style tags** replace the style picker (Style library steps 1–2): load the JSON, chips, search, blend rules, the
+   "what your tags do" card. Then the new profiles, artist eras and genre variants (steps 3, 7, 29), applying
+   `existingStyles` to the original 8 (step 6).
+3. **Producer pass** (25), using `pass`, `fxStyle` and the emotion rules (28).
+4. **Emotion and vibe** on songs and sections (28), with automation lanes.
+5. **Real sounds**: sound suggestions with recipes (26), then the plug-in scan in the desktop app (27, 30).
+6. Engine additions the styles ask for (swing, train beat, waltz is already there; snare rolls, drones, phaser/flanger,
+   stutter, new instruments), using the named stand-ins until each exists.
+7. The rest of Phase 1, then the "Smarter" ideas (1–11) and Phase 2.
+Still being researched in a Claude session, don't duplicate: album-by-album catalogs (with tags and eras where needed)
+for the other artists and composers, added to `data/catalog.json` and progressions.json the same way as Lana Del Rey.
+
 ## Working rules
 - Several agents work on this repo (Codex, Claude Code on Jamie's Mac, a cloud Claude session). Run `git pull`
   before you start and before you push; keep commits small and self-contained; push to `main`.
