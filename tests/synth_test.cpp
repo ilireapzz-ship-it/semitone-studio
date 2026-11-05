@@ -340,6 +340,36 @@ int main()
         printf ("ok: part effects shape the sound, follow their lanes and stay stable\n");
     }
 
+    // transitions fire at their beat, and a take plays the right part of its file at the right beat
+    {
+        Synth sy; sy.prepare (SR);
+        auto pt = std::make_shared<SynthPatch>();
+        pt->trans = std::make_shared<std::vector<TransEv>>();
+        TransEv im; im.kind = TransEv::impact; im.at = 2; im.dur = 1.7f; pt->trans->push_back (im);
+        auto audio = std::make_shared<TakeAudio>(); audio->rate = SR; audio->data.assign ((size_t) SR * 4, 0.f);
+        for (size_t i = (size_t) SR * 2; i < (size_t) SR * 3; ++i) audio->data[i] = .5f;   // silent, then 1 s of level
+        pt->takes = std::make_shared<std::vector<TakeSeg>>();
+        TakeSeg g; g.audio = audio; g.beat = 8; g.end = 12; g.start = 1; pt->takes->push_back (g);   // file second 1 lands on beat 8
+        sy.setPatch (pt);
+        const int blk = 240; std::vector<float> L ((size_t) blk), R ((size_t) blk);
+        double beat = 0, bps = 2.0 / SR, firstT = -1, firstK = -1; const std::vector<Event> none;
+        while (beat < 13)
+        {
+            std::fill (L.begin(), L.end(), 0.f); std::fill (R.begin(), R.end(), 0.f);
+            sy.process (none, blk, L.data(), R.data(), 1, beat, bps);
+            for (int i = 0; i < blk; ++i)
+            {
+                const double b = beat + i * bps;
+                if (firstT < 0 && std::abs (L[(size_t) i]) > .001f) firstT = b;
+                if (b > 7 && firstK < 0 && std::abs (L[(size_t) i]) > .05f) firstK = b;
+            }
+            beat += blk * bps;
+        }
+        // the take is silent for its first second (2 beats), so sound starts at beat 10
+        if (firstT < 1.95 || firstT > 2.1 || firstK < 9.95 || firstK > 10.05) { printf ("FAIL transitions at %.3f, take at %.3f\n", firstT, firstK); return 1; }
+        printf ("ok: transitions and takes land on their beats\n");
+    }
+
     // automation lanes: a part's volume and pan follow the song position
     {
         Synth sy; sy.prepare (SR);

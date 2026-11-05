@@ -8,6 +8,7 @@
 // Sections rendered by the page (ClipPlayer) still carry those.
 // Header-only and JUCE-free so it can be unit-tested anywhere.
 #pragma once
+#include <cstring>
 #include <string>
 #include "Sequencer.h"
 #include <algorithm>
@@ -100,8 +101,14 @@ struct Lane
 
 struct FxDesc;
 class FxBank;
+struct TransEv;
+struct TakeSeg;
 struct SynthPatch
 {
+    std::shared_ptr<std::vector<TransEv>> trans;   // sorted by beat
+    std::shared_ptr<std::vector<TakeSeg>> takes;
+    std::vector<std::string> takeFiles;
+    float transLevel = 1;
     std::vector<PartPatch> parts;
     std::vector<Lane> lanes;
     std::shared_ptr<std::vector<FxDesc>> fxList;   // what the page asked for
@@ -801,6 +808,7 @@ private:
 // ---- the engine ----
 } // namespace st
 #include "SynthFx.h"
+#include "SynthTrans.h"
 namespace st
 {
 class Synth
@@ -819,6 +827,8 @@ public:
         for (auto& v : voices) v.active = false;
         current.reset();
         fxBus = nullptr;
+        for (auto& t : transVoices) t.active = false;
+        sweepLeft = 0;
     }
 
     // Any thread. The caller keeps the previous patch alive for a few seconds, as with ClipPlayer's banks.
@@ -834,6 +844,7 @@ public:
         {
             current = std::move (next);
             fxBus = current ? current->fx.get() : nullptr;
+            transAt = 0; lastBeat = -1;
             busL.fill (0); busR.fill (0); chorusCh.fill (-1); busLevel.fill (1); busPan.fill (0); busStereo.fill (false);
             if (current)
             {
@@ -845,7 +856,7 @@ public:
         if (! current || n <= 0) return;
 
         // nothing sounding for a while (the room has rung out): use no CPU at all
-        if (events.empty() && activeVoices() == 0)
+        if (events.empty() && activeVoices() == 0 && ! current->trans && ! current->takes)
         {
             if (idle >= (int64_t) (sr * 8)) { gate = audible; return; }
             idle += n;
@@ -860,8 +871,31 @@ public:
         for (int i = 0; i < n; ++i)
         {
             while (e < sorted.size() && sorted[e].offset <= i) handle (sorted[e++]);
-            if ((i & 31) == 0) updateLanes (beat < 0 ? -1 : beat + i * beatInc);
+            if ((i & 31) == 0)
+            {
+                updateLanes (beat < 0 ? -1 : beat + i * beatInc);
+                if (beat >= 0) fireTrans (beat + i * beatInc);
+            }
             float l = 0, r = 0;
+            float tr = 0;
+            for (auto& t : transVoices) if (t.active) tr += t.run (rng);
+            if (tr != 0) { float pl, pr; panGains (0, false, pl, pr); l += tr * current->transLevel * pl; r += tr * current->transLevel * pr; }
+            if (beat >= 0 && current->takes)
+            {
+                const double now = beat + i * beatInc, secPerBeat = beatInc > 0 ? 1 / (beatInc * sr) : 0;
+                float tk = 0;
+                for (const auto& seg : *current->takes)
+                {
+                    if (now < seg.beat || now >= seg.end || ! seg.audio) continue;
+                    const double pos = (seg.start + (now - seg.beat) * secPerBeat) * seg.audio->rate;
+                    const size_t a = (size_t) std::max (0.0, pos);
+                    if (a + 1 >= seg.audio->data.size()) continue;
+                    const float fr = (float) (pos - std::floor (pos));
+                    tk += seg.audio->data[a] * (1 - fr) + seg.audio->data[a + 1] * fr;
+                }
+                if (fxBus && fxBus->any[15]) { busL[15] += tk; busR[15] += tk; busLevel[15] = takeLevel; }
+                else { float pl, pr; panGains (0, false, pl, pr); l += tk * takeLevel * pl; r += tk * takeLevel * pr; }
+            }
             float chorusIn[3] { 0, 0, 0 };
             for (auto& v : voices)
             {
@@ -900,6 +934,11 @@ public:
                     l += bl * busLevel[c] * chGain[c] * pl;
                     r += br * busLevel[c] * chGain[c] * pr;
                 }
+            if (sweepLeft > 0)
+            {
+                if ((sweepLeft & 31) == 0) { const double t = 1 - (double) sweepLeft / sweepTotal; sweep.lowpass (18000 * std::pow (700.0 / 18000, t), .9, sr); }
+                l = sweep.run (l, 0); r = sweep.run (r, 1); --sweepLeft;
+            }
             l *= .6f * masterGain; r *= .6f * masterGain;    // the master bus
             if (fxBus && fxBus->any[FxBank::master]) fxBus->run (FxBank::master, l, r);
             if (current->roomMix > 0)
@@ -933,7 +972,28 @@ public:
 
     static constexpr float roomGain = .32f;    // matches the page's normalised convolver
 
+public:
+    float takeLevel = 1;
 private:
+    void fireTrans (double now)
+    {
+        if (! current || ! current->trans) return;
+        const auto& L = *current->trans;
+        if (now < lastBeat) transAt = 0;   // looped or moved back
+        while (transAt < L.size() && L[transAt].at <= now)
+        {
+            const auto& e = L[transAt++];
+            if (e.at < now - .05) continue;   // jumped past it
+            if (e.kind == TransEv::sweep) { sweepTotal = sweepLeft = std::max (32, (int) (e.dur * sr)); sweep.reset(); }
+            else if (e.kind == TransEv::snare)
+            {
+                if (current->drumCh >= 0) { auto& v = freeVoice(); v.order = ++counter; v.startDrum (current->kit, 38, e.g0, current->drumCh, current->drumLevel, current->drumPan, sr, rng); rng.next(); }
+            }
+            else for (auto& t : transVoices) if (! t.active) { t.start (e, sr); break; }
+        }
+        lastBeat = now;
+    }
+
     void updateLanes (double beat)
     {
         chGain.fill (1); hasPan.fill (false); masterGain = 1;
@@ -1010,6 +1070,11 @@ private:
     std::array<float, 16> busL {}, busR {}, busLevel {}, busPan {};
     std::array<int, 3> chorusCh { -1, -1, -1 };
     FxBank* fxBus = nullptr;
+    std::array<TransVoice, 8> transVoices;
+    size_t transAt = 0;
+    double lastBeat = -1;
+    int sweepLeft = 0, sweepTotal = 1;
+    Biquad sweep;
     float masterGain = 1;
     std::array<double, 16> bends { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
     std::vector<Event> sorted;

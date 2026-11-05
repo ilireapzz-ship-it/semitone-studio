@@ -107,6 +107,7 @@ void SemitoneProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
             if (pos < 0) pos += len;
             beat = pos + off;
         }
+        synth.takeLevel = takeGain.load();
         synth.process (events, n, L, R, covered ? 0.0f : 1.0f, beat, bpm / 60.0 / sr);
     }
     else if (mode == 2) synth.silence();
@@ -275,6 +276,35 @@ void SemitoneProcessor::setSynthSound (const juce::var& sound, const st::Timelin
                 t->fxList->push_back (std::move (d));
             }
         }
+        if (auto* list = sound.getProperty ("trans", juce::var()).getArray())
+        {
+            t->trans = std::make_shared<std::vector<st::TransEv>>();
+            for (const auto& o : *list)
+            {
+                st::TransEv e;
+                const auto k = o.getProperty ("k", "").toString();
+                e.kind = k == "riser" ? st::TransEv::riser : k == "impact" ? st::TransEv::impact : k == "sweep" ? st::TransEv::sweep : k == "snare" ? st::TransEv::snare : st::TransEv::noise;
+                e.at = (double) o.getProperty ("at", 0.0); e.dur = num (o, "dur", 1); e.f0 = num (o, "f0", 1000); e.f1 = num (o, "f1", 1000); e.g0 = num (o, "g0", .1f); e.g1 = num (o, "g1", .1f); e.q = num (o, "q", 1);
+                const auto fl = o.getProperty ("filter", "bandpass").toString();
+                e.filter = fl == "highpass" ? 1 : fl == "lowpass" ? 2 : 0;
+                t->trans->push_back (e);
+            }
+            std::stable_sort (t->trans->begin(), t->trans->end(), [] (const st::TransEv& a, const st::TransEv& b) { return a.at < b.at; });
+            t->transLevel = num (sound, "transLevel", 1);
+            if (t->trans->empty()) t->trans.reset();
+        }
+        if (auto* list = sound.getProperty ("takes", juce::var()).getArray())
+        {
+            t->takes = std::make_shared<std::vector<st::TakeSeg>>();
+            t->takeFiles.clear();
+            for (const auto& o : *list)
+            {
+                st::TakeSeg g; g.beat = (double) o.getProperty ("beat", 0.0); g.end = g.beat + (double) o.getProperty ("beats", 0.0); g.start = (double) o.getProperty ("start", 0.0);
+                t->takes->push_back (g); t->takeFiles.push_back (o.getProperty ("file", "").toString().toStdString());
+            }
+            if (t->takes->empty()) t->takes.reset();
+        }
+        takeGain = num (sound, "takeLevel", 1);
         if (auto* lanes = sound.getProperty ("fxLanes", juce::var()).getArray())
             for (const auto& o : *lanes)
             {
@@ -330,6 +360,18 @@ void SemitoneProcessor::buildSynthPatch()
         {
             built = std::make_shared<st::SynthPatch> (*tmpl);
             built->buffers.resize (built->parts.size());
+            if (built->takes)
+            {
+                auto segs = std::make_shared<std::vector<st::TakeSeg>> (*built->takes);
+                for (size_t i = 0; i < segs->size() && i < built->takeFiles.size(); ++i)
+                {
+                    const auto& name = built->takeFiles[i];
+                    auto& slot = takeCache[name];
+                    if (slot == nullptr) slot = st::readTake (st::files::takesFolder().getChildFile (juce::String (name)).getFullPathName().toStdString());
+                    (*segs)[i].audio = slot;
+                }
+                built->takes = segs;
+            }
             if (built->fxList)
             {
                 built->fx = st::makeFxBank (*built->fxList, rate);
