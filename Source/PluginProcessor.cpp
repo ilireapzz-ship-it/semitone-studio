@@ -81,7 +81,8 @@ void SemitoneProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
     const int mode = soundMode.load();
     if (mode == 0 || mode == 2)
         for (const auto& e : events)
-            midi.addEvent (juce::MidiMessage (e.status, e.d1, e.d2), e.offset);
+            if (! ((midiMute.load() >> (e.status & 15)) & 1))
+                midi.addEvent (juce::MidiMessage (e.status, e.d1, e.d2), e.offset);
 
     // Semitone's own instruments, rendered by the interface, played on the DAW's timeline
     // (the standalone app plays its sound in the interface itself)
@@ -99,7 +100,14 @@ void SemitoneProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
             if (pos < 0) pos += len;
             covered = clipPlayer.covers (pos + off);
         }
-        synth.process (events, n, L, R, covered ? 0.0f : 1.0f);
+        double beat = -1;
+        if (playing && len > 0)
+        {
+            double pos = std::fmod (ppq, len);
+            if (pos < 0) pos += len;
+            beat = pos + off;
+        }
+        synth.process (events, n, L, R, covered ? 0.0f : 1.0f, beat, bpm / 60.0 / sr);
     }
     else if (mode == 2) synth.silence();
 
@@ -245,6 +253,19 @@ void SemitoneProcessor::setSynthSound (const juce::var& sound, const st::Timelin
             numsInto (k, "open", t->kit.open); numsInto (k, "rim", t->kit.rim); numsInto (k, "crash", t->kit.crash);
         }
         t->bendRange = (float) juce::jlimit (1, 48, tl.bendRange > 0 ? tl.bendRange : 12);
+        if (auto* lanes = sound.getProperty ("lanes", juce::var()).getArray())
+            for (const auto& o : *lanes)
+            {
+                st::Lane k;
+                k.ch = (int) o.getProperty ("ch", -1); k.pan = (bool) o.getProperty ("pan", false);
+                if (auto* p = o.getProperty ("pts", juce::var()).getArray())
+                    for (int i = 0; i + 1 < p->size(); i += 2) k.pts.push_back ({ (double) (*p)[i], (float) (double) (*p)[i + 1] });
+                t->lanes.push_back (std::move (k));
+            }
+        uint32_t mute = 0;
+        if (auto* m = sound.getProperty ("midiMute", juce::var()).getArray())
+            for (const auto& c : *m) mute |= 1u << juce::jlimit (0, 15, (int) c);
+        midiMute = mute;
         const auto r = sound.getProperty ("room", juce::var());
         if (r.isObject())
         {

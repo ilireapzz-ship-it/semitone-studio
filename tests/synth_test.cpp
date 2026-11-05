@@ -305,6 +305,36 @@ int main()
         printf ("ok: rendered sections take over from the engine, and only for their own beats\n");
     }
 
+    // automation lanes: a part's volume and pan follow the song position
+    {
+        Synth sy; sy.prepare (SR);
+        auto pt = std::make_shared<SynthPatch>();
+        PartPatch p; p.ch = 0; p.kind = Kind::voice; p.wave = Wave::sine; p.vol = .2f; p.cutoff = 8000; p.attack = .001f; p.level = 1;
+        pt->parts.push_back (p);
+        Lane vol; vol.ch = 0; vol.pts = { { 0, 1.0f }, { 2, 1.0f }, { 2.001, .25f }, { 4, .25f } };
+        Lane pan; pan.ch = 0; pan.pan = true; pan.pts = { { 0, 0.0f }, { 2, 0.0f }, { 2.001, -1.0f }, { 4, -1.0f } };
+        pt->lanes = { vol, pan };
+        sy.setPatch (pt);
+        const int blk = 480; std::vector<float> L ((size_t) blk), R ((size_t) blk);
+        const double bps = 2.0 / SR;     // 120 BPM
+        double beat = 0; std::vector<Event> ev; Event on {}; on.status = 0x90; on.d1 = 69; on.d2 = 100; on.offset = 0; ev.push_back (on);
+        double a0 = 0, r1 = 0, l1 = 0; int n0 = 0, n1 = 0;
+        while (beat < 3.5)
+        {
+            std::fill (L.begin(), L.end(), 0.f); std::fill (R.begin(), R.end(), 0.f);
+            sy.process (ev, blk, L.data(), R.data(), 1, beat, bps); ev.clear();
+            for (int i = 0; i < blk; ++i)
+            {
+                if (beat > .5 && beat < 1.8) { a0 += L[(size_t) i] * L[(size_t) i]; ++n0; }
+                if (beat > 2.5) { l1 += L[(size_t) i] * L[(size_t) i]; r1 += R[(size_t) i] * R[(size_t) i]; ++n1; }
+            }
+            beat += blk * bps;
+        }
+        const double a1 = std::sqrt (l1 / n1), g = a1 / std::sqrt (a0 / n0), rr = std::sqrt (r1 / n1);
+        if (g < .2 || g > .5 || rr > a1 * .1) { printf ("FAIL lanes: gain %.3f, right %.4f left %.4f\n", g, rr, a1); return 1; }
+        printf ("ok: volume and pan lanes follow the song position\n");
+    }
+
     printf (failures ? "%d synth tests FAILED\n" : "all synth tests passed\n", failures);
     return failures ? 1 : 0;
 }

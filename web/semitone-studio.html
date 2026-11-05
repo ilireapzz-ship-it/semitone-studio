@@ -7140,12 +7140,15 @@ function nativeScope(){ return $('#view-orch')&&!$('#view-orch').hidden?'orch':'
 function nativeSecRange(scope){ if(scope==='song'){ const B=METERS[S.meter].B; let o=0; for(let i=0;i<S.sel;i++) o+=S.song.sections[i].bars*B; return [o,o+S.song.sections[S.sel].bars*B]; } let o=0; for(let i=0;i<O.sel;i++) o+=O.sections[i].bars*4; return [o,o+O.sections[O.sel].bars*4]; }
 function nativeTimeline(){ const scope=nativeScope(), D=dawTracks(scope), [s0,s1]=NATIVE.secOnly?nativeSecRange(scope):[0,D.total], notes=[];
   D.tracks.forEach(t=>{ const r=scope==='song'?MOUT.map.song[t.id]:orchRoute(t.id); if(r&&!r.on) return; const ch=r?r.ch:t.ch;
-    t.notes.forEach(n=>{ if(n.t<s0-1e-6||n.t>=s1-1e-6) return; notes.push(+(n.t-s0).toFixed(4),+Math.max(.02,Math.min(n.d,s1-n.t)).toFixed(4),ch,n.m,n.v); }); });
+    const LY=scope==='song'&&t.id==='chords'?nativeLayers():null; t.notes.forEach(n=>{ if(n.t<s0-1e-6||n.t>=s1-1e-6) return; const st=+(n.t-s0).toFixed(4), du=+Math.max(.02,Math.min(n.d,s1-n.t)).toFixed(4); notes.push(st,du,ch,n.m,n.v); if(LY) LY.at(n.t).forEach(c=>notes.push(st,du,c,n.m,n.v)); }); });
   // melody articulations (glides, scoops, falls, vibrato) as pitch bend: [beat, status, d1, d2, ...]
   const ev=[]; if(scope==='song'){ const r=MOUT.map.song.lead; if(!r||r.on){ const ch=r?r.ch:0; songLeadBends().forEach(x=>{ if(x.beat<s0-1e-6||x.beat>=s1-1e-6) return; ev.push(+(x.beat-s0).toFixed(4),0xE0|ch,x.v&127,(x.v>>7)&127); }); } }
   let sound=null; if(scope==='song'){ try{ sound=nativeSoundInfo(); }catch(e){ console.warn('sound info',e); } }
   return {length:s1-s0,notes,ev,bendRange:BEND_RANGE,scope,offset:s0,sound}; }
 /* the settings of every part, so the plugin's own engine (Source/Synth.h) can play the song without this page */
+function nativeLayers(){ const ids=[...new Set(Object.values(S.secLayer||{}).flat())].slice(0,5), B=METERS[S.meter].B, ch=id=>10+ids.indexOf(id), edges=S.song.sections.map(x=>[x.startBar*B,(x.startBar+x.bars)*B]); return {ids,ch,at:t=>{ const i=edges.findIndex(([a,b])=>t>=a-1e-6&&t<b-1e-6); return ((S.secLayer||{})[i]||[]).filter(x=>ids.includes(x)).map(ch); }}; }
+function nativeLanes(){ const B=METERS[S.meter].B, out=[]; ['lead','chords','bass','drums','master'].forEach(p=>['vol','pan'].forEach(tg=>{ if(p==='master'&&tg==='pan') return; const d=tdef('song',p,tg); if(!d) return; const stat=tg==='vol'?1:(strip('song',p).pan||0), base=tg==='vol'?(staticVal('song',p,'vol')||1):1, pts=[]; S.song.sections.forEach((sc,si)=>{ const A=(S.auto[si]||{})[p], L=A&&A[tg]; if(!L||!L.length) return; const a=sc.startBar*B, b=(sc.startBar+sc.bars)*B, v=x=>{ const r=tV(d,x); return +(tg==='vol'?r/base:r).toFixed(4); }; pts.push(a-.001,stat); L.forEach(q=>pts.push(+(a+q.t).toFixed(4),v(q.v))); pts.push(b-.002,v(L[L.length-1].v),b,stat); }); if(pts.length){ const r=MOUT.map.song[p]; out.push({ch:p==='master'?-1:p==='drums'?(MOUT.map.song.drums?MOUT.map.song.drums.ch:9):(r?r.ch:{lead:0,chords:1,bass:2}[p]),pan:tg==='pan',pts}); } })); return out; }
+function nativeLayerPatch(id,ch,velRef){ const I=INSTR[id], RV=ROLEVOL.pad||.15, base={ch,velRef,level:stripVol('song','chords')*.2,pan:strip('song','chords').pan||0}; let o; if(!I) return null; if(I.kind==='fm') o={kind:'fm',vol:RV}; else if(I.kind==='ana') o={...ANA[id],kind:ANA[id].fam,vol:RV,chorus:ANA[id].ch||'',stereo:!!ANA[id].ch}; else if(I.kind==='voice'){ const q=IVOICE[id]; o={...q,kind:'voice',vol:q.vol*RV/.2,stereo:(q.unison||0)>.02}; } else if(id==='piano') o={kind:'piano',vol:RV,rel:.22}; else o={kind:'pluck',instr:id,vol:RV,rel:id==='pizz'?.08:.35,holdMin:id==='pizz'?0:.4,holdMax:id==='pizz'?.5:0}; delete o.name; return {...o,...base}; }
 function nativeSoundInfo(){ const boost=S.comp==='sustain'?1:1.3, parts=[];
   [['lead',92,0],['chords',74/(.95*boost),1],['bass',92,2]].forEach(([p,velRef,defCh])=>{ const P=S.parts[p], r=MOUT.map.song[p]; if(!P||!P.on||(r&&!r.on)) return;
     const role=PARTS[p].role, RV=ROLEVOL[role]||.15, snd=P.sound, base={ch:r?r.ch:defCh,velRef,level:stripVol('song',p),pan:strip('song',p).pan||0}, id=snd&&snd.startsWith('i:')?snd.slice(2):null, I=id?INSTR[id]:null; let o;
@@ -7156,8 +7159,9 @@ function nativeSoundInfo(){ const boost=S.comp==='sustain'?1:1.3, parts=[];
     else if(I) o={kind:'pluck',instr:id,vol:RV,rel:id==='pizz'?.08:.35,holdMin:id==='pizz'?0:.4,holdMax:id==='pizz'?.5:0};
     else { const q={...SOUNDS[partSound(p)][role],...synthExtra(role)}; o={...q,kind:'voice',stereo:(q.unison||0)>.02}; }
     delete o.name; parts.push({...o,...base}); });
+  const LY=nativeLayers(); LY.ids.forEach(id=>{ const q=nativeLayerPatch(id.slice(2),LY.ch(id),74/(.95*boost)); if(q) parts.push(q); });
   const dr=MOUT.map.song.drums, R=ROOMS[S.room]||ROOMS.off, pol=POLISH[polishOf('song')];
-  return {parts,drums:{ch:dr?dr.ch:9,level:stripVol('song','drums'),pan:strip('song','drums').pan||0,kit:KITS[S.kit]||KITS['808']},
+  return {parts,lanes:nativeLanes(),midiMute:LY.ids.map(LY.ch),drums:{ch:dr?dr.ch:9,level:stripVol('song','drums'),pan:strip('song','drums').pan||0,kit:KITS[S.kit]||KITS['808']},
     room:R.mix?{len:R.len,decay:R.decay,mix:S.roomMix}:null,polish:pol&&pol.hp?{...pol,make:pol.make+(S.polishTrim||0)}:null}; }
 function nativeSync(){ if(!NATIVE.on||!NATIVE.inited||!S.song) return; try{ const tl=nativeTimeline(), k=JSON.stringify(tl); if(k!==NATIVE.lastTl){ NATIVE.lastTl=k; NATIVE.tl=tl; nEmit('st_timeline',tl); } }catch(e){ console.warn('timeline',e); } }
 function songStateJSON(){ return JSON.stringify({v:1,song:projectData(),orch:orchData(),proj:S.project}); }

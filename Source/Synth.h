@@ -71,9 +71,34 @@ struct PolishPatch
 using NoteBuffer = std::vector<float>;
 using NoteBuffers = std::array<const NoteBuffer*, 128>;
 
+// One automation lane: value at song beat, straight lines between points, held at the ends.
+// Volume is a multiplier on the part's level; pan replaces the part's pan. ch -1 = the master bus.
+struct Lane
+{
+    int ch = -1;
+    bool pan = false;
+    std::vector<std::pair<double, float>> pts;
+
+    float at (double beat) const
+    {
+        if (pts.empty()) return pan ? 0.0f : 1.0f;
+        if (beat <= pts.front().first) return pts.front().second;
+        if (beat >= pts.back().first) return pts.back().second;
+        for (size_t i = 1; i < pts.size(); ++i)
+            if (beat <= pts[i].first)
+            {
+                const auto& a = pts[i - 1]; const auto& b = pts[i];
+                const double d = b.first - a.first;
+                return d <= 0 ? b.second : a.second + (b.second - a.second) * (float) ((beat - a.first) / d);
+            }
+        return pts.back().second;
+    }
+};
+
 struct SynthPatch
 {
     std::vector<PartPatch> parts;
+    std::vector<Lane> lanes;
     std::vector<NoteBuffers> buffers;   // one per part (the buffers are owned by the caller's cache)
     int drumCh = -1;
     float drumLevel = 1, drumPan = 0;
@@ -789,7 +814,8 @@ public:
 
     // Audio thread. Mixes into L/R (R may equal L for mono). `audible`: 0..1, ramped across the block;
     // the voices keep running while it is 0, so they are in the right place when it comes back.
-    void process (const std::vector<Event>& events, int n, float* L, float* R, float audible = 1)
+    // `beat`: song position of the block's first sample for the automation lanes, -1 to leave them alone.
+    void process (const std::vector<Event>& events, int n, float* L, float* R, float audible = 1, double beat = -1, double beatInc = 0)
     {
         auto next = std::atomic_load (&pending);
         if (next != current)
@@ -820,6 +846,7 @@ public:
         for (int i = 0; i < n; ++i)
         {
             while (e < sorted.size() && sorted[e].offset <= i) handle (sorted[e++]);
+            if ((i & 31) == 0) updateLanes (beat < 0 ? -1 : beat + i * beatInc);
             float l = 0, r = 0;
             float chorusIn[3] { 0, 0, 0 };
             for (auto& v : voices)
@@ -827,11 +854,12 @@ public:
                 if (! v.active) continue;
                 v.tick (bends[(size_t) (v.ch & 15)]);
                 if (! v.active) continue;
-                if (! v.isDrum && v.p.chorus > 0) { chorusIn[(size_t) (v.p.chorus - 1)] += v.outL * v.p.level; continue; }
+                const int ci = v.ch & 15;
+                if (! v.isDrum && v.p.chorus > 0) { chorusIn[(size_t) (v.p.chorus - 1)] += v.outL * v.p.level * chGain[(size_t) ci]; continue; }
                 float pl, pr;
-                panGains (v.p.pan, v.p.stereo, pl, pr);
-                l += v.outL * v.p.level * pl;
-                r += v.outR * v.p.level * pr;
+                panGains (hasPan[(size_t) ci] ? chPan[(size_t) ci] : v.p.pan, v.p.stereo, pl, pr);
+                l += v.outL * v.p.level * chGain[(size_t) ci] * pl;
+                r += v.outR * v.p.level * chGain[(size_t) ci] * pr;
             }
             for (size_t c = 0; c < 3; ++c)
             {
@@ -839,7 +867,7 @@ public:
                 choruses[c].run (chorusIn[c], cl, cr);
                 l += cl; r += cr;
             }
-            l *= .6f; r *= .6f;                    // the master bus
+            l *= .6f * masterGain; r *= .6f * masterGain;    // the master bus
             if (current->roomMix > 0)
             {
                 float wl, wr;
@@ -872,6 +900,19 @@ public:
     static constexpr float roomGain = .32f;    // matches the page's normalised convolver
 
 private:
+    void updateLanes (double beat)
+    {
+        chGain.fill (1); hasPan.fill (false); masterGain = 1;
+        if (beat < 0 || ! current) return;
+        for (const auto& k : current->lanes)
+        {
+            const float v = k.at (beat);
+            if (k.ch < 0) { if (! k.pan) masterGain = v; }
+            else if (k.pan) { chPan[(size_t) (k.ch & 15)] = v; hasPan[(size_t) (k.ch & 15)] = true; }
+            else chGain[(size_t) (k.ch & 15)] = v;
+        }
+    }
+
     void handle (const Event& e)
     {
         const int type = e.status & 0xF0, ch = e.status & 15;
@@ -929,6 +970,9 @@ private:
     int64_t idle = 0;
     Noise rng;
     std::array<Voice, maxVoices> voices {};
+    std::array<float, 16> chGain { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }, chPan {};
+    std::array<bool, 16> hasPan {};
+    float masterGain = 1;
     std::array<double, 16> bends { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
     std::vector<Event> sorted;
     Room room;

@@ -79,6 +79,7 @@ private:
     std::atomic<double> stStartRequest { -1.0 };
 
     st::ClipPlayer clipPlayer;
+    std::atomic<uint32_t> midiMute { 0 };   // channels that only exist for the built-in engine (section layers)
 public:
     st::TakeRecorder takeRecorder;   // standalone only: the audio input goes here, never to the speakers
 private:
