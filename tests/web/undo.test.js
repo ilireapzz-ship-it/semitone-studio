@@ -10,7 +10,7 @@ const url='file://'+require('path').resolve(__dirname,'../../web/semitone-studio
  const steps=()=>p.evaluate(()=>[H.past.length,H.future.length]);
  const settle=()=>p.evaluate(()=>{ H.quietUntil=0; H.last=null; });
  const changes=[
-  ['style','Changed style',()=>{ $('#styles').querySelectorAll('button')[2].click(); }],
+  ['style','Changed style',()=>{ TL.pick=['genre:rnb']; TL.choices={}; $('#tagUse').click(); }],
   ['key','Changed key',()=>{ const e=$('#keySel'); e.value=String((S.key+3)%12); e.dispatchEvent(new Event('change',{bubbles:true})); }],
   ['mode','Changed mode',()=>{ const e=$('#modeSel'); e.value=[...e.options].find(o=>o.value!==S.mode).value; e.dispatchEvent(new Event('change',{bubbles:true})); }],
   ['time signature','Changed time signature',()=>{ const e=$('#meterSel'); e.value=[...e.options].find(o=>o.value!==S.meter).value; e.dispatchEvent(new Event('change',{bubbles:true})); }],

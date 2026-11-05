@@ -37,6 +37,7 @@ In the HTML, the bridge is the `NATIVE` / `nativeInit()` / `NSND` code (only act
 - It is one big file: patch with exact-string edits; check the last `<script>` with `node --check`.
 - New JS modules go before `/* ---------- routing + boot ---------- */`; CSS before `</style>`.
 - The page must keep working as a plain web page (no `window.__JUCE__`).
+- `data/*.json` are copied into the HTML by `tools/embed_data.py` (run it after any data change; the build fails if you forget). Style tags are `TL` / `tagResolve`: a picked mix becomes one generated style saved as `tags` + `tagChoices` in the song.
 - Undo is one song history (`H`, `histCheck`): it compares `projectData()` + `orchData()` after each settled change, so anything those save is undoable automatically. `pushUndo` / `oPushUndo` only mark a fine note edit as its own step. Give a new setting a label in `histLabel`.
 
 ## The native engine (Source/Synth.h)

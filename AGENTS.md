@@ -15,7 +15,7 @@ You can't open Jamie's claude.ai design canvas or plan doc, so copies are in the
 
 **Suggested order** (each step ships on its own, with tests and a plain-words note for Jamie):
 1. Phase 1 task 1, **undo for every action**: done (`H` / `histCheck` in the HTML, `tests/web/undo.test.js`). A new setting is undoable once it is in `projectData()`.
-2. **Style tags** replace the style picker (Style library steps 1–2): load the JSON, chips, search, blend rules, the
+2. Done for Style library steps 1–3, 6, the Lana eras and genre variants (song-tag filter still to do). **Style tags** replace the style picker (Style library steps 1–2): load the JSON, chips, search, blend rules, the
    "what your tags do" card. Then the new profiles, artist eras and genre variants (steps 3, 7, 29), applying
    `existingStyles` to the original 8 (step 6).
 3. **Producer pass** (25), using `pass`, `fxStyle` and the emotion rules (28).
