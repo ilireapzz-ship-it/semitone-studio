@@ -1260,6 +1260,521 @@
         "c": "low",
         "note": "from a guitar chord site, converted to numerals; check by ear or with the song analyser"
       }
+    ],
+    "cinematic": [
+      {
+        "song": "Time",
+        "artist": "Hans Zimmer",
+        "key": "E minor",
+        "sections": {
+          "theme": "iv i III VII iv"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/hans-zimmer/time",
+        "c": "high",
+        "bpm": 63
+      },
+      {
+        "song": "No Time for Caution",
+        "artist": "Hans Zimmer",
+        "key": "C major",
+        "sections": {
+          "outro": "IV V vi V IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/hans-zimmer/no-time-for-caution---interstellar",
+        "c": "high",
+        "bpm": 63
+      },
+      {
+        "song": "Dream Is Collapsing",
+        "artist": "Hans Zimmer",
+        "key": "G minor",
+        "sections": {
+          "intro": "i VI bIV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/hans-zimmer/dream-is-collapsing-",
+        "c": "high",
+        "bpm": 126
+      },
+      {
+        "song": "The Rock Theme",
+        "artist": "Hans Zimmer",
+        "key": "F minor",
+        "sections": {
+          "theme": "i VI III VII i",
+          "bridge (C minor)": "i iv"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/hans-zimmer/the-rock-theme",
+        "c": "high",
+        "bpm": 124
+      },
+      {
+        "song": "Now We Are Free",
+        "artist": "Hans Zimmer",
+        "key": "F# minor",
+        "sections": {
+          "chorus": "i VI VII i VI",
+          "instrumental": "III VII III VI III"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/hans-zimmer/now-we-are-free",
+        "c": "high",
+        "bpm": 69
+      },
+      {
+        "song": "On the Nature of Daylight",
+        "artist": "Max Richter",
+        "key": "Bb minor",
+        "sections": {
+          "theme": "i v III VI VII"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/max-richter/on-the-nature-of-daylight",
+        "c": "high",
+        "bpm": 61
+      },
+      {
+        "song": "Experience",
+        "artist": "Ludovico Einaudi",
+        "key": "F# minor",
+        "sections": {
+          "theme": "i III v VI"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/ludovico-einaudi/experience",
+        "c": "high",
+        "bpm": 92
+      },
+      {
+        "song": "Skyfall",
+        "artist": "Adele",
+        "key": "C minor",
+        "sections": {
+          "verse": "i VI IV iv",
+          "chorus": "v i VI III iv",
+          "bridge": "i iv V VI III"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/adele/skyfall",
+        "c": "high",
+        "bpm": 76
+      }
+    ],
+    "country": [
+      {
+        "song": "Jolene",
+        "artist": "Dolly Parton",
+        "key": "C# minor",
+        "sections": {
+          "chorus": "i III VII i VII"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/dolly-parton/jolene",
+        "c": "high",
+        "bpm": 110
+      },
+      {
+        "song": "Take Me Home, Country Roads",
+        "artist": "John Denver",
+        "key": "A major",
+        "sections": {
+          "verse": "I vi V IV",
+          "bridge": "vi V I IV I"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/john-denver/take-me-home-country-roads",
+        "c": "high",
+        "bpm": 82
+      },
+      {
+        "song": "Ring of Fire",
+        "artist": "Johnny Cash",
+        "key": "G major",
+        "sections": {
+          "chorus": "V IV I"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/johnny-cash/ring-of-fire",
+        "c": "high",
+        "bpm": 104
+      },
+      {
+        "song": "Jesus, Take the Wheel",
+        "artist": "Carrie Underwood",
+        "key": "A major",
+        "sections": {
+          "chorus": "I V ii I IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/carrie-underwood/jesus-take-the-wheel",
+        "c": "high",
+        "bpm": 77
+      },
+      {
+        "song": "Before He Cheats",
+        "artist": "Carrie Underwood",
+        "key": "F# minor",
+        "sections": {
+          "intro": "i VII VI VII i",
+          "verse": "i VII VI V",
+          "chorus": "VI i",
+          "bridge (A major)": "I V IV V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/carrie-underwood/before-he-cheats",
+        "c": "high",
+        "bpm": 74
+      },
+      {
+        "song": "Our Song",
+        "artist": "Taylor Swift",
+        "key": "D major",
+        "sections": {
+          "verse": "I ii IV V",
+          "bridge": "V ii IV I"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/taylor-swift/our-song",
+        "c": "high",
+        "bpm": 89
+      },
+      {
+        "song": "Whiskey Glasses",
+        "artist": "Morgan Wallen",
+        "key": "F# major",
+        "sections": {
+          "chorus": "I V vi IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/morgan-wallen/whiskey-glasses",
+        "c": "high",
+        "bpm": 150
+      },
+      {
+        "song": "Sand in My Boots",
+        "artist": "Morgan Wallen",
+        "key": "Eb major",
+        "sections": {
+          "intro": "I IV V",
+          "verse": "I IV V I vi",
+          "chorus": "I IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/morgan-wallen/sand-in-my-boots",
+        "c": "high",
+        "bpm": 70
+      },
+      {
+        "song": "You Proof",
+        "artist": "Morgan Wallen",
+        "key": "A major",
+        "sections": {
+          "chorus": "IV vi I"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/morgan-wallen/you-proof",
+        "c": "high",
+        "bpm": 119
+      },
+      {
+        "song": "Fox in the Henhouse",
+        "artist": "Luke Combs",
+        "key": "G major",
+        "sections": {
+          "chorus": "I bVII I V I"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/luke-combs/fox-in-the-henhouse",
+        "c": "high",
+        "bpm": 110
+      },
+      {
+        "song": "The Kind of Love We Make",
+        "artist": "Luke Combs",
+        "key": "Db major",
+        "sections": {
+          "chorus": "I vi"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/luke-combs/the-kind-of-love-we-make",
+        "c": "high",
+        "bpm": 102
+      },
+      {
+        "song": "Starting Over",
+        "artist": "Chris Stapleton",
+        "key": "Bb major",
+        "sections": {
+          "chorus": "vi V I IV V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/chris-stapleton/starting-over",
+        "c": "high",
+        "bpm": 90
+      },
+      {
+        "song": "Cold",
+        "artist": "Chris Stapleton",
+        "key": "C# minor",
+        "sections": {
+          "chorus": "i v iv V i"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/chris-stapleton/cold",
+        "c": "high",
+        "bpm": 118
+      }
+    ],
+    "edm": [
+      {
+        "song": "Levels",
+        "artist": "Avicii",
+        "key": "C# minor",
+        "sections": {
+          "theme": "i III VII VI"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/avicii/levels",
+        "c": "high",
+        "bpm": 127
+      },
+      {
+        "song": "Wake Me Up",
+        "artist": "Avicii",
+        "key": "B minor",
+        "sections": {
+          "verse": "i VI III",
+          "chorus": "i VI III VII i"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/avicii/wake-me-up",
+        "c": "high",
+        "bpm": 124
+      },
+      {
+        "song": "The Nights",
+        "artist": "Avicii",
+        "key": "D# minor",
+        "sections": {
+          "verse": "i VII",
+          "chorus": "VI III VII i VII"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/avicii/the-nights",
+        "c": "high",
+        "bpm": 126
+      },
+      {
+        "song": "Don't You Worry Child",
+        "artist": "Swedish House Mafia",
+        "key": "D major",
+        "sections": {
+          "verse": "vi I vi iii IV",
+          "pre": "V vi I IV I",
+          "chorus": "V vi"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/swedish-house-mafia/dont-you-worry-child",
+        "c": "high",
+        "bpm": 129
+      },
+      {
+        "song": "Save the World",
+        "artist": "Swedish House Mafia",
+        "key": "A minor",
+        "sections": {
+          "chorus": "i III VI i III"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/swedish-house-mafia/save-the-world",
+        "c": "high",
+        "bpm": 127
+      },
+      {
+        "song": "Clarity",
+        "artist": "Zedd",
+        "key": "Ab major",
+        "sections": {
+          "theme": "ii V vi iii IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/zedd/clarity",
+        "c": "high",
+        "bpm": 128
+      },
+      {
+        "song": "Animals",
+        "artist": "Martin Garrix",
+        "key": "F minor",
+        "sections": {
+          "pre": "i III v III v",
+          "drop": "i III"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/martin-garrix/animals",
+        "c": "high",
+        "bpm": 128
+      },
+      {
+        "song": "Strobe",
+        "artist": "deadmau5",
+        "key": "G# minor",
+        "sections": {
+          "theme": "iv VI iv v i"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/deadmau5/strobe",
+        "c": "high",
+        "bpm": 128
+      },
+      {
+        "song": "Summer",
+        "artist": "Calvin Harris",
+        "key": "G major",
+        "sections": {
+          "verse": "IV vi V vi V",
+          "chorus": "IV vi V ii I"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/calvin-harris/summer",
+        "c": "high",
+        "bpm": 128
+      },
+      {
+        "song": "Feel So Close",
+        "artist": "Calvin Harris",
+        "key": "G major",
+        "sections": {
+          "verse": "ii vi I IV",
+          "chorus": "ii IV vi I vi"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/calvin-harris/feel-so-close",
+        "c": "high",
+        "bpm": 128
+      }
+    ],
+    "psych": [
+      {
+        "song": "Let It Happen",
+        "artist": "Tame Impala",
+        "key": "C# minor / F# major",
+        "sections": {
+          "intro": "VI iv v V",
+          "verse": "VI iv v V VI",
+          "chorus (F# major)": "vi IV V I",
+          "bridge": "VI iv v"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/tame-impala/let-it-happen",
+        "c": "high",
+        "bpm": 125
+      },
+      {
+        "song": "The Less I Know the Better",
+        "artist": "Tame Impala",
+        "key": "C# minor / E major",
+        "sections": {
+          "intro": "i VII III v i",
+          "verse": "III v i VII III",
+          "chorus (E major)": "I vi bVII",
+          "bridge": "III v i iv"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/tame-impala/the-less-i-know-the-better",
+        "c": "high",
+        "bpm": 117
+      },
+      {
+        "song": "Feels Like We Only Go Backwards",
+        "artist": "Tame Impala",
+        "key": "F major",
+        "sections": {
+          "verse": "vi V vi II ii",
+          "chorus": "I V ii"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/tame-impala/feels-like-we-only-go-backwards",
+        "c": "high",
+        "bpm": 74
+      },
+      {
+        "song": "The Moment",
+        "artist": "Tame Impala",
+        "key": "F# phrygian / D major",
+        "sections": {
+          "intro (F# phrygian)": "i II VI vii i",
+          "verse": "iii IV I ii iii",
+          "chorus": "I vi iii V vi"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/tame-impala/the-moment",
+        "c": "high",
+        "bpm": 117
+      },
+      {
+        "song": "Kids",
+        "artist": "MGMT",
+        "key": "A major",
+        "sections": {
+          "theme": "vi IV I V",
+          "instrumental": "IV V vi vii I"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/mgmt/kids",
+        "c": "high",
+        "bpm": 123
+      },
+      {
+        "song": "Electric Feel",
+        "artist": "MGMT",
+        "key": "C minor",
+        "sections": {
+          "theme": "i v VI VII i"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/mgmt/electric-feel",
+        "c": "med",
+        "note": "page lists one progression for every section and 3/4; check by ear"
+      },
+      {
+        "song": "Lucy in the Sky with Diamonds",
+        "artist": "The Beatles",
+        "key": "A mixolydian / Bb / G",
+        "sections": {
+          "verse": "I vi iv I vi",
+          "pre (Bb major)": "I II I IV",
+          "chorus (G major)": "I IV V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/the-beatles/lucy-in-the-sky-with-diamonds",
+        "c": "high",
+        "bpm": 127
+      },
+      {
+        "song": "Breathe (In the Air)",
+        "artist": "Pink Floyd",
+        "key": "E dorian / E minor",
+        "sections": {
+          "verse": "i IV",
+          "chorus (E minor)": "VI v bII III VII"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/pink-floyd/breathe-(in-the-air)",
+        "c": "high",
+        "bpm": 64
+      },
+      {
+        "song": "Wish You Were Here",
+        "artist": "Pink Floyd",
+        "key": "E minor / G major",
+        "sections": {
+          "intro": "i III iv III",
+          "verse (G major)": "IV V ii I V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/pink-floyd/wish-you-were-here",
+        "c": "high",
+        "bpm": 113
+      },
+      {
+        "song": "White Rabbit",
+        "artist": "Jefferson Airplane",
+        "key": "F# phrygian",
+        "sections": {
+          "verse": "I II"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/jefferson-airplane/white-rabbit",
+        "c": "med",
+        "bpm": 106,
+        "note": "phrygian I–II vamp (bolero-like build)"
+      },
+      {
+        "song": "Purple Haze",
+        "artist": "Jimi Hendrix",
+        "key": "E dorian",
+        "sections": {
+          "verse": "I III IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/jimi-hendrix/purple-haze",
+        "c": "high",
+        "bpm": 108
+      },
+      {
+        "song": "Light My Fire",
+        "artist": "The Doors",
+        "key": "G# dorian / Db major",
+        "sections": {
+          "verse (G# dorian)": "i ii",
+          "chorus (Db major)": "IV V I"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/the-doors/light-my-fire",
+        "c": "high",
+        "bpm": 128
+      }
     ]
   },
   "existingStyles": {

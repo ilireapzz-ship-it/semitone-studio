@@ -5023,6 +5023,1685 @@
           "Blue Banisters"
         ]
       }
+    },
+    {
+      "id": "cinematic",
+      "kind": "genre",
+      "tags": [
+        "Cinematic"
+      ],
+      "alsoTags": [
+        "mood:cinematic",
+        "vibe:epic trailer"
+      ],
+      "style": {
+        "id": "cinematic",
+        "meter": "4/4",
+        "comp": "arp",
+        "swing": 50,
+        "name": "Cinematic",
+        "lane": "Cinematic",
+        "desc": "Slow minor themes that circle i–VI–III–VII (Time, Now We Are Free), Lydian and chromatic-mediant colour shifts, an ostinato that builds over a long crescendo: piano and strings first, then percussion, brass and choir.",
+        "mode": "aeolian",
+        "key": 4,
+        "bpm": 70,
+        "sevenths": false,
+        "density": 0.3,
+        "leap": 0.3,
+        "register": [
+          48,
+          79
+        ],
+        "sound": "dreamy",
+        "drums": true,
+        "structure": "ballad",
+        "contour": 0.1,
+        "space": 1.8,
+        "mopts": {
+          "chorus": {
+            "shift": 7
+          }
+        },
+        "rhythms": [
+          [
+            1,
+            1,
+            2
+          ],
+          [
+            2,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1.5,
+            0.5,
+            2
+          ],
+          [
+            0.5,
+            0.5,
+            1,
+            2
+          ]
+        ],
+        "bpmRange": [
+          60,
+          126
+        ],
+        "mMajor": {
+          "0": {
+            "0": 1
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "0": 1
+          },
+          "3": {
+            "4": 6
+          },
+          "4": {
+            "5": 6,
+            "3": 6
+          },
+          "5": {
+            "4": 6
+          },
+          "6": {
+            "0": 1
+          }
+        },
+        "mMinor": {
+          "0": {
+            "5": 6,
+            "3": 3,
+            "2": 2,
+            "4": 1
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "6": 3,
+            "5": 2,
+            "4": 1,
+            "3": 1,
+            "0": 1
+          },
+          "3": {
+            "0": 6,
+            "4": 2
+          },
+          "4": {
+            "5": 2,
+            "2": 1,
+            "0": 1
+          },
+          "5": {
+            "2": 3,
+            "3": 3,
+            "0": 2,
+            "6": 2
+          },
+          "6": {
+            "0": 3,
+            "3": 1,
+            "2": 1
+          }
+        },
+        "modeShare": {
+          "major": 0.08,
+          "minor": 0.92
+        },
+        "m": {
+          "0": {
+            "5": 6,
+            "3": 3,
+            "2": 2,
+            "4": 1
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "6": 3,
+            "5": 2,
+            "4": 1,
+            "3": 1,
+            "0": 1
+          },
+          "3": {
+            "0": 6,
+            "4": 2
+          },
+          "4": {
+            "5": 2,
+            "2": 1,
+            "0": 1
+          },
+          "5": {
+            "2": 3,
+            "3": 3,
+            "0": 2,
+            "6": 2
+          },
+          "6": {
+            "0": 3,
+            "3": 1,
+            "2": 1
+          }
+        }
+      },
+      "bass": "held",
+      "groove": "halftime",
+      "kit": "acoustic",
+      "instr": {
+        "chords": "i:strings",
+        "pad": "i:piano",
+        "bass": "i:strings",
+        "lead": "i:strings"
+      },
+      "quirks": "ballad",
+      "feel": {
+        "kick": 0,
+        "snare": 0.01,
+        "hat": 0.006,
+        "jit": 0.004,
+        "vj": 0.08,
+        "ghost": 0,
+        "acc": 0.4
+      },
+      "sug": {
+        "ext": 0.5,
+        "borrow": 0.9,
+        "sec": 0.3,
+        "tri": 0.05,
+        "sus": 0.7
+      },
+      "trans": {
+        "chorus": [
+          "riser",
+          "impact",
+          "sweep"
+        ],
+        "verse": [],
+        "bridge": [
+          "sweep"
+        ],
+        "pre": [
+          "riser"
+        ],
+        "outro": [
+          "down"
+        ]
+      },
+      "art": {
+        "legato": 0.9,
+        "vibLong": 0.7,
+        "scoopStart": 0.1,
+        "fallEnd": 0.2,
+        "slideLeap": 0.2,
+        "ghost": 0,
+        "stacc": 0.1,
+        "accent": 0.3,
+        "grace": 0,
+        "tenuto": 0.5,
+        "info": "Long legato lines, swelling with expression; ostinatos short and even."
+      },
+      "arrangement": {
+        "form": "three acts: sparse setup (piano, pad), escalation (ostinato, percussion, swelling strings), climax (brass, choir, full percussion, sub hits); silence before the biggest hit",
+        "ostinato": "a repeating 8th-note figure (strings or piano) under the theme, as in Time and The Rock",
+        "harmony": "circle a few minor chords; colour shifts like I→iv, i→IV, I→II, and VImaj7–v–i–v7 (Interstellar)"
+      },
+      "mixHint": "Huge hall reverb, wide strings, low end from sub hits not bass; dynamics automated over minutes.",
+      "dna": {
+        "tagline": "a slow theme that grows into a wall of sound",
+        "intro": "Film-score and trailer writing for songs: Zimmer, Richter, Einaudi themes and Bond-style ballads.",
+        "stats": [
+          [
+            "Pieces analysed",
+            "8"
+          ],
+          [
+            "Tempo range",
+            "60–126 BPM"
+          ],
+          [
+            "Harmony",
+            "mostly minor, slow chord changes"
+          ]
+        ],
+        "points": [
+          {
+            "c": "high",
+            "t": "Zimmer's Time loops iv–i–III–VII at 63 BPM; Now We Are Free circles i–VI–VII; Richter's On the Nature of Daylight moves i–v–III–VI–VII.",
+            "used": "chord matrix",
+            "src": [
+              "https://www.hooktheory.com/theorytab/view/hans-zimmer/time",
+              "https://www.hooktheory.com/theorytab/view/max-richter/on-the-nature-of-daylight"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Signature film moves: I→iv (Leia), i→IV (Binary Sun), I→II (E.T.), VImaj7–v–i–v7 (Interstellar), I–♭VI–IV (Man of Steel).",
+            "used": "borrow weights, colour suggestions",
+            "src": [
+              "https://www.hooktheory.com/blog/cinematic-chord-progressions/"
+            ]
+          },
+          {
+            "c": "med",
+            "t": "Trailer cues follow three acts: sparse setup, escalation with rhythmic motifs, climax with brass, choir and sub drops; silence before the biggest hit.",
+            "used": "arrangement.form, transitions",
+            "src": [
+              "https://tonalchaos.pages.dev/blog/what-makes-great-trailer-music/"
+            ]
+          }
+        ]
+      },
+      "songsAnalysed": [
+        {
+          "song": "Time",
+          "key": "E minor",
+          "bpm": 63,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/hans-zimmer/time"
+        },
+        {
+          "song": "No Time for Caution",
+          "key": "C major",
+          "bpm": 63,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/hans-zimmer/no-time-for-caution---interstellar"
+        },
+        {
+          "song": "Dream Is Collapsing",
+          "key": "G minor",
+          "bpm": 126,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/hans-zimmer/dream-is-collapsing-"
+        },
+        {
+          "song": "The Rock Theme",
+          "key": "F minor",
+          "bpm": 124,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/hans-zimmer/the-rock-theme"
+        },
+        {
+          "song": "Now We Are Free",
+          "key": "F# minor",
+          "bpm": 69,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/hans-zimmer/now-we-are-free"
+        },
+        {
+          "song": "On the Nature of Daylight",
+          "key": "Bb minor",
+          "bpm": 61,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/max-richter/on-the-nature-of-daylight"
+        },
+        {
+          "song": "Experience",
+          "key": "F# minor",
+          "bpm": 92,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/ludovico-einaudi/experience"
+        },
+        {
+          "song": "Skyfall",
+          "key": "C minor",
+          "bpm": 76,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/adele/skyfall"
+        }
+      ],
+      "sounds": [
+        "strings",
+        "grand",
+        "choir",
+        "trailerperc",
+        "braam",
+        "omnisphere"
+      ],
+      "fxStyle": {
+        "base": [
+          "long hall reverb",
+          "strings swell by expression",
+          "risers and reverse swells into each act",
+          "silence before the climax hit"
+        ],
+        "byEmotion": {
+          "melancholy": "solo piano and strings only, no percussion",
+          "triumphant": "brass and choir climax, key lift",
+          "tense": "ostinato and low strings, dissonant held notes, sub drops",
+          "hopeful": "major lift (i→IV or I→II) at the climax"
+        },
+        "c": "med"
+      },
+      "variants": [
+        {
+          "id": "emotional",
+          "name": "Emotional (piano and strings)",
+          "set": {
+            "bpm": 66,
+            "kit": "none",
+            "instr": {
+              "chords": "i:piano",
+              "pad": "i:strings"
+            }
+          }
+        },
+        {
+          "id": "epic",
+          "name": "Epic trailer",
+          "set": {
+            "bpm": 120,
+            "kit": "acoustic toms",
+            "instr": {
+              "chords": "i:strings",
+              "lead": "i:probrass"
+            }
+          }
+        }
+      ],
+      "typicalEmotions": [
+        "cinematic",
+        "melancholy",
+        "tense",
+        "triumphant"
+      ]
+    },
+    {
+      "id": "country",
+      "kind": "genre",
+      "tags": [
+        "Country"
+      ],
+      "alsoTags": [
+        "vibe:open road",
+        "instrument:pedal steel"
+      ],
+      "style": {
+        "id": "country",
+        "meter": "4/4",
+        "comp": "strum",
+        "swing": 50,
+        "name": "Country",
+        "lane": "Country",
+        "desc": "Major-key songwriting (I–IV–V, I–V–vi–IV, I–vi) with a few minor story songs (Jolene, Before He Cheats); acoustic and Telecaster guitars, pedal steel answering the vocal, sparse verses and full choruses.",
+        "mode": "ionian",
+        "key": 4,
+        "bpm": 100,
+        "sevenths": false,
+        "density": 0.5,
+        "leap": 0.3,
+        "register": [
+          52,
+          74
+        ],
+        "sound": "pluck",
+        "drums": true,
+        "structure": "pop",
+        "contour": -0.1,
+        "space": 1.1,
+        "mopts": {
+          "chorus": {
+            "shift": 3
+          }
+        },
+        "rhythms": [
+          [
+            1,
+            1,
+            2
+          ],
+          [
+            2,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1.5,
+            0.5,
+            2
+          ],
+          [
+            0.5,
+            0.5,
+            1,
+            2
+          ]
+        ],
+        "bpmRange": [
+          70,
+          150
+        ],
+        "mMajor": {
+          "0": {
+            "3": 6,
+            "4": 4,
+            "5": 3,
+            "1": 1,
+            "6": 1
+          },
+          "1": {
+            "3": 2,
+            "0": 1
+          },
+          "2": {
+            "0": 1
+          },
+          "3": {
+            "0": 6,
+            "4": 4,
+            "5": 1
+          },
+          "4": {
+            "0": 5,
+            "3": 3,
+            "1": 1,
+            "5": 1
+          },
+          "5": {
+            "0": 3,
+            "4": 2,
+            "3": 1
+          },
+          "6": {
+            "0": 1
+          }
+        },
+        "mMinor": {
+          "0": {
+            "6": 6,
+            "5": 5,
+            "2": 2,
+            "4": 2
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "6": 2
+          },
+          "3": {
+            "4": 2
+          },
+          "4": {
+            "0": 4,
+            "3": 2
+          },
+          "5": {
+            "0": 5,
+            "4": 2,
+            "6": 2
+          },
+          "6": {
+            "0": 6,
+            "5": 4
+          }
+        },
+        "modeShare": {
+          "major": 0.75,
+          "minor": 0.25
+        },
+        "m": {
+          "0": {
+            "3": 6,
+            "4": 4,
+            "5": 3,
+            "1": 1,
+            "6": 1
+          },
+          "1": {
+            "3": 2,
+            "0": 1
+          },
+          "2": {
+            "0": 1
+          },
+          "3": {
+            "0": 6,
+            "4": 4,
+            "5": 1
+          },
+          "4": {
+            "0": 5,
+            "3": 3,
+            "1": 1,
+            "5": 1
+          },
+          "5": {
+            "0": 3,
+            "4": 2,
+            "3": 1
+          },
+          "6": {
+            "0": 1
+          }
+        }
+      },
+      "bass": "rootfifth",
+      "groove": "backbeat",
+      "kit": "acoustic",
+      "instr": {
+        "chords": "i:steel",
+        "bass": "i:bassgtr",
+        "lead": "i:steel"
+      },
+      "quirks": "natural",
+      "feel": {
+        "kick": 0,
+        "snare": 0.006,
+        "hat": 0.003,
+        "jit": 0.004,
+        "vj": 0.1,
+        "ghost": 0.1,
+        "acc": 0.3
+      },
+      "sug": {
+        "ext": 0.2,
+        "borrow": 0.3,
+        "sec": 0.4,
+        "tri": 0,
+        "sus": 0.6
+      },
+      "trans": {
+        "chorus": [
+          "rev"
+        ],
+        "verse": [],
+        "bridge": [
+          "sweep"
+        ],
+        "pre": [],
+        "outro": [
+          "down"
+        ]
+      },
+      "art": {
+        "legato": 0.5,
+        "vibLong": 0.4,
+        "scoopStart": 0.45,
+        "fallEnd": 0.35,
+        "slideLeap": 0.35,
+        "ghost": 0.05,
+        "stacc": 0.15,
+        "accent": 0.3,
+        "grace": 0.3,
+        "tenuto": 0.4,
+        "info": "Story-first: clear words, scoops and small cracks into notes, slides on leaps."
+      },
+      "arrangement": {
+        "verses": "sparse verses so the story breathes; full band in the chorus",
+        "fills": "pedal steel or Telecaster licks answer the vocal between lines and in turnarounds, never over words",
+        "bass": "root–fifth (or root–third–fifth) like an upright",
+        "meter": "mostly 4/4; some 3/4 waltzes"
+      },
+      "mixHint": "Vocal front and centre; short plate or room (<1.5 s), slapback 80–120 ms; tape-style warmth; steel high-passed and ducked under the vocal.",
+      "dna": {
+        "tagline": "three chords and the truth, plus pedal steel",
+        "intro": "From classic (Dolly Parton, Johnny Cash, John Denver) to modern Nashville (Morgan Wallen, Luke Combs, Chris Stapleton, Carrie Underwood).",
+        "stats": [
+          [
+            "Songs analysed",
+            "13"
+          ],
+          [
+            "Tempo range",
+            "70–150 BPM"
+          ],
+          [
+            "Harmony",
+            "mostly major; a few minor story songs"
+          ]
+        ],
+        "points": [
+          {
+            "c": "high",
+            "t": "Country Roads (I–vi–V–IV), Our Song (I–ii–IV–V), Whiskey Glasses (I–V–vi–IV), Ring of Fire (V–IV–I); Jolene and Before He Cheats are minor (i–III–VII, i–VII–VI–V).",
+            "used": "chord matrix",
+            "src": [
+              "https://www.hooktheory.com/theorytab/view/john-denver/take-me-home-country-roads",
+              "https://www.hooktheory.com/theorytab/view/dolly-parton/jolene"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Typical instruments: acoustic, electric, steel and resonator guitars, pedal steel, banjo, mandolin, fiddle, harmonica, piano.",
+            "used": "sounds, instruments",
+            "src": [
+              "https://en.wikipedia.org/wiki/Country_music"
+            ]
+          },
+          {
+            "c": "med",
+            "t": "Modern production: close lead vocal with subtle tuning, clean Telecaster, pedal steel fills answering the vocal, short plates and slapback, sparse verses and full choruses.",
+            "used": "mix, arrangement",
+            "src": [
+              "https://output.com/blog/best-plugins-for-modern-country",
+              "https://reverb.com/news/how-to-get-the-nashville-sound-in-your-home-studio"
+            ]
+          }
+        ]
+      },
+      "songsAnalysed": [
+        {
+          "song": "Jolene",
+          "key": "C# minor",
+          "bpm": 110,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/dolly-parton/jolene"
+        },
+        {
+          "song": "Take Me Home, Country Roads",
+          "key": "A major",
+          "bpm": 82,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/john-denver/take-me-home-country-roads"
+        },
+        {
+          "song": "Ring of Fire",
+          "key": "G major",
+          "bpm": 104,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/johnny-cash/ring-of-fire"
+        },
+        {
+          "song": "Jesus, Take the Wheel",
+          "key": "A major",
+          "bpm": 77,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/carrie-underwood/jesus-take-the-wheel"
+        },
+        {
+          "song": "Before He Cheats",
+          "key": "F# minor",
+          "bpm": 74,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/carrie-underwood/before-he-cheats"
+        },
+        {
+          "song": "Our Song",
+          "key": "D major",
+          "bpm": 89,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/taylor-swift/our-song"
+        },
+        {
+          "song": "Whiskey Glasses",
+          "key": "F# major",
+          "bpm": 150,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/morgan-wallen/whiskey-glasses"
+        },
+        {
+          "song": "Sand in My Boots",
+          "key": "Eb major",
+          "bpm": 70,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/morgan-wallen/sand-in-my-boots"
+        },
+        {
+          "song": "You Proof",
+          "key": "A major",
+          "bpm": 119,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/morgan-wallen/you-proof"
+        },
+        {
+          "song": "Fox in the Henhouse",
+          "key": "G major",
+          "bpm": 110,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/luke-combs/fox-in-the-henhouse"
+        },
+        {
+          "song": "The Kind of Love We Make",
+          "key": "Db major",
+          "bpm": 102,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/luke-combs/the-kind-of-love-we-make"
+        },
+        {
+          "song": "Starting Over",
+          "key": "Bb major",
+          "bpm": 90,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/chris-stapleton/starting-over"
+        },
+        {
+          "song": "Cold",
+          "key": "C# minor",
+          "bpm": 118,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/chris-stapleton/cold"
+        }
+      ],
+      "sounds": [
+        "telecaster",
+        "pedalsteel",
+        "guitar12",
+        "banjo",
+        "fiddle",
+        "dobro",
+        "upright"
+      ],
+      "fxStyle": {
+        "base": [
+          "slapback on vocal and Telecaster",
+          "short plate or room",
+          "delay throws at chorus line ends",
+          "steel volume swells"
+        ],
+        "byEmotion": {
+          "heartbroken": "drop to acoustic and voice; steel swells answer each line",
+          "playful": "chicken-pickin Telecaster, train-beat snare, fiddle fills",
+          "nostalgic": "tape saturation, upright bass, brushes",
+          "defiant": "overdriven Telecaster in the chorus, stomping kick"
+        },
+        "c": "med"
+      },
+      "variants": [
+        {
+          "id": "classic",
+          "name": "Classic country (Nashville / Bakersfield)",
+          "set": {
+            "bpm": 104,
+            "groove": "train beat (needs a new groove)",
+            "mix": "mono-ish, plate and tape echo"
+          }
+        },
+        {
+          "id": "modern",
+          "name": "Modern pop-country",
+          "set": {
+            "bpm": 110,
+            "kit": "acoustic + programmed claps",
+            "mix": "pop low end, tight kick and bass"
+          }
+        }
+      ],
+      "typicalEmotions": [
+        "nostalgic",
+        "heartbroken",
+        "hopeful",
+        "playful"
+      ]
+    },
+    {
+      "id": "edm",
+      "kind": "genre",
+      "tags": [
+        "EDM"
+      ],
+      "alsoTags": [
+        "vibe:main stage",
+        "mood:euphoric"
+      ],
+      "style": {
+        "id": "edm",
+        "meter": "4/4",
+        "comp": "stabs",
+        "swing": 50,
+        "name": "EDM / festival house",
+        "lane": "EDM",
+        "desc": "Four-on-the-floor at about 124–130 BPM, minor loops like i–III–VII–VI (Levels) and i–VI–III–VII (Wake Me Up) or bright vi–IV–V–I turns; a build-up of risers, snare rolls and a high-pass sweep, half a bar of silence, then a sidechained supersaw drop.",
+        "mode": "aeolian",
+        "key": 4,
+        "bpm": 128,
+        "sevenths": false,
+        "density": 0.6,
+        "leap": 0.3,
+        "register": [
+          55,
+          79
+        ],
+        "sound": "saw",
+        "drums": true,
+        "structure": "edm",
+        "contour": 0.2,
+        "space": 0.9,
+        "mopts": {
+          "chorus": {
+            "shift": 5
+          }
+        },
+        "rhythms": [
+          [
+            1,
+            1,
+            2
+          ],
+          [
+            2,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1.5,
+            0.5,
+            2
+          ],
+          [
+            0.5,
+            0.5,
+            1,
+            2
+          ]
+        ],
+        "bpmRange": [
+          124,
+          130
+        ],
+        "mMajor": {
+          "0": {
+            "3": 4,
+            "5": 2,
+            "4": 1
+          },
+          "1": {
+            "5": 1,
+            "4": 1,
+            "0": 1,
+            "3": 1
+          },
+          "2": {
+            "3": 2
+          },
+          "3": {
+            "5": 4,
+            "1": 2,
+            "0": 1
+          },
+          "4": {
+            "5": 6,
+            "3": 1,
+            "1": 1
+          },
+          "5": {
+            "4": 6,
+            "0": 5,
+            "2": 2,
+            "1": 1
+          },
+          "6": {
+            "0": 1
+          }
+        },
+        "mMinor": {
+          "0": {
+            "2": 6,
+            "6": 3,
+            "5": 2,
+            "3": 1
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "0": 5,
+            "6": 3,
+            "4": 2,
+            "5": 1
+          },
+          "3": {
+            "5": 1,
+            "4": 1
+          },
+          "4": {
+            "0": 2,
+            "2": 1
+          },
+          "5": {
+            "2": 3,
+            "0": 2,
+            "3": 1
+          },
+          "6": {
+            "0": 4,
+            "5": 2
+          }
+        },
+        "modeShare": {
+          "major": 0.47,
+          "minor": 0.53
+        },
+        "m": {
+          "0": {
+            "2": 6,
+            "6": 3,
+            "5": 2,
+            "3": 1
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "0": 5,
+            "6": 3,
+            "4": 2,
+            "5": 1
+          },
+          "3": {
+            "5": 1,
+            "4": 1
+          },
+          "4": {
+            "0": 2,
+            "2": 1
+          },
+          "5": {
+            "2": 3,
+            "0": 2,
+            "3": 1
+          },
+          "6": {
+            "0": 4,
+            "5": 2
+          }
+        }
+      },
+      "bass": "octave",
+      "groove": "fourfloor",
+      "kit": "electro",
+      "instr": {
+        "chords": "i:junopoly",
+        "bass": "i:probass",
+        "lead": "i:junopluck"
+      },
+      "quirks": "punchy",
+      "feel": {
+        "kick": 0,
+        "snare": 0,
+        "hat": 0,
+        "jit": 0.001,
+        "vj": 0.03,
+        "ghost": 0,
+        "acc": 0.2
+      },
+      "sug": {
+        "ext": 0.3,
+        "borrow": 0.4,
+        "sec": 0.2,
+        "tri": 0,
+        "sus": 0.6
+      },
+      "trans": {
+        "chorus": [
+          "riser",
+          "snareRoll",
+          "silence",
+          "impact",
+          "drop"
+        ],
+        "verse": [
+          "down"
+        ],
+        "bridge": [
+          "sweep"
+        ],
+        "pre": [
+          "riser",
+          "snareRoll"
+        ],
+        "outro": [
+          "down"
+        ]
+      },
+      "art": {
+        "legato": 0.4,
+        "vibLong": 0.3,
+        "scoopStart": 0.1,
+        "fallEnd": 0.1,
+        "slideLeap": 0.1,
+        "ghost": 0,
+        "stacc": 0.5,
+        "accent": 0.4,
+        "grace": 0,
+        "tenuto": 0.3,
+        "info": "Topline: short repeated phrases; the drop hook is often an instrumental lead."
+      },
+      "arrangement": {
+        "form": "intro – breakdown (vocal) – build-up (8 bars) – drop – breakdown – build-up – drop – outro (DJ-friendly 8 or 16-bar ends)",
+        "build": "snare roll doubling in rate, white-noise riser, pitch up, high-pass on the master; half or one bar of silence before the drop",
+        "drop": "supersaw or pluck hook, kick and bass sidechained, the chord loop from the breakdown at full size"
+      },
+      "mixHint": "Kick and bass own the low end; everything else sidechained to the kick; bright, wide, loud.",
+      "dna": {
+        "tagline": "build, silence, drop",
+        "intro": "Progressive and big-room house and festival EDM: Avicii, Swedish House Mafia, Zedd, Martin Garrix, deadmau5, Calvin Harris.",
+        "stats": [
+          [
+            "Tracks analysed",
+            "10"
+          ],
+          [
+            "Tempo",
+            "124–130 BPM (128 typical)"
+          ],
+          [
+            "Harmony",
+            "minor loops and bright vi–IV–V–I"
+          ]
+        ],
+        "points": [
+          {
+            "c": "high",
+            "t": "Levels loops i–III–VII–VI, Wake Me Up i–VI–III–VII, The Nights VI–III–VII–i, Clarity ii–V–vi–iii–IV, Summer IV–vi–V–ii–I; all 124–130 BPM.",
+            "used": "chord matrix, bpm",
+            "src": [
+              "https://www.hooktheory.com/theorytab/view/avicii/levels",
+              "https://www.hooktheory.com/theorytab/view/zedd/clarity"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Electro house sits around 128 BPM; techno and house use four-on-the-floor kicks; big room is built around simple melodies and drops.",
+            "used": "groove, bpm",
+            "src": [
+              "https://en.wikipedia.org/wiki/Electronic_dance_music"
+            ]
+          },
+          {
+            "c": "med",
+            "t": "Build-ups: 8 bars by default; risers, snare rolls that double, filter and pitch automation, a high-pass on the master, a short silence before the drop.",
+            "used": "transitions",
+            "src": [
+              "https://edmprod.com/ultimate-guide-build-ups"
+            ]
+          }
+        ]
+      },
+      "songsAnalysed": [
+        {
+          "song": "Levels",
+          "key": "C# minor",
+          "bpm": 127,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/avicii/levels"
+        },
+        {
+          "song": "Wake Me Up",
+          "key": "B minor",
+          "bpm": 124,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/avicii/wake-me-up"
+        },
+        {
+          "song": "The Nights",
+          "key": "D# minor",
+          "bpm": 126,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/avicii/the-nights"
+        },
+        {
+          "song": "Don't You Worry Child",
+          "key": "D major",
+          "bpm": 129,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/swedish-house-mafia/dont-you-worry-child"
+        },
+        {
+          "song": "Save the World",
+          "key": "A minor",
+          "bpm": 127,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/swedish-house-mafia/save-the-world"
+        },
+        {
+          "song": "Clarity",
+          "key": "Ab major",
+          "bpm": 128,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/zedd/clarity"
+        },
+        {
+          "song": "Animals",
+          "key": "F minor",
+          "bpm": 128,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/martin-garrix/animals"
+        },
+        {
+          "song": "Strobe",
+          "key": "G# minor",
+          "bpm": 128,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/deadmau5/strobe"
+        },
+        {
+          "song": "Summer",
+          "key": "G major",
+          "bpm": 128,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/calvin-harris/summer"
+        },
+        {
+          "song": "Feel So Close",
+          "key": "G major",
+          "bpm": 128,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/calvin-harris/feel-so-close"
+        }
+      ],
+      "sounds": [
+        "supersaw",
+        "pluck",
+        "tb303",
+        "serum",
+        "juno"
+      ],
+      "fxStyle": {
+        "base": [
+          "sidechain pump on everything but kick",
+          "riser + snare roll + master high-pass into each drop",
+          "silence half a bar before the drop",
+          "reverb tails cut at the drop"
+        ],
+        "byEmotion": {
+          "euphoric": "major lift, supersaw chords, long riser",
+          "melancholy": "minor loop, piano breakdown, softer pluck drop (Avicii-style)",
+          "dark": "acid 303 bass, filtered drop, less melody",
+          "nostalgic": "Juno chords and 90s piano stabs"
+        },
+        "c": "med"
+      },
+      "variants": [
+        {
+          "id": "progressive",
+          "name": "Progressive house (melodic)",
+          "set": {
+            "bpm": 128,
+            "lead": "pluck"
+          }
+        },
+        {
+          "id": "bigroom",
+          "name": "Big room",
+          "set": {
+            "bpm": 128,
+            "lead": "percussive lead, minimal melody"
+          }
+        },
+        {
+          "id": "futurebass",
+          "name": "Future bass",
+          "set": {
+            "bpm": 150,
+            "groove": "halftime",
+            "chords": "wobbling supersaw chords"
+          }
+        }
+      ],
+      "typicalEmotions": [
+        "euphoric",
+        "triumphant",
+        "melancholy",
+        "tense"
+      ]
+    },
+    {
+      "id": "psych",
+      "kind": "genre",
+      "tags": [
+        "Psychedelic"
+      ],
+      "alsoTags": [
+        "vibe:kaleidoscope",
+        "mood:dreamy"
+      ],
+      "style": {
+        "id": "psych",
+        "meter": "4/4",
+        "comp": "arp",
+        "swing": 50,
+        "name": "Psychedelic",
+        "lane": "Psychedelic",
+        "desc": "Modal vamps (dorian i–IV, phrygian I–II, mixolydian I–♭VII) and surprising key moves between sections, droning bass, swirling phaser and flanger, backwards sounds, long jams; from 60s psych rock to modern Tame Impala psych-pop.",
+        "mode": "mixolydian",
+        "key": 4,
+        "bpm": 112,
+        "sevenths": true,
+        "density": 0.45,
+        "leap": 0.3,
+        "register": [
+          52,
+          76
+        ],
+        "sound": "dreamy",
+        "drums": true,
+        "structure": "pop",
+        "contour": -0.1,
+        "space": 1.5,
+        "mopts": {
+          "chorus": {
+            "shift": 3
+          }
+        },
+        "rhythms": [
+          [
+            1,
+            1,
+            2
+          ],
+          [
+            2,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            1.5,
+            0.5,
+            2
+          ],
+          [
+            0.5,
+            0.5,
+            1,
+            2
+          ]
+        ],
+        "bpmRange": [
+          64,
+          128
+        ],
+        "mMajor": {
+          "0": {
+            "5": 5,
+            "1": 5,
+            "3": 5,
+            "4": 4
+          },
+          "1": {
+            "0": 6,
+            "5": 2,
+            "2": 1
+          },
+          "2": {
+            "3": 1,
+            "4": 1
+          },
+          "3": {
+            "4": 6,
+            "0": 4
+          },
+          "4": {
+            "0": 4,
+            "5": 4,
+            "1": 2,
+            "3": 1
+          },
+          "5": {
+            "6": 3,
+            "3": 3,
+            "0": 2,
+            "4": 1,
+            "1": 1,
+            "2": 1
+          },
+          "6": {
+            "0": 3
+          }
+        },
+        "mMinor": {
+          "0": {
+            "3": 5,
+            "2": 4,
+            "1": 3,
+            "6": 2,
+            "4": 1
+          },
+          "1": {
+            "0": 3,
+            "2": 1
+          },
+          "2": {
+            "4": 4,
+            "3": 4,
+            "0": 2,
+            "6": 1
+          },
+          "3": {
+            "0": 5,
+            "4": 5,
+            "2": 3
+          },
+          "4": {
+            "5": 6,
+            "0": 4,
+            "1": 1
+          },
+          "5": {
+            "3": 5,
+            "6": 1,
+            "4": 1
+          },
+          "6": {
+            "2": 2,
+            "0": 1,
+            "5": 1
+          }
+        },
+        "modeShare": {
+          "major": 0.56,
+          "minor": 0.44
+        },
+        "m": {
+          "0": {
+            "5": 5,
+            "1": 5,
+            "3": 5,
+            "4": 4
+          },
+          "1": {
+            "0": 6,
+            "5": 2,
+            "2": 1
+          },
+          "2": {
+            "3": 1,
+            "4": 1
+          },
+          "3": {
+            "4": 6,
+            "0": 4
+          },
+          "4": {
+            "0": 4,
+            "5": 4,
+            "1": 2,
+            "3": 1
+          },
+          "5": {
+            "6": 3,
+            "3": 3,
+            "0": 2,
+            "4": 1,
+            "1": 1,
+            "2": 1
+          },
+          "6": {
+            "0": 3
+          }
+        }
+      },
+      "bass": "held",
+      "groove": "backbeat",
+      "kit": "acoustic",
+      "instr": {
+        "chords": "i:junopoly",
+        "bass": "i:bassgtr",
+        "lead": "i:steel"
+      },
+      "quirks": "lofi",
+      "feel": {
+        "kick": 0,
+        "snare": 0.012,
+        "hat": 0.008,
+        "jit": 0.008,
+        "vj": 0.14,
+        "ghost": 0.15,
+        "acc": 0.35
+      },
+      "sug": {
+        "ext": 0.7,
+        "borrow": 0.8,
+        "sec": 0.4,
+        "tri": 0.2,
+        "sus": 0.4
+      },
+      "trans": {
+        "chorus": [
+          "sweep",
+          "rev"
+        ],
+        "verse": [],
+        "bridge": [
+          "sweep",
+          "rev"
+        ],
+        "pre": [
+          "rev"
+        ],
+        "outro": [
+          "down"
+        ]
+      },
+      "art": {
+        "legato": 0.7,
+        "vibLong": 0.4,
+        "scoopStart": 0.3,
+        "fallEnd": 0.3,
+        "slideLeap": 0.3,
+        "ghost": 0.05,
+        "stacc": 0.1,
+        "accent": 0.2,
+        "grace": 0.1,
+        "tenuto": 0.4,
+        "info": "Dreamy, double-tracked, a little detached; falsetto in modern psych-pop."
+      },
+      "arrangement": {
+        "harmony": "vamp on two chords for long stretches; change key or mode between sections (The Less I Know the Better, Lucy in the Sky)",
+        "jams": "extended instrumental sections and solos",
+        "drone": "hold the root under changing chords (tambura, organ, bass)",
+        "fxAsArrangement": "bring in a flanger or phaser sweep mid-song as a section change (Mind Mischief)"
+      },
+      "mixHint": "Heavily compressed, pumping drums; bass rubbery and up front; guitars and synths swirling (phaser, flanger) in big reverbs; tape warmth; backwards effects.",
+      "dna": {
+        "tagline": "modal vamps in a swirling haze",
+        "intro": "From 60s psych rock (The Beatles, Pink Floyd, Hendrix, The Doors, Jefferson Airplane) to modern psych-pop (Tame Impala, MGMT).",
+        "stats": [
+          [
+            "Songs analysed",
+            "12"
+          ],
+          [
+            "Tempo range",
+            "64–128 BPM"
+          ],
+          [
+            "Harmony",
+            "dorian, phrygian and mixolydian vamps, key changes between sections"
+          ]
+        ],
+        "points": [
+          {
+            "c": "high",
+            "t": "Breathe (E dorian i–IV), White Rabbit (F♯ phrygian I–II), Purple Haze (E dorian), Lucy in the Sky (A mixolydian verse, B♭ pre-chorus, G chorus), The Less I Know the Better (C♯ minor verse, E major chorus).",
+            "used": "chord matrix, mode",
+            "src": [
+              "https://www.hooktheory.com/theorytab/view/pink-floyd/breathe-(in-the-air)",
+              "https://www.hooktheory.com/theorytab/view/tame-impala/the-less-i-know-the-better"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Fuzz, wah and feedback guitars; sitar and tambura drones; organ, Mellotron and early synths; backwards tapes, flanging, panning, tape loops, extreme reverb and varispeed; long jams and key or time changes.",
+            "used": "sounds, effects, arrangement",
+            "src": [
+              "https://en.wikipedia.org/wiki/Psychedelic_rock"
+            ]
+          },
+          {
+            "c": "med",
+            "t": "Kevin Parker: drums with heavy vintage compression for pumping; rubbery mid-boosted bass; Juno-106 synths sidechained to the drums with phaser and big hall; double-tracked vocals; effects written in as arrangement.",
+            "used": "kit, mix, fxStyle",
+            "src": [
+              "https://reverbmachine.com/blog/tame-impala-production-tricks",
+              "https://www.audiotechnology.com/features/lonerism-tame-impala-in-the-studio"
+            ]
+          }
+        ]
+      },
+      "songsAnalysed": [
+        {
+          "song": "Let It Happen",
+          "key": "C# minor / F# major",
+          "bpm": 125,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/tame-impala/let-it-happen"
+        },
+        {
+          "song": "The Less I Know the Better",
+          "key": "C# minor / E major",
+          "bpm": 117,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/tame-impala/the-less-i-know-the-better"
+        },
+        {
+          "song": "Feels Like We Only Go Backwards",
+          "key": "F major",
+          "bpm": 74,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/tame-impala/feels-like-we-only-go-backwards"
+        },
+        {
+          "song": "The Moment",
+          "key": "F# phrygian / D major",
+          "bpm": 117,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/tame-impala/the-moment"
+        },
+        {
+          "song": "Kids",
+          "key": "A major",
+          "bpm": 123,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/mgmt/kids"
+        },
+        {
+          "song": "Electric Feel",
+          "key": "C minor",
+          "c": "med",
+          "src": "https://www.hooktheory.com/theorytab/view/mgmt/electric-feel"
+        },
+        {
+          "song": "Lucy in the Sky with Diamonds",
+          "key": "A mixolydian / Bb / G",
+          "bpm": 127,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/the-beatles/lucy-in-the-sky-with-diamonds"
+        },
+        {
+          "song": "Breathe (In the Air)",
+          "key": "E dorian / E minor",
+          "bpm": 64,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/pink-floyd/breathe-(in-the-air)"
+        },
+        {
+          "song": "Wish You Were Here",
+          "key": "E minor / G major",
+          "bpm": 113,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/pink-floyd/wish-you-were-here"
+        },
+        {
+          "song": "White Rabbit",
+          "key": "F# phrygian",
+          "bpm": 106,
+          "c": "med",
+          "src": "https://www.hooktheory.com/theorytab/view/jefferson-airplane/white-rabbit"
+        },
+        {
+          "song": "Purple Haze",
+          "key": "E dorian",
+          "bpm": 108,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/jimi-hendrix/purple-haze"
+        },
+        {
+          "song": "Light My Fire",
+          "key": "G# dorian / Db major",
+          "bpm": 128,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/the-doors/light-my-fire"
+        }
+      ],
+      "sounds": [
+        "juno",
+        "mellotron",
+        "sitar",
+        "fuzzguitar",
+        "eguitar",
+        "b3"
+      ],
+      "fxStyle": {
+        "base": [
+          "phaser and flanger sweeps on guitars and synths",
+          "pumping drum compression",
+          "synths sidechained to the drums",
+          "backwards cymbals and guitars into sections",
+          "tape saturation"
+        ],
+        "byEmotion": {
+          "dreamy": "long reverbs, slow phaser, double-tracked vocal",
+          "playful": "flanger sweeps, panning tricks, varispeed",
+          "dark": "fuzz bass and phrygian vamp, a drone under everything",
+          "euphoric": "four-on-the-floor psych-disco (Let It Happen), filter build"
+        },
+        "c": "med"
+      },
+      "variants": [
+        {
+          "id": "60s",
+          "name": "60s psych rock",
+          "set": {
+            "bpm": 108,
+            "kit": "acoustic",
+            "instr": {
+              "chords": "i:organ",
+              "lead": "fuzz guitar (stand-in steel + drive)"
+            }
+          }
+        },
+        {
+          "id": "modern",
+          "name": "Modern psych-pop (Tame Impala style)",
+          "set": {
+            "bpm": 118,
+            "instr": {
+              "chords": "i:junopoly",
+              "bass": "i:bassgtr"
+            }
+          }
+        }
+      ],
+      "typicalEmotions": [
+        "dreamy",
+        "hazy",
+        "playful",
+        "nostalgic"
+      ]
     }
   ],
   "producers": [
@@ -8037,5 +9716,8 @@
       ]
     },
     "researched": "2026-11-05"
+  },
+  "genreVariants": {
+    "about": "A genre can offer variants (like artist eras): picked as chips under the genre tag. A variant only overrides the fields in \"set\"."
   }
 }

@@ -135,6 +135,17 @@ target look (Start, Song view, Record, Mix). Rules for every one of them:
     handles it, and a vibe suggests tempo, sounds and effects. Show automation as lanes with a one-line "why"
     (design canvas board "7 · Real sounds, emotion and vibe"). Emotion→move rules are Semitone's own (`c: low`): tune them.
 
+### More genres and Jamie's own library (5 Nov 2026)
+29. **New genres:** Cinematic, Country, EDM, Psychedelic (`profiles[]` kind genre, chord data from 8–13 songs each in
+    progressions.json). Each has `variants` (Cinematic: emotional / epic trailer; Country: classic / modern pop-country;
+    EDM: progressive / big room / future bass; Psychedelic: 60s / modern psych-pop) shown as chips under the genre tag,
+    `sounds` (sound-library ids), `fxStyle` (effects and how emotion changes them) and `typicalEmotions`.
+    Engine additions they ask for: train-beat and shuffle grooves (country), snare-roll and silence transitions (EDM),
+    a drone part and phaser/flanger effects (psych), trailer percussion ostinato and sub hits (cinematic).
+30. **Library scan:** `tools/scan_library.py` is the reference (names only, writes to the app-data folder, never
+    uploaded or committed). The desktop app's "Scan my plug-ins" does the same natively; suggestions then show
+    "you own it" with the plug-in and, when a preset name matches the recipe, the preset. Never commit a user's scan.
+
 ### Needs Jamie's decision first: don't start without asking
 24. **Built-in assistant.** A chat panel that sees the whole song and answers "why does the bridge feel weak?"
     or "three alternate chorus melodies in my range". Needs an AI model through an API (internet, running cost).

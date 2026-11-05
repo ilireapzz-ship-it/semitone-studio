@@ -1046,6 +1046,327 @@
       "recipe": {
         "tip": "record clicks, taps, a lighter, a zip; tune and trim to replace the hi-hat"
       }
+    },
+    {
+      "id": "banjo",
+      "name": "Banjo",
+      "kind": "acoustic",
+      "roles": [
+        "picking"
+      ],
+      "character": [
+        "bright",
+        "rolling",
+        "country"
+      ],
+      "usedBy": [],
+      "software": [
+        "a banjo library in Kontakt",
+        "a real banjo"
+      ],
+      "semitoneStandIn": [
+        "i:steel (stand-in)"
+      ],
+      "recipe": {
+        "picking": "forward rolls in 16ths on the chord tones"
+      },
+      "styles": [
+        "country"
+      ]
+    },
+    {
+      "id": "fiddle",
+      "name": "Fiddle",
+      "kind": "acoustic",
+      "roles": [
+        "lead",
+        "fills"
+      ],
+      "character": [
+        "country",
+        "sliding",
+        "folk"
+      ],
+      "usedBy": [],
+      "software": [
+        "a fiddle or solo violin library"
+      ],
+      "semitoneStandIn": [
+        "i:strings (stand-in)"
+      ],
+      "recipe": {
+        "fills": "answer the vocal between lines with slides into the note"
+      },
+      "styles": [
+        "country"
+      ]
+    },
+    {
+      "id": "dobro",
+      "name": "Dobro / resonator guitar",
+      "kind": "acoustic",
+      "roles": [
+        "fills",
+        "slide"
+      ],
+      "character": [
+        "bluesy",
+        "metallic"
+      ],
+      "usedBy": [],
+      "software": [
+        "a resonator guitar library"
+      ],
+      "semitoneStandIn": [
+        "i:steel"
+      ],
+      "recipe": {},
+      "styles": [
+        "country"
+      ]
+    },
+    {
+      "id": "telecaster",
+      "name": "Telecaster (clean, twangy)",
+      "kind": "electric guitar",
+      "roles": [
+        "chicken-pickin",
+        "fills",
+        "chords"
+      ],
+      "character": [
+        "twangy",
+        "snappy",
+        "bright"
+      ],
+      "usedBy": [],
+      "software": [
+        "Guitar Rig (clean amp + compressor)",
+        "a real Tele"
+      ],
+      "semitoneStandIn": [
+        "i:steel (needs a new instrument)"
+      ],
+      "recipe": {
+        "chords": "single-coil bridge pickup, compressor, light slapback",
+        "fills": "double-stops and bends between vocal lines"
+      },
+      "styles": [
+        "country"
+      ]
+    },
+    {
+      "id": "sitar",
+      "name": "Sitar and tambura drone",
+      "kind": "world",
+      "roles": [
+        "drone",
+        "lead"
+      ],
+      "character": [
+        "psychedelic",
+        "Eastern",
+        "droning"
+      ],
+      "usedBy": [],
+      "software": [
+        "a sitar/tambura library",
+        "Omnisphere: search \"sitar\""
+      ],
+      "semitoneStandIn": [
+        "i:steel + held root (stand-in)"
+      ],
+      "recipe": {
+        "drone": "tambura on the root and fifth for the whole section"
+      },
+      "styles": [
+        "psych"
+      ]
+    },
+    {
+      "id": "fuzzguitar",
+      "name": "Fuzz guitar",
+      "kind": "electric guitar",
+      "roles": [
+        "riff",
+        "solo"
+      ],
+      "character": [
+        "psychedelic",
+        "saturated"
+      ],
+      "usedBy": [],
+      "software": [
+        "Guitar Rig (fuzz + amp)",
+        "Decapitator on a clean guitar"
+      ],
+      "semitoneStandIn": [
+        "i:steel + drive"
+      ],
+      "recipe": {},
+      "styles": [
+        "psych"
+      ]
+    },
+    {
+      "id": "tb303",
+      "name": "Roland TB-303",
+      "kind": "analog bass synth",
+      "roles": [
+        "acid bass"
+      ],
+      "character": [
+        "squelchy",
+        "acid"
+      ],
+      "usedBy": [],
+      "software": [
+        "Serum: an acid preset",
+        "Roland Cloud TB-303"
+      ],
+      "semitoneStandIn": [
+        "i:probass"
+      ],
+      "recipe": {
+        "acid bass": "saw, high resonance, accent and slide, cutoff automated"
+      },
+      "styles": [
+        "edm"
+      ]
+    },
+    {
+      "id": "supersaw",
+      "name": "Supersaw lead / chords",
+      "kind": "synth patch",
+      "roles": [
+        "lead",
+        "chords"
+      ],
+      "character": [
+        "huge",
+        "bright",
+        "festival"
+      ],
+      "usedBy": [],
+      "software": [
+        "Serum: supersaw preset",
+        "Sylenth/Spire style supersaws"
+      ],
+      "semitoneStandIn": [
+        "i:junopoly (stand-in)"
+      ],
+      "recipe": {
+        "chords": "7 detuned saws, unison wide, sidechained to the kick"
+      },
+      "styles": [
+        "edm"
+      ]
+    },
+    {
+      "id": "pluck",
+      "name": "Pluck synth",
+      "kind": "synth patch",
+      "roles": [
+        "hook"
+      ],
+      "character": [
+        "clean",
+        "progressive house"
+      ],
+      "usedBy": [],
+      "software": [
+        "Serum",
+        "FL Sytrus / Harmor"
+      ],
+      "semitoneStandIn": [
+        "i:junopluck"
+      ],
+      "recipe": {
+        "hook": "short decay, a touch of delay, the Clarity/Strobe-style motif"
+      },
+      "styles": [
+        "edm"
+      ]
+    },
+    {
+      "id": "choir",
+      "name": "Choir",
+      "kind": "vocal ensemble",
+      "roles": [
+        "pad",
+        "hits"
+      ],
+      "character": [
+        "epic",
+        "sacred"
+      ],
+      "usedBy": [],
+      "software": [
+        "Omnisphere choirs",
+        "a Kontakt choir library"
+      ],
+      "semitoneStandIn": [
+        "i:strings (stand-in)"
+      ],
+      "recipe": {
+        "pad": "wordless \"ah\" on long notes, swelling"
+      },
+      "styles": [
+        "cinematic"
+      ]
+    },
+    {
+      "id": "trailerperc",
+      "name": "Trailer percussion (taiko, toms, hits)",
+      "kind": "percussion",
+      "roles": [
+        "ostinato",
+        "hits"
+      ],
+      "character": [
+        "epic",
+        "driving"
+      ],
+      "usedBy": [],
+      "software": [
+        "Battery 4 / Kontakt epic percussion",
+        "sample packs"
+      ],
+      "semitoneStandIn": [
+        "kit:acoustic toms (stand-in)"
+      ],
+      "recipe": {
+        "ostinato": "low toms in 8ths, accents on beat 1 and the \"and\" of 2"
+      },
+      "styles": [
+        "cinematic"
+      ]
+    },
+    {
+      "id": "braam",
+      "name": "Braam / sub drop / riser",
+      "kind": "sound design",
+      "roles": [
+        "hits",
+        "transitions"
+      ],
+      "character": [
+        "huge",
+        "tense"
+      ],
+      "usedBy": [],
+      "software": [
+        "Omnisphere hits and risers",
+        "sample packs"
+      ],
+      "semitoneStandIn": [
+        "transitions: impact, riser"
+      ],
+      "recipe": {},
+      "styles": [
+        "cinematic",
+        "edm"
+      ]
     }
   ],
   "effects": [
@@ -1415,6 +1736,99 @@
         }
       ],
       "semitone": "needs the stutter effect"
+    },
+    {
+      "id": "phaser",
+      "name": "Phaser",
+      "kind": "modulation",
+      "does": "sweeping notches: swirling, psychedelic",
+      "software": [
+        "Soundtoys PhaseMistress",
+        "FL Fruity Phaser"
+      ],
+      "usedBy": [],
+      "semitone": "—",
+      "automateFor": [
+        "slow sweep on guitars and synths",
+        "enter mid-song as an arrangement move"
+      ]
+    },
+    {
+      "id": "flanger",
+      "name": "Flanger",
+      "kind": "modulation",
+      "does": "jet-plane sweep",
+      "software": [
+        "Melda MFlangerMB",
+        "FL Fruity Flangus"
+      ],
+      "usedBy": [],
+      "semitone": "—",
+      "automateFor": [
+        "one sweep across a whole section"
+      ]
+    },
+    {
+      "id": "sidechain",
+      "name": "Sidechain ducking",
+      "kind": "dynamics",
+      "does": "pads and bass duck to the kick: the EDM pump",
+      "software": [
+        "FL Fruity Limiter (sidechain)",
+        "Gross Beat volume shapes",
+        "any compressor with sidechain"
+      ],
+      "usedBy": [],
+      "semitone": "—",
+      "automateFor": [
+        "deeper in the drop, lighter in the breakdown"
+      ]
+    },
+    {
+      "id": "noiseriser",
+      "name": "White-noise riser",
+      "kind": "sound design",
+      "does": "rising filtered noise into the drop",
+      "software": [
+        "Serum noise oscillator",
+        "FL Fruity Filter on noise"
+      ],
+      "usedBy": [],
+      "semitone": "—",
+      "automateFor": [
+        "8 bars before the drop, filter and volume up, cut half a bar before"
+      ]
+    },
+    {
+      "id": "backwards",
+      "name": "Reverse / backwards tape",
+      "kind": "edit",
+      "does": "reversed cymbals, guitars or vocals",
+      "software": [
+        "any DAW reverse",
+        "Soundtoys Crystallizer (reverse echo)"
+      ],
+      "usedBy": [],
+      "semitone": "—",
+      "automateFor": [
+        "into a new section"
+      ]
+    },
+    {
+      "id": "tapesat",
+      "name": "Tape saturation",
+      "kind": "colour",
+      "does": "warmth and glue",
+      "software": [
+        "UAD Ampex ATR-102",
+        "Soundtoys Decapitator",
+        "Super VHS / Lofinity (lo-fi)"
+      ],
+      "usedBy": [],
+      "semitone": "—",
+      "automateFor": [
+        "on the mix bus for vintage country and psych"
+      ]
     }
   ],
   "automationMoves": [
@@ -2091,6 +2505,117 @@
         "emotions": [
           "euphoric",
           "nostalgic"
+        ]
+      },
+      "Laurel Canyon dusk": {
+        "tempo": "mid",
+        "sounds": [
+          "guitar12",
+          "rhodes",
+          "mellotron"
+        ],
+        "fx": [
+          "tapesat",
+          "tapeecho"
+        ],
+        "emotions": [
+          "nostalgic",
+          "hazy"
+        ]
+      },
+      "honky-tonk night": {
+        "tempo": "mid-fast",
+        "sounds": [
+          "telecaster",
+          "pedalsteel",
+          "upright"
+        ],
+        "fx": [
+          "slapback",
+          "room"
+        ],
+        "emotions": [
+          "playful",
+          "defiant"
+        ]
+      },
+      "open road": {
+        "tempo": "mid",
+        "sounds": [
+          "telecaster",
+          "guitar12",
+          "pedalsteel"
+        ],
+        "fx": [
+          "slapback"
+        ],
+        "emotions": [
+          "hopeful",
+          "nostalgic"
+        ]
+      },
+      "kaleidoscope": {
+        "tempo": "mid",
+        "sounds": [
+          "sitar",
+          "mellotron",
+          "fuzzguitar"
+        ],
+        "fx": [
+          "phaser",
+          "flanger",
+          "backwards"
+        ],
+        "emotions": [
+          "dreamy",
+          "playful"
+        ]
+      },
+      "main stage": {
+        "tempo": "fast",
+        "sounds": [
+          "supersaw",
+          "pluck"
+        ],
+        "fx": [
+          "sidechain",
+          "noiseriser"
+        ],
+        "emotions": [
+          "euphoric",
+          "triumphant"
+        ]
+      },
+      "epic trailer": {
+        "tempo": "mid",
+        "sounds": [
+          "strings",
+          "choir",
+          "trailerperc",
+          "braam"
+        ],
+        "fx": [
+          "vintageverb"
+        ],
+        "emotions": [
+          "cinematic",
+          "tense",
+          "triumphant"
+        ]
+      },
+      "space": {
+        "tempo": "slow",
+        "sounds": [
+          "b3",
+          "grand",
+          "strings"
+        ],
+        "fx": [
+          "vintageverb"
+        ],
+        "emotions": [
+          "cinematic",
+          "lonely"
         ]
       }
     }
