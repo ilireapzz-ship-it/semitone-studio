@@ -24,6 +24,6 @@ node tests/web/regression.test.js
 | `real-sounds.test.js` | suggestions, recipes, scan results shown only from real names, MIDI + note export |
 | `engine-additions.test.js` | swing, shuffle and train grooves, snare roll, silence, accordion, upright bass, Jazz and Country tags use them |
 | `demo-song.test.js` | first launch of the app opens the demo, silently; Space plays the whole song; a saved song or the plugin never gets the demo |
-| `song-doctor.test.js` | hook score reasons, flat section and clash fixes as undo steps, key fit |
+| `song-doctor.test.js` | hook, flat, clash, key fit, style position, why it works, usual habits, describe a change, fill a gap, each one undo step |
 | `undo.test.js` | every kind of change undoes and redoes exactly, labels, no ghost steps, playing song keeps playing, 100-step cap, plugin |
 | `fl-markers.test.js` | Send structure to FL: marker list, setup panel |
