@@ -108,3 +108,29 @@ target look (Start, Song view, Record, Mix). Rules for every one of them:
 ### Needs Jamie's decision first: don't start without asking
 24. **Built-in assistant.** A chat panel that sees the whole song and answers "why does the bridge feel weak?"
     or "three alternate chorus melodies in my range". Needs an AI model through an API (internet, running cost).
+
+## Style library and tags (agreed with Jamie, 5 Nov 2026)
+`data/style-library.json` holds new style profiles and a tag system, researched with sources. Build it in this order:
+1. **Tags replace the style picker.** Kinds: genre, artist, soundtrack & media, composer (base tags), producer
+   (a production layer), mood, era, instrument (modifiers), and "your reference" (a song or album the user owns).
+   The existing 8 styles and the orchestral templates become tags too (`existingTags`). Search box plus chips, like
+   Suno/Udio style tags; the design canvas has the target screen ("5 · Style tags").
+2. **Blend rules** (`blendRules` in the JSON): the first base tag sets the core; more base tags blend in at 0.35;
+   a producer replaces only the production layer (kit, groove, instruments, sound, articulation, mix moves);
+   modifiers apply deltas; conflicts are asked, never silently resolved; a card lists what each tag changed, with Undo.
+3. **New profiles:** artists Chappell Roan, Lady Gaga, Fleetwood Mac, Red Hot Chili Peppers; composer Yann Tiersen
+   (Compose, 3/4 waltz); soundtrack Stranger Things; genre Jazz (swing, with ballad / bossa / waltz variants);
+   producers Jack Antonoff, Max Martin, Finneas, Mike Dean, RedOne; orchestral composer Ramin Djawadi
+   (a new OT template). Each `profiles[]` entry carries every table a style needs (STYLES, STYLE_BASS,
+   STYLE_GROOVE, STYLE_KIT, STYLE_INSTR, STYLE_QUIRKS, STYLE_FEEL, SUGSTYLE, TRANS_STYLE, ARTSTYLE, STYLE_DNA);
+   write a STYLE_MIX entry for each from its `mixHint` and producer `mixMoves`. Load the JSON at build time
+   (tools/wrap_web.py can inline it) or paste it into the HTML; keep one source of truth.
+4. **Engine additions they need:** a swing groove (ride pattern, hi-hat on 2 and 4), an upright-bass and an
+   accordion instrument, AABA and 12-bar blues forms, a stutter-edit effect (post-chorus hooks), a slap-bass
+   articulation, a small found-sound percussion set (Finneas), a synth-solo outro option (Mike Dean). Until one
+   exists, use the stand-in named in the JSON and say so in the style's info.
+5. **Soundtrack library** (`soundtrackLibrary`): media tags map to a profile or a blend of tags; blends are
+   labelled "approximate". **Your reference** (`referenceTag`): the song analyser reads the user's own files
+   locally and keeps only numbers, never audio, melodies, lyrics or MIDI.
+- Rules: profiles describe habits across many songs, never one song; no copied melodies, lyrics or recordings;
+  no voice imitation. Points marked `"c":"low"` are starting guesses: tune them with the song analyser and say so.
