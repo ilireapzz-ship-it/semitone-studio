@@ -795,7 +795,7 @@ body.is-native #timeline .sec,body.is-native #oTimeline .sec{cursor:grab}
 <header class="topbar">
   <div class="wrap">
     <div class="brand"><h1>Semitone Studio</h1><span class="mono">f = 440 · 2<sup>(n−69)/12</sup></span></div>
-    <div class="top-tools"><button class="btn mini-btn" id="libBtn">Library</button><button class="btn mini-btn" id="helpBtn" aria-label="Keyboard shortcuts">?</button></div>
+    <div class="top-tools"><button class="btn mini-btn" id="histUndo" aria-label="Undo">↶ Undo</button><button class="btn mini-btn" id="histRedo" aria-label="Redo">↷ Redo</button><button class="btn mini-btn" id="libBtn">Library</button><button class="btn mini-btn" id="helpBtn" aria-label="Keyboard shortcuts">?</button></div>
     <nav class="tabs" aria-label="Views">
       <a href="#compose" id="tab-compose">Compose</a>
       <a href="#orch" id="tab-orch">Orchestral</a>
@@ -1694,7 +1694,7 @@ function generate(seed,keepSel){
   const sections=list.map(([type,bars,label])=>{ seen[type]=(seen[type]||0)+1;
     const name=label||(SEC[type]+(type==='verse'&&counts.verse>1?' '+seen[type]:''));
     const s={type,bars,name,startBar:bar}; bar+=bars; return s; });
-  S.song={mats,sections,totalBars:bar}; S.versions={}; if(S.trans){ S.trans={}; S.transOwn={}; } invalidateViews(); S.undo=[]; S.redo=[]; S.selNote=null; if($('#undoBtn')) syncUndoBtns();
+  S.song={mats,sections,totalBars:bar}; S.versions={}; if(S.trans){ S.trans={}; S.transOwn={}; } invalidateViews(); S.selNote=null;
   if(!S.beats) buildBeats(STYLE_GROOVE[S.style.id]);
   if(!keepSel||S.sel==null||S.sel>=sections.length){ const v=sections.findIndex(s=>s.type==='verse'); S.sel=v<0?0:v; }
   if(S.smartArt!==false) smartArtAll();
@@ -2055,7 +2055,7 @@ SOUNDS.chip={lead:{type:'square',vol:.09,attack:.005,release:.12,cutoff:6000},pa
 SOUND_LABELS.chip='Chiptune square';
 const PARTS={lead:{name:'Melody',role:'lead'},chords:{name:'Chords',role:'pad'},bass:{name:'Bass',role:'bass'}};
 Object.assign(S,{room:'studio',roomMix:.18,parts:{lead:{on:true,sound:'style',vol:1},chords:{on:true,sound:'style',vol:1},bass:{on:true,sound:'style',vol:1},drums:{on:true,vol:1}},
-  samples:{},kit:'808',fill:true,beats:null,groove:null,beatSel:'verse',snap:.25,lastLen:1,undo:[],selNote:null,rects:[],rl:null});
+  samples:{},kit:'808',fill:true,beats:null,groove:null,beatSel:'verse',snap:.25,lastLen:1,selNote:null,rects:[],rl:null});
 function partSound(p){ const s=S.parts[p].sound; return (s==='style'||!SOUNDS[s])?S.style.sound:s; }
 function playSample(buf,t,dur,vol,rate,rateFrom=null,rtime=0){
   const s=ac.createBufferSource(), g=ac.createGain(); s.buffer=buf; s.playbackRate.setValueAtTime(rateFrom||rate,t); if(rateFrom&&rtime>0) s.playbackRate.exponentialRampToValueAtTime(rate,t+rtime);
@@ -2237,8 +2237,8 @@ function matOfSel(){ return S.song.mats[S.song.sections[S.sel].type]; }
 const VC={}; function viewCached(si){ return VC[si]||(VC[si]=sectionView(si)); } function invalidateViews(){ for(const k in VC) delete VC[k]; if(typeof BRC!=='undefined') BRC.key=null; if(typeof invalidateExpr==='function') invalidateExpr(); }
 const snapB=x=>S.snap?Math.round(x/S.snap)*S.snap:x;
 function snapshotMel(){ return fullSnap(); }
-function pushUndo(snap){ S.undo.push(snap); if(S.undo.length>60) S.undo.shift(); S.redo=[]; syncUndoBtns(); }
-function undoEdit(){ const u=S.undo.pop(); if(!u) return; const back=restoreSnap(u); if(back) S.redo.push(back); S.selNote=null; syncUndoBtns(); invalidateViews(); S.piece=sectionView(S.sel); renderAll(); toast('Undone'); }
+function pushUndo(){ histNote(); }
+
 function refreshAfterEdit(full){ invalidateViews(); S.piece=sectionView(S.sel); if(!S.playing) renderRoll(); if(full){ renderCards(); renderStats(); renderQuirkInfo(); } }
 function rollPos(e){ const r=$('#roll').getBoundingClientRect(); return {x:e.clientX-r.left,y:e.clientY-r.top}; }
 function hitNote(x,y){ for(let i=S.rects.length-1;i>=0;i--){ const q=S.rects[i]; if(x>=q.x-1&&x<=q.x+q.w+1&&y>=q.y-1&&y<=q.y+q.h+1) return q; } return null; }
@@ -2292,7 +2292,6 @@ function initRollEditing(){
   document.addEventListener('keydown',e=>{
     if($('#view-compose').hidden) return; const tg=e.target.tagName; if(tg==='INPUT'||tg==='SELECT'||tg==='TEXTAREA') return;
     if((e.key==='Delete'||e.key==='Backspace')&&S.editLayer!=='chords'&&(S.selNote||S.selSet.size)){ e.preventDefault(); if(S.selSet.size>1) songDelete(); else deleteNote(S.selNote||[...S.selSet][0]); S.selSet=new Set(); selInfo(); }
-    if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'&&!e.shiftKey){ e.preventDefault(); undoEdit(); }
     if(e.code==='Space'&&!(tg==='BUTTON')){ e.preventDefault(); if(S.playing) stopPlay(); else play('section'); }
   });
 }
@@ -2302,7 +2301,6 @@ function initStudio2(){
   $('#kitSel').innerHTML=Object.entries(KITS).map(([k,v])=>`<option value="${k}">${v.name}</option>`).join('');
   $('#snapSel').innerHTML=[['0.25','1/16'],['0.5','1/8'],['1','1/4 (beat)'],[String(1/3),'1/8 triplet'],['0','Off']].map(([v,l])=>`<option value="${v}"${+v===S.snap?' selected':''}>${l}</option>`).join('');
   $('#snapSel').onchange=e=>{S.snap=+e.target.value;};
-  $('#undoBtn').onclick=undoEdit; $('#undoBtn').disabled=true;
   $('#loopOn').onchange=e=>{S.loopOn=e.target.checked; if(S.playing&&S.playMode==='section'){stopPlay();play('section');}};
   $('#ctxOn').onchange=e=>{S.ctxOn=e.target.checked;};
   $('#fromReset').onclick=()=>setPlayFrom(0);
@@ -3691,10 +3689,13 @@ function projectData(){ if(typeof verSync==='function') verSync();
   const parts={}; Object.entries(S.parts).forEach(([k,p])=>parts[k]={on:p.on,vol:p.vol,sound:p.sound==='sample'?'style':p.sound});
   return {v:1,style:S.style.id,key:S.key,mode:S.mode,bpm:S.bpm,sevenths:S.sevenths,density:S.density,leap:S.leap,meter:S.meter,comp:S.comp,swing:S.swing,
     structure:S.structure,structSeed:S.structSeed,seed:S.seed,matrix:S.matrix,mats,sections:S.song.sections.map(s=>[s.type,s.bars,s.name]),beats:S.beats,groove:S.groove,kit:S.kit,fill:S.fill,parts,
-    qOn:S.qOn,q:S.q,qPreset:S.qPreset,sel:S.sel,mix:S.mix,auto:S.auto,smart:S.smart,autoGen:S.autoGen,mixGen:S.mixGen,mixOwn:S.mixOwn,autoNotes:S.autoNotes,moveSalt:S.moveSalt,smartArt:S.smartArt,artSalt:S.artSalt,lyrics:S.lyrics,showLyrics:S.showLyrics,perf:S.perf,energy:S.song.sections.map(s=>s.energy==null?null:s.energy),lift:S.lift,energyOn:S.energyOn,polish:S.polish,polishTrim:S.polishTrim,versions:S.versions,transOn:S.transOn,trans:S.trans,transOwn:S.transOwn};
+    qOn:S.qOn,q:S.q,qPreset:S.qPreset,sel:S.sel,mix:S.mix,auto:S.auto,smart:S.smart,autoGen:S.autoGen,mixGen:S.mixGen,mixOwn:S.mixOwn,autoNotes:S.autoNotes,moveSalt:S.moveSalt,smartArt:S.smartArt,artSalt:S.artSalt,lyrics:S.lyrics,showLyrics:S.showLyrics,perf:S.perf,energy:S.song.sections.map(s=>s.energy==null?null:s.energy),lift:S.lift,energyOn:S.energyOn,polish:S.polish,polishTrim:S.polishTrim,versions:S.versions,transOn:S.transOn,trans:S.trans,transOwn:S.transOwn,room:S.room,roomMix:S.roomMix};
+}
+function applyMats(mats){
+  Object.entries(mats).forEach(([t,m])=>{ const mat=S.song.mats[t]; if(!mat) return; mat.loop=m.loop; if(m.blockBars) mat.blockBars=m.blockBars; if(Array.isArray(m.prog)&&m.prog.length===mat.blockBars){ mat.chords=m.prog.map(chordOf); if(Array.isArray(m.cv)) mat.chords=mat.chords.map((c,i)=>m.cv[i]?customChord(c,m.cv[i]):c); } else { const c4=m.loop.map(c=>chordOf(c)); mat.chords=Array.from({length:mat.blockBars},(_,b)=>c4[b%4]); if(t==='outro') mat.chords[mat.blockBars-1]=makeChord(0); } mat.melody=m.melody.map(n=>({...n})); });
 }
 function applyProject(d){
-  stopPlay();
+  stopPlay(); if(!H.restoring) H.reset=true;
   const st=STYLES.find(x=>x.id===d.style)||STYLES[0]; S.style=st;
   Object.assign(S,{key:d.key,mode:d.mode,bpm:d.bpm,sevenths:d.sevenths,density:d.density,leap:d.leap,meter:METERS[d.meter]?d.meter:'4/4',comp:COMPS[d.comp]?d.comp:'pulse',swing:d.swing||50,structure:d.structure,structSeed:d.structSeed,matrix:d.matrix.map(r=>r.slice())});
   S.kit=KITS[d.kit]?d.kit:'808'; S.fill=!!d.fill; S.groove=d.groove; S.beats=JSON.parse(JSON.stringify(d.beats));
@@ -3705,9 +3706,10 @@ function applyProject(d){
   generate(d.seed,false);
   const cp=x=>JSON.parse(JSON.stringify(x||{})); S.mix=cp(d.mix); S.auto=cp(d.auto); S.autoGen=cp(d.autoGen); S.mixGen=cp(d.mixGen); S.mixOwn=cp(d.mixOwn); S.autoNotes=Array.isArray(d.autoNotes)?d.autoNotes:[]; FXED.song=null; S.lyrics=cp(d.lyrics); S.showLyrics=d.showLyrics!==false; S.perf=Object.assign({bass:'style',voice:true,human:true,vary:true},d.perf||{}); if(typeof perfUI==='function') perfUI();
   S.structure=d.structure;
-  Object.entries(d.mats).forEach(([t,m])=>{ const mat=S.song.mats[t]; if(!mat) return; mat.loop=m.loop; if(m.blockBars) mat.blockBars=m.blockBars; if(Array.isArray(m.prog)&&m.prog.length===mat.blockBars){ mat.chords=m.prog.map(chordOf); if(Array.isArray(m.cv)) mat.chords=mat.chords.map((c,i)=>m.cv[i]?customChord(c,m.cv[i]):c); } else { const c4=m.loop.map(c=>chordOf(c)); mat.chords=Array.from({length:mat.blockBars},(_,b)=>c4[b%4]); if(t==='outro') mat.chords[mat.blockBars-1]=makeChord(0); } mat.melody=m.melody.map(n=>({...n})); });
+  applyMats(d.mats);
   S.versions=d.versions?JSON.parse(JSON.stringify(d.versions)):{}; S.transOn=d.transOn!==false; S.trans=d.trans||{}; S.transOwn=d.transOwn||{}; if($('#transOn')) $('#transOn').checked=S.transOn;
   S.lift=d.lift||0; S.energyOn=d.energyOn!==false; S.polish=POLISH[d.polish]?d.polish:'gentle'; S.polishTrim=d.polishTrim||0; if(typeof finishUI==='function') finishUI(); if(Array.isArray(d.energy)) S.song.sections.forEach((s,i)=>{ if(d.energy[i]!=null) s.energy=d.energy[i]; }); if($('#liftSel')){ $('#liftSel').value=String(S.lift); $('#energyOn').checked=S.energyOn; }
+  if(ROOMS[d.room]){ S.room=d.room; S.roomMix=d.roomMix!=null?d.roomMix:ROOMS[d.room].mix; syncRoom(); }
   invalidateViews(); S.sel=Math.min(d.sel||0,S.song.sections.length-1);
   renderStyles(); syncControls(); renderMixer(); renderQuirks(); selectSection(S.sel);
 }
@@ -3849,7 +3851,7 @@ const OT={
  ]},
 };
 const MELODY_FALLBACK=['v1','fl','hn','ob','cl','tp','vc','pno'];
-const O={tpl:'heroic',ens:'medium',key:2,mode:'ionian',bpm:112,seed:7,char:'heroic',sections:[],parts:[],themes:{},sel:0,var:{},mute:{},solo:null,tall:{},snap:.25,undo:[],selNote:null,playing:false,drafts:true,name:'Untitled cue',id:null};
+const O={tpl:'heroic',ens:'medium',key:2,mode:'ionian',bpm:112,seed:7,char:'heroic',sections:[],parts:[],themes:{},sel:0,var:{},mute:{},solo:null,tall:{},snap:.25,selNote:null,playing:false,drafts:true,name:'Untitled cue',id:null};
 const oNorm=r=>typeof r==='string'?{role:r}:{...r};
 const OQ={maj:[[0,4,7],''],min:[[0,3,7],'m'],dim:[[0,3,6],'dim'],aug:[[0,4,8],'+'],'7':[[0,4,7,10],'7'],maj7:[[0,4,7,11],'maj7'],m7:[[0,3,7,10],'m7'],sus4:[[0,5,7],'sus4'],sus2:[[0,2,7],'sus2'],add9:[[0,4,7,14],'add9'],madd9:[[0,3,7,14],'m(add9)'],'7sus4':[[0,5,7,10],'7sus4'],mM7:[[0,3,7,11],'m(maj7)'],m9:[[0,3,7,10,14],'m9'],maj9:[[0,4,7,11,14],'maj9']};
 function chordAt(sec,b){ const [r,q]=sec.prog[b%sec.prog.length], k=O.key+(sec.keyShift||0), Q=OQ[q]||OQ.maj; return {root:mod(k+r,12),pcs:[...new Set(Q[0].map(x=>mod(k+r+x,12)))],sym:pcName(k+r)+Q[1]}; }
@@ -3941,7 +3943,7 @@ function buildCue(tplId,opts={}){
     Object.entries(s.roles).forEach(([id,v])=>{ const R=oNorm(v); if(R.role==='melody'&&!ens.has(id)){ const fb=MELODY_FALLBACK.find(x=>ens.has(x)&&(!roles[x]||!['melody','double'].includes(roles[x].role))); if(fb) roles[fb]={role:'melody',theme:R.theme||'A'}; } });
     ENSEMBLES[O.ens].ids.forEach(id=>{ if(!roles[id]) roles[id]={role:'rest'}; });
     return {name:s.name,bars:s.bars,dyn:s.dyn,prog:s.prog,lesson:s.lesson,roles,keyShift:s.keyShift||0,baseKeyShift:s.keyShift||0}; });
-  O.parts=O.sections.map(()=>({})); O.sel=0; O.redo=[];
+  O.parts=O.sections.map(()=>({})); O.sel=0;
   O.sections.forEach((_,si)=>prepareSection(si));
   if(opts.drafts!==false) O.sections.forEach((_,si)=>suggestAll(si,true));
   O.autoGen={}; orchSmartAuto();
@@ -3950,8 +3952,8 @@ function buildCue(tplId,opts={}){
 function suggestOne(si,id,bump){ if(bump){ O.var[si]=O.var[si]||{}; O.var[si][id]=(O.var[si][id]||0)+1; } O.parts[si][id]=genPart(si,id); }
 function suggestAll(si,silent){ const sec=O.sections[si]; ROLE_ORDER.forEach(role=>Object.keys(sec.roles).forEach(id=>{ if(sec.roles[id].role===role) suggestOne(si,id,false); })); if(!silent){ renderOrchRows(); renderGuide(); } }
 function oSnapshot(){ return JSON.stringify({si:O.sel,parts:O.parts[O.sel],roles:O.sections[O.sel].roles}); }
-function oPushUndo(snap){ O.undo.push(snap); if(O.undo.length>60) O.undo.shift(); O.redo=[]; syncUndoBtns(); }
-function oUndo(){ const u=O.undo.pop(); if(!u) return; const d=JSON.parse(u); (O.redo=O.redo||[]).push(oSnapAt(d.si)); O.parts[d.si]=d.parts; O.sections[d.si].roles=d.roles; O.sel=d.si; O.selNote=null; syncUndoBtns(); renderOrch(); }
+function oPushUndo(){ histNote(); }
+
 
 /* ----- orchestral sound ----- */
 function orchPlay(id,m,t,dur,vel,pizz){ if(typeof moutOrch==='function'&&moutOrch(id,m,t,dur,vel)) return; return withBus('orch',id,()=>orchPlay0(id,m,t,dur,vel,pizz)); }
@@ -4100,7 +4102,6 @@ function initOrchEditing(){
   host.addEventListener('contextmenu',e=>{ const cv=e.target.closest('.oroll'); if(!cv) return; const id=cv.dataset.id, q=hit(id,pos(e,cv)); if(!q) return; e.preventDefault(); oPushUndo(oSnapshot()); const arr=O.parts[O.sel][id]; arr.splice(arr.indexOf(q.n),1); refreshORow(id); });
   document.addEventListener('keydown',e=>{ if($('#view-orch').hidden) return; const tg=e.target.tagName; if(tg==='INPUT'||tg==='SELECT'||tg==='TEXTAREA') return;
     if((e.key==='Delete'||e.key==='Backspace')&&(O.selNote||O.selSet.size)){ e.preventDefault(); orchDelete(); }
-    if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'&&!e.shiftKey){ e.preventDefault(); oUndo(); }
     if(e.code==='Space'&&tg!=='BUTTON'){ e.preventDefault(); oPlay('section'); } });
 }
 function refreshORow(id){ const row=document.querySelector(`.orow[data-id="${id}"]`); if(row){ row.outerHTML=oRowHTML(id); requestAnimationFrame(()=>drawORoll(id)); } renderGuide(); renderOTimeline(); scoreDirty(); }
@@ -4115,7 +4116,7 @@ async function saveOrch(){ const name=($('#oName').value.trim()||'Untitled cue')
   const data=JSON.stringify({weird:O.weird,tpl:O.tpl,ens:O.ens,key:O.key,mode:O.mode,bpm:O.bpm,seed:O.seed,char:O.char,sections:O.sections,parts:O.parts,themes:O.themes,var:O.var,mute:O.mute,solo:O.solo,famMute:O.famMute||{},famSolo:O.famSolo||{},mix:O.mix||{},autoGen:O.autoGen||{},smartAuto:O.smartAuto!==false,mixGen:O.mixGen||{},mixOwn:O.mixOwn||{},autoNotes:O.autoNotes||[],moveSalt:O.moveSalt||0});
   const w=await putDoc(id,{name,updated:Date.now(),data},'ss_orch'); OPROJ.list[id]={name,updated:Date.now()}; renderOProjBar(); toast(`Saved “${name}”`+(w==='account'?' to your account':' in this browser')); }
 async function openOrch(id){ if(!id) return; let rec=null; if(Store.db){ try{ const d=await Store.db.collection('data/users/'+Store.uid).doc(id).get(); if(d.exists) rec=d.data(); }catch(e){} } if(!rec) rec=lsGet('ss_orch')[id];
-  if(!rec){ toast('That cue couldn’t be opened'); return; } try{ oStop(); Object.assign(O,{mix:{},mixGen:{},mixOwn:{},autoGen:{},autoNotes:[],famMute:{},famSolo:{}},JSON.parse(rec.data),{id,name:rec.name,sel:0,undo:[],selNote:null,selSet:new Set(),playFrom:0}); FXED.orch=null; renderOrch(); toast(`Opened “${rec.name}”`); }catch(e){ toast('That cue is damaged'); } $('#oOpen').value=''; }
+  if(!rec){ toast('That cue couldn’t be opened'); return; } try{ oStop(); Object.assign(O,{mix:{},mixGen:{},mixOwn:{},autoGen:{},autoNotes:[],famMute:{},famSolo:{}},JSON.parse(rec.data),{id,name:rec.name,sel:0,selNote:null,selSet:new Set(),playFrom:0}); FXED.orch=null; renderOrch(); toast(`Opened “${rec.name}”`); }catch(e){ toast('That cue is damaged'); } $('#oOpen').value=''; }
 function initOrch(){
   $('#oEns').innerHTML=Object.entries(ENSEMBLES).map(([k,v])=>`<option value="${k}">${v.name}</option>`).join('');
   $('#oKey').innerHTML=PC.map((n,i)=>`<option value="${i}">${n}</option>`).join('');
@@ -4309,7 +4310,7 @@ function arrangeSongForOrchestra(){
   stopPlay(); oStop();
   const charMap={sadcore:'sad',anthem:'heroic',rnb:'explore',folk:'whimsy',darkpop:'dark',synth:'epic',disco:'whimsy',soul:'sad'};
   const ch=charMap[S.style.id]||(['ionian','lydian','mixolydian'].includes(S.mode)?'heroic':'sad');
-  Object.assign(O,{tpl:'song',char:ch,key:S.key,mode:S.mode,bpm:S.bpm,seed:O.nextSeed||S.seed||7,var:{},undo:[],redo:[],selNote:null,id:null,
+  Object.assign(O,{tpl:'song',char:ch,key:S.key,mode:S.mode,bpm:S.bpm,seed:O.nextSeed||S.seed||7,var:{},selNote:null,id:null,
     name:((S.project.name&&S.project.name!=='Untitled song')?S.project.name:S.style.name)+' (orchestral)'});
   const ens=new Set(ENSEMBLES[O.ens].ids), r=mulberry(O.seed); O.themes={A:makeTheme(ch,r),B:makeTheme(ch,r)};
   const plan={intro:{dyn:'p',roles:{hp:'arp',va:'harmony',v2:'harmony',vc:'bass',cel:'arp'}},
@@ -4353,11 +4354,10 @@ function cueToTracks(){
 function plFromCue(){ if(!O.sections.length){ toast('Build a cue in the Orchestral tab first'); return; } loadPlaySource(cueToTracks(),'Orchestral cue'); }
 
 /* ---------- redo ---------- */
-S.redo=[]; O.redo=[];
-function redoEdit(){ const u=S.redo.pop(); if(!u) return; const back=restoreSnap(u); if(!back) return; S.undo.push(back); S.selNote=null; syncUndoBtns(); invalidateViews(); S.piece=sectionView(S.sel); renderAll(); toast('Redone'); }
-function syncUndoBtns(){ if($('#undoBtn')) $('#undoBtn').disabled=!S.undo.length; if($('#redoBtn')) $('#redoBtn').disabled=!S.redo.length; if($('#oUndo')) $('#oUndo').disabled=!O.undo.length; if($('#oRedo')) $('#oRedo').disabled=!(O.redo&&O.redo.length); }
-function oSnapAt(si){ return JSON.stringify({si,parts:O.parts[si],roles:O.sections[si].roles}); }
-function oRedo(){ const u=O.redo.pop(); if(!u) return; const d=JSON.parse(u); O.undo.push(oSnapAt(d.si)); O.parts[d.si]=d.parts; O.sections[d.si].roles=d.roles; O.sel=d.si; O.selNote=null; syncUndoBtns(); renderOrch(); }
+
+
+
+
 
 /* ---------- library ---------- */
 const LIB={tab:'songs',q:'',renaming:null,armed:null};
@@ -4415,14 +4415,14 @@ function autosave(){ if(!S.song||S.rendering) return; try{ const song=JSON.strin
 function checkAutosave(){ let a=null; try{ a=JSON.parse(localStorage.getItem('ss_autosave')||'null'); }catch(e){}
   if(!a||!a.at||Date.now()-a.at>14*864e5) return;
   $('#restoreBar').hidden=false; $('#restoreText').textContent=`Unsaved work from ${new Date(a.at).toLocaleString([], {dateStyle:'medium',timeStyle:'short'})} was kept in this browser.`;
-  $('#restoreYes').onclick=()=>{ try{ applyProject(JSON.parse(a.song)); S.project=a.proj||{id:null,name:'Restored song'}; renderProjectBar(); const od=JSON.parse(a.orch); if(od.sections&&od.sections.length){ Object.assign(O,od,{sel:0,undo:[],redo:[],selNote:null}); renderOrch(); } toast('Restored your last session'); }catch(e){ toast('That session couldn’t be restored'); } $('#restoreBar').hidden=true; };
+  $('#restoreYes').onclick=()=>{ try{ applyProject(JSON.parse(a.song)); S.project=a.proj||{id:null,name:'Restored song'}; renderProjectBar(); const od=JSON.parse(a.orch); if(od.sections&&od.sections.length){ Object.assign(O,od,{sel:0,selNote:null}); renderOrch(); } toast('Restored your last session'); }catch(e){ toast('That session couldn’t be restored'); } $('#restoreBar').hidden=true; };
   $('#restoreNo').onclick=()=>{ $('#restoreBar').hidden=true; }; }
 
 /* ---------- help ---------- */
 const HELP=[
- ['Anywhere',[['?','Show this help'],['Esc','Close a window']]],
- ['Compose',[['Space','Play or stop the section'],['Ctrl/⌘ + Z','Undo a note edit'],['Ctrl/⌘ + Shift + Z or Ctrl + Y','Redo'],['Delete','Remove the selected note'],['Double-click','Add a note'],['Right-click','Delete a note'],['Drag a note’s right edge','Change its length'],['Click the strip above the notes','Choose where playback starts'],['Drag on empty space','Select several notes (Shift adds)'],['Ctrl/⌘ + C / X / V / D','Copy, cut, paste at the playhead, duplicate'],['Ctrl/⌘ + A','Select all notes'],['Arrow keys','Nudge selected notes (Shift: octave)'],['Alt/⌥ + click a note, or ✂ Slice','Cut a note in two'],['Ctrl/⌘ + E','Slice selected notes at the playhead'],['Edit chords','Revoice chords: drag chord notes, double-click to add, Delete to remove']]],
- ['Orchestral',[['Space','Play or stop the section'],['Ctrl/⌘ + Z / Shift + Z','Undo / redo'],['Delete, double-click, right-click','Edit notes, as in Compose'],['Drag on empty roll space','Select several notes, across instruments'],['Ctrl/⌘ + C / V / D','Copy, paste at the playhead (into the last-clicked instrument), duplicate'],['Arrow keys','Nudge selected notes'],['Click the bar ruler','Choose where playback starts'],['Family M / S','Mute or solo a whole section bus']]],
+ ['Anywhere',[['?','Show this help'],['Esc','Close a window'],['Ctrl/⌘ + Z','Undo the last change to the song, whichever tab it was made in'],['Ctrl/⌘ + Shift + Z or Ctrl + Y','Redo']]],
+ ['Compose',[['Space','Play or stop the section'],['Delete','Remove the selected note'],['Double-click','Add a note'],['Right-click','Delete a note'],['Drag a note’s right edge','Change its length'],['Click the strip above the notes','Choose where playback starts'],['Drag on empty space','Select several notes (Shift adds)'],['Ctrl/⌘ + C / X / V / D','Copy, cut, paste at the playhead, duplicate'],['Ctrl/⌘ + A','Select all notes'],['Arrow keys','Nudge selected notes (Shift: octave)'],['Alt/⌥ + click a note, or ✂ Slice','Cut a note in two'],['Ctrl/⌘ + E','Slice selected notes at the playhead'],['Edit chords','Revoice chords: drag chord notes, double-click to add, Delete to remove']]],
+ ['Orchestral',[['Space','Play or stop the section'],['Delete, double-click, right-click','Edit notes, as in Compose'],['Drag on empty roll space','Select several notes, across instruments'],['Ctrl/⌘ + C / V / D','Copy, paste at the playhead (into the last-clicked instrument), duplicate'],['Arrow keys','Nudge selected notes'],['Click the bar ruler','Choose where playback starts'],['Family M / S','Mute or solo a whole section bus']]],
  ['Play along',[['A S D F G H J K L ; \'','White keys'],['W E T Y U O P','Black keys'],['Z / X','Octave down / up'],['Space','Play or pause']]],
  ['Read music',[['A to G','Answer the note-reading trainer']]],
  ['Ear training',[['Space or R','Play the question again'],['1 to 9','Pick an answer'],['Enter or N','Next question']]],
@@ -4430,7 +4430,6 @@ const HELP=[
 function openHelp(){ $('#helpBody').innerHTML=HELP.map(([g,rows])=>`<div class="help-g"><h3>${g}</h3>${rows.map(([k,d])=>`<div class="help-r"><kbd>${esc(k)}</kbd><span>${esc(d)}</span></div>`).join('')}</div>`).join(''); $('#helpModal').hidden=false; }
 
 function initB3(){
-  $('#redoBtn').onclick=redoEdit; $('#oRedo').onclick=oRedo; syncUndoBtns();
   $('#libBtn').onclick=()=>openLibrary(); $('#helpBtn').onclick=openHelp;
   document.querySelectorAll('[data-close]').forEach(b=>b.onclick=closeModals);
   document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{ if(e.target===m) closeModals(); }));
@@ -4442,7 +4441,7 @@ function initB3(){
   document.addEventListener('keydown',e=>{ const tg=e.target.tagName; const typing=tg==='INPUT'&&e.target.type==='text'||tg==='TEXTAREA';
     if(e.key==='Escape'&&(!$('#libModal').hidden||!$('#helpModal').hidden)){ closeModals(); return; }
     if(e.key==='?'&&!typing){ e.preventDefault(); $('#helpModal').hidden?openHelp():closeModals(); }
-    if(!typing&&(e.ctrlKey||e.metaKey)&&((e.key.toLowerCase()==='z'&&e.shiftKey)||e.key.toLowerCase()==='y')){ e.preventDefault(); e.stopImmediatePropagation(); if(!$('#view-orch').hidden) oRedo(); else if(!$('#view-compose').hidden) redoEdit(); } },true);
+ },true);
   setInterval(autosave,20000); window.addEventListener('pagehide',autosave);
   checkAutosave();
 }
@@ -5395,8 +5394,6 @@ function afterSmart(){ renderStrips('song'); syncAutoSelects(); drawLanes('song'
 
 /* ---------- chord lane: drag to move, drag the edge to lengthen, change length of the section ---------- */
 function fullSnap(){ const m=matOfSel(); return {type:m.type||S.song.sections[S.sel].type,mel:m.melody.map(n=>({...n})),ch:m.chords.map(codeOf),cv:m.chords.map(c=>c.custom?c.custom.slice():null),bb:m.blockBars,bars:S.song.sections.map(s=>s.bars)}; }
-function restoreSnap(u){ const m=S.song.mats[u.type]; if(!m) return null; const back={type:u.type,mel:m.melody.map(n=>({...n})),ch:m.chords.map(codeOf),cv:m.chords.map(c=>c.custom?c.custom.slice():null),bb:m.blockBars,bars:S.song.sections.map(s=>s.bars)};
-  m.melody=u.mel; if(u.ch){ m.blockBars=u.bb; m.chords=u.ch.map((c,i)=>u.cv&&u.cv[i]?customChord(chordOf(c),u.cv[i]):chordOf(c)); m.loop=loopOf(u.ch); if(u.bars&&u.bars.length===S.song.sections.length) S.song.sections.forEach((s,i)=>s.bars=u.bars[i]); recomputeStarts(); } return back; }
 function loopOf(D){ const out=[]; for(let i=0;i<4;i++) out.push(D[i%D.length]); return out; }
 function recomputeStarts(){ let bar=0; S.song.sections.forEach(s=>{ s.startBar=bar; bar+=s.bars; }); S.song.totalBars=bar; }
 function chordsChanged(msg,lengthChanged){ invalidateViews(); S.piece=sectionView(S.sel); S.playFrom=Math.min(S.playFrom||0,Math.max(0,S.piece.bars*METERS[S.meter].B-.25)); if(lengthChanged&&S.smart) smartMix(); renderAll(); if($('#fromInfo')) fromLabel(); if(msg) toast(msg); }
@@ -6700,7 +6697,7 @@ function saUseInSection(){ const mat=matOfSel(), bl=mat.blockBars, snap=fullSnap
 function saNewSong(){ const R=SA.res; S.bpm=R.bpm; $('#bpm').value=R.bpm; $('#bpm').dispatchEvent(new Event('input')); S.mode=R.key.mode==='major'?'ionian':'aeolian'; $('#modeSel').value=S.mode; $('#modeSel').dispatchEvent(new Event('change')); $('#keySel').value=String(R.key.pc); $('#keySel').dispatchEvent(new Event('change'));
   const {groups,cnt}=barPatterns(R.bars.filter(b=>!b.nc)), sorted=Object.entries(cnt).sort((a,b)=>b[1]-a[1]).map(x=>x[0]), vIdx=0, verse=groups[vIdx]||sorted[0], chorus=sorted.find(g=>g!==verse)||verse;
   const fill=(type,g)=>{ const mat=S.song.mats[type]; if(!mat||!g) return; const syms=g.split(' '), bars=syms.map(sy=>R.bars.find(b=>b.sym===sy)); mat.chords=Array.from({length:mat.blockBars},(_,i)=>chordOf(saCode(bars[i%bars.length]))); mat.loop=loopOf(mat.chords.map(codeOf)); mat.melody=bestMelody(mat.chords,mo(type),type,brainCtx(S.song.mats)); };
-  fill('verse',verse); fill('chorus',chorus); if(S.song.mats.pre) fill('pre',sorted[2]||verse); S.undo=[]; invalidateViews(); S.piece=sectionView(S.sel); if(S.smartArt!==false) smartArtAll(); renderAll(); toast(`New song in ${keyLabel(R.key)} at ${R.bpm} BPM: verse ${verse}, chorus ${chorus}. Fresh melodies written over them.`); location.hash='#compose'; }
+  fill('verse',verse); fill('chorus',chorus); if(S.song.mats.pre) fill('pre',sorted[2]||verse); invalidateViews(); S.piece=sectionView(S.sel); if(S.smartArt!==false) smartArtAll(); renderAll(); toast(`New song in ${keyLabel(R.key)} at ${R.bpm} BPM: verse ${verse}, chorus ${chorus}. Fresh melodies written over them.`); location.hash='#compose'; }
 function saMakeLane(){ const R=SA.res, {groups}=barPatterns(R.bars.filter(b=>!b.nc)), uniq=[...new Set(groups)].slice(0,12); openBuilder(null); $('#bName').value=('Learned: '+SA.name.replace(/\.[^.]+$/,'')).slice(0,40); $('#bKey').value=R.key.pc; $('#bMode').value=R.key.mode==='major'?'ionian':'aeolian'; $('#bBpm').value=Math.max(60,Math.min(150,R.bpm)); $('#bProg').value=uniq.join('\n'); builderReport(); toast('Check the lane, then press Create lane'); }
 async function saLoad(file){ ensureAudio(); const out=$('#saOut'); out.innerHTML='<p class="qhint" id="saProg">Reading…</p>'; try{ const buf=await ac.decodeAudioData(await file.arrayBuffer()); SA.buf=buf; SA.name=file.name; KD.file=[...chromaOfBuffer(buf)]; KD.src='file'; renderKeyBox();
     SA.res=await analyseSong(buf,t=>{ const p=$('#saProg'); if(p) p.textContent=t; }); renderSA(); }catch(e){ console.warn(e); out.innerHTML='<p class="qhint">Couldn’t read that audio file.</p>'; } }
@@ -7058,7 +7055,7 @@ function initNativeFiles(){
     let parsed=null; try{ parsed=JSON.parse(d.json); }catch(e){} if(!parsed||!parsed.song){ toast('That file isn’t a Semitone song'); return; }
     stopPlay(); nativeRestore(d.json,'file'); S.project={...(parsed.proj||{}),id:null,name:d.name}; NATIVE.songFile=d.path; renderProjectBar(); NATIVE.fileState=songStateJSON(); nativeSaveState(); toast(`Opened ${d.name}`); });
 }
-function nativeRestore(json,from){ try{ const d=JSON.parse(json); if(d.song) applyProject(d.song); if(d.proj) { S.project=d.proj; renderProjectBar(); } if(d.orch&&d.orch.sections&&d.orch.sections.length){ Object.assign(O,d.orch,{sel:0,undo:[],redo:[],selNote:null,selSet:new Set(),playFrom:0}); renderOrch(); } NATIVE.lastState=''; if($('#restoreBar')) $('#restoreBar').hidden=true; if(from!=='file') toast(NATIVE.plugin?'Song restored from your '+(NATIVE.host||'DAW')+' project':'Welcome back: your last song is open'); }catch(e){ console.warn('restore',e); } }
+function nativeRestore(json,from){ try{ const d=JSON.parse(json); if(d.song) applyProject(d.song); if(d.proj) { S.project=d.proj; renderProjectBar(); } if(d.orch&&d.orch.sections&&d.orch.sections.length){ Object.assign(O,d.orch,{sel:0,selNote:null,selSet:new Set(),playFrom:0}); renderOrch(); } NATIVE.lastState=''; if($('#restoreBar')) $('#restoreBar').hidden=true; if(from!=='file') toast(NATIVE.plugin?'Song restored from your '+(NATIVE.host||'DAW')+' project':'Welcome back: your last song is open'); }catch(e){ console.warn('restore',e); } }
 function nativeHost(h){ NATIVE.hs=h; const bar=$('#nativeBar'); if(!bar) return; const tl=NATIVE.tl;
   const st=$('#nbState'); if(st) st.textContent=NATIVE.plugin?(h.playing?`▶ playing · ${Math.round(h.bpm)} BPM`:`stopped · ${Math.round(h.bpm)} BPM`):(h.playing?'▶ sending MIDI':'ready');
   const tw=$('#nbTempo'); if(tw){ const scopeBpm=nativeScope()==='song'?S.bpm:O.bpm; tw.hidden=!NATIVE.plugin||Math.abs(h.bpm-scopeBpm)<.5; tw.textContent=`${NATIVE.host||'Your DAW'} is at ${Math.round(h.bpm)} BPM, your song at ${scopeBpm}: notes follow ${NATIVE.host||'the DAW'}. Match the song`; }
@@ -7314,6 +7311,73 @@ function initSectionDrag(){ if(!NATIVE.plugin) return;
   document.addEventListener('click',e=>{ if(!startEl(e)) return; if(SDRAG.sent&&Date.now()<SDRAG.until){ SDRAG.sent=false; e.stopPropagation(); e.preventDefault(); } },true);
   nOn('st_dragdone',v=>{ end(); if(v&&v.why==='notready') toast(NSND.queue.length||NSND.busy?'The section’s sound is still being prepared: try again in a few seconds':'That section’s sound isn’t ready yet: set Sound to include Semitone’s instruments, or hold ⌥ to drag MIDI'); });
  }
+/* ---------- song history: undo and redo for every change ----------
+   One list for the whole song, Compose and Orchestral together. After each settled change the song is
+   compared with the last known state; a difference becomes a step with a short label. Notes, chords and
+   lyrics restore in place so a playing song keeps playing; anything else goes through applyProject. */
+const H={past:[],future:[],cur:null,last:null,lastAt:0,quietUntil:0,timer:0,down:false,fine:false,reset:false,restoring:false,max:100};
+function histCapture(){ const song={...projectData()}; delete song.sel; const orch={...orchData()}; delete orch.id; delete orch.name; return {song:JSON.stringify(song),orch:JSON.stringify(orch)}; }
+function histName(k,v){ const n=['C','C♯','D','E♭','E','F','F♯','G','A♭','A','B♭','B'][((+v%12)+12)%12]; return k==='key'?n:v; }
+function histLabel(a,b){ const same=k=>JSON.stringify(a[k])===JSON.stringify(b[k]);
+  if(!same('style')){ const st=STYLES.find(x=>x.id===b.style); return {key:'style',label:`Changed style to ${st?st.name:b.style}`}; }
+  if(!same('key')) return {key:'key',label:`Changed key to ${histName('key',b.key)}`};
+  if(!same('mode')) return {key:'mode',label:`Changed mode to ${b.mode}`};
+  if(!same('meter')) return {key:'meter',label:`Changed time signature to ${b.meter}`};
+  if(!same('bpm')) return {key:'bpm',merge:1500,label:`Changed tempo to ${b.bpm} BPM`};
+  if(!same('structure')||!same('sections')) return {key:'sections',label:'Changed the structure'};
+  if(!same('seed')) return {key:'seed',label:'Made a new take of the song'};
+  if(!same('mats')){ const ts=Object.keys(b.mats).filter(t=>JSON.stringify(a.mats[t])!==JSON.stringify(b.mats[t])), t=ts[0], w=ts.length===1?` in ${SEC[t]||t}`:'';
+    const m=ts.length===1&&a.mats[t]&&JSON.stringify(a.mats[t].melody)===JSON.stringify(b.mats[t].melody); return {key:'mats',label:(m?'Changed the chords':'Edited the notes')+w}; }
+  if(!same('lyrics')) return {key:'lyrics',merge:2500,label:'Changed the lyrics'};
+  if(!same('parts')) return {key:'parts',merge:1500,label:'Changed the sounds'};
+  if(!same('auto')) return {key:'auto',merge:1500,label:'Changed the automation'};
+  if(!same('mix')) return {key:'mix',merge:1500,label:'Changed the mix'};
+  if(['beats','groove','kit','fill'].some(k=>!same(k))) return {key:'drums',merge:1500,label:'Changed the drums'};
+  if(['energy','lift','energyOn'].some(k=>!same(k))) return {key:'energy',merge:1500,label:'Changed the energy'};
+  if(['room','roomMix'].some(k=>!same(k))) return {key:'room',merge:1500,label:'Changed the room reverb'};
+  if(['polish','polishTrim'].some(k=>!same(k))) return {key:'polish',merge:1500,label:'Changed the final polish'};
+  if(['trans','transOn','transOwn'].some(k=>!same(k))) return {key:'trans',label:'Changed a transition'};
+  if(!same('versions')) return {key:'versions',label:'Changed the section versions'};
+  return {key:'song',merge:1500,label:'Changed the song'}; }
+function histStep(a,b){ if(a.song!==b.song) return histLabel(JSON.parse(a.song),JSON.parse(b.song)); const x=JSON.parse(a.orch), y=JSON.parse(b.orch);
+  if(x.key!==y.key) return {key:'okey',label:`Changed the cue’s key to ${histName('key',y.key)}`}; if(x.bpm!==y.bpm) return {key:'obpm',merge:1500,label:`Changed the cue’s tempo to ${y.bpm} BPM`};
+  if(JSON.stringify(x.mix)!==JSON.stringify(y.mix)) return {key:'omix',merge:1500,label:'Changed the orchestral mix'}; return {key:'orch',label:'Changed the orchestral parts'}; }
+function histHasOrch(st){ try{ return JSON.parse(st.orch).sections.length>0; }catch(e){ return false; } }
+function histCheck(fine){ if(!S.song||S.rendering||H.restoring||H.down||(typeof LIVE!=='undefined'&&LIVE.rec)) return false;
+  const now=Date.now(); let st; try{ st=histCapture(); }catch(e){ return false; }
+  if(H.reset||!H.cur){ H.reset=false; H.past=[]; H.future=[]; H.cur=st; H.last=null; H.quietUntil=now+1500; syncUndoBtns(); return false; }
+  if(st.song===H.cur.song&&st.orch===H.cur.orch) return false;
+  if(now<H.quietUntil||(st.song===H.cur.song&&!histHasOrch(H.cur))){ H.cur=st; return false; }  // settling after a restore, or a cue built for the first time
+  const step=histStep(H.cur,st), top=H.past[H.past.length-1], fineNow=fine||H.fine; H.fine=false;
+  if(!fineNow&&step.merge&&top&&H.last===step.key&&now-H.lastAt<step.merge){ top.label=step.label; H.cur=st; H.lastAt=now; if(top.state.song===st.song&&top.state.orch===st.orch) H.past.pop(); }
+  else { H.past.push({state:H.cur,label:step.label}); if(H.past.length>H.max) H.past.shift(); H.cur=st; H.last=step.key; H.lastAt=now; }
+  H.future=[]; syncUndoBtns(); return true; }
+function histLater(ms){ clearTimeout(H.timer); H.timer=setTimeout(()=>histCheck(),ms==null?350:ms); }
+function histNote(){ H.fine=true; clearTimeout(H.timer); H.timer=setTimeout(()=>histCheck(true),0); }
+function histRestoreSong(from,to){ const a=JSON.parse(from), b=JSON.parse(to), changed=Object.keys({...a,...b}).filter(k=>JSON.stringify(a[k])!==JSON.stringify(b[k]));
+  const inPlace=changed.every(k=>['mats','versions','lyrics'].includes(k))&&Object.entries(b.mats).every(([t,m])=>S.song.mats[t]&&S.song.mats[t].blockBars===m.blockBars);
+  if(!inPlace){ applyProject({...b,sel:S.sel}); return; }
+  applyMats(b.mats); S.versions=JSON.parse(JSON.stringify(b.versions||{})); S.lyrics=JSON.parse(JSON.stringify(b.lyrics||{}));
+  S.selNote=null; S.selSet=new Set(); invalidateViews(); S.piece=sectionView(S.sel); renderAll(); renderLyrics(); }
+function histRestoreOrch(to){ const d=JSON.parse(to); if(d.sections.length!==O.sections.length) oStop(); Object.assign(O,d,{selNote:null,selSet:new Set(),sel:Math.min(O.sel,Math.max(0,d.sections.length-1))}); renderOrch(); }
+function histGo(from,to){ H.restoring=true; try{ if(from.song!==to.song) histRestoreSong(from.song,to.song); if(from.orch!==to.orch) histRestoreOrch(to.orch); return true; }
+  catch(e){ console.warn('history',e); return false; } finally{ H.restoring=false; H.reset=false; } }
+function histMove(fromList,toList,word){ if(document.activeElement&&document.activeElement.tagName==='TEXTAREA') document.activeElement.blur(); histCheck(true); const e=fromList.pop(); if(!e) return;
+  const was=H.cur, ok=histGo(was,e.state); if(!ok){ toast('That couldn’t be restored'); H.cur=histCapture(); syncUndoBtns(); return; }
+  toList.push({state:was,label:e.label}); H.cur=histCapture(); H.last=null; H.fine=false; H.quietUntil=Date.now()+700; syncUndoBtns(); toast(`${word}: ${e.label}`); }
+function histUndo(){ histMove(H.past,H.future,'Undone'); }
+function histRedo(){ histMove(H.future,H.past,'Redone'); }
+function syncUndoBtns(){ const u=H.past[H.past.length-1], r=H.future[H.future.length-1];
+  [['histUndo','undoBtn','oUndo'],['histRedo','redoBtn','oRedo']].forEach((ids,i)=>{ const e=i?r:u; ids.forEach(id=>{ const b=$('#'+id); if(!b) return; b.disabled=!e; b.title=e?`${i?'Redo':'Undo'}: ${e.label}`:(i?'Nothing to redo':'Nothing to undo'); }); }); }
+function initHistory(){ ['histUndo','undoBtn','oUndo'].forEach(id=>{ $('#'+id).onclick=histUndo; }); ['histRedo','redoBtn','oRedo'].forEach(id=>{ $('#'+id).onclick=histRedo; });
+  document.addEventListener('pointerdown',()=>{ H.down=true; },true);
+  const up=()=>{ H.down=false; histLater(); }; document.addEventListener('pointerup',up,true); document.addEventListener('pointercancel',up,true);
+  ['click','change','input','keyup'].forEach(t=>document.addEventListener(t,()=>histLater(),true));
+  document.addEventListener('keydown',e=>{ const k=e.key.toLowerCase(), z=k==='z', t=e.target, typing=t&&(t.isContentEditable||t.tagName==='TEXTAREA'||(t.tagName==='INPUT'&&!['checkbox','radio','range','button','color'].includes(t.type)));
+    if(!(e.ctrlKey||e.metaKey)||e.altKey||typing||!(z||(k==='y'&&!e.shiftKey))) return; e.preventDefault(); e.stopImmediatePropagation(); if(z&&!e.shiftKey) histUndo(); else histRedo(); },true);
+  setInterval(()=>{ if(!document.hidden&&!S.playing&&!O.playing) histCheck(); },1500);  // catches anything that finishes by itself
+  syncUndoBtns(); histCheck(); }
+
 /* ---------- routing + boot ---------- */
 function route(){
   if(location.hash==='#classroom'){ let last='learn'; try{ last=localStorage.getItem('ss_lesson')||'learn'; }catch(e){} if(!['learn','time','read','play','ear'].includes(last)) last='learn'; history.replaceState(null,'','#'+last); }
@@ -7335,6 +7399,6 @@ new MutationObserver(()=>setTimeout(redraw,30)).observe(document.documentElement
 
 buildStyles(); bindControls(); initExtras(); initTime(); initStudio2(); initQuirks(); initRead(); initPlay(); initProjects(); initOrch2(); initOrch(); initRoom(); initB3(); initEar(); initPractice(); initWeird(); initArt(); initMix(); initSmartView(); initCArt(); initCLane(); initSug(); initInstr(); initLyrics(); initPerf(); initEnergy(); initFinish(); initLive(); initSel(); initEdit2(); earUI(); initPro(); initDaw(); initBassRoll(); renderODrag(); try{ initTidy(); }catch(e){ console.warn('tidy',e); } try{ initInfo(); }catch(e){ console.warn('info',e); } nativeInit(); document.querySelectorAll('[data-meter]').forEach(el=>el.innerHTML=meterHTML()); $('#oPolishSel').value=O.polish||'off'; $('#oPolishSel').onchange=e=>{ O.polish=e.target.value; }; $('#oShowArt').onchange=drawAllORolls; renderNoteBar(); buildKeyboard(); buildClock();
 S.seed=4127; loadStyle(STYLES[0],false);
-renderInterval(); renderClock(); renderFacts(); route();
+renderInterval(); renderClock(); renderFacts(); route(); initHistory();
 if(document.fonts&&document.fonts.ready) document.fonts.ready.then(redraw);
 </script>

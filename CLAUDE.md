@@ -37,6 +37,7 @@ In the HTML, the bridge is the `NATIVE` / `nativeInit()` / `NSND` code (only act
 - It is one big file: patch with exact-string edits; check the last `<script>` with `node --check`.
 - New JS modules go before `/* ---------- routing + boot ---------- */`; CSS before `</style>`.
 - The page must keep working as a plain web page (no `window.__JUCE__`).
+- Undo is one song history (`H`, `histCheck`): it compares `projectData()` + `orchData()` after each settled change, so anything those save is undoable automatically. `pushUndo` / `oPushUndo` only mark a fine note edit as its own step. Give a new setting a label in `histLabel`.
 
 ## The native engine (Source/Synth.h)
 - It copies the web recipes on purpose: `voice`, `drumHit`, `fmEP`, `anaSynth`, `anaChorus`, `renderPianoNote`, `renderPluck`, `newMaster`, `buildPolish`. Change a patch in the page's tables and the engine follows, because the page sends the settings. Change a recipe and port it to `Synth.h` too.

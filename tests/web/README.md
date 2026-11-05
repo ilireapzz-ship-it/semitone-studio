@@ -18,4 +18,5 @@ node tests/web/regression.test.js
 | `sounds-in-daw.test.js` | section layout, rendering and chunked clips sent to the plugin (slow: renders the whole song) |
 | `section-drag.test.js` | Compose section blocks drag out as audio, ⌥ as MIDI, Whole song chip, click still selects |
 | `orchestral-drag.test.js` | the same for Orchestral, plus its sections render |
+| `undo.test.js` | every kind of change undoes and redoes exactly, labels, no ghost steps, playing song keeps playing, 100-step cap, plugin |
 | `fl-markers.test.js` | Send structure to FL: marker list, setup panel |

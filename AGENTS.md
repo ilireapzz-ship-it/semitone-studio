@@ -14,7 +14,7 @@ You can't open Jamie's claude.ai design canvas or plan doc, so copies are in the
   `python3 tools/check_style_data.py` (ISSUES must be 0). Nothing in `data/` is used by the app yet: wiring it in is the job.
 
 **Suggested order** (each step ships on its own, with tests and a plain-words note for Jamie):
-1. Phase 1 task 1, **undo for every action**: almost everything below depends on it.
+1. Phase 1 task 1, **undo for every action**: done (`H` / `histCheck` in the HTML, `tests/web/undo.test.js`). A new setting is undoable once it is in `projectData()`.
 2. **Style tags** replace the style picker (Style library steps 1–2): load the JSON, chips, search, blend rules, the
    "what your tags do" card. Then the new profiles, artist eras and genre variants (steps 3, 7, 29), applying
    `existingStyles` to the original 8 (step 6).
@@ -48,12 +48,8 @@ suggest and you accept, never surprise changes.
 ## What's left: the plan, in order
 
 ### Finish Phase 1 (the song-first app)
-1. **Undo for every action.** Today undo covers note edits in the piano rolls only. Add a song-level history:
-   every change to style, structure, sections, chords, mix, automation, sounds, lyrics, orchestral parts etc.
-   can be undone and redone (⌘Z / ⇧⌘Z, plus buttons), with a short label per step ("Changed style to …").
-   A good approach: snapshot `songStateJSON()` after each settled change (debounced), restore with the same
-   path `nativeRestore` uses; keep the existing piano-roll undo for fine note edits. Cap the history (~100).
-   Works in the web version, the app and the plugin.
+1. **Undo for every action.** Done: one song-level history for Compose and Orchestral (⌘Z / ⇧⌘Z, plus buttons), labelled, last 100 steps.
+   Notes, chords and lyrics restore in place so playback continues; other changes stop playback.
 2. **Open with a song ready.** First launch of the standalone app shows a finished demo song, ready to play
    (Space plays). Later launches reopen the last song (autosave already does this). Don't start sound by itself.
 3. **Windows check.** The Windows build has never been run on a PC. Go through docs/INSTALL-WINDOWS.txt
