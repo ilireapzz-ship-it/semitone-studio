@@ -29,5 +29,6 @@ node tests/web/regression.test.js
 | `tools.test.js` | history list and jump, ⌘K palette, focus mode, section notes, taste ordering |
 | `song-versions.test.js` | keep, switch, remove, exact restore, keeps playing for notes and chords, undo, saved with the song |
 | `redesign.test.js` | song view, dock tabs, arrangement, side panel, Mix tab, Record and Start screens, phone width |
+| `plugin-host.test.js` | find plug-ins, put one on a part, state saves, not offered inside a DAW |
 | `undo.test.js` | every kind of change undoes and redoes exactly, labels, no ghost steps, playing song keeps playing, 100-step cap, plugin |
 | `fl-markers.test.js` | Send structure to FL: marker list, setup panel |

@@ -21,6 +21,7 @@ private:
     void dragAudio (const juce::var& v);
     void sendMarkers (const juce::var& v);
     void scanLibrary();
+    void sendHostList();
     void takeStart();
     void takeOpenInput (bool granted);
     void takeStop();

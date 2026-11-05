@@ -11,17 +11,19 @@ SemitoneProcessor::SemitoneProcessor()
     // standalone app: come back to the song you were working on, even after a crash
     if (isStandalone())
     {
+        host = std::make_unique<st::PartHost>();
         const auto f = st::files::autosaveFile();
         if (f.existsAsFile()) projectJson = f.loadFileAsString();
     }
 }
 
-void SemitoneProcessor::prepareToPlay (double sampleRate, int)
+void SemitoneProcessor::prepareToPlay (double sampleRate, int maxBlock)
 {
     const bool changed = sampleRate != sr;
     sr = sampleRate;
     if (changed) synth.setPatch (nullptr);   // notes rendered for the old rate would play out of tune until the rebuild lands
     synth.prepare (sr);
+    if (host) host->prepare (sr, maxBlock);
     if (changed) buildSynthPatch();   // the piano and plucked notes are rendered for one sample rate
 }
 
@@ -115,6 +117,10 @@ void SemitoneProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
         synth.process (events, n, L, R, covered ? 0.0f : 1.0f, beat, bpm / 60.0 / sr);
     }
     else if (mode == 2) synth.silence();
+
+    // your own plug-ins on Semitone's parts (desktop app)
+    if (host && buffer.getNumChannels() > 0)
+        host->process (events, n, buffer.getWritePointer (0), buffer.getNumChannels() > 1 ? buffer.getWritePointer (1) : nullptr);
 
     uiPlaying = playing; uiPpq = ppq; uiBpm = bpm; uiHostHasTransport = hostTransport;
 }

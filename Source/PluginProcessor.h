@@ -5,6 +5,7 @@
 #include "Sequencer.h"
 #include "ClipPlayer.h"
 #include "Synth.h"
+#include "PluginHost.h"
 #include <map>
 #include <set>
 #include <array>
@@ -84,6 +85,7 @@ private:
     std::map<std::string, std::shared_ptr<st::TakeAudio>> takeCache;   // only touched on the patch-building job
     std::atomic<uint32_t> midiMute { 0 };   // channels that only exist for the built-in engine (section layers)
 public:
+    std::unique_ptr<st::PartHost> host;   // desktop app only
     st::TakeRecorder takeRecorder;   // standalone only: the audio input goes here, never to the speakers
 private:
     std::atomic<int> soundMode { 0 };

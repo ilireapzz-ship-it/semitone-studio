@@ -21,6 +21,7 @@ Jamie is a songwriter, not a programmer: explain results in plain words, not cod
 | Song files, autosave, recents | `Source/SongFiles.h` |
 | Scan my plug-ins (names only, kept locally) | `Source/LibraryScan.h` |
 | Recording takes (desktop app, audio input to WAV, tested) | `Source/TakeRecorder.h`; files in Documents/Semitone Studio/Songs/Takes |
+| Your plug-ins on parts (desktop app) | `Source/PluginHost.h`; events `st_host_*` |
 | Mac drag of MIDI files | `Source/MacDrag.mm` |
 | Interface tests | `tests/web/*.test.js` (Playwright, see tests/web/README.md) |
 | Tests | `tests/sequencer_test.cpp` (sequencer + clip player): `clang++ -std=c++17 -ISource tests/sequencer_test.cpp -o t && ./t`; `tests/synth_test.cpp` (sound engine), same way with `-O2`. `build-mac.sh` and CI run both |

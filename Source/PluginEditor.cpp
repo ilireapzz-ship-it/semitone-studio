@@ -22,13 +22,24 @@ SemitoneEditor::SemitoneEditor (SemitoneProcessor& p)
         h = juce::jmin (h, d->userArea.getHeight() - 140);
     }
     setSize (juce::jmax (720, w), juce::jmax (480, h));
+    if (proc.host)
+    {
+        juce::Component::SafePointer<SemitoneEditor> self (this);
+        proc.host->onList = [self] { if (self != nullptr) self->sendHostList(); };
+        proc.host->onLoaded = [self] (int ch, bool ok, juce::String info)
+        {
+            if (self == nullptr) return;
+            auto* o = new juce::DynamicObject(); o->setProperty ("ch", ch); o->setProperty ("ok", ok); o->setProperty ("info", info);
+            self->browser.emitEventIfBrowserIsVisible ("st_host_loaded", juce::var (o));
+        };
+    }
     browser.goToURL (juce::WebBrowserComponent::getResourceProviderRoot());
     incoming.reserve (1024);
     prepareMarkers();
     startTimerHz (60);
 }
 
-SemitoneEditor::~SemitoneEditor() { stopTimer(); }
+SemitoneEditor::~SemitoneEditor() { stopTimer(); if (proc.host) { proc.host->onList = nullptr; proc.host->onLoaded = nullptr; } }
 
 void SemitoneEditor::resized() { browser.setBounds (getLocalBounds()); }
 
@@ -86,6 +97,18 @@ juce::WebBrowserComponent::Options SemitoneEditor::makeOptions()
         .withEventListener ("st_save", [this] (const juce::var& v) { saveFile (v.getProperty ("name", "Semitone export").toString(), v.getProperty ("b64", "").toString()); })
         // song structure -> FL Studio Playlist markers, through Semitone's controller script
         .withEventListener ("st_markers", [this] (const juce::var& v) { sendMarkers (v); })
+        .withEventListener ("st_host_scan", [this] (const juce::var&) { if (proc.host) proc.host->startScan(); })
+        .withEventListener ("st_host_list", [this] (const juce::var&) { sendHostList(); })
+        .withEventListener ("st_host_load", [this] (const juce::var& v) { if (proc.host) proc.host->load ((int) v.getProperty ("ch", 0), v.getProperty ("id", "").toString(), v.getProperty ("state", "").toString()); })
+        .withEventListener ("st_host_open", [this] (const juce::var& v) { if (proc.host) proc.host->openWindow ((int) v.getProperty ("ch", 0)); })
+        .withEventListener ("st_host_state", [this] (const juce::var& v)
+        {
+            if (! proc.host) return;
+            auto* o = new juce::DynamicObject();
+            const int ch = (int) v.getProperty ("ch", 0);
+            o->setProperty ("ch", ch); o->setProperty ("b64", proc.host->stateB64 (ch));
+            browser.emitEventIfBrowserIsVisible ("st_host_stateis", juce::var (o));
+        })
         .withEventListener ("st_take_start", [this] (const juce::var&) { takeStart(); })
         .withEventListener ("st_take_stop", [this] (const juce::var&) { takeStop(); })
         .withEventListener ("st_scan", [this] (const juce::var&) { scanLibrary(); })
@@ -333,6 +356,14 @@ void SemitoneEditor::loadLibraryScan()
 {
     if (st::libscan::file().existsAsFile())
         scanDone (st::libscan::file().loadFileAsString());
+}
+
+void SemitoneEditor::sendHostList()
+{
+    if (! proc.host) return;
+    auto* o = new juce::DynamicObject();
+    o->setProperty ("list", proc.host->listVar()); o->setProperty ("scanning", proc.host->scanning); o->setProperty ("name", proc.host->scanningName); o->setProperty ("progress", proc.host->progress);
+    browser.emitEventIfBrowserIsVisible ("st_host_plugins", juce::var (o));
 }
 
 void SemitoneEditor::scanDone (const juce::String& json)
