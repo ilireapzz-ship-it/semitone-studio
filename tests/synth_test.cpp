@@ -376,6 +376,23 @@ int main()
         printf ("ok: transitions and takes land on their beats\n");
     }
 
+    // plucked strings are in tune across the keyboard, at both common sample rates
+    for (double rate : { 44100.0, 48000.0 })
+        for (Pluck kind : { Pluck::nylon, Pluck::steel, Pluck::harp, Pluck::bassgtr, Pluck::upright })
+            for (int key : { 33, 45, 57, 69, 81, 93 })
+            {
+                if ((kind == Pluck::bassgtr || kind == Pluck::upright) && key > 69) continue;
+                const auto d = renderPluckNote (key, rate, kind);
+                const double f = 440 * std::pow (2.0, (key - 69) / 12.0);
+                const int s = (int) (rate * .05), n = std::min ((int) d.size() - s - 4000, (int) (rate * .25));
+                int lo = (int) (rate / (f * 1.1)), hi = (int) (rate / (f / 1.1)), lag = lo; double best = -1e9;
+                for (int l = lo; l <= hi; ++l) { double c = 0; for (int i = 0; i < n; ++i) c += d[(size_t) (s + i)] * d[(size_t) (s + i + l)]; if (c > best) { best = c; lag = l; } }
+                auto y = [&] (int l) { double c = 0; for (int i = 0; i < n; ++i) c += d[(size_t) (s + i)] * d[(size_t) (s + i + l)]; return c; };
+                const double A = y (lag - 1), B = y (lag), C = y (lag + 1), got = rate / (lag + .5 * (A - C) / (A - 2 * B + C)), off = std::abs (cents (got, f));
+                if (off > 8) { printf ("FAIL pluck kind %d key %d at %.0f: %.1f cents\n", (int) kind, key, rate, off); return 1; }
+            }
+    printf ("ok: plucked strings are in tune across the keyboard\n");
+
     // automation lanes: a part's volume and pan follow the song position
     {
         Synth sy; sy.prepare (SR);

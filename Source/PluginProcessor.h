@@ -80,6 +80,7 @@ private:
 
     st::ClipPlayer clipPlayer;
     std::atomic<float> takeGain { 1 };
+    std::atomic<double> songBpm { 0 };
     std::map<std::string, std::shared_ptr<st::TakeAudio>> takeCache;   // only touched on the patch-building job
     std::atomic<uint32_t> midiMute { 0 };   // channels that only exist for the built-in engine (section layers)
 public:

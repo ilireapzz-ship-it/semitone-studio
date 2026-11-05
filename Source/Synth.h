@@ -66,6 +66,7 @@ struct KitPatch
 
 struct PolishPatch
 {
+    float shelfLo = 0, shelfHi = 0;
     bool on = false;            // false: the safety compressor only
     float hp = 28, thr = -18, ratio = 2, att = .03f, rel = .25f, make = 1, lim = -2, drive = .8f;
 };
@@ -298,8 +299,10 @@ inline NoteBuffer renderPluckNote (int m, double sr, Pluck kind)
 {
     static constexpr double t60s[] { 2.2, 3.2, 3.4, .45, 2.4, 1.2 }, brights[] { .4, .8, .55, .35, .28, .2 };
     const double f0 = 440 * std::pow (2.0, (m - 69) / 12.0), per = sr / f0;
-    const int N = std::max (2, (int) std::floor (per - .5));
-    const double frac = per - .5 - N, C = (1 - frac) / (1 + frac);
+    // the loop's two-point average reads one sample newer, so it delays -0.5: N - 0.5 + frac = one period
+    const double D = per + .5;
+    const int N = std::max (2, (int) std::floor (D - .2));
+    const double frac = D - N, C = (1 - frac) / (1 + frac);
     const double T60 = t60s[(int) kind] * std::pow (220 / f0, .35), rho = std::pow (10.0, -3 / (T60 * f0)), bright = brights[(int) kind];
     const int len = (int) (sr * std::min (5.0, T60 * 1.15 + .1));
     NoteBuffer d ((size_t) len, 0.0f);
@@ -767,6 +770,17 @@ private:
     float thr = 0, slope = 0, kA = 0, kR = 0, reduce = 0, makeup = 1;
 };
 
+inline void polishLowShelf (Biquad& b, double f, double dB, double sr)
+{
+    const double A = std::pow (10.0, dB / 40), w = 2 * synthPi * f / sr, c = std::cos (w), s = 2 * std::sqrt (A) * std::sin (w) / 2 * std::sqrt (2.0);
+    b.set (A * ((A + 1) - (A - 1) * c + s), 2 * A * ((A - 1) - (A + 1) * c), A * ((A + 1) - (A - 1) * c - s), (A + 1) + (A - 1) * c + s, -2 * ((A - 1) + (A + 1) * c), (A + 1) + (A - 1) * c - s);
+}
+inline void polishHighShelf (Biquad& b, double f, double dB, double sr)
+{
+    const double A = std::pow (10.0, dB / 40), w = 2 * synthPi * f / sr, c = std::cos (w), s = 2 * std::sqrt (A) * std::sin (w) / 2 * std::sqrt (2.0);
+    b.set (A * ((A + 1) + (A - 1) * c + s), -2 * A * ((A - 1) + (A + 1) * c), A * ((A + 1) + (A - 1) * c - s), (A + 1) - (A - 1) * c + s, 2 * ((A - 1) - (A + 1) * c), (A + 1) - (A - 1) * c - s);
+}
+
 class Polish
 {
 public:
@@ -776,11 +790,15 @@ public:
         hp.highpass (p.on ? p.hp : 20, .7, sr);
         if (p.on) { glue.set (sr, p.thr, p.ratio, p.att, p.rel); lim.set (sr, p.lim, 20, .002f, .09f); }
         else lim.set (sr, -24, 12, .003f, .25f);
-        make = p.on ? std::pow (10.0f, p.make / 20) : 1.0f;
+        make = p.on ? std::pow (10.0f, p.make / 20) * .867f : 1.0f;    // .867: measured against the page across its level range
+        shelfL.reset(); shelfH.reset();
+        hasShelf = p.on && (p.shelfLo != 0 || p.shelfHi != 0);
+        if (hasShelf) { polishLowShelf (shelfL, 90, p.shelfLo, sr); polishHighShelf (shelfH, 10000, p.shelfHi, sr); }
     }
     void run (float& l, float& r)
     {
         l = hp.run (l, 0); r = hp.run (r, 1);
+        if (hasShelf) { l = shelfH.run (shelfL.run (l, 0), 0); r = shelfH.run (shelfL.run (r, 1), 1); }
         if (patch.on)
         {
             const float g = glue.gain (std::max (std::abs (l), std::abs (r))) * make;
@@ -800,9 +818,10 @@ private:
         return x < 0 ? -o : o;
     }
     PolishPatch patch;
-    Biquad hp;
+    Biquad hp, shelfL, shelfH;
     Compressor glue, lim;
     float make = 1;
+    bool hasShelf = false;
 };
 
 // ---- the engine ----
@@ -934,19 +953,21 @@ public:
                     l += bl * busLevel[c] * chGain[c] * pl;
                     r += br * busLevel[c] * chGain[c] * pr;
                 }
-            if (sweepLeft > 0)
-            {
-                if ((sweepLeft & 31) == 0) { const double t = 1 - (double) sweepLeft / sweepTotal; sweep.lowpass (18000 * std::pow (700.0 / 18000, t), .9, sr); }
-                l = sweep.run (l, 0); r = sweep.run (r, 1); --sweepLeft;
-            }
-            l *= .6f * masterGain; r *= .6f * masterGain;    // the master bus
-            if (fxBus && fxBus->any[FxBank::master]) fxBus->run (FxBank::master, l, r);
+            // same order as the page: master gain, room, master effects, filter sweep, master fader, polish
+            l *= .6f; r *= .6f;
             if (current->roomMix > 0)
             {
                 float wl, wr;
                 room.run (l, r, wl, wr);
                 l += wl * current->roomMix * roomGain; r += wr * current->roomMix * roomGain;
             }
+            if (fxBus && fxBus->any[FxBank::master]) fxBus->run (FxBank::master, l, r);
+            if (sweepLeft > 0)
+            {
+                if ((sweepLeft & 31) == 0) { const double t = 1 - (double) sweepLeft / sweepTotal; sweep.lowpass (18000 * std::pow (700.0 / 18000, t), .9, sr); }
+                l = sweep.run (l, 0); r = sweep.run (r, 1); --sweepLeft;
+            }
+            l *= masterGain; r *= masterGain;
             polish.run (l, r);
             gate += dg;
             l *= gate; r *= gate;

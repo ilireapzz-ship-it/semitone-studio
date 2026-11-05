@@ -55,6 +55,7 @@ In the HTML, the bridge is the `NATIVE` / `nativeInit()` / `NSND` code (only act
 - Omnisphere STACK MODE ignores part channels. Single-part MIDI exports use channel 1. Pitch-bend range is 12.
 - Clicking inside the plugin's web view by computer use needs full-screen control.
 - Playlist markers: `Source/FLMarkers.h` installs `device_SemitoneStudio.py` in Documents/Image-Line/FL Studio/Settings/Hardware and sends SysEx on the virtual port "Semitone Studio markers". FL only lists a new script after a restart. Tested working in FL 2026 (Mac).
+- Rendered sections and takes are audio, so another tempo would change their pitch. When the DAW's tempo isn't the song's, `processBlock` skips them and the built-in engine plays instead.
 - Never delete Jamie's files: move them to a `_to_delete/` folder instead and tell him.
 
 ## Roadmap (Phase 1 of the DAW plan)

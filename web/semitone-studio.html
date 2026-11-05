@@ -5869,7 +5869,7 @@ function renderPianoNote(m,sr){ const f0=440*Math.pow(2,(m-69)/12), len=Math.flo
   let lp=0; const hl=Math.floor(sr*.01); for(let i=0;i<hl;i++){ lp=lp*.55+(Math.random()*2-1)*.45; d[i]+=lp*.18*(1-i/hl); }
   const fl=Math.floor(sr*.004); for(let i=0;i<fl;i++) d[i]*=i/fl;
   return d; }
-function renderPluck(m,sr,kind){ const f0=440*Math.pow(2,(m-69)/12), per=sr/f0, N=Math.max(2,Math.floor(per-.5)), frac=per-.5-N, C=(1-frac)/(1+frac);
+function renderPluck(m,sr,kind){ const f0=440*Math.pow(2,(m-69)/12), per=sr/f0, D=per+.5, N=Math.max(2,Math.floor(D-.2)), frac=D-N, C=(1-frac)/(1+frac); /* the loop's two-point average reads one sample newer, so it delays -0.5: N-0.5+frac = one period */
   const T60=({nylon:2.2,steel:3.2,harp:3.4,pizz:.45,bassgtr:2.4,upright:1.2}[kind])*Math.pow(220/f0,.35), rho=Math.pow(10,-3/(T60*f0)), bright={nylon:.4,steel:.8,harp:.55,pizz:.35,bassgtr:.28,upright:.2}[kind];
   const len=Math.floor(sr*Math.min(5,T60*1.15+.1)), d=new Float32Array(len), buf=new Float32Array(N); let lp=0;
   for(let i=0;i<N;i++){ lp+=((Math.random()*2-1)-lp)*bright; buf[i]=lp; }
@@ -7144,7 +7144,7 @@ function nativeTimeline(){ const scope=nativeScope(), D=dawTracks(scope), [s0,s1
   // melody articulations (glides, scoops, falls, vibrato) as pitch bend: [beat, status, d1, d2, ...]
   const ev=[]; if(scope==='song'){ const r=MOUT.map.song.lead; if(!r||r.on){ const ch=r?r.ch:0; songLeadBends().forEach(x=>{ if(x.beat<s0-1e-6||x.beat>=s1-1e-6) return; ev.push(+(x.beat-s0).toFixed(4),0xE0|ch,x.v&127,(x.v>>7)&127); }); } }
   let sound=null; try{ sound=scope==='song'?nativeSoundInfo():nativeOrchInfo(); }catch(e){ console.warn('sound info',e); }
-  return {length:s1-s0,notes,ev,bendRange:BEND_RANGE,scope,offset:s0,sound}; }
+  return {length:s1-s0,notes,ev,bendRange:BEND_RANGE,scope,offset:s0,sound,bpm:scope==='song'?S.bpm:O.bpm}; }
 /* the settings of every part, so the plugin's own engine (Source/Synth.h) can play the song without this page */
 function nativeLayers(){ const ids=[...new Set(Object.values(S.secLayer||{}).flat())].slice(0,5), B=METERS[S.meter].B, ch=id=>10+ids.indexOf(id), edges=S.song.sections.map(x=>[x.startBar*B,(x.startBar+x.bars)*B]); return {ids,ch,at:t=>{ const i=edges.findIndex(([a,b])=>t>=a-1e-6&&t<b-1e-6); return ((S.secLayer||{})[i]||[]).filter(x=>ids.includes(x)).map(ch); }}; }
 function nativeLanes(){ const B=METERS[S.meter].B, out=[]; ['lead','chords','bass','drums','master'].forEach(p=>['vol','pan'].forEach(tg=>{ if(p==='master'&&tg==='pan') return; const d=tdef('song',p,tg); if(!d) return; const stat=tg==='vol'?1:(strip('song',p).pan||0), base=tg==='vol'?(staticVal('song',p,'vol')||1):1, pts=[]; S.song.sections.forEach((sc,si)=>{ const A=(S.auto[si]||{})[p], L=A&&A[tg]; if(!L||!L.length) return; const a=sc.startBar*B, b=(sc.startBar+sc.bars)*B, v=x=>{ const r=tV(d,x); return +(tg==='vol'?r/base:r).toFixed(4); }; pts.push(a-.001,stat); L.forEach(q=>pts.push(+(a+q.t).toFixed(4),v(q.v))); pts.push(b-.002,v(L[L.length-1].v),b,stat); }); if(pts.length){ const r=MOUT.map.song[p]; out.push({ch:p==='master'?-1:p==='drums'?(MOUT.map.song.drums?MOUT.map.song.drums.ch:9):(r?r.ch:{lead:0,chords:1,bass:2}[p]),pan:tg==='pan',pts}); } })); return out; }
@@ -7197,7 +7197,7 @@ function initNativeFiles(){
 function nativeRestore(json,from){ try{ const d=JSON.parse(json); if(d.song) applyProject(d.song); if(d.proj) { S.project=d.proj; renderProjectBar(); } if(d.orch&&d.orch.sections&&d.orch.sections.length){ Object.assign(O,d.orch,{sel:0,selNote:null,selSet:new Set(),playFrom:0}); renderOrch(); } NATIVE.lastState=''; if($('#restoreBar')) $('#restoreBar').hidden=true; if(from!=='file') toast(NATIVE.plugin?'Song restored from your '+(NATIVE.host||'DAW')+' project':'Welcome back: your last song is open'); }catch(e){ console.warn('restore',e); } }
 function nativeHost(h){ NATIVE.hs=h; const bar=$('#nativeBar'); if(!bar) return; const tl=NATIVE.tl;
   const st=$('#nbState'); if(st) st.textContent=NATIVE.plugin?(h.playing?`▶ playing · ${Math.round(h.bpm)} BPM`:`stopped · ${Math.round(h.bpm)} BPM`):(h.playing?'▶ sending MIDI':'ready');
-  const tw=$('#nbTempo'); if(tw){ const scopeBpm=nativeScope()==='song'?S.bpm:O.bpm; tw.hidden=!NATIVE.plugin||Math.abs(h.bpm-scopeBpm)<.5; tw.textContent=`${NATIVE.host||'Your DAW'} is at ${Math.round(h.bpm)} BPM, your song at ${scopeBpm}: notes follow ${NATIVE.host||'the DAW'}. Match the song`; }
+  const tw=$('#nbTempo'); if(tw){ const scopeBpm=nativeScope()==='song'?S.bpm:O.bpm; tw.hidden=!NATIVE.plugin||Math.abs(h.bpm-scopeBpm)<.5; tw.textContent=`${NATIVE.host||'Your DAW'} is at ${Math.round(h.bpm)} BPM, your song at ${scopeBpm}: the built-in engine is playing, and recorded takes are off. Match the song`; }
   if(!NATIVE.plugin||!tl||!tl.length) return;
   if(h.playing){ const b=((h.ppq%tl.length)+tl.length)%tl.length+tl.offset;
     if(tl.scope==='song'){ const B=METERS[S.meter].B; let o=0, si=0; for(;si<S.song.sections.length;si++){ const L=S.song.sections[si].bars*B; if(b<o+L) break; o+=L; } si=Math.min(si,S.song.sections.length-1);

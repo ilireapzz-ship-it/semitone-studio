@@ -20,6 +20,7 @@ void SemitoneProcessor::prepareToPlay (double sampleRate, int)
 {
     const bool changed = sampleRate != sr;
     sr = sampleRate;
+    if (changed) synth.setPatch (nullptr);   // notes rendered for the old rate would play out of tune until the rebuild lands
     synth.prepare (sr);
     if (changed) buildSynthPatch();   // the piano and plucked notes are rendered for one sample rate
 }
@@ -91,10 +92,13 @@ void SemitoneProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
         float* L = buffer.getWritePointer (0);
         float* R = buffer.getNumChannels() > 1 ? buffer.getWritePointer (1) : L;
         const double len = tlLength.load(), off = tlOffset.load();
-        if (mode != 3) clipPlayer.process (playing, ppq, bpm, sr, n, len, off, L, R);
+        // rendered sections and takes are audio: played at another tempo they change pitch, so then the engine takes over
+        const double songTempo = songBpm.load();
+        const bool tempoMatches = songTempo <= 0 || std::abs (bpm - songTempo) < .5;
+        if (mode != 3 && tempoMatches) clipPlayer.process (playing, ppq, bpm, sr, n, len, off, L, R);
         // the native engine fills in wherever no rendered section covers the playhead
         bool covered = false;
-        if (mode != 3 && len > 0)
+        if (mode != 3 && len > 0 && tempoMatches)
         {
             double pos = std::fmod (ppq, len);
             if (pos < 0) pos += len;
@@ -107,7 +111,7 @@ void SemitoneProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
             if (pos < 0) pos += len;
             beat = pos + off;
         }
-        synth.takeLevel = takeGain.load();
+        synth.takeLevel = tempoMatches ? takeGain.load() : 0.0f;
         synth.process (events, n, L, R, covered ? 0.0f : 1.0f, beat, bpm / 60.0 / sr);
     }
     else if (mode == 2) synth.silence();
@@ -120,6 +124,7 @@ void SemitoneProcessor::setTimelineFromVar (const juce::var& v)
     // { length: beats, notes: [start, dur, channel, key, velocity, start, dur, ...] }
     auto tl = std::make_shared<st::Timeline>();
     tl->length = (double) v.getProperty ("length", 0.0);
+    songBpm = (double) v.getProperty ("bpm", 0.0);
     if (auto* arr = v.getProperty ("notes", juce::var()).getArray())
     {
         const int count = arr->size() / 5;
@@ -330,7 +335,7 @@ void SemitoneProcessor::setSynthSound (const juce::var& sound, const st::Timelin
         {
             auto& q = t->polish;
             q.on = true; q.hp = num (pl, "hp", 28); q.thr = num (pl, "thr", -18); q.ratio = num (pl, "ratio", 2); q.att = num (pl, "att", .03f); q.rel = num (pl, "rel", .25f);
-            q.make = num (pl, "make", 1); q.lim = num (pl, "lim", -2); q.drive = num (pl, "drive", .8f);
+            q.shelfLo = num (pl, "shelfLo", 0); q.shelfHi = num (pl, "shelfHi", 0); q.make = num (pl, "make", 1); q.lim = num (pl, "lim", -2); q.drive = num (pl, "drive", .8f);
         }
     }
     {
