@@ -5681,7 +5681,8 @@
                 "nostalgic",
                 "accordion",
                 "waltz"
-              ]
+              ],
+              "chords": true
             },
             {
               "title": "Les Jours tristes",
@@ -5689,7 +5690,8 @@
                 "melancholy",
                 "strings",
                 "instrumental"
-              ]
+              ],
+              "chords": false
             },
             {
               "title": "La Valse d'Amélie",
@@ -5699,17 +5701,19 @@
                 "waltz",
                 "toy piano",
                 "accordion"
-              ]
+              ],
+              "chords": true
             },
             {
-              "title": "Comptine d'un autre été : L'Après-midi",
+              "title": "Comptine d'un autre été, l'après-midi",
               "tags": [
                 "melancholy",
                 "tender",
                 "acoustic piano",
                 "minimalist",
                 "sparse"
-              ]
+              ],
+              "chords": true
             },
             {
               "title": "La Noyée",
@@ -5717,7 +5721,8 @@
                 "melancholy",
                 "accordion",
                 "waltz"
-              ]
+              ],
+              "chords": false
             },
             {
               "title": "L'Autre valse d'Amélie",
@@ -5725,7 +5730,8 @@
                 "tender",
                 "waltz",
                 "accordion"
-              ]
+              ],
+              "chords": false
             },
             {
               "title": "Guilty",
@@ -5734,7 +5740,8 @@
                 "cabaret"
               ],
               "cover": true,
-              "note": "another writer's song: listed, not analysed"
+              "note": "another writer's song: listed, not analysed",
+              "chords": false
             },
             {
               "title": "À quai",
@@ -5743,7 +5750,8 @@
                 "acoustic piano",
                 "strings",
                 "slow build"
-              ]
+              ],
+              "chords": false
             },
             {
               "title": "Le Moulin",
@@ -5751,14 +5759,16 @@
                 "nostalgic",
                 "acoustic piano",
                 "accordion"
-              ]
+              ],
+              "chords": false
             },
             {
               "title": "Pas si simple",
               "tags": [
                 "playful",
                 "accordion"
-              ]
+              ],
+              "chords": false
             },
             {
               "title": "La Valse d'Amélie (orchestra version)",
@@ -5766,7 +5776,8 @@
                 "romantic",
                 "strings",
                 "waltz"
-              ]
+              ],
+              "chords": false
             },
             {
               "title": "La Valse des vieux os",
@@ -5774,7 +5785,8 @@
                 "playful",
                 "toy piano",
                 "waltz"
-              ]
+              ],
+              "chords": false
             },
             {
               "title": "La Dispute",
@@ -5782,7 +5794,8 @@
                 "melancholy",
                 "acoustic piano",
                 "slow build"
-              ]
+              ],
+              "chords": false
             },
             {
               "title": "Si tu n'étais pas là",
@@ -5791,21 +5804,24 @@
                 "cabaret"
               ],
               "cover": true,
-              "note": "another writer's song: listed, not analysed"
+              "note": "another writer's song: listed, not analysed",
+              "chords": false
             },
             {
               "title": "Soir de fête",
               "tags": [
                 "joyful",
                 "accordion"
-              ]
+              ],
+              "chords": false
             },
             {
               "title": "La Redécouverte",
               "tags": [
                 "dreamy",
                 "sparse"
-              ]
+              ],
+              "chords": false
             },
             {
               "title": "Sur le fil",
@@ -5813,14 +5829,16 @@
                 "cathartic",
                 "violin",
                 "slow build"
-              ]
+              ],
+              "chords": false
             },
             {
               "title": "Le Banquet",
               "tags": [
                 "playful",
                 "harpsichord"
-              ]
+              ],
+              "chords": false
             },
             {
               "title": "La Valse d'Amélie (piano version)",
@@ -5828,7 +5846,8 @@
                 "tender",
                 "acoustic piano",
                 "waltz"
-              ]
+              ],
+              "chords": false
             },
             {
               "title": "La Valse des monstres",
@@ -5837,14 +5856,16 @@
                 "dark",
                 "waltz",
                 "accordion"
-              ]
+              ],
+              "chords": false
             },
             {
               "title": "Les Deux pianos",
               "tags": [
                 "tender",
                 "acoustic piano"
-              ]
+              ],
+              "chords": false
             },
             {
               "title": "Comptine d'un autre été : La Démarche",
@@ -5852,7 +5873,8 @@
                 "restless",
                 "acoustic piano",
                 "minimalist"
-              ]
+              ],
+              "chords": false
             },
             {
               "title": "La Maison",
@@ -5860,7 +5882,8 @@
                 "nostalgic",
                 "tender",
                 "acoustic piano"
-              ]
+              ],
+              "chords": true
             }
           ],
           "kind": "soundtrack"
