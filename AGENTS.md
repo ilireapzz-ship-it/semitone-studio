@@ -110,7 +110,7 @@ First versions of 1–6 and 8–11 are done, mostly in the Song doctor (`doc*`, 
 17. **Section notes.** Sticky notes and to-dos on a section ("re-sing line 3"), shown on the timeline.
 
 ### Recording (Phase 2)
-18. **Auto-comp.** After several takes, pick the best take per line by pitch, timing and tone; Jamie swaps phrases.
+18. **Auto-comp.** (first version: `compAuto`, bar by bar, scores in-tune and on-time against semitones and the written melody; tone not scored yet) After several takes, pick the best take per line by pitch, timing and tone; Jamie swaps phrases.
     Flag pitchy or late spots.
 19. **Practice coach.** Track sing/play-along accuracy over sessions; turn weak spots into Classroom exercises
     built from his own songs.
