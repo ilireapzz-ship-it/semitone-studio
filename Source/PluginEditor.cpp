@@ -22,6 +22,11 @@ SemitoneEditor::SemitoneEditor (SemitoneProcessor& p)
         h = juce::jmin (h, d->userArea.getHeight() - 140);
     }
     setSize (juce::jmax (720, w), juce::jmax (480, h));
+   #if JucePlugin_Build_Standalone
+    // the audio input only ever goes to take files, never to the speakers, so the feedback warning doesn't apply
+    if (auto* h = juce::StandalonePluginHolder::getInstance())
+        h->getMuteInputValue().setValue (false);
+   #endif
     browser.goToURL (juce::WebBrowserComponent::getResourceProviderRoot());
     incoming.reserve (1024);
     prepareMarkers();
