@@ -4102,7 +4102,7 @@ function initOrchEditing(){
     if(e.code==='Space'&&tg!=='BUTTON'){ e.preventDefault(); oPlay('section'); } });
 }
 function refreshORow(id){ const row=document.querySelector(`.orow[data-id="${id}"]`); if(row){ row.outerHTML=oRowHTML(id); requestAnimationFrame(()=>drawORoll(id)); } renderGuide(); renderOTimeline(); scoreDirty(); }
-function renderODrag(){ const el=$('#oDawDrag'); if(!el||typeof dragChip!=='function') return; el.innerHTML=`<span class="label">Into your DAW</span>${dragChip('orch','__all','All instruments','#555')}<span class="qhint">Each instrument also has a ⠿ MIDI chip on its row. ${inNative()?'Drag onto your DAW’s timeline or a track':'Drag onto a DAW track (Chrome/Edge)'} or click to save.</span>`; }
+function renderODrag(){ const el=$('#oDawDrag'); if(!el||typeof dragChip!=='function') return; el.innerHTML=`<span class="label">Into your DAW</span>${dragChip('orch','__all','All instruments','#555')}${dragChip('orch','__struct','Structure only','#8a8a8a')}<span class="qhint">Each instrument also has a ⠿ MIDI chip on its row. ${inNative()?'Drag onto your DAW’s timeline or a track':'Drag onto a DAW track (Chrome/Edge)'} or click to save.</span>`; }
 function renderOrch(){ renderODrag(); renderOTemplates(); renderODNA(); renderOSounds(); syncOControls(); renderOTimeline(); renderGuide(); renderOrchRows(); renderOProjBar(); renderStrips('orch'); }
 function syncOControls(){ $('#oEns').value=O.ens; $('#oKey').value=O.key; $('#oBpm').value=O.bpm; $('#oBpmOut').textContent=O.bpm+' BPM'; $('#oDrafts').checked=O.drafts; $('#oWeird').value=O.weird||0; $('#oWeirdOut').textContent=Math.round((O.weird||0)*100)+'%'; }
 /* ----- orchestral projects ----- */
@@ -6920,7 +6920,12 @@ async function renderOrchAt(sr,only){ ensureAudio(); const realAc=ac, realM=mast
 /* drag a part straight into a DAW (Chrome / Edge), or click to save it */
 function inNative(){ return !!(window.__JUCE__&&window.__JUCE__.backend); }
 function dragChip(scope,id,label,color){ return `<span class="dx-drag" draggable="${inNative()?'false':'true'}" data-dxs="${scope}" data-dxi="${esc(id)}" style="--c:${color}" title="Drag into your DAW, or click to save ${esc(label)}.mid">⠿ ${esc(label)}</span>`; }
-function dxFile(scope,id){ const D=dawTracks(scope), t=D.tracks.find(x=>x.id===id); const name=(id==='__all'?(scope==='song'?fileBase():(O.name||'Orchestral piece'))+' - all parts':(t?t.name:id)).replace(/[\\/:*?"<>|]/g,'')+'.mid'; return {name,data:id==='__all'?D.mid:partMidi(scope,id)}; }
+function structureMidi(scope){ const Q=480, tk=b=>Math.round(b*Q), orch=scope==='orch', secs=orch?O.sections:S.song.sections, B=orch?4:METERS[S.meter].B, M=orch?{top:4,bot:4,compound:false}:METERS[S.meter], bpm=orch?O.bpm:S.bpm, marks=[]; let at=0;
+  secs.forEach(sec=>{ const nm=ascii(sec.name); marks.push({t:tk(at),o:2,b:[0xFF,0x06,...vlq(nm.length),...nm]}); at+=sec.bars*B; });
+  const end=ascii('End'); marks.push({t:tk(at),o:2,b:[0xFF,0x06,...vlq(end.length),...end]});
+  const us=Math.round(60e6/bpm), trk=mtrk((orch?(O.name||'Orchestral piece'):fileBase())+' - structure',marks,[0,0xFF,0x51,0x03,(us>>16)&255,(us>>8)&255,us&255, 0,0xFF,0x58,0x04,M.top,M.bot===8?3:2,M.compound?36:24,8]);
+  return new Uint8Array([...ascii('MThd'),0,0,0,6,0,0,0,1,(Q>>8)&255,Q&255,...trk]); }
+function dxFile(scope,id){ if(id==='__struct') return {name:((scope==='orch'?(O.name||'Orchestral piece'):fileBase())+' - structure').replace(/[\\/:*?"<>|]/g,'')+'.mid',data:structureMidi(scope)}; const D=dawTracks(scope), t=D.tracks.find(x=>x.id===id); const name=(id==='__all'?(scope==='song'?fileBase():(O.name||'Orchestral piece'))+' - all parts':(t?t.name:id)).replace(/[\\/:*?"<>|]/g,'')+'.mid'; return {name,data:id==='__all'?D.mid:partMidi(scope,id)}; }
 // desktop app / plugin: the drag is started by the native side (a real file drag the DAW accepts), not by the web view
 const NDRAG={el:null,x:0,y:0,sent:false,until:0};
 function initNativeDrag(){
@@ -6935,7 +6940,7 @@ function initDawDrag(){ if(inNative()) initNativeDrag(); document.addEventListen
     e.dataTransfer.effectAllowed='copy'; e.dataTransfer.setData('DownloadURL',`audio/midi:${f.name}:${url}`); e.dataTransfer.setData('text/uri-list',url); e.dataTransfer.setData('text/plain',f.name); setTimeout(()=>URL.revokeObjectURL(url),60000); });
   document.addEventListener('click',async e=>{ const c=e.target.closest('.dx-drag'); if(!c) return; if(NDRAG.sent&&Date.now()<NDRAG.until){ NDRAG.sent=false; return; } if(!downloadsCap){ toast('Saving files isn’t available in this view'); return; } const f=dxFile(c.dataset.dxs,c.dataset.dxi); try{ await downloadsCap.save({filename:f.name,data:f.data}); toast(`Saved ${f.name}`); }catch(err){ if(err&&err.code==='declined') return; try{ await downloadsCap.save({filename:f.name.replace(/\.mid$/,'')+'.zip',data:zipOne(f.name,f.data)}); toast('Saved (zipped): unzip to get the .mid'); }catch(e2){ toast('Couldn’t save'); } } }); }
 function renderSongDrag(){ const el=$('#dawDrag'); if(!el||!S.song) return; const parts=[['lead','Melody'],['chords','Chords'],['bass','Bass'],['drums','Drums']].filter(([p])=>S.parts[p].on);
-  el.innerHTML=`<span class="label">Into your DAW</span>${parts.map(([p,n])=>dragChip('song',p,n,SONG_COL[p])).join('')}${dragChip('song','__all','All parts','#555')}<span class="qhint">${inNative()?'Drag a part onto your DAW’s timeline or a track (FL Studio: drop it on the Channel Rack), or click to save it.':'Drag a part onto a DAW track (Chrome/Edge), or click to save it.'}</span>`; }
+  el.innerHTML=`<span class="label">Into your DAW</span>${parts.map(([p,n])=>dragChip('song',p,n,SONG_COL[p])).join('')}${dragChip('song','__all','All parts','#555')}${dragChip('song','__struct','Structure only','#8a8a8a')}<span class="qhint">${inNative()?'Drag a part onto your DAW’s timeline or a track (FL Studio: drop it on the Channel Rack), or click to save it.':'Drag a part onto a DAW track (Chrome/Edge), or click to save it.'}</span>`; }
 
 /* ---------- MIDI out: play your VSTs from every piano roll ---------- */
 const MOUT={acc:null,port:'',on:false,mute:true,clock:false,map:{song:{lead:{on:true,ch:0},chords:{on:true,ch:1},bass:{on:true,ch:2},drums:{on:true,ch:9}},orch:{}},clockT:null,held:new Set()};
@@ -7276,7 +7281,7 @@ function secDragChip(orch){ return `<span class="sec-drag dx-sec" data-sall="1"$
 function initSectionDrag(){ if(!NATIVE.plugin) return;
   [['#timeline',false],['#oTimeline',true]].forEach(([sel,orch])=>{ const tl=$(sel); if(!tl) return;
     const hint=document.createElement('div'); hint.className='qhint sec-drag-hint'; hint.id=orch?'oSecDragHint':'secDragHint';
-    hint.innerHTML=`${secDragChip(orch)} Drag a section, or the whole ${orch?'piece':'song'}, onto the ${esc(NATIVE.host==='FL Studio'?'Playlist':'timeline')}: it lands as audio, exactly as long as the section. Hold ⌥ for MIDI${NATIVE.host==='FL Studio'?' (drop that on the Channel Rack)':''}.`;
+    hint.innerHTML=`${dragChip(orch?'orch':'song','__struct','Structure only','#8a8a8a')} the section names as markers, no notes: a guide to arrange to. ${secDragChip(orch)} Or drag a section, or the whole ${orch?'piece':'song'}, onto the ${esc(NATIVE.host==='FL Studio'?'Playlist':'timeline')} as audio (hold ⌥ for MIDI).`;
     tl.insertAdjacentElement('afterend',hint); });
   const startEl=e=>e.target.closest&&(e.target.closest('#timeline .sec')||e.target.closest('#oTimeline .sec')||e.target.closest('.dx-sec'));
   document.addEventListener('pointerdown',e=>{ const b=startEl(e); if(!b||e.button!==0) return; SDRAG.b=b; SDRAG.x=e.clientX; SDRAG.y=e.clientY; SDRAG.sent=false; SDRAG.alt=e.altKey; },true);
