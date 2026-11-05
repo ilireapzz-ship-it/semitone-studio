@@ -52,7 +52,7 @@ suggest and you accept, never surprise changes.
 2. **Open with a song ready.** Done (`demoSong`).
 3. **Windows check.** The Windows build has never been run on a PC. Go through docs/INSTALL-WINDOWS.txt
    when a PC is available; fix what breaks. (FL markers need loopMIDI on Windows; nothing else should be Mac-only.)
-4. **Engine gaps** (Source/Synth.h), so the plugin sounds complete with its window closed: per-part effects,
+4. **Engine gaps** (deferred 5 Nov 2026: risky without a listen, and rendered sections already cover these) (Source/Synth.h), so the plugin sounds complete with its window closed: per-part effects,
    mix automation, transitions, recorded takes, samples and SoundFonts, orchestral instruments.
 
 ### Phase 2: record the song
@@ -76,6 +76,7 @@ target look (Start, Song view, Record, Mix). Rules for every one of them:
 - Each idea ships with a test in `tests/web/` and a short plain-words note for Jamie.
 
 ### Smarter: Semitone understands the song (Phase 1–2, interface only; start here)
+Done so far: 1 (already in the lyrics lane), 2, 3, 4 and 11 in the Song doctor (`docHook`, `docFlat`, `docClash`, `docFit`; 11 suggests a key but can't transpose the song yet). Next: 5, 6, 8, 9, 10; 7 after there are more suggestions to learn from.
 1. **Prosody check.** Flag stressed syllables on weak beats or short notes (needs syllable stress: a small
    English stress dictionary plus rules), suggest moving the note or the word. Shown under the piano roll's lyrics.
 2. **Hook strength, explained.** Score the chorus on repetition, contour, rhythm and range lift over the verse;
