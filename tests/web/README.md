@@ -20,5 +20,6 @@ node tests/web/regression.test.js
 | `orchestral-drag.test.js` | the same for Orchestral, plus its sections render |
 | `style-tags.test.js` | library loads, every new style renders, search, blending, conflicts, eras, variants, orchestral tags, undo, save |
 | `producer-pass.test.js` | all 8 producers, A/B returns your version exactly, Discard, Keep as labelled undo steps, muted sections leave the MIDI |
+| `emotion-vibe.test.js` | emotion per section, suggested moves, lanes change the sound, one undo step, saved with the song |
 | `undo.test.js` | every kind of change undoes and redoes exactly, labels, no ghost steps, playing song keeps playing, 100-step cap, plugin |
 | `fl-markers.test.js` | Send structure to FL: marker list, setup panel |
