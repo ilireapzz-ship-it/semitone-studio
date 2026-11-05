@@ -5089,6 +5089,47 @@
             ]
           }
         ]
+      },
+      "pass": {
+        "name": "80s machines",
+        "summary": "LinnDrum-style drums, Juno arpeggios, pulsing pads and a wide room.",
+        "moves": [
+          {
+            "id": "machine-drums",
+            "level": "sound",
+            "what": "Drums to an 80s drum machine",
+            "why": "His LinnDrum-driven beats",
+            "op": "kit:electro; groove:drive"
+          },
+          {
+            "id": "juno-arp",
+            "level": "sound",
+            "what": "Juno arpeggio carries the chorus low end",
+            "why": "A favourite Juno-6 move",
+            "op": "swapSound:bass->i:junobass,arp@chorus"
+          },
+          {
+            "id": "tremolo-pads",
+            "level": "mix",
+            "what": "16th-note tremolo on held pads",
+            "why": "Held chords pulse",
+            "op": "fx:pad=tremolo16"
+          },
+          {
+            "id": "room",
+            "level": "mix",
+            "what": "Wide room sound on drums and backing vocals",
+            "why": "His two-corner room mics",
+            "op": "fx:drums,bv=room-wide"
+          },
+          {
+            "id": "vintage-modern",
+            "level": "sound",
+            "what": "Layer a vintage sound with a modern one in the chorus",
+            "why": "Contrast",
+            "op": "layer:i:prokeys@chorus"
+          }
+        ]
       }
     },
     {
@@ -5142,6 +5183,47 @@
           }
         ],
         "note": "These are songwriting rules, so this tag shapes structure and the A&R check more than sound."
+      },
+      "pass": {
+        "name": "Tighten the hook",
+        "summary": "One new element at a time; the hook gets the most space; melody repeats more.",
+        "moves": [
+          {
+            "id": "one-new",
+            "level": "arrangement",
+            "what": "Bring in one new element per section",
+            "why": "Keeps the ear interested",
+            "op": "layerRamp:one-per-section"
+          },
+          {
+            "id": "hook-space",
+            "level": "arrangement",
+            "what": "Thin the parts under the chorus hook",
+            "why": "The hook gets the most space",
+            "op": "thin:@chorus-under-melody"
+          },
+          {
+            "id": "repeat-hook",
+            "level": "writing",
+            "what": "Make the chorus melody repeat its first phrase",
+            "why": "Melodic repetition makes it stick (changes your melody)",
+            "op": "melodyRepeat:chorus,phrase1"
+          },
+          {
+            "id": "syllables",
+            "level": "writing",
+            "what": "Match verse 2 syllable counts to verse 1",
+            "why": "Familiar shape the second time (changes your melody)",
+            "op": "melodyMatch:verse2<-verse1"
+          },
+          {
+            "id": "early-hook",
+            "level": "structure",
+            "what": "Hook before 0:45: shorten the intro or first verse",
+            "why": "Gets to the point",
+            "op": "cutBars:intro|verse1 until hook<45s"
+          }
+        ]
       }
     },
     {
@@ -5205,6 +5287,47 @@
             ]
           }
         ]
+      },
+      "pass": {
+        "name": "Close and intimate",
+        "summary": "Sparse, close vocal and harmonies, found-sound percussion, tremolo chops.",
+        "moves": [
+          {
+            "id": "close-vocal",
+            "level": "mix",
+            "what": "Vocal very close; harmonies almost as loud as the lead",
+            "why": "His intimate vocal sound",
+            "op": "fx:vocal=close; harmonies+3dB"
+          },
+          {
+            "id": "sparse",
+            "level": "arrangement",
+            "what": "Remove busy parts; keep rhythm and harmonies",
+            "why": "Space over density",
+            "op": "muteDoubles:@all; density*0.7"
+          },
+          {
+            "id": "found-sounds",
+            "level": "sound",
+            "what": "Found-sound percussion (clicks, taps) replaces the hi-hat",
+            "why": "Household sounds as drums (needs the found-sound set)",
+            "op": "kit:found"
+          },
+          {
+            "id": "tremolo-chop",
+            "level": "mix",
+            "what": "Chopping tremolo on a synth or vocal",
+            "why": "Rhythmic movement without more parts",
+            "op": "fx:lead=tremoloChop8"
+          },
+          {
+            "id": "upright",
+            "level": "sound",
+            "what": "Chords to piano",
+            "why": "Upright piano as the writing instrument",
+            "op": "swapSound:chords->i:piano"
+          }
+        ]
       }
     },
     {
@@ -5260,6 +5383,40 @@
             "src": [
               "https://thefader.com/2018/10/08/mike-dean-interview-travis-scott-and-kanye-west"
             ]
+          }
+        ]
+      },
+      "pass": {
+        "name": "Synth-solo outro",
+        "summary": "Big analog pads, throbbing synth bass, an expressive synth solo over a new outro.",
+        "moves": [
+          {
+            "id": "solo-outro",
+            "level": "structure",
+            "what": "Add an 8-bar outro with a synth solo",
+            "why": "His signature ending",
+            "op": "addSection:outro(8)+synthSolo"
+          },
+          {
+            "id": "big-pads",
+            "level": "sound",
+            "what": "Big analog pad under the chorus",
+            "why": "Size",
+            "op": "layer:i:propad@chorus"
+          },
+          {
+            "id": "throb-bass",
+            "level": "sound",
+            "what": "Throbbing synth bass",
+            "why": "Low-end movement",
+            "op": "swapSound:bass->i:probass"
+          },
+          {
+            "id": "gaps",
+            "level": "arrangement",
+            "what": "Leave gaps where an extra layer can fit",
+            "why": "Room for the solo and ad-libs",
+            "op": "thin:@verse"
           }
         ]
       }
@@ -5320,6 +5477,40 @@
             "src": [
               "https://www.bmi.com/news/entry/redone_rising"
             ]
+          }
+        ]
+      },
+      "pass": {
+        "name": "Club-pop",
+        "summary": "Marching four-on-the-floor beat, synth stabs, a stuttering post-chorus hook.",
+        "moves": [
+          {
+            "id": "four-floor",
+            "level": "sound",
+            "what": "Clipped marching dance beat",
+            "why": "Big, simple, memorable",
+            "op": "groove:fourfloor; kit:electro"
+          },
+          {
+            "id": "stabs",
+            "level": "sound",
+            "what": "80s synth stabs on the chords",
+            "why": "His synth sound",
+            "op": "swapSound:chords->i:junobrass,stabs"
+          },
+          {
+            "id": "stutter",
+            "level": "arrangement",
+            "what": "Post-chorus: stutter the hook",
+            "why": "A second hook after the chorus (needs the stutter effect)",
+            "op": "addSection:postChorus+stutter(hook)"
+          },
+          {
+            "id": "chant-intro",
+            "level": "structure",
+            "what": "Open with a chanted hook",
+            "why": "Hook in the first seconds",
+            "op": "addSection:intro(chant-hook)"
           }
         ]
       }
@@ -5390,6 +5581,61 @@
           }
         ],
         "note": "Rubin is known for an approach rather than a fixed sound, so this tag mostly removes things and keeps performances natural."
+      },
+      "pass": {
+        "name": "Reduce",
+        "summary": "Strip each section back to what the song needs; the vocal and words carry it.",
+        "moves": [
+          {
+            "id": "verse1-bare",
+            "level": "arrangement",
+            "what": "First verse: vocal plus one instrument",
+            "why": "So the song starts from the voice",
+            "op": "mute:all-but(vocal,lead-harmony-instrument)@verse1"
+          },
+          {
+            "id": "mute-nonessential",
+            "level": "arrangement",
+            "what": "Mute any part that doubles another in the same range",
+            "why": "Fewer parts, each one clearer",
+            "op": "muteDoubles:@all"
+          },
+          {
+            "id": "short-intro",
+            "level": "structure",
+            "what": "Shorten the intro to 2 bars, or start on the vocal",
+            "why": "Get to the voice sooner",
+            "op": "cutBars:intro->2"
+          },
+          {
+            "id": "drop-before-peak",
+            "level": "arrangement",
+            "what": "Drums out for the first half of the last chorus",
+            "why": "A gap before the last lift makes it hit harder",
+            "op": "dropDrums:lastChorus,firstHalf"
+          },
+          {
+            "id": "dry-mix",
+            "level": "mix",
+            "what": "Dry and upfront: less reverb and effects",
+            "why": "Performance over polish",
+            "op": "fx:reverb*0.4,delay*0.5@all"
+          },
+          {
+            "id": "natural-take",
+            "level": "mix",
+            "what": "Use the take with the fewest edits; less pitch correction",
+            "why": "Feel over perfection",
+            "op": "vocalTake:mostNatural; tune*0.5"
+          },
+          {
+            "id": "plain-sound",
+            "level": "sound",
+            "what": "Swap a synth pad for piano or acoustic guitar",
+            "why": "A plainer sound leaves room for the vocal",
+            "op": "swapSound:pad->i:piano"
+          }
+        ]
       }
     },
     {
@@ -5461,6 +5707,54 @@
             "src": [
               "https://www.musicradar.com/news/chappell-roan-good-luck-babe-theory"
             ]
+          }
+        ]
+      },
+      "pass": {
+        "name": "Build it up",
+        "summary": "Start on piano and voice and build to a full band; the last chorus goes bigger.",
+        "moves": [
+          {
+            "id": "piano-start",
+            "level": "arrangement",
+            "what": "Intro and verse 1: piano and voice only",
+            "why": "The ballad-to-rock arc starts small",
+            "op": "mute:all-but(vocal,piano)@intro,verse1"
+          },
+          {
+            "id": "band-in",
+            "level": "arrangement",
+            "what": "Band enters at chorus 1, fuller each section",
+            "why": "Each section adds one layer",
+            "op": "layerRamp:@chorus1..end"
+          },
+          {
+            "id": "double-time",
+            "level": "arrangement",
+            "what": "Last chorus switches to double-time drums",
+            "why": "The classic lift into the end",
+            "op": "drumFeel:double@lastChorus"
+          },
+          {
+            "id": "push-tempo",
+            "level": "arrangement",
+            "what": "Tempo pushes up a few BPM towards the end",
+            "why": "Builds urgency (uses the tempo curve)",
+            "op": "tempoCurve:+3@lastChorus"
+          },
+          {
+            "id": "colour",
+            "level": "sound",
+            "what": "Stacked strings and Mellotron in the bridge",
+            "why": "Colour layers for size",
+            "op": "layer:i:strings@bridge"
+          },
+          {
+            "id": "vocal-chain",
+            "level": "mix",
+            "what": "Vocal compressed twice, vintage reverb",
+            "why": "His documented vocal sound",
+            "op": "fx:vocal=comp2+vintageVerb"
           }
         ]
       }
@@ -5535,6 +5829,47 @@
             "src": [
               "https://en.wikipedia.org/wiki/Brat_(album)"
             ]
+          }
+        ]
+      },
+      "pass": {
+        "name": "Hyperpop",
+        "summary": "Pitched and chopped vocals, plastic-bright synths, sudden switches, a dark undertone.",
+        "moves": [
+          {
+            "id": "pitch-vocal",
+            "level": "mix",
+            "what": "Pitch the vocal up and chop it into a rhythm",
+            "why": "His signature vocal treatment",
+            "op": "fx:vocal=pitch+5,chop16@chorus"
+          },
+          {
+            "id": "switch",
+            "level": "arrangement",
+            "what": "Bridge switches sound and rhythm completely",
+            "why": "The song has several personalities",
+            "op": "swapSoundAll@bridge; groove:random"
+          },
+          {
+            "id": "chaos-peak",
+            "level": "arrangement",
+            "what": "Stack clashing layers for a peak, then snap back",
+            "why": "Chaos then clean pop",
+            "op": "layer:clash@lastChorus,firstHalf"
+          },
+          {
+            "id": "sub",
+            "level": "sound",
+            "what": "Grime-style sub-bass",
+            "why": "Weight under the bright top",
+            "op": "swapSound:bass->i:probass,sub"
+          },
+          {
+            "id": "dark-chord",
+            "level": "writing",
+            "what": "One dissonant inversion under the bright chorus",
+            "why": "A dark undertone (changes your chords)",
+            "op": "chordColor:dissonantInversion@chorus,1"
           }
         ]
       }
@@ -6875,6 +7210,28 @@
         "lana-honeymoon",
         "lana-nfr",
         "lana-bb"
+      ]
+    }
+  },
+  "producerPass": {
+    "about": "A producer pass runs on a finished song: Semitone proposes what that producer would likely do, as session notes. Each move is one line with a reason and its own on/off switch; A/B compares your version and the pass while it plays; the pass is one undo step and so is each move. \"How far\" picks the levels: sounds & mix (sound, mix) / + arrangement (arrangement, structure) / + writing (writing: only these touch melody or chords, and say so). \"Try another take\" draws a different subset and variant of the moves. Wording is always \"<name>-style pass, based on how they are known to work\": never quotes or first-person lines in the producer's voice. op strings are a small action language for the engine (mute, muteDoubles, cutBars, dropDrums, drumFeel, tempoCurve, layer, layerRamp, thin, swapSound, kit, groove, fx, vocalTake, addSection, melodyRepeat, melodyMatch, chordColor); moves the engine cannot do yet stay listed but greyed with \"coming soon\".",
+    "levels": {
+      "sounds & mix": [
+        "sound",
+        "mix"
+      ],
+      "+ arrangement": [
+        "sound",
+        "mix",
+        "arrangement",
+        "structure"
+      ],
+      "+ writing": [
+        "sound",
+        "mix",
+        "arrangement",
+        "structure",
+        "writing"
       ]
     }
   }

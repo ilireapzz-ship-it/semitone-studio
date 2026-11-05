@@ -105,6 +105,18 @@ target look (Start, Song view, Record, Mix). Rules for every one of them:
 22. **Listen-and-comment links.** Co-writers and A&R open a link, listen, comment at a moment in the song.
 23. **Idea capture from the phone.** A voice memo that arrives as a new song sketch with key, tempo and melody detected.
 
+### Producer pass (agreed with Jamie, 5 Nov 2026; build right after Phase 1 task 1, undo)
+25. **Ask a producer about your finished song.** Flow: pick a style → find a song you like → pick a producer → Semitone
+    shows that producer's likely moves for this song as **session notes** (design canvas board "6 · Producer pass").
+    - Moves come from `producers[].pass` in style-library.json (rules in `producerPass`): one line each, with the reason,
+      a number that also marks the spot on the timeline, and an on/off switch. Muted parts show hatched, changed ones outlined.
+    - **A/B** switches between your version and the pass while the song plays. Keep N changes / Try another take / Discard.
+    - **How far:** sounds & mix · + arrangement · + writing. Only "+ writing" moves may change melody or chords, and the card says so.
+    - The pass is one undo step, and each kept move is its own step, so any of them can be undone later.
+    - Wording: "Rick Rubin-style pass, based on how he's known to work". Never quotes or lines in the producer's voice.
+    - Producer tags picked *before* generating still set the production layer (blend rules); the pass is the after-the-fact version.
+    - Moves the engine can't do yet (stutter, found sounds, tempo curve per section) stay listed, greyed, "coming soon".
+
 ### Needs Jamie's decision first: don't start without asking
 24. **Built-in assistant.** A chat panel that sees the whole song and answers "why does the bridge feel weak?"
     or "three alternate chorus melodies in my range". Needs an AI model through an API (internet, running cost).
