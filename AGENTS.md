@@ -20,7 +20,7 @@ You can't open Jamie's claude.ai design canvas or plan doc, so copies are in the
    `existingStyles` to the original 8 (step 6).
 3. **Producer pass** (25): first version done (`PASS`, `passOp`). A move runs when `passOp` understands its op; the rest show "coming soon". Parts mute per section through `S.secMute`. Still to do: the other ops, `fxStyle`, the emotion rules (28).
 4. **Emotion and vibe** (28): first version done (`FEEL`, `FEEL_DO`): 5 of the 20 moves draw real volume/pan lanes, the rest show "coming soon" until effects can be automated generally.
-5. **Real sounds**: sound suggestions with recipes (26), then the plug-in scan in the desktop app (27, 30).
+5. **Real sounds**: first version done (`SND`, `Source/LibraryScan.h`): suggestions, recipes, opt-in scan, part + recipe export. Sample packs are not scanned yet.
 6. Engine additions the styles ask for (swing, train beat, waltz is already there; snare rolls, drones, phaser/flanger,
    stutter, new instruments), using the named stand-ins until each exists.
 7. The rest of Phase 1, then the "Smarter" ideas (1–11) and Phase 2.

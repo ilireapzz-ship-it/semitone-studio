@@ -964,7 +964,7 @@ body.is-native #timeline .sec,body.is-native #oTimeline .sec{cursor:grab}
         <button class="btn" id="audioBtn" hidden>Export audio</button>
         <button class="btn" id="dxOpen" hidden title="All parts as MIDI (one file or one per part), plus Reaper and DAWproject files, colour-coded">⇪ Export to DAW</button>
         <button class="btn" id="ppOpen" hidden title="Everything an artist’s team needs in one zip">📦 Pitch pack</button>
-        <button class="btn" id="feelBtn" title="Give the song and each section an emotion and a vibe; see the automation they suggest">Emotion &amp; vibe</button><button class="btn" id="passBtn" title="Ask a producer about this song: their likely moves, heard on A/B, and you keep what works">Producer pass</button><button class="btn" id="arrBtn" title="Turn this song into an orchestral cue">Arrange for orchestra</button>
+        <button class="btn" id="soundBtn" title="Real instruments for this song: who uses them, a recipe, and what you already own">Real sounds</button><button class="btn" id="feelBtn" title="Give the song and each section an emotion and a vibe; see the automation they suggest">Emotion &amp; vibe</button><button class="btn" id="passBtn" title="Ask a producer about this song: their likely moves, heard on A/B, and you keep what works">Producer pass</button><button class="btn" id="arrBtn" title="Turn this song into an orchestral cue">Arrange for orchestra</button>
         <span class="mono" id="tempoNow" aria-live="off"></span><span class="seed mono muted" id="seedOut"></span>
       </div>
       <div class="roll-tools">
@@ -1425,6 +1425,10 @@ body.is-native #timeline .sec,body.is-native #oTimeline .sec{cursor:grab}
 <div class="tagview" id="feelView" hidden role="dialog" aria-modal="true" aria-labelledby="fvTitle">
   <div class="tv-head"><button class="btn mini-btn" id="feelBack">← Song</button><h2 id="fvTitle">Emotion &amp; vibe</h2><span class="muted tv-hint">The feeling and the picture steer the automation. Nothing changes until you press Try these moves.</span><button class="btn" id="feelArc">Suggest an arc</button><button class="btn primary" id="feelTry">Try these moves</button></div>
   <div class="tv-body"><div class="tv-main" id="feelMain"></div><aside class="tv-card" id="feelCard" aria-live="polite"></aside></div>
+</div>
+<div class="tagview" id="soundView" hidden role="dialog" aria-modal="true" aria-labelledby="svTitle">
+  <div class="tv-head"><button class="btn mini-btn" id="soundBack">← Song</button><h2 id="svTitle">Real sounds</h2><span class="muted tv-hint">Semitone’s synths are for sketching. The finished sound comes from your plug-ins.</span><button class="btn" id="soundScan">Scan my plug-ins</button></div>
+  <div class="tv-body"><div class="tv-main" id="soundMain"></div><aside class="tv-card" id="soundCard" aria-live="polite"></aside></div>
 </div>
 <div class="modal" id="libModal" hidden role="dialog" aria-modal="true" aria-labelledby="libTitle">
   <div class="modal-box">
@@ -7514,6 +7518,36 @@ function initFeel(){ FEEL.lib=libJSON('soundLibrary'); S.emotion=''; S.secEmotio
   $('#feelView').addEventListener('click',e=>{ const b=e.target.closest('[data-fvibe]'); if(!b) return; const v=b.dataset.fvibe, i=S.vibes.indexOf(v); if(i>=0) S.vibes.splice(i,1); else S.vibes.push(v); feelRender(); });
   $('#feelView').addEventListener('change',e=>{ const t=e.target; if(t.id==='feelSong') S.emotion=t.value; else if(t.dataset.fsec!=null){ if(t.value) S.secEmotion[t.dataset.fsec]=t.value; else delete S.secEmotion[t.dataset.fsec]; } else if(t.dataset.fmove) FEEL.sel[t.dataset.fmove]=t.checked; feelRender(); }); }
 
+/* ---------- real sounds: point to real instruments, with recipes, and what the user already owns ---------- */
+const SND={id:null,scan:null};
+function sndIds(){ const lib=FEEL.lib, out=[], add=(id,why)=>{ if(lib.instruments.some(i=>i.id===id)&&!out.some(x=>x.id===id)) out.push({id,why}); }, prof=TL.d.profiles.find(p=>p.id===(S.style&&S.style.id));
+  ((S.tags||[]).map(t=>TL.byId[t]).filter(t=>t&&t.ref)).forEach(t=>{ const p=TL.d.profiles.find(x=>'style:'+x.id===t.ref); ((p&&p.sounds)||[]).forEach(id=>add(id,`from ${t.label}`)); });
+  ((prof&&prof.sounds)||[]).forEach(id=>add(id,`from ${S.style.name}`)); (S.vibes||[]).forEach(v=>((lib.vibes.tags[v]||{}).sounds||[]).forEach(id=>add(id,`from the vibe “${v}”`)));
+  ['lead','chords','bass'].forEach(p=>{ const cur=S.parts[p].sound==='style'?(STYLE_INSTR[S.style.id]||{})[p]:S.parts[p].sound; lib.instruments.filter(i=>(i.semitoneStandIn||[]).includes(cur)).forEach(i=>add(i.id,`close to your ${PARTS[p]?PARTS[p].name.toLowerCase():p}`)); });
+  return out; }
+function sndOwned(list){ const names=((SND.scan&&SND.scan.plugins)||[]).map(x=>x.toLowerCase()); return (list||[]).filter(sw=>sw.split(/[:/,()]| or /).some(t=>{ const k=t.trim().toLowerCase(); return k.length>3&&names.some(n=>n.includes(k)||k.includes(n)); })); }
+function sndPresets(i){ const kw=[i.id,...String(i.name).toLowerCase().split(/[^a-z0-9]+/)].filter(k=>k.length>3&&!['roland','with','style'].includes(k)); return ((SND.scan&&SND.scan.presets)||[]).filter(p=>kw.some(k=>String(p.preset).toLowerCase().includes(k))).slice(0,3); }
+function sndPart(i){ const r=i.roles||[]; return r.some(x=>/pad|chord|keys/.test(x))?'chords':r.some(x=>/bass/.test(x))?'bass':r.some(x=>/lead|arp|melody/.test(x))?'lead':'chords'; }
+function sndRender(){ const lib=FEEL.lib, ids=sndIds(); if(!SND.id||!ids.some(x=>x.id===SND.id)) SND.id=ids.length?ids[0].id:null;
+  $('#soundMain').innerHTML=`<div class="tv-group"><div class="tv-ghead"><b>Suggested for this song</b><span class="muted">from your tags, style and vibe</span></div><div class="tv-row" style="margin-top:0">${ids.map(x=>{ const i=lib.instruments.find(y=>y.id===x.id), own=sndOwned(i.software).length; return `<button class="tchip" data-snd="${esc(x.id)}" aria-pressed="${x.id===SND.id}">${esc(i.name)}${own?' ✓':''}</button>`; }).join('')||'<span class="muted">Pick style tags or a vibe to get suggestions.</span>'}</div></div>
+   <div class="tv-group"><div class="tv-ghead"><b>Effects to reach for</b><span class="muted">from your vibes</span></div>${[...new Set((S.vibes||[]).flatMap(v=>(lib.vibes.tags[v]||{}).fx||[]))].map(id=>{ const e=lib.effects.find(x=>x.id===id); if(!e) return ''; const own=sndOwned(e.software); return `<div class="fv-lane" style="margin-top:6px"><b>${esc(e.name)}</b><span>${esc(e.does)}${own.length?` <small>· you own ${esc(own[0])}</small>`:''}</span></div>`; }).join('')||'<p class="muted" style="margin:0">Pick a vibe in Emotion &amp; vibe to see these.</p>'}</div>
+   <p class="muted" style="font-size:.84rem">${SND.scan?`Your library: ${(SND.scan.plugins||[]).length} plug-ins and ${(SND.scan.presets||[]).length} presets. Names only, kept on this computer.`:window.__JUCE__?'Scan my plug-ins reads plug-in and preset names on this computer so suggestions can say what you own. Names only. Nothing leaves your computer.':'Scanning your plug-ins works in the desktop app.'}</p>`;
+  const i=lib.instruments.find(y=>y.id===SND.id); if(!i){ $('#soundCard').innerHTML=''; return; } const own=sndOwned(i.software), pre=sndPresets(i), part=sndPart(i), rest=i.software.filter(x=>!own.includes(x)), why=(ids.find(x=>x.id===i.id)||{}).why;
+  $('#soundCard').innerHTML=`<span class="label">Sound for the ${esc(part)}</span><h3 style="margin:0">${esc(i.name)}</h3><small class="muted">${esc(i.kind||'')}${why?' · '+esc(why):''}</small>
+   ${(i.usedBy||[]).slice(0,2).map(u=>`<div class="tv-note"><b>${esc(u.who)}</b>${esc(u.how)}</div>`).join('')}
+   ${i.recipe?`<div class="tv-note"><b>Recipe (set this on any similar synth)</b><ul>${Object.entries(i.recipe).map(([k,v])=>`<li><b style="display:inline">${esc(k)}:</b> ${esc(v)}</li>`).join('')}</ul></div>`:''}
+   ${own.length?`<div class="tv-note"><b>In your library</b><ul>${own.map(x=>`<li>${esc(x)}</li>`).join('')}${pre.map(q=>`<li>${esc(q.pack)} → ${esc(q.preset)}</li>`).join('')}</ul></div>`:''}
+   ${rest.length?`<div class="tv-note"><b>Software that recreates it</b>${esc(rest.join(' · '))}</div>`:''}
+   <div><button class="btn primary" id="soundDaw">Use in my DAW (MIDI + note)</button> ${(i.semitoneStandIn||[]).length?`<button class="btn" id="soundSketch">Sketch with Semitone’s stand-in</button>`:''}</div>`; }
+async function sndFiles(files){ for(const [filename,data] of files){ if(window.__JUCE__&&typeof nativeDownloads==='function') await nativeDownloads().save({filename,data}); else { const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([data])); a.download=filename; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),4000); } } }
+function sndNote(i,part){ const own=sndOwned(i.software); return [`${(S.project&&S.project.name)||'Untitled song'}: ${part} part`,`Sound: ${i.name}${i.kind?` (${i.kind})`:''}`,'',...Object.entries(i.recipe||{}).map(([k,v])=>`Recipe, ${k}: ${v}`),'',own.length?`In your library: ${own.join(', ')}`:`Software to try: ${i.software.join(', ')}`,'','Made by Semitone Studio. A recipe to set by hand, not a preset.'].join('\n'); }
+function initSounds(){ $('#soundBtn').onclick=()=>{ if(!FEEL.lib) return; $('#soundView').hidden=false; sndRender(); }; $('#soundBack').onclick=()=>{ $('#soundView').hidden=true; };
+  $('#soundScan').onclick=()=>{ if(!window.__JUCE__){ toast('Scanning works in the desktop app'); return; } $('#soundScan').disabled=true; $('#soundScan').textContent='Scanning…'; nEmit('st_scan',{}); };
+  $('#soundView').addEventListener('click',e=>{ const c=e.target.closest('[data-snd]'); if(c){ SND.id=c.dataset.snd; sndRender(); return; } const i=FEEL.lib.instruments.find(y=>y.id===SND.id); if(!i) return; const part=sndPart(i);
+    if(e.target.id==='soundSketch'){ S.parts[part].sound=i.semitoneStandIn[0]; renderMixer(); toast(`${part} now sketches with ${i.semitoneStandIn[0].slice(2)}`); }
+    if(e.target.id==='soundDaw') sndFiles([[`${i.id} ${part}.mid`,partMidi('song',part)],[`${i.id} ${part} recipe.txt`,sndNote(i,part)]]).then(()=>toast('Saved the part and its recipe')); });
+  if(window.__JUCE__){ nOn('st_scan_done',d=>{ try{ SND.scan=JSON.parse(d.json); }catch(e){} const b=$('#soundScan'); b.disabled=false; b.textContent='Rescan my plug-ins'; if(!$('#soundView').hidden) sndRender(); }); nEmit('st_scan_load',{}); } }
+
 /* ---------- song history: undo and redo for every change ----------
    One list for the whole song, Compose and Orchestral together. After each settled change the song is
    compared with the last known state; a difference becomes a step with a short label. Notes, chords and
@@ -7602,7 +7636,7 @@ const redraw=()=>{if(!S.playing)renderRoll();drawWave();renderRead();drawPlay();
 try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>setTimeout(redraw,30));}catch(e){}
 new MutationObserver(()=>setTimeout(redraw,30)).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
 
-initStyleLibrary(); initTags(); initPass(); initFeel(); buildStyles(); bindControls(); initExtras(); initTime(); initStudio2(); initQuirks(); initRead(); initPlay(); initProjects(); initOrch2(); initOrch(); initRoom(); initB3(); initEar(); initPractice(); initWeird(); initArt(); initMix(); initSmartView(); initCArt(); initCLane(); initSug(); initInstr(); initLyrics(); initPerf(); initEnergy(); initFinish(); initLive(); initSel(); initEdit2(); earUI(); initPro(); initDaw(); initBassRoll(); renderODrag(); try{ initTidy(); }catch(e){ console.warn('tidy',e); } try{ initInfo(); }catch(e){ console.warn('info',e); } nativeInit(); document.querySelectorAll('[data-meter]').forEach(el=>el.innerHTML=meterHTML()); $('#oPolishSel').value=O.polish||'off'; $('#oPolishSel').onchange=e=>{ O.polish=e.target.value; }; $('#oShowArt').onchange=drawAllORolls; renderNoteBar(); buildKeyboard(); buildClock();
+initStyleLibrary(); initTags(); initPass(); initFeel(); initSounds(); buildStyles(); bindControls(); initExtras(); initTime(); initStudio2(); initQuirks(); initRead(); initPlay(); initProjects(); initOrch2(); initOrch(); initRoom(); initB3(); initEar(); initPractice(); initWeird(); initArt(); initMix(); initSmartView(); initCArt(); initCLane(); initSug(); initInstr(); initLyrics(); initPerf(); initEnergy(); initFinish(); initLive(); initSel(); initEdit2(); earUI(); initPro(); initDaw(); initBassRoll(); renderODrag(); try{ initTidy(); }catch(e){ console.warn('tidy',e); } try{ initInfo(); }catch(e){ console.warn('info',e); } nativeInit(); document.querySelectorAll('[data-meter]').forEach(el=>el.innerHTML=meterHTML()); $('#oPolishSel').value=O.polish||'off'; $('#oPolishSel').onchange=e=>{ O.polish=e.target.value; }; $('#oShowArt').onchange=drawAllORolls; renderNoteBar(); buildKeyboard(); buildClock();
 S.seed=4127; loadStyle(STYLES[0],false);
 renderInterval(); renderClock(); renderFacts(); route(); initHistory();
 if(document.fonts&&document.fonts.ready) document.fonts.ready.then(redraw);

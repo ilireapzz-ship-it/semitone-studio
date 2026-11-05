@@ -3,6 +3,7 @@
 #include "MacDrag.h"
 #include "SongFiles.h"
 #include "FLMarkers.h"
+#include "LibraryScan.h"
 
 SemitoneEditor::SemitoneEditor (SemitoneProcessor& p)
     : AudioProcessorEditor (p), proc (p), browser (makeOptions())
@@ -82,6 +83,8 @@ juce::WebBrowserComponent::Options SemitoneEditor::makeOptions()
         .withEventListener ("st_save", [this] (const juce::var& v) { saveFile (v.getProperty ("name", "Semitone export").toString(), v.getProperty ("b64", "").toString()); })
         // song structure -> FL Studio Playlist markers, through Semitone's controller script
         .withEventListener ("st_markers", [this] (const juce::var& v) { sendMarkers (v); })
+        .withEventListener ("st_scan", [this] (const juce::var&) { scanLibrary(); })
+        .withEventListener ("st_scan_load", [this] (const juce::var&) { loadLibraryScan(); })
         .withEventListener ("st_drag_audio", [this] (const juce::var& v) { dragAudio (v); })
         .withEventListener ("st_drag", [this] (const juce::var& v) { dragFile (v.getProperty ("name", "Semitone part.mid").toString(), v.getProperty ("b64", "").toString()); });
 }
@@ -299,6 +302,30 @@ void SemitoneEditor::dragAudio (const juce::var& v)
         if (! w->writeFromAudioSampleBuffer (buf, 0, total)) { dragDone (false, "write"); return; }
     }
     startDrag (f);
+}
+
+// Runs on its own thread: walking plug-in folders can take a few seconds. Only starts when the user asks.
+void SemitoneEditor::scanLibrary()
+{
+    juce::Component::SafePointer<SemitoneEditor> self (this);
+    juce::Thread::launch ([self]
+    {
+        const auto json = st::libscan::scanToJson();
+        juce::MessageManager::callAsync ([self, json] { if (self != nullptr) self->scanDone (json); });
+    });
+}
+
+void SemitoneEditor::loadLibraryScan()
+{
+    if (st::libscan::file().existsAsFile())
+        scanDone (st::libscan::file().loadFileAsString());
+}
+
+void SemitoneEditor::scanDone (const juce::String& json)
+{
+    auto* o = new juce::DynamicObject();
+    o->setProperty ("json", json);
+    browser.emitEventIfBrowserIsVisible ("st_scan_done", juce::var (o));
 }
 
 void SemitoneEditor::sendMarkers (const juce::var& v)

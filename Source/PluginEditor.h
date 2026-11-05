@@ -20,6 +20,9 @@ private:
     void dragFile (const juce::String& name, const juce::String& base64);
     void dragAudio (const juce::var& v);
     void sendMarkers (const juce::var& v);
+    void scanLibrary();
+    void loadLibraryScan();
+    void scanDone (const juce::String& json);
     void prepareMarkers();
     void startDrag (const juce::File& f);
     void dragDone (bool ok, const juce::String& why);
