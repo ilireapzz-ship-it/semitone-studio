@@ -27,5 +27,6 @@ node tests/web/regression.test.js
 | `song-doctor.test.js` | hook, flat, clash, key fit, style position, why it works, usual habits, describe a change, fill a gap, each one undo step |
 | `recording.test.js` | desktop takes through the native bridge, takes follow sections, Use this one, Record button, plugin leaves recording to the DAW |
 | `tools.test.js` | history list and jump, ⌘K palette, focus mode, section notes, taste ordering |
+| `song-versions.test.js` | keep, switch, remove, exact restore, keeps playing for notes and chords, undo, saved with the song |
 | `undo.test.js` | every kind of change undoes and redoes exactly, labels, no ghost steps, playing song keeps playing, 100-step cap, plugin |
 | `fl-markers.test.js` | Send structure to FL: marker list, setup panel |
