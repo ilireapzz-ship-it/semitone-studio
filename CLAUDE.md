@@ -52,6 +52,7 @@ In the HTML, the bridge is the `NATIVE` / `nativeInit()` / `NSND` code (only act
 
 ## Roadmap (Phase 1 of the DAW plan)
 1. Songs as `.semitone` files + autosave + title — done.
-2. Semitone's own sounds inside the DAW (ClipPlayer) — done (Compose only; Orchestral is MIDI-only so far).
+2. Semitone's own sounds inside the DAW (ClipPlayer) — done for Compose and Orchestral (sections rendered by the page).
 3. Native synth engine so the plugin renders sound without the web page — first version done: all patches, instruments and kits, room, polish. Plays what no rendered section covers.
-   Still only in rendered sections: per-part effects, mix automation, transitions, recorded takes, samples and SoundFonts. Orchestral is still MIDI-only.
+   Still only in rendered sections: per-part effects, mix automation, transitions, recorded takes, samples and SoundFonts. The engine has no orchestral instruments yet (Orchestral plays from rendered sections).
+- Plugin drag-out: song-structure blocks (Compose and Orchestral) drag onto the DAW timeline as WAV cut from the section clips (`st_drag_audio`, `SemitoneEditor::dragAudio`); ⌥ drags that section as MIDI (`MIDI_SEC` / `OMIDI_SEC`).

@@ -786,8 +786,8 @@ h2 .info-i{width:19px;height:19px;font-size:12px;margin-left:8px;position:relati
 .ofam.fam-empty:not([open]){opacity:.85}
 .sec-drag-hint{margin:.35rem 0 .1rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
 .sec-drag{display:inline-flex;align-items:center;gap:.3rem;padding:.18rem .6rem;border:1px dashed currentColor;border-radius:999px;font-weight:600;cursor:grab;user-select:none;-webkit-user-select:none}
-body.is-native #timeline .sec{cursor:grab}
-#timeline .sec.dragging,.sec-drag.dragging{opacity:.55;cursor:grabbing}
+body.is-native #timeline .sec,body.is-native #oTimeline .sec{cursor:grab}
+#timeline .sec.dragging,#oTimeline .sec.dragging,.sec-drag.dragging{opacity:.55;cursor:grabbing}
 </style>
 
 <header class="topbar">
@@ -3982,15 +3982,16 @@ function oStop(){ clearInterval(O.timer); cancelAnimationFrame(O.raf); if(O.play
 function oPlayhead(beat){ const sec=O.sections[O.sel]; document.querySelectorAll('.o-ph').forEach(el=>{ if(beat==null){ el.hidden=true; return; } el.hidden=false; el.style.left=(beat/(sec.bars*4)*100)+'%'; }); }
 
 /* ----- orchestral MIDI ----- */
+var OMIDI_SEC=null; // a section index: buildOrchMidi() writes only that section, starting at beat 0
 function buildOrchMidi(){
-  const Q=480, tk=b=>Math.round(b*Q), tracks=[], marks=[]; let ch=0, off=0;
-  O.sections.forEach(s=>{ const nm=ascii(s.name); marks.push({t:tk(off),o:2,b:[0xFF,0x06,...vlq(nm.length),...nm]}); off+=s.bars*4; });
+  const Q=480, tk=b=>Math.round(b*Q), tracks=[], marks=[], SEC=OMIDI_SEC; let ch=0, off=0;
+  O.sections.forEach((s,si)=>{ if(SEC!=null&&si!==SEC) return; const nm=ascii(s.name); marks.push({t:tk(off),o:2,b:[0xFF,0x06,...vlq(nm.length),...nm]}); off+=s.bars*4; });
   ORCH.forEach(inst=>{ if(!ENSEMBLES[O.ens].ids.includes(inst.id)) return; if(typeof MIDI_ONLY!=='undefined'&&MIDI_ONLY&&MIDI_ONLY!==inst.id) return; const ev=[]; let base=0, any=false; const chan=inst.perc?9:ch;
-    O.sections.forEach((s,si)=>{ (O.parts[si][inst.id]||[]).forEach(n=>{ any=true; const m=inst.perc?inst.drum:n.m, v=Math.max(20,Math.min(127,Math.round(110*(n.vel||.7))));
+    O.sections.forEach((s,si)=>{ if(SEC!=null&&si!==SEC) return; (O.parts[si][inst.id]||[]).forEach(n=>{ any=true; const m=inst.perc?inst.drum:n.m, v=Math.max(20,Math.min(127,Math.round(110*(n.vel||.7))));
       ev.push({t:tk(base+n.start),o:1,b:[0x90|chan,m,v]}); ev.push({t:tk(base+n.start+Math.max(.05,n.dur)),o:0,b:[0x80|chan,m,0]}); }); base+=s.bars*4; });
-    if(!any) return; if(!inst.perc){ ev.push({t:0,o:-1,b:[0xC0|chan,inst.gm]}); ev.push(...ccEvents('orch',inst.id,chan,orchSegs(),tk)); ch++; if(ch===9) ch++; }
+    if(!any) return; if(!inst.perc){ ev.push({t:0,o:-1,b:[0xC0|chan,inst.gm]}); if(SEC==null) ev.push(...ccEvents('orch',inst.id,chan,orchSegs(),tk)); ch++; if(ch===9) ch++; }
     tracks.push(mtrk(inst.name,ev)); });
-  if(oAnyTempo()){ let lastUs=-1, o2=0; O.sections.forEach((s,si)=>{ for(let x=0;x<s.bars*4;x+=.5){ const u=Math.round(60e6/oTempoAt(si,x)); if(u!==lastUs){ lastUs=u; marks.push({t:tk(o2+x),o:1.5,b:[0xFF,0x51,0x03,(u>>16)&255,(u>>8)&255,u&255]}); } } o2+=s.bars*4; }); }
+  if(SEC==null&&oAnyTempo()){ let lastUs=-1, o2=0; O.sections.forEach((s,si)=>{ for(let x=0;x<s.bars*4;x+=.5){ const u=Math.round(60e6/oTempoAt(si,x)); if(u!==lastUs){ lastUs=u; marks.push({t:tk(o2+x),o:1.5,b:[0xFF,0x51,0x03,(u>>16)&255,(u>>8)&255,u&255]}); } } o2+=s.bars*4; }); }
   const us=Math.round(60e6/O.bpm), conductor=mtrk(O.name||'Cue',marks,[0,0xFF,0x51,0x03,(us>>16)&255,(us>>8)&255,us&255,0,0xFF,0x58,0x04,4,2,24,8]);
   const all=[conductor,...tracks], head=[...ascii('MThd'),0,0,0,6,0,1,0,all.length,(Q>>8)&255,Q&255];
   return new Uint8Array([...head,...all.flat()]);
@@ -7223,17 +7224,25 @@ function nHash(str){ let h1=0x811c9dc5, h2=0x01000193^str.length; for(let i=0;i<
 function nSecKey(si,g){ const sec=S.song.sections[si], v=sectionView(si); const nb=k=>S.song.sections[k]?{t:S.song.sections[k].type,b:S.song.sections[k].bars}:null;
   return JSON.stringify([g,si,sec.type,sec.bars,energyOf(si),v.chords.map(c=>[codeOf(c),c.custom||null]),v.melody.map(n=>[n.m,+n.start.toFixed(4),+n.dur.toFixed(4),n.art||0]),transOf(si),transOf(si+1),nb(si-1),nb(si+1),typeof TAKES!=='undefined'?TAKES.length:0,NSND.sr]); }
 function nAudioLayout(){ const d=projectData(), g={...d}; ['mats','sections','sel','versions','showLyrics','energy'].forEach(k=>delete g[k]); const gs=JSON.stringify(g); const B=METERS[S.meter].B; let at=0; const items=[];
-  S.song.sections.forEach((s,si)=>{ const id=nHash(nSecKey(si,gs)); items.push({id,at}); NSND.map[id]=si; at+=s.bars*B; }); return items; }
+  S.song.sections.forEach((s,si)=>{ const id=nHash(nSecKey(si,gs)); items.push({id,at}); NSND.map[id]={scope:'song',si}; at+=s.bars*B; }); return items; }
+function nOrchLayout(){ const d=orchData(), g={...d}; ['sections','parts','themes','var','name','id','autoNotes'].forEach(k=>delete g[k]); const gs=JSON.stringify(g); let at=0; const items=[];
+  O.sections.forEach((sec,si)=>{ const id=nHash(JSON.stringify(['orch',gs,si,sec,O.parts[si]||{},NSND.sr])); items.push({id,at}); NSND.map[id]={scope:'orch',si}; at+=sec.bars*4; }); return items; }
+async function nRenderOrchSection(si,sr){ ensureAudio(); const bars=oBars('cue').filter(b=>b.si===si); if(!bars.length) return null;
+  const TM=bars.map(oBarTiming), body=TM.reduce((a,x)=>a+x.dur,0), off=new OfflineAudioContext(2,Math.ceil((body+3.1)*sr),sr), marks=[];
+  const realAc=ac, realMaster=master;
+  try{ ac=off; master=newMaster('orch'); PLAY_T0=.1; let tc=.1; bars.forEach((bar,i)=>{ marks.push(bar.b*4,+tc.toFixed(6)); oScheduleBar(bar,tc,TM[i].spb); tc+=TM[i].dur; }); marks.push(bars.length*4,+tc.toFixed(6));
+    const buf=await off.startRendering(); return {buf,marks}; }
+  finally{ ac=realAc; master=realMaster; PLAY_T0=null; } }
 function nSndMode(m){ NSND.mode=m; nEmit('st_soundmode',{mode:m}); NSND.lastLayout=''; nAudioTick(); nSndStatus(); }
 function nSndStatus(){ const el=$('#nbSnd'); if(!el) return; const n=NSND.queue.length+(NSND.busy?1:0);
-  el.textContent=NSND.mode===2?'':NSND.mode===3?'built-in engine':nativeScope()!=='song'?'Orchestral plays as MIDI for now':n?`preparing sounds… ${n} section${n>1?'s':''} left`:'sounds ready'; }
+  el.textContent=NSND.mode===2?'':NSND.mode===3?'built-in engine':n?`preparing sounds… ${n} section${n>1?'s':''} left`:'sounds ready'; }
 function nAudioTick(){ if(!NATIVE.on||!NATIVE.plugin||!NATIVE.inited||!S.song) return; let items=[];
-  if(NSND.mode<2&&nativeScope()==='song'){ try{ items=nAudioLayout(); }catch(e){ console.warn('audio layout',e); return; } }
+  if(NSND.mode<2){ try{ items=nativeScope()==='song'?nAudioLayout():nOrchLayout(); }catch(e){ console.warn('audio layout',e); return; } }
   const k=JSON.stringify(items); if(k!==NSND.lastLayout){ NSND.lastLayout=k; NSND.stableAt=performance.now(); NSND.seq++; NSND.queue=[]; nEmit('st_audio_layout',{items,seq:NSND.seq}); }
   nSndStatus(); nAudioPump(); }
 function nAudioPump(){ if(NSND.busy||!NSND.queue.length) return; if(S.playing||O.playing||performance.now()-NSND.stableAt<1200){ setTimeout(nAudioPump,400); return; }
-  const id=NSND.queue.shift(), si=NSND.map[id]; if(si==null){ nAudioPump(); return; } NSND.busy=true; nSndStatus();
-  nRenderSection(si,NSND.sr).then(r=>{ // the song changed while rendering: the next layout asks again
+  const id=NSND.queue.shift(), w=NSND.map[id]; if(!w){ nAudioPump(); return; } NSND.busy=true; nSndStatus();
+  (w.scope==='orch'?nRenderOrchSection(w.si,NSND.sr):nRenderSection(w.si,NSND.sr)).then(r=>{ // the song changed while rendering: the next layout asks again
     if(!r||NSND.lastLayout.indexOf(id)<0) return; nSendClip(id,r); }).catch(e=>console.warn('render',e)).finally(()=>{ NSND.busy=false; nSndStatus(); setTimeout(nAudioPump,30); }); }
 async function nRenderSection(si,sr){ ensureAudio(); const B=METERS[S.meter].B, bars=barList('song').filter(b=>b.si===si); if(!bars.length) return null;
   const TM=bars.map(barTiming), body=TM.reduce((a,x)=>a+x.dur,0), off=new OfflineAudioContext(2,Math.ceil((body+2.6)*sr),sr), marks=[];
@@ -7253,25 +7262,26 @@ function initNativeSound(d){ if(!NATIVE.plugin) return; NSND.mode=d&&d.soundMode
   setInterval(nAudioTick,1000); addEventListener('hashchange',()=>setTimeout(nAudioTick,80)); nAudioTick(); }
 /* ---- plugin: drag song sections (or the whole song) from the structure bar onto the DAW timeline ---- */
 const SDRAG={b:null,x:0,y:0,sent:false,until:0,alt:false};
-function secFileBase(si){ const s=S.song.sections[si], same=S.song.sections.filter(x=>x.name===s.name).length>1; return (fileBase()+' - '+(si+1)+' '+s.name).replace(/[\\/:*?"<>|]/g,''); }
+function secFileBase(si,orch){ const s=(orch?O.sections:S.song.sections)[si]; return ((orch?(O.name||'Orchestral piece'):fileBase())+' - '+(si+1)+' '+s.name).replace(/[\\/:*?"<>|]/g,''); }
+function orchSectionMidi(si){ OMIDI_SEC=si; try{ return buildOrchMidi(); } finally{ OMIDI_SEC=null; } }
 function sectionMidi(si){ MIDI_SEC=si; try{ return buildMidi(); } finally{ MIDI_SEC=null; } }
-function secDrag(si,alt){ const B=METERS[S.meter].B, all=si==null, idx=all?S.song.sections.map((_,i)=>i):[si];
-  const name=all?fileBase()+' - whole song':secFileBase(si);
-  if(alt||NSND.mode===2){ if(!alt) toast('Sound is set to MIDI only, so this is MIDI: drop it on the Channel Rack');
-    const data=all?buildMidi():sectionMidi(si); nEmit('st_drag',{name:name+'.mid',b64:u8b64(data)}); return; }
-  let items=[]; try{ items=nAudioLayout(); }catch(e){}
-  const h=NATIVE.hs; if(h&&Math.abs(h.bpm-S.bpm)>=.5) toast(`Heads-up: the audio is at your song’s ${S.bpm} BPM but ${NATIVE.host||'the DAW'} is at ${Math.round(h.bpm)}, so it won’t line up with the grid. Use “Match the song” first.`);
-  nEmit('st_drag_audio',{name,bpm:S.bpm,items:idx.map(i=>({id:items[i]&&items[i].id,beats:S.song.sections[i].bars*B}))}); }
-function secDragChip(){ return `<span class="sec-drag dx-sec" data-sall="1" title="Drag the whole song into ${esc(NATIVE.host||'your DAW')} as one audio clip (hold ⌥ for MIDI)">⇲ Whole song</span>`; }
+function secDrag(si,alt,orch){ const B=orch?4:METERS[S.meter].B, secs=orch?O.sections:S.song.sections, all=si==null, idx=all?secs.map((_,i)=>i):[si], bpm=orch?O.bpm:S.bpm;
+  const name=all?(orch?(O.name||'Orchestral piece'):fileBase())+' - whole '+(orch?'piece':'song'):secFileBase(si,orch);
+  if(alt||NSND.mode>=2){ if(!alt) toast('Sound is set to '+(NSND.mode===2?'MIDI only':'the built-in engine only')+', so this is MIDI: drop it on the Channel Rack');
+    const data=orch?(all?buildOrchMidi():orchSectionMidi(si)):(all?buildMidi():sectionMidi(si)); nEmit('st_drag',{name:name+'.mid',b64:u8b64(data)}); return; }
+  let items=[]; try{ items=orch?nOrchLayout():nAudioLayout(); }catch(e){}
+  const h=NATIVE.hs; if(h&&Math.abs(h.bpm-bpm)>=.5) toast(`Heads-up: the audio is at your ${orch?'piece':'song'}’s ${bpm} BPM but ${NATIVE.host||'the DAW'} is at ${Math.round(h.bpm)}, so it won’t line up with the grid. Use “Match the song” first.`);
+  nEmit('st_drag_audio',{name,bpm,items:idx.map(i=>({id:items[i]&&items[i].id,beats:secs[i].bars*B}))}); }
+function secDragChip(orch){ return `<span class="sec-drag dx-sec" data-sall="1"${orch?' data-orch="1"':''} title="Drag the whole ${orch?'piece':'song'} into ${esc(NATIVE.host||'your DAW')} as one audio clip (hold ⌥ for MIDI)">⇲ Whole ${orch?'piece':'song'}</span>`; }
 function initSectionDrag(){ if(!NATIVE.plugin) return;
-  const tl=$('#timeline'); if(!tl) return;
-  const hint=document.createElement('div'); hint.className='qhint sec-drag-hint'; hint.id='secDragHint';
-  hint.innerHTML=`${secDragChip()} Drag a section, or the whole song, onto the ${esc(NATIVE.host==='FL Studio'?'Playlist':'timeline')}: it lands as audio, exactly as long as the section. Hold ⌥ for MIDI${NATIVE.host==='FL Studio'?' (drop that on the Channel Rack)':''}.`;
-  tl.insertAdjacentElement('afterend',hint);
-  const startEl=e=>e.target.closest&&(e.target.closest('#timeline .sec')||e.target.closest('.dx-sec'));
+  [['#timeline',false],['#oTimeline',true]].forEach(([sel,orch])=>{ const tl=$(sel); if(!tl) return;
+    const hint=document.createElement('div'); hint.className='qhint sec-drag-hint'; hint.id=orch?'oSecDragHint':'secDragHint';
+    hint.innerHTML=`${secDragChip(orch)} Drag a section, or the whole ${orch?'piece':'song'}, onto the ${esc(NATIVE.host==='FL Studio'?'Playlist':'timeline')}: it lands as audio, exactly as long as the section. Hold ⌥ for MIDI${NATIVE.host==='FL Studio'?' (drop that on the Channel Rack)':''}.`;
+    tl.insertAdjacentElement('afterend',hint); });
+  const startEl=e=>e.target.closest&&(e.target.closest('#timeline .sec')||e.target.closest('#oTimeline .sec')||e.target.closest('.dx-sec'));
   document.addEventListener('pointerdown',e=>{ const b=startEl(e); if(!b||e.button!==0) return; SDRAG.b=b; SDRAG.x=e.clientX; SDRAG.y=e.clientY; SDRAG.sent=false; SDRAG.alt=e.altKey; },true);
   document.addEventListener('pointermove',e=>{ const b=SDRAG.b; if(!b||SDRAG.sent||!(e.buttons&1)) return; if(Math.hypot(e.clientX-SDRAG.x,e.clientY-SDRAG.y)<6) return;
-    SDRAG.sent=true; SDRAG.until=Date.now()+1500; b.classList.add('dragging'); secDrag(b.dataset.sall?null:+b.dataset.i,SDRAG.alt||e.altKey); },true);
+    SDRAG.sent=true; SDRAG.until=Date.now()+1500; b.classList.add('dragging'); const orch=!!b.dataset.orch||b.dataset.osec!=null; secDrag(b.dataset.sall?null:+(orch?b.dataset.osec:b.dataset.i),SDRAG.alt||e.altKey,orch); },true);
   const end=()=>{ if(SDRAG.b) SDRAG.b.classList.remove('dragging'); SDRAG.b=null; };
   document.addEventListener('pointerup',end,true); document.addEventListener('pointercancel',end,true); window.addEventListener('blur',end);
   // a drag is not a click: don't select the section (or restart playback) when the drag ends
