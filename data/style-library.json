@@ -1,19 +1,62 @@
 {
   "version": 1,
   "about": "Semitone's style library: tags you combine (like Suno/Udio style tags) and the profiles behind them. A profile describes musical habits across many songs (chords, tempo, range, rhythm, sound, production), never any single song: no melodies, lyrics, recordings or MIDI are copied, and no voice is imitated. Each 'dna' point carries a confidence (high = sourced, med = some evidence, low = hunch) and sources, in the same shape as STYLE_DNA in web/semitone-studio.html. Wiring: see AGENTS.md, 'Style library and tags'.",
-
   "tagKinds": [
-    {"id": "genre", "label": "Genre", "role": "base", "help": "Sets the core: chords, rhythm, structure."},
-    {"id": "artist", "label": "Artist", "role": "base", "help": "An artist's songwriting habits."},
-    {"id": "soundtrack", "label": "Soundtrack & media", "role": "base", "help": "The vibe of a score, show, film or game."},
-    {"id": "composer", "label": "Composer", "role": "base", "help": "A composer's writing habits (Orchestral, or Compose for small-ensemble writers)."},
-    {"id": "producer", "label": "Producer", "role": "layer", "help": "How it's produced: drums, sounds, effects, arrangement tricks. Layers on top of any base."},
-    {"id": "mood", "label": "Mood", "role": "modifier", "help": "Nudges key, tempo, density and brightness."},
-    {"id": "era", "label": "Era", "role": "modifier", "help": "Picks period instruments, drums and mix colour."},
-    {"id": "instrument", "label": "Instrument", "role": "modifier", "help": "Puts an instrument up front."},
-    {"id": "reference", "label": "Your reference", "role": "base", "help": "A song or album you own, read by the song analyser: only numbers are kept (key, tempo, structure, energy, chords, tonal balance)."}
+    {
+      "id": "genre",
+      "label": "Genre",
+      "role": "base",
+      "help": "Sets the core: chords, rhythm, structure."
+    },
+    {
+      "id": "artist",
+      "label": "Artist",
+      "role": "base",
+      "help": "An artist's songwriting habits."
+    },
+    {
+      "id": "soundtrack",
+      "label": "Soundtrack & media",
+      "role": "base",
+      "help": "The vibe of a score, show, film or game."
+    },
+    {
+      "id": "composer",
+      "label": "Composer",
+      "role": "base",
+      "help": "A composer's writing habits (Orchestral, or Compose for small-ensemble writers)."
+    },
+    {
+      "id": "producer",
+      "label": "Producer",
+      "role": "layer",
+      "help": "How it's produced: drums, sounds, effects, arrangement tricks. Layers on top of any base."
+    },
+    {
+      "id": "mood",
+      "label": "Mood",
+      "role": "modifier",
+      "help": "Nudges key, tempo, density and brightness."
+    },
+    {
+      "id": "era",
+      "label": "Era",
+      "role": "modifier",
+      "help": "Picks period instruments, drums and mix colour."
+    },
+    {
+      "id": "instrument",
+      "label": "Instrument",
+      "role": "modifier",
+      "help": "Puts an instrument up front."
+    },
+    {
+      "id": "reference",
+      "label": "Your reference",
+      "role": "base",
+      "help": "A song or album you own, read by the song analyser: only numbers are kept (key, tempo, structure, energy, chords, tonal balance)."
+    }
   ],
-
   "blendRules": [
     "The first base tag (genre, artist, soundtrack, composer or reference) sets the core profile.",
     "Each further base tag blends in: chord transition weights (m) are averaged with weight 0.35, numbers (bpm, density, leap, register, swing) move 35% towards it, and its DNA points are listed under 'also from'.",
@@ -22,355 +65,2514 @@
     "Conflicts are shown, never silently resolved: e.g. Jazz + Trap asks whether the bass walks or plays 808s.",
     "After choosing, a card lists what each tag changed, with Undo. The song is regenerated only when the user presses Use these tags."
   ],
-
   "modifiers": {
     "mood": {
-      "melancholy": {"label": "Melancholy", "mode": ["aeolian", "dorian"], "bpm": -8, "density": -0.08, "contour": -0.2, "space": 0.3},
-      "euphoric": {"label": "Euphoric", "mode": ["ionian", "lydian"], "bpm": 8, "density": 0.08, "chorusShift": 2, "sug": {"sus": 0.2}},
-      "dreamy": {"label": "Dreamy", "sound": "dreamy", "space": 0.4, "sug": {"ext": 0.3}, "comp": "sustain"},
-      "dark": {"label": "Dark", "mode": ["aeolian", "harmonic", "phrygian"], "bpm": -5, "register": -2, "sug": {"borrow": 0.2}},
-      "playful": {"label": "Playful", "mode": ["ionian", "mixolydian"], "leap": 0.08, "comp": "stabs", "density": 0.05},
-      "tense": {"label": "Tense", "mode": ["phrygian", "harmonic"], "sug": {"tri": 0.3, "sus": 0.2}, "density": -0.05},
-      "romantic": {"label": "Romantic", "sug": {"ext": 0.25, "sec": 0.2}, "contour": 0.1},
-      "nostalgic": {"label": "Nostalgic", "sug": {"borrow": 0.25}, "quirks": "lofi"},
-      "triumphant": {"label": "Triumphant", "mode": ["ionian"], "bpm": 6, "chorusShift": 3, "trans": {"chorus": ["riser", "impact"]}}
+      "melancholy": {
+        "label": "Melancholy",
+        "mode": [
+          "aeolian",
+          "dorian"
+        ],
+        "bpm": -8,
+        "density": -0.08,
+        "contour": -0.2,
+        "space": 0.3
+      },
+      "euphoric": {
+        "label": "Euphoric",
+        "mode": [
+          "ionian",
+          "lydian"
+        ],
+        "bpm": 8,
+        "density": 0.08,
+        "chorusShift": 2,
+        "sug": {
+          "sus": 0.2
+        }
+      },
+      "dreamy": {
+        "label": "Dreamy",
+        "sound": "dreamy",
+        "space": 0.4,
+        "sug": {
+          "ext": 0.3
+        },
+        "comp": "sustain"
+      },
+      "dark": {
+        "label": "Dark",
+        "mode": [
+          "aeolian",
+          "harmonic",
+          "phrygian"
+        ],
+        "bpm": -5,
+        "register": -2,
+        "sug": {
+          "borrow": 0.2
+        }
+      },
+      "playful": {
+        "label": "Playful",
+        "mode": [
+          "ionian",
+          "mixolydian"
+        ],
+        "leap": 0.08,
+        "comp": "stabs",
+        "density": 0.05
+      },
+      "tense": {
+        "label": "Tense",
+        "mode": [
+          "phrygian",
+          "harmonic"
+        ],
+        "sug": {
+          "tri": 0.3,
+          "sus": 0.2
+        },
+        "density": -0.05
+      },
+      "romantic": {
+        "label": "Romantic",
+        "sug": {
+          "ext": 0.25,
+          "sec": 0.2
+        },
+        "contour": 0.1
+      },
+      "nostalgic": {
+        "label": "Nostalgic",
+        "sug": {
+          "borrow": 0.25
+        },
+        "quirks": "lofi"
+      },
+      "triumphant": {
+        "label": "Triumphant",
+        "mode": [
+          "ionian"
+        ],
+        "bpm": 6,
+        "chorusShift": 3,
+        "trans": {
+          "chorus": [
+            "riser",
+            "impact"
+          ]
+        }
+      }
     },
     "era": {
-      "70s": {"label": "70s", "kit": "acoustic", "instr": {"chords": "i:epiano", "bass": "i:bassgtr"}, "quirks": "natural"},
-      "80s": {"label": "80s", "kit": "electro", "instr": {"chords": "i:junopoly", "bass": "i:junobass", "lead": "i:prolead"}, "quirks": "synthwave"},
-      "90s": {"label": "90s", "kit": "acoustic", "groove": "boombap"},
-      "2000s": {"label": "2000s", "kit": "electro", "groove": "fourfloor", "quirks": "punchy"},
-      "2010s": {"label": "2010s", "kit": "808", "groove": "trap"},
-      "modern": {"label": "Modern", "quirks": "punchy"}
+      "70s": {
+        "label": "70s",
+        "kit": "acoustic",
+        "instr": {
+          "chords": "i:epiano",
+          "bass": "i:bassgtr"
+        },
+        "quirks": "natural"
+      },
+      "80s": {
+        "label": "80s",
+        "kit": "electro",
+        "instr": {
+          "chords": "i:junopoly",
+          "bass": "i:junobass",
+          "lead": "i:prolead"
+        },
+        "quirks": "synthwave"
+      },
+      "90s": {
+        "label": "90s",
+        "kit": "acoustic",
+        "groove": "boombap"
+      },
+      "2000s": {
+        "label": "2000s",
+        "kit": "electro",
+        "groove": "fourfloor",
+        "quirks": "punchy"
+      },
+      "2010s": {
+        "label": "2010s",
+        "kit": "808",
+        "groove": "trap"
+      },
+      "modern": {
+        "label": "Modern",
+        "quirks": "punchy"
+      }
     },
     "instrument": {
-      "piano": {"label": "Piano", "instr": {"chords": "i:piano"}},
-      "electric-piano": {"label": "Electric piano", "instr": {"chords": "i:epiano"}},
-      "acoustic-guitar": {"label": "Acoustic guitar", "instr": {"chords": "i:steel"}, "comp": "strum"},
-      "strings": {"label": "Strings", "instr": {"chords": "i:strings"}},
-      "analog-synths": {"label": "Analog synths", "instr": {"chords": "i:junopoly", "bass": "i:junobass", "lead": "i:prolead"}},
-      "organ": {"label": "Organ", "instr": {"chords": "i:organ"}},
-      "accordion": {"label": "Accordion", "needs": "a new accordion instrument (not in INSTR yet)"},
-      "upright-bass": {"label": "Upright bass", "needs": "a new upright bass instrument (bassgtr is the stand-in)"}
+      "piano": {
+        "label": "Piano",
+        "instr": {
+          "chords": "i:piano"
+        }
+      },
+      "electric-piano": {
+        "label": "Electric piano",
+        "instr": {
+          "chords": "i:epiano"
+        }
+      },
+      "acoustic-guitar": {
+        "label": "Acoustic guitar",
+        "instr": {
+          "chords": "i:steel"
+        },
+        "comp": "strum"
+      },
+      "strings": {
+        "label": "Strings",
+        "instr": {
+          "chords": "i:strings"
+        }
+      },
+      "analog-synths": {
+        "label": "Analog synths",
+        "instr": {
+          "chords": "i:junopoly",
+          "bass": "i:junobass",
+          "lead": "i:prolead"
+        }
+      },
+      "organ": {
+        "label": "Organ",
+        "instr": {
+          "chords": "i:organ"
+        }
+      },
+      "accordion": {
+        "label": "Accordion",
+        "needs": "a new accordion instrument (not in INSTR yet)"
+      },
+      "upright-bass": {
+        "label": "Upright bass",
+        "needs": "a new upright bass instrument (bassgtr is the stand-in)"
+      }
     }
   },
-
   "existingTags": {
     "about": "The current styles and orchestral templates become tags too, so nothing is lost.",
-    "genre": {"sadcore": "Cinematic sadcore", "anthem": "Four-chord pop", "rnb": "Late-night R&B", "folk": "Indie folk", "darkpop": "Whisper dark-pop", "disco": "Disco dance-pop", "soul": "Retro soul", "synth": "Neon synthwave"},
-    "artist": {"Lana Del Rey": "sadcore", "Mazzy Star": "sadcore", "Taylor Swift": "anthem", "Coldplay": "anthem", "Frank Ocean": "rnb", "SZA": "rnb", "Phoebe Bridgers": "folk", "Bon Iver": "folk", "Billie Eilish": "darkpop", "Dua Lipa": "disco", "Daft Punk": "disco", "Amy Winehouse": "soul", "Adele": "soul", "The Weeknd": "synth", "M83": "synth"},
-    "composer": {"John Williams": "OT.heroic", "Alan Silvestri": "OT.heroic", "Hans Zimmer": "OT.trailer", "Joe Hisaishi": "OT.whimsy"},
-    "soundtrack": {"Studio Ghibli": "OT.whimsy", "Zelda": "OT.explore", "Skyrim": "OT.explore", "Final Fantasy": "OT.farewell", "The Last of Us": "OT.farewell", "Silent Hill": "OT.stealth"}
+    "genre": {
+      "sadcore": "Cinematic sadcore",
+      "anthem": "Four-chord pop",
+      "rnb": "Late-night R&B",
+      "folk": "Indie folk",
+      "darkpop": "Whisper dark-pop",
+      "disco": "Disco dance-pop",
+      "soul": "Retro soul",
+      "synth": "Neon synthwave"
+    },
+    "artist": {
+      "Lana Del Rey": "sadcore",
+      "Mazzy Star": "sadcore",
+      "Taylor Swift": "anthem",
+      "Coldplay": "anthem",
+      "Frank Ocean": "rnb",
+      "SZA": "rnb",
+      "Phoebe Bridgers": "folk",
+      "Bon Iver": "folk",
+      "Billie Eilish": "darkpop",
+      "Dua Lipa": "disco",
+      "Daft Punk": "disco",
+      "Amy Winehouse": "soul",
+      "Adele": "soul",
+      "The Weeknd": "synth",
+      "M83": "synth"
+    },
+    "composer": {
+      "John Williams": "OT.heroic",
+      "Alan Silvestri": "OT.heroic",
+      "Hans Zimmer": "OT.trailer",
+      "Joe Hisaishi": "OT.whimsy"
+    },
+    "soundtrack": {
+      "Studio Ghibli": "OT.whimsy",
+      "Zelda": "OT.explore",
+      "Skyrim": "OT.explore",
+      "Final Fantasy": "OT.farewell",
+      "The Last of Us": "OT.farewell",
+      "Silent Hill": "OT.stealth"
+    }
   },
-
   "profiles": [
     {
       "id": "chappell",
       "kind": "artist",
-      "tags": ["Chappell Roan"],
-      "alsoTags": ["genre:synth-pop", "era:80s", "mood:euphoric"],
-      "style": {"id": "chappell", "meter": "4/4", "comp": "push", "swing": 50, "name": "Camp synth-pop", "lane": "Chappell Roan", "desc": "Big major IV–V–I–vi loops coloured with added 6ths and 9ths, 80s synths and drums, a theatrical voice that saves its top notes for the chorus.", "mode": "ionian", "key": 2, "bpm": 117, "sevenths": false, "density": 0.6, "leap": 0.34, "register": [55, 79], "sound": "bright", "drums": true, "structure": "pop", "contour": 0.2, "space": 1.1, "mopts": {"verse": {"shift": -2}, "chorus": {"shift": 5}},
-        "rhythms": [[1, 1, 1, 1], [0.5, 0.5, 1, 2], [1.5, 0.5, 1, 1], [0.5, 1, 0.5, 2], [2, 1, 1]],
-        "m": {"0": {"5": 4, "3": 3, "4": 1}, "1": {"4": 3, "3": 2}, "2": {"3": 2, "5": 1}, "3": {"4": 5, "0": 2, "1": 1}, "4": {"0": 4, "5": 3}, "5": {"3": 5, "1": 2, "4": 1}, "6": {"0": 1}}},
-      "bass": "eighths", "groove": "backbeat", "kit": "electro", "instr": {"chords": "i:junopoly", "bass": "i:junobass"},
-      "quirks": "punchy", "feel": {"kick": 0, "snare": 0.004, "hat": -0.002, "jit": 0.003, "vj": 0.08, "ghost": 0.1, "acc": 0.35},
-      "sug": {"ext": 0.7, "borrow": 0.3, "sec": 0.5, "tri": 0.1, "sus": 0.6},
-      "trans": {"chorus": ["riser", "rev", "impact"], "verse": ["down"], "bridge": ["sweep"], "pre": ["rev"], "outro": ["down"]},
-      "art": {"legato": 0.35, "vibLong": 0.55, "scoopStart": 0.3, "fallEnd": 0.2, "slideLeap": 0.25, "ghost": 0.05, "stacc": 0.45, "accent": 0.55, "grace": 0.1, "tenuto": 0.35, "info": "Theatrical: accented phrase starts, held top notes with vibrato, short punchy notes in the verse."},
-      "arrangement": {"preChorus": "hold the ii chord for the whole pre-chorus", "drumsTrick": "double the beat-four snare every other bar (a Motown take on the backbeat)", "extras": ["swirling strings in the bridge", "pedal steel as an unexpected colour"]},
+      "tags": [
+        "Chappell Roan"
+      ],
+      "alsoTags": [
+        "genre:synth-pop",
+        "era:80s",
+        "mood:euphoric",
+        "producer:Dan Nigro"
+      ],
+      "style": {
+        "id": "chappell",
+        "meter": "4/4",
+        "comp": "push",
+        "swing": 50,
+        "name": "Camp synth-pop",
+        "lane": "Chappell Roan",
+        "desc": "Big major IV–V–I–vi loops coloured with added 6ths and 9ths, 80s synths and drums, a theatrical voice that saves its top notes for the chorus.",
+        "mode": "ionian",
+        "key": 2,
+        "bpm": 117,
+        "sevenths": false,
+        "density": 0.6,
+        "leap": 0.34,
+        "register": [
+          55,
+          79
+        ],
+        "sound": "bright",
+        "drums": true,
+        "structure": "pop",
+        "contour": 0.2,
+        "space": 1.1,
+        "mopts": {
+          "verse": {
+            "shift": -2
+          },
+          "chorus": {
+            "shift": 5
+          }
+        },
+        "rhythms": [
+          [
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            0.5,
+            0.5,
+            1,
+            2
+          ],
+          [
+            1.5,
+            0.5,
+            1,
+            1
+          ],
+          [
+            0.5,
+            1,
+            0.5,
+            2
+          ],
+          [
+            2,
+            1,
+            1
+          ]
+        ],
+        "m": {
+          "0": {
+            "5": 4,
+            "3": 3,
+            "4": 1
+          },
+          "1": {
+            "4": 3,
+            "3": 2
+          },
+          "2": {
+            "3": 2,
+            "5": 1
+          },
+          "3": {
+            "4": 5,
+            "0": 2,
+            "1": 1
+          },
+          "4": {
+            "0": 4,
+            "5": 3
+          },
+          "5": {
+            "3": 5,
+            "1": 2,
+            "4": 1
+          },
+          "6": {
+            "0": 1
+          }
+        }
+      },
+      "bass": "eighths",
+      "groove": "backbeat",
+      "kit": "electro",
+      "instr": {
+        "chords": "i:junopoly",
+        "bass": "i:junobass"
+      },
+      "quirks": "punchy",
+      "feel": {
+        "kick": 0,
+        "snare": 0.004,
+        "hat": -0.002,
+        "jit": 0.003,
+        "vj": 0.08,
+        "ghost": 0.1,
+        "acc": 0.35
+      },
+      "sug": {
+        "ext": 0.7,
+        "borrow": 0.3,
+        "sec": 0.5,
+        "tri": 0.1,
+        "sus": 0.6
+      },
+      "trans": {
+        "chorus": [
+          "riser",
+          "rev",
+          "impact"
+        ],
+        "verse": [
+          "down"
+        ],
+        "bridge": [
+          "sweep"
+        ],
+        "pre": [
+          "rev"
+        ],
+        "outro": [
+          "down"
+        ]
+      },
+      "art": {
+        "legato": 0.35,
+        "vibLong": 0.55,
+        "scoopStart": 0.3,
+        "fallEnd": 0.2,
+        "slideLeap": 0.25,
+        "ghost": 0.05,
+        "stacc": 0.45,
+        "accent": 0.55,
+        "grace": 0.1,
+        "tenuto": 0.35,
+        "info": "Theatrical: accented phrase starts, held top notes with vibrato, short punchy notes in the verse."
+      },
+      "arrangement": {
+        "preChorus": "hold the ii chord for the whole pre-chorus",
+        "drumsTrick": "double the beat-four snare every other bar (a Motown take on the backbeat)",
+        "extras": [
+          "swirling strings in the bridge",
+          "pedal steel as an unexpected colour"
+        ]
+      },
       "mixHint": "Wide 80s synth stack, multi-tracked; bright and loud; strings and pedal steel tucked behind.",
-      "dna": {"tagline": "camp 80s synth-pop with Broadway-sized hooks",
+      "dna": {
+        "tagline": "camp 80s synth-pop with Broadway-sized hooks",
         "intro": "Chappell Roan's songs, produced and co-written by Dan Nigro, pair simple major-key loops with jazzy colours, 80s drums and synths, and a theatrical vocal.",
-        "stats": [["Key (example)", "D major"], ["Tempo (example)", "113–121 BPM, drifting"], ["Main loop", "IV–V–I–vi"]],
+        "stats": [
+          [
+            "Key (example)",
+            "D major"
+          ],
+          [
+            "Tempo (example)",
+            "113–121 BPM, drifting"
+          ],
+          [
+            "Main loop",
+            "IV–V–I–vi"
+          ]
+        ],
         "points": [
-          {"c": "high", "t": "Good Luck, Babe! loops IV–V–I–vi in D major, with an added 6th and 9th on the V and a 9th on the vi for jazzy colour.", "used": "chord matrix and colour weights", "src": ["https://www.musicradar.com/news/chappell-roan-good-luck-babe-theory"]},
-          {"c": "high", "t": "The pre-chorus holds a single ii chord and the bridge stays on it too.", "used": "arrangement.preChorus", "src": ["https://www.musicradar.com/news/chappell-roan-good-luck-babe-theory"]},
-          {"c": "high", "t": "The tempo drifts between about 113 and 121 BPM, unusual for modern pop.", "used": "bpm 117", "src": ["https://www.musicradar.com/news/chappell-roan-good-luck-babe-theory"]},
-          {"c": "high", "t": "80s-sounding drums with a Motown-influenced backbeat (the beat-four snare doubled in alternate bars) and an 80s synth groove.", "used": "kit electro, drums trick", "src": ["https://www.musicradar.com/news/chappell-roan-good-luck-babe-theory"]},
-          {"c": "high", "t": "Verse melodies sit on chord tones with syncopation; chorus phrases open on the highest notes. The delivery is theatrical (Kate Bush and Tori Amos are cited).", "used": "register, contour, chorus shift, articulation", "src": ["https://www.musicradar.com/news/chappell-roan-good-luck-babe-theory"]},
-          {"c": "med", "t": "Dan Nigro co-writes and produces; he describes building songs around the artist's voice and story.", "src": ["https://www.rollingstone.com/music/music-features/dan-nigro-chappell-roan-olivia-rodrigo-grammys-interview-podcast-1235204396/"]}
-        ]}
+          {
+            "c": "high",
+            "t": "Good Luck, Babe! loops IV–V–I–vi in D major, with an added 6th and 9th on the V and a 9th on the vi for jazzy colour.",
+            "used": "chord matrix and colour weights",
+            "src": [
+              "https://www.musicradar.com/news/chappell-roan-good-luck-babe-theory"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "The pre-chorus holds a single ii chord and the bridge stays on it too.",
+            "used": "arrangement.preChorus",
+            "src": [
+              "https://www.musicradar.com/news/chappell-roan-good-luck-babe-theory"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "The tempo drifts between about 113 and 121 BPM, unusual for modern pop.",
+            "used": "bpm 117",
+            "src": [
+              "https://www.musicradar.com/news/chappell-roan-good-luck-babe-theory"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "80s-sounding drums with a Motown-influenced backbeat (the beat-four snare doubled in alternate bars) and an 80s synth groove.",
+            "used": "kit electro, drums trick",
+            "src": [
+              "https://www.musicradar.com/news/chappell-roan-good-luck-babe-theory"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Verse melodies sit on chord tones with syncopation; chorus phrases open on the highest notes. The delivery is theatrical (Kate Bush and Tori Amos are cited).",
+            "used": "register, contour, chorus shift, articulation",
+            "src": [
+              "https://www.musicradar.com/news/chappell-roan-good-luck-babe-theory"
+            ]
+          },
+          {
+            "c": "med",
+            "t": "Dan Nigro co-writes and produces; he describes building songs around the artist's voice and story.",
+            "src": [
+              "https://www.rollingstone.com/music/music-features/dan-nigro-chappell-roan-olivia-rodrigo-grammys-interview-podcast-1235204396/"
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "gaga",
       "kind": "artist",
-      "tags": ["Lady Gaga"],
-      "alsoTags": ["genre:dance-pop", "producer:RedOne", "era:2000s"],
-      "style": {"id": "gaga", "meter": "4/4", "comp": "eighths", "swing": 50, "name": "Electro dance-pop", "lane": "Lady Gaga", "desc": "Minor-key dance-pop at about 120 BPM: i–III–VII–iv and i–VI–VII loops, robotic verses, a chorus that opens up, stutter hooks.", "mode": "aeolian", "key": 8, "bpm": 120, "sevenths": false, "density": 0.62, "leap": 0.28, "register": [54, 71], "sound": "saw", "drums": true, "structure": "pop", "contour": 0, "space": 0.9, "mopts": {"verse": {"shift": -2}, "chorus": {"shift": 4}},
-        "rhythms": [[0.5, 0.5, 0.5, 0.5, 1, 1], [1, 0.5, 0.5, 1, 1], [0.5, 1, 0.5, 2], [1, 1, 1, 1], [0.5, 0.5, 1, 0.5, 1.5]],
-        "m": {"0": {"2": 3, "5": 3, "6": 2}, "1": {"4": 1}, "2": {"6": 4, "3": 1}, "3": {"0": 4, "6": 1}, "4": {"0": 2}, "5": {"6": 4, "2": 1}, "6": {"3": 3, "0": 3, "5": 1}}},
-      "bass": "octave", "groove": "fourfloor", "kit": "electro", "instr": {"chords": "i:junobrass", "bass": "i:junobass", "lead": "i:prolead"},
-      "quirks": "punchy", "feel": {"kick": 0, "snare": 0, "hat": -0.003, "jit": 0.001, "vj": 0.05, "ghost": 0, "acc": 0.45},
-      "sug": {"ext": 0.2, "borrow": 0.4, "sec": 0.3, "tri": 0.1, "sus": 0.4},
-      "trans": {"chorus": ["riser", "impact", "drop"], "verse": ["down"], "bridge": ["sweep"], "pre": ["rev"], "outro": ["down"]},
-      "art": {"legato": 0.2, "vibLong": 0.3, "scoopStart": 0.1, "fallEnd": 0.1, "slideLeap": 0.15, "ghost": 0.05, "stacc": 0.7, "accent": 0.55, "grace": 0.05, "tenuto": 0.3, "info": "Clipped, robotic verse lines and accented hooks; the chorus opens into longer notes."},
-      "arrangement": {"hooks": "a vocal hook opens the song; a stuttering hook follows the chorus", "needs": "a stutter-edit effect for the post-chorus hook (not in the engine yet)"},
+      "tags": [
+        "Lady Gaga"
+      ],
+      "alsoTags": [
+        "genre:dance-pop",
+        "producer:RedOne",
+        "era:2000s"
+      ],
+      "style": {
+        "id": "gaga",
+        "meter": "4/4",
+        "comp": "eighths",
+        "swing": 50,
+        "name": "Electro dance-pop",
+        "lane": "Lady Gaga",
+        "desc": "Minor-key dance-pop at about 120 BPM: i–III–VII–iv and i–VI–VII loops, robotic verses, a chorus that opens up, stutter hooks.",
+        "mode": "aeolian",
+        "key": 8,
+        "bpm": 120,
+        "sevenths": false,
+        "density": 0.62,
+        "leap": 0.28,
+        "register": [
+          54,
+          71
+        ],
+        "sound": "saw",
+        "drums": true,
+        "structure": "pop",
+        "contour": 0,
+        "space": 0.9,
+        "mopts": {
+          "verse": {
+            "shift": -2
+          },
+          "chorus": {
+            "shift": 4
+          }
+        },
+        "rhythms": [
+          [
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            1,
+            1
+          ],
+          [
+            1,
+            0.5,
+            0.5,
+            1,
+            1
+          ],
+          [
+            0.5,
+            1,
+            0.5,
+            2
+          ],
+          [
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            0.5,
+            0.5,
+            1,
+            0.5,
+            1.5
+          ]
+        ],
+        "m": {
+          "0": {
+            "2": 3,
+            "5": 3,
+            "6": 2
+          },
+          "1": {
+            "4": 1
+          },
+          "2": {
+            "6": 4,
+            "3": 1
+          },
+          "3": {
+            "0": 4,
+            "6": 1
+          },
+          "4": {
+            "0": 2
+          },
+          "5": {
+            "6": 4,
+            "2": 1
+          },
+          "6": {
+            "3": 3,
+            "0": 3,
+            "5": 1
+          }
+        }
+      },
+      "bass": "octave",
+      "groove": "fourfloor",
+      "kit": "electro",
+      "instr": {
+        "chords": "i:junobrass",
+        "bass": "i:junobass",
+        "lead": "i:prolead"
+      },
+      "quirks": "punchy",
+      "feel": {
+        "kick": 0,
+        "snare": 0,
+        "hat": -0.003,
+        "jit": 0.001,
+        "vj": 0.05,
+        "ghost": 0,
+        "acc": 0.45
+      },
+      "sug": {
+        "ext": 0.2,
+        "borrow": 0.4,
+        "sec": 0.3,
+        "tri": 0.1,
+        "sus": 0.4
+      },
+      "trans": {
+        "chorus": [
+          "riser",
+          "impact",
+          "drop"
+        ],
+        "verse": [
+          "down"
+        ],
+        "bridge": [
+          "sweep"
+        ],
+        "pre": [
+          "rev"
+        ],
+        "outro": [
+          "down"
+        ]
+      },
+      "art": {
+        "legato": 0.2,
+        "vibLong": 0.3,
+        "scoopStart": 0.1,
+        "fallEnd": 0.1,
+        "slideLeap": 0.15,
+        "ghost": 0.05,
+        "stacc": 0.7,
+        "accent": 0.55,
+        "grace": 0.05,
+        "tenuto": 0.3,
+        "info": "Clipped, robotic verse lines and accented hooks; the chorus opens into longer notes."
+      },
+      "arrangement": {
+        "hooks": "a vocal hook opens the song; a stuttering hook follows the chorus",
+        "needs": "a stutter-edit effect for the post-chorus hook (not in the engine yet)"
+      },
       "mixHint": "Clipped marching beat, soaring electronics, dry upfront vocal; synths carry over from section to section.",
-      "dna": {"tagline": "minor-key electro dance-pop with stutter hooks",
+      "dna": {
+        "tagline": "minor-key electro dance-pop with stutter hooks",
         "intro": "Lady Gaga's early hits with RedOne set dark minor loops at a dance tempo under 80s-inspired synths, with robotic verses and big, clear choruses.",
-        "stats": [["Tempo", "119–120 BPM"], ["Keys (examples)", "C♯ minor, G♯ minor"], ["Vocal range (example)", "F♯3–B4"]],
+        "stats": [
+          [
+            "Tempo",
+            "119–120 BPM"
+          ],
+          [
+            "Keys (examples)",
+            "C♯ minor, G♯ minor"
+          ],
+          [
+            "Vocal range (example)",
+            "F♯3–B4"
+          ]
+        ],
         "points": [
-          {"c": "high", "t": "Just Dance: C♯ minor, 119 BPM, C♯m–E–B–F♯m (i–III–VII–iv), uptempo dance-pop with electropop and synth-pop elements.", "used": "chord matrix, bpm", "src": ["https://en.wikipedia.org/wiki/Just_Dance_(song)"]},
-          {"c": "high", "t": "Poker Face: G♯ minor, 120 BPM, verse G♯m–E/G♯–F♯, chorus G♯m–E–B–F♯ (i–VI–III–VII), vocal range F♯3–B4.", "used": "key, register, chord matrix", "src": ["https://en.wikipedia.org/wiki/Poker_Face_(song)"]},
-          {"c": "high", "t": "80s-inspired synths and robotic verses; a vocal hook opens the song and a stuttering hook follows the chorus.", "used": "sound, articulation, arrangement.hooks", "src": ["https://en.wikipedia.org/wiki/Poker_Face_(song)"]},
-          {"c": "med", "t": "Critics heard clipped marching beats with soaring electronics and a mild R&B flavour.", "used": "kit, groove", "src": ["https://en.wikipedia.org/wiki/Just_Dance_(song)"]}
-        ]}
+          {
+            "c": "high",
+            "t": "Just Dance: C♯ minor, 119 BPM, C♯m–E–B–F♯m (i–III–VII–iv), uptempo dance-pop with electropop and synth-pop elements.",
+            "used": "chord matrix, bpm",
+            "src": [
+              "https://en.wikipedia.org/wiki/Just_Dance_(song)"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Poker Face: G♯ minor, 120 BPM, verse G♯m–E/G♯–F♯, chorus G♯m–E–B–F♯ (i–VI–III–VII), vocal range F♯3–B4.",
+            "used": "key, register, chord matrix",
+            "src": [
+              "https://en.wikipedia.org/wiki/Poker_Face_(song)"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "80s-inspired synths and robotic verses; a vocal hook opens the song and a stuttering hook follows the chorus.",
+            "used": "sound, articulation, arrangement.hooks",
+            "src": [
+              "https://en.wikipedia.org/wiki/Poker_Face_(song)"
+            ]
+          },
+          {
+            "c": "med",
+            "t": "Critics heard clipped marching beats with soaring electronics and a mild R&B flavour.",
+            "used": "kit, groove",
+            "src": [
+              "https://en.wikipedia.org/wiki/Just_Dance_(song)"
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "fleetwood",
       "kind": "artist",
-      "tags": ["Fleetwood Mac"],
-      "alsoTags": ["genre:soft-rock", "era:70s"],
-      "style": {"id": "fleetwood", "meter": "4/4", "comp": "eighths", "swing": 50, "name": "70s soft rock", "lane": "Fleetwood Mac", "desc": "Few chords used three ways, a hypnotic steady groove, Rhodes and layered guitars, three-part harmonies on every chorus.", "mode": "mixolydian", "key": 5, "bpm": 118, "sevenths": true, "density": 0.48, "leap": 0.24, "register": [53, 74], "sound": "keys", "drums": true, "structure": "pop", "contour": -0.1, "space": 1.2, "mopts": {"chorus": {"shift": 3}},
-        "rhythms": [[1, 1, 2], [2, 1, 1], [1, 0.5, 0.5, 2], [1.5, 0.5, 2], [1, 1, 1, 1]],
-        "m": {"0": {"6": 3, "3": 4, "1": 1, "5": 1}, "1": {"3": 2, "4": 1}, "2": {"5": 1}, "3": {"0": 4, "6": 2, "4": 1}, "4": {"3": 2, "0": 1}, "5": {"3": 2, "6": 1}, "6": {"3": 3, "0": 3}}},
-      "bass": "rootfifth", "groove": "backbeat", "kit": "acoustic", "instr": {"chords": "i:epiano", "bass": "i:bassgtr"},
-      "quirks": "natural", "feel": {"kick": 0, "snare": 0.01, "hat": 0.004, "jit": 0.004, "vj": 0.1, "ghost": 0.2, "acc": 0.3},
-      "sug": {"ext": 0.45, "borrow": 0.5, "sec": 0.35, "tri": 0, "sus": 0.5},
-      "trans": {"chorus": ["rev"], "verse": [], "bridge": ["sweep"], "pre": ["rev"]},
-      "art": {"legato": 0.5, "vibLong": 0.35, "scoopStart": 0.2, "fallEnd": 0.25, "slideLeap": 0.2, "ghost": 0.05, "stacc": 0.15, "accent": 0.25, "grace": 0.1, "tenuto": 0.4, "info": "Relaxed, conversational lines; held notes lightly shaped, never belted."},
-      "arrangement": {"harmony": "three-part harmony on the chorus, doubled", "sections": "verse, pre-chorus and chorus can share the same chords; change texture instead (a tom accent into the pre-chorus, vibraphone with delay, congas at the back)", "drums": "an 8-bar drum loop feel: steady and hypnotic"},
+      "tags": [
+        "Fleetwood Mac"
+      ],
+      "alsoTags": [
+        "genre:soft-rock",
+        "era:70s"
+      ],
+      "style": {
+        "id": "fleetwood",
+        "meter": "4/4",
+        "comp": "eighths",
+        "swing": 50,
+        "name": "70s soft rock",
+        "lane": "Fleetwood Mac",
+        "desc": "Few chords used three ways, a hypnotic steady groove, Rhodes and layered guitars, three-part harmonies on every chorus.",
+        "mode": "mixolydian",
+        "key": 5,
+        "bpm": 118,
+        "sevenths": true,
+        "density": 0.48,
+        "leap": 0.24,
+        "register": [
+          53,
+          74
+        ],
+        "sound": "keys",
+        "drums": true,
+        "structure": "pop",
+        "contour": -0.1,
+        "space": 1.2,
+        "mopts": {
+          "chorus": {
+            "shift": 3
+          }
+        },
+        "rhythms": [
+          [
+            1,
+            1,
+            2
+          ],
+          [
+            2,
+            1,
+            1
+          ],
+          [
+            1,
+            0.5,
+            0.5,
+            2
+          ],
+          [
+            1.5,
+            0.5,
+            2
+          ],
+          [
+            1,
+            1,
+            1,
+            1
+          ]
+        ],
+        "m": {
+          "0": {
+            "6": 3,
+            "3": 4,
+            "1": 1,
+            "5": 1
+          },
+          "1": {
+            "3": 2,
+            "4": 1
+          },
+          "2": {
+            "5": 1
+          },
+          "3": {
+            "0": 4,
+            "6": 2,
+            "4": 1
+          },
+          "4": {
+            "3": 2,
+            "0": 1
+          },
+          "5": {
+            "3": 2,
+            "6": 1
+          },
+          "6": {
+            "3": 3,
+            "0": 3
+          }
+        }
+      },
+      "bass": "rootfifth",
+      "groove": "backbeat",
+      "kit": "acoustic",
+      "instr": {
+        "chords": "i:epiano",
+        "bass": "i:bassgtr"
+      },
+      "quirks": "natural",
+      "feel": {
+        "kick": 0,
+        "snare": 0.01,
+        "hat": 0.004,
+        "jit": 0.004,
+        "vj": 0.1,
+        "ghost": 0.2,
+        "acc": 0.3
+      },
+      "sug": {
+        "ext": 0.45,
+        "borrow": 0.5,
+        "sec": 0.35,
+        "tri": 0,
+        "sus": 0.5
+      },
+      "trans": {
+        "chorus": [
+          "rev"
+        ],
+        "verse": [],
+        "bridge": [
+          "sweep"
+        ],
+        "pre": [
+          "rev"
+        ]
+      },
+      "art": {
+        "legato": 0.5,
+        "vibLong": 0.35,
+        "scoopStart": 0.2,
+        "fallEnd": 0.25,
+        "slideLeap": 0.2,
+        "ghost": 0.05,
+        "stacc": 0.15,
+        "accent": 0.25,
+        "grace": 0.1,
+        "tenuto": 0.4,
+        "info": "Relaxed, conversational lines; held notes lightly shaped, never belted."
+      },
+      "arrangement": {
+        "harmony": "three-part harmony on the chorus, doubled",
+        "sections": "verse, pre-chorus and chorus can share the same chords; change texture instead (a tom accent into the pre-chorus, vibraphone with delay, congas at the back)",
+        "drums": "an 8-bar drum loop feel: steady and hypnotic"
+      },
       "mixHint": "Warm 70s tape; guitars spread across the stereo field; congas placed far back; bass simple and droning.",
-      "dna": {"tagline": "warm 70s soft rock: few chords, hypnotic grooves, stacked harmonies",
+      "dna": {
+        "tagline": "warm 70s soft rock: few chords, hypnotic grooves, stacked harmonies",
         "intro": "On Rumours, Fleetwood Mac built rich records from very few chords: Lindsey Buckingham changed texture, not harmony, to make sections feel different, over steady grooves and three-part harmonies.",
-        "stats": [["Era", "1970s"], ["Keys", "Rhodes, Hammond, Clavinet, Wurlitzer"], ["Vocals", "three-part harmonies, doubled"]],
+        "stats": [
+          [
+            "Era",
+            "1970s"
+          ],
+          [
+            "Keys",
+            "Rhodes, Hammond, Clavinet, Wurlitzer"
+          ],
+          [
+            "Vocals",
+            "three-part harmonies, doubled"
+          ]
+        ],
         "points": [
-          {"c": "high", "t": "Dreams began as 'just three chords'; Buckingham made three sections from identical chords that each sound different.", "used": "low chord variety; sections differ by texture", "src": ["https://en.wikipedia.org/wiki/Dreams_(Fleetwood_Mac_song)"]},
-          {"c": "high", "t": "An eight-bar loop of Mick Fleetwood's drumming gave Dreams its deep, hypnotic effect; the bass is simple and softly droning.", "used": "steady groove, low ghost notes, rootfifth bass", "src": ["https://en.wikipedia.org/wiki/Dreams_(Fleetwood_Mac_song)"]},
-          {"c": "high", "t": "Three-part harmonies were doubled for a fuller sound; the chorus harmonies came from Buckingham playing triads on piano.", "used": "arrangement.harmony", "src": ["https://en.wikipedia.org/wiki/Dreams_(Fleetwood_Mac_song)"]},
-          {"c": "high", "t": "Keyboards across Rumours: Fender Rhodes (the basis of Dreams), Hammond B3, Clavinet, Wurlitzer and grand piano.", "used": "instr chords epiano", "src": ["https://producelikeapro.com/blog/rumours-fleetwood-mac/"]},
-          {"c": "high", "t": "Don't Stop uses a triplet snare rhythm into a shuffle; Never Going Back Again uses brushes.", "used": "variation: shuffle feel option", "src": ["https://producelikeapro.com/blog/rumours-fleetwood-mac/"]},
-          {"c": "low", "t": "Tempo around 115–125 BPM for the mid-tempo songs; ballads slower.", "used": "bpm 118 (check against the song analyser)"}
-        ]}
+          {
+            "c": "high",
+            "t": "Dreams began as 'just three chords'; Buckingham made three sections from identical chords that each sound different.",
+            "used": "low chord variety; sections differ by texture",
+            "src": [
+              "https://en.wikipedia.org/wiki/Dreams_(Fleetwood_Mac_song)"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "An eight-bar loop of Mick Fleetwood's drumming gave Dreams its deep, hypnotic effect; the bass is simple and softly droning.",
+            "used": "steady groove, low ghost notes, rootfifth bass",
+            "src": [
+              "https://en.wikipedia.org/wiki/Dreams_(Fleetwood_Mac_song)"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Three-part harmonies were doubled for a fuller sound; the chorus harmonies came from Buckingham playing triads on piano.",
+            "used": "arrangement.harmony",
+            "src": [
+              "https://en.wikipedia.org/wiki/Dreams_(Fleetwood_Mac_song)"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Keyboards across Rumours: Fender Rhodes (the basis of Dreams), Hammond B3, Clavinet, Wurlitzer and grand piano.",
+            "used": "instr chords epiano",
+            "src": [
+              "https://producelikeapro.com/blog/rumours-fleetwood-mac/"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Don't Stop uses a triplet snare rhythm into a shuffle; Never Going Back Again uses brushes.",
+            "used": "variation: shuffle feel option",
+            "src": [
+              "https://producelikeapro.com/blog/rumours-fleetwood-mac/"
+            ]
+          },
+          {
+            "c": "low",
+            "t": "Tempo around 115–125 BPM for the mid-tempo songs; ballads slower.",
+            "used": "bpm 118 (check against the song analyser)"
+          }
+        ]
+      }
     },
     {
       "id": "rhcp",
       "kind": "artist",
-      "tags": ["Red Hot Chili Peppers"],
-      "alsoTags": ["genre:funk-rock", "era:90s", "producer:Rick Rubin"],
-      "style": {"id": "rhcp", "meter": "4/4", "comp": "stabs", "swing": 54, "name": "Funk rock", "lane": "Red Hot Chili Peppers", "desc": "Dorian minor riffs built from jams: a busy, melodic bass that knows when to lay out, clean bright guitar, half-rapped verses and sung choruses.", "mode": "dorian", "key": 4, "bpm": 96, "sevenths": true, "density": 0.68, "leap": 0.26, "register": [50, 72], "sound": "pluck", "drums": true, "structure": "pop", "contour": 0, "space": 0.9, "mopts": {"verse": {"shift": -3}, "chorus": {"shift": 4}},
-        "rhythms": [[0.5, 0.5, 0.5, 0.5, 1, 1], [0.5, 0.25, 0.25, 1, 2], [1, 0.5, 0.5, 1, 1], [0.25, 0.25, 0.5, 1, 2], [1.5, 0.5, 2]],
-        "m": {"0": {"3": 5, "6": 2, "4": 1}, "1": {"0": 1}, "2": {"3": 1}, "3": {"0": 5, "6": 1}, "4": {"0": 2}, "5": {"6": 1, "0": 1}, "6": {"0": 3, "3": 2}}},
-      "bass": "syncop", "groove": "backbeat", "kit": "acoustic", "instr": {"chords": "i:steel", "bass": "i:bassgtr"},
-      "quirks": "natural", "feel": {"kick": 0.002, "snare": 0.012, "hat": 0.006, "jit": 0.006, "vj": 0.14, "ghost": 0.55, "acc": 0.45},
-      "sug": {"ext": 0.6, "borrow": 0.3, "sec": 0.3, "tri": 0.2, "sus": 0.3},
-      "trans": {"chorus": ["impact"], "verse": [], "bridge": ["sweep"], "pre": []},
-      "art": {"legato": 0.2, "vibLong": 0.25, "scoopStart": 0.2, "fallEnd": 0.2, "slideLeap": 0.2, "ghost": 0.4, "stacc": 0.55, "accent": 0.5, "grace": 0.15, "tenuto": 0.2, "info": "Rhythmic, half-rapped verse lines full of short notes and ghosted syllables; choruses sing out."},
-      "arrangement": {"bass": "melodic and busy, but leaves space so the busy moments stand out (fewer notes, more impact)", "guitar": "clean, raw Strat-into-amp tone; clear single lines and varied textures rather than distortion walls", "process": "riffs and structures from jams", "needs": "a slap-bass articulation option (not in the engine yet)"},
+      "tags": [
+        "Red Hot Chili Peppers"
+      ],
+      "alsoTags": [
+        "genre:funk-rock",
+        "era:90s",
+        "producer:Rick Rubin"
+      ],
+      "style": {
+        "id": "rhcp",
+        "meter": "4/4",
+        "comp": "stabs",
+        "swing": 54,
+        "name": "Funk rock",
+        "lane": "Red Hot Chili Peppers",
+        "desc": "Dorian minor riffs built from jams: a busy, melodic bass that knows when to lay out, clean bright guitar, half-rapped verses and sung choruses.",
+        "mode": "dorian",
+        "key": 4,
+        "bpm": 96,
+        "sevenths": true,
+        "density": 0.68,
+        "leap": 0.26,
+        "register": [
+          50,
+          72
+        ],
+        "sound": "pluck",
+        "drums": true,
+        "structure": "pop",
+        "contour": 0,
+        "space": 0.9,
+        "mopts": {
+          "verse": {
+            "shift": -3
+          },
+          "chorus": {
+            "shift": 4
+          }
+        },
+        "rhythms": [
+          [
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            1,
+            1
+          ],
+          [
+            0.5,
+            0.25,
+            0.25,
+            1,
+            2
+          ],
+          [
+            1,
+            0.5,
+            0.5,
+            1,
+            1
+          ],
+          [
+            0.25,
+            0.25,
+            0.5,
+            1,
+            2
+          ],
+          [
+            1.5,
+            0.5,
+            2
+          ]
+        ],
+        "m": {
+          "0": {
+            "3": 5,
+            "6": 2,
+            "4": 1
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "3": 1
+          },
+          "3": {
+            "0": 5,
+            "6": 1
+          },
+          "4": {
+            "0": 2
+          },
+          "5": {
+            "6": 1,
+            "0": 1
+          },
+          "6": {
+            "0": 3,
+            "3": 2
+          }
+        }
+      },
+      "bass": "syncop",
+      "groove": "backbeat",
+      "kit": "acoustic",
+      "instr": {
+        "chords": "i:steel",
+        "bass": "i:bassgtr"
+      },
+      "quirks": "natural",
+      "feel": {
+        "kick": 0.002,
+        "snare": 0.012,
+        "hat": 0.006,
+        "jit": 0.006,
+        "vj": 0.14,
+        "ghost": 0.55,
+        "acc": 0.45
+      },
+      "sug": {
+        "ext": 0.6,
+        "borrow": 0.3,
+        "sec": 0.3,
+        "tri": 0.2,
+        "sus": 0.3
+      },
+      "trans": {
+        "chorus": [
+          "impact"
+        ],
+        "verse": [],
+        "bridge": [
+          "sweep"
+        ],
+        "pre": []
+      },
+      "art": {
+        "legato": 0.2,
+        "vibLong": 0.25,
+        "scoopStart": 0.2,
+        "fallEnd": 0.2,
+        "slideLeap": 0.2,
+        "ghost": 0.4,
+        "stacc": 0.55,
+        "accent": 0.5,
+        "grace": 0.15,
+        "tenuto": 0.2,
+        "info": "Rhythmic, half-rapped verse lines full of short notes and ghosted syllables; choruses sing out."
+      },
+      "arrangement": {
+        "bass": "melodic and busy, but leaves space so the busy moments stand out (fewer notes, more impact)",
+        "guitar": "clean, raw Strat-into-amp tone; clear single lines and varied textures rather than distortion walls",
+        "process": "riffs and structures from jams",
+        "needs": "a slap-bass articulation option (not in the engine yet)"
+      },
       "mixHint": "Raw, dry and close (recorded in a house); drums live and punchy; little processing.",
-      "dna": {"tagline": "jam-born funk rock: melodic bass, clean guitar, rap-sung verses",
+      "dna": {
+        "tagline": "jam-born funk rock: melodic bass, clean guitar, rap-sung verses",
         "intro": "On Blood Sugar Sex Magik, produced by Rick Rubin, the band moved from funk-metal toward melodic funk rock: Flea played fewer, more melodic notes and John Frusciante favoured clear lines over noise.",
-        "stats": [["Genres", "funk rock, alternative, rap rock"], ["Producer", "Rick Rubin"], ["Approach", "songs from jams"]],
+        "stats": [
+          [
+            "Genres",
+            "funk rock, alternative, rap rock"
+          ],
+          [
+            "Producer",
+            "Rick Rubin"
+          ],
+          [
+            "Approach",
+            "songs from jams"
+          ]
+        ],
         "points": [
-          {"c": "high", "t": "Flea cut back the slap technique for melodic bass lines and a minimalist approach: fewer notes so the busy moments stand out.", "used": "bass style syncop with space", "src": ["https://en.wikipedia.org/wiki/Blood_Sugar_Sex_Magik"]},
-          {"c": "high", "t": "Frusciante's guitar was less noisy, leaving room for clearer lines and textures, over a raw, unprocessed Strat-and-Marshall tone.", "used": "clean plucked chords, comp stabs", "src": ["https://en.wikipedia.org/wiki/Blood_Sugar_Sex_Magik"]},
-          {"c": "high", "t": "Songs grew from jams; Give It Away came from one. Rick Rubin helped arrange drum beats, guitar melodies and lyrics.", "src": ["https://en.wikipedia.org/wiki/Blood_Sugar_Sex_Magik"]},
-          {"c": "med", "t": "Funk and rap rhythms in the verses, melodic sung choruses.", "used": "rhythms, mopts", "src": ["https://en.wikipedia.org/wiki/Blood_Sugar_Sex_Magik"]},
-          {"c": "low", "t": "Riffs often sit in a minor key with a major IV (Dorian colour).", "used": "mode dorian"}
-        ]}
+          {
+            "c": "high",
+            "t": "Flea cut back the slap technique for melodic bass lines and a minimalist approach: fewer notes so the busy moments stand out.",
+            "used": "bass style syncop with space",
+            "src": [
+              "https://en.wikipedia.org/wiki/Blood_Sugar_Sex_Magik"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Frusciante's guitar was less noisy, leaving room for clearer lines and textures, over a raw, unprocessed Strat-and-Marshall tone.",
+            "used": "clean plucked chords, comp stabs",
+            "src": [
+              "https://en.wikipedia.org/wiki/Blood_Sugar_Sex_Magik"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Songs grew from jams; Give It Away came from one. Rick Rubin helped arrange drum beats, guitar melodies and lyrics.",
+            "src": [
+              "https://en.wikipedia.org/wiki/Blood_Sugar_Sex_Magik"
+            ]
+          },
+          {
+            "c": "med",
+            "t": "Funk and rap rhythms in the verses, melodic sung choruses.",
+            "used": "rhythms, mopts",
+            "src": [
+              "https://en.wikipedia.org/wiki/Blood_Sugar_Sex_Magik"
+            ]
+          },
+          {
+            "c": "low",
+            "t": "Riffs often sit in a minor key with a major IV (Dorian colour).",
+            "used": "mode dorian"
+          }
+        ]
+      }
     },
     {
       "id": "tiersen",
       "kind": "composer",
-      "tags": ["Yann Tiersen"],
-      "alsoTags": ["soundtrack:Amélie", "genre:french-waltz", "instrument:accordion", "instrument:piano"],
-      "style": {"id": "tiersen", "meter": "3/4", "comp": "pulse", "swing": 50, "name": "Parisian waltz", "lane": "Yann Tiersen", "desc": "Waltzes that turn like a merry-go-round: rippling piano arpeggios, an accordion tune, simple repeating patterns and small toy-like colours.", "mode": "aeolian", "key": 4, "bpm": 100, "sevenths": false, "density": 0.55, "leap": 0.2, "register": [60, 84], "sound": "keys", "drums": false, "structure": "ballad", "contour": 0, "space": 1.2, "mopts": {"chorus": {"shift": 0}},
-        "rhythms": [[1, 1, 1], [2, 1], [1, 0.5, 0.5, 1], [3], [0.5, 0.5, 1, 1]],
-        "m": {"0": {"5": 4, "2": 2, "6": 1}, "1": {"4": 1}, "2": {"6": 4, "5": 1}, "3": {"0": 3}, "4": {"0": 3}, "5": {"2": 4, "0": 1, "3": 1}, "6": {"0": 5, "2": 1}}},
-      "bass": "root", "groove": "waltz", "kit": "acoustic", "instr": {"chords": "i:piano", "lead": "accordion (needs a new instrument; organ is the stand-in)"},
-      "quirks": "natural", "feel": {"kick": 0, "snare": 0, "hat": 0, "jit": 0.006, "vj": 0.12, "ghost": 0, "acc": 0.3},
-      "sug": {"ext": 0.1, "borrow": 0.2, "sec": 0.3, "tri": 0, "sus": 0.2},
-      "trans": {"chorus": [], "verse": [], "bridge": [], "pre": []},
-      "art": {"legato": 0.4, "vibLong": 0.2, "scoopStart": 0, "fallEnd": 0.05, "slideLeap": 0, "ghost": 0, "stacc": 0.35, "accent": 0.3, "grace": 0.15, "tenuto": 0.3, "info": "Light and clear: detached waltz notes, the odd grace note, no slides."},
-      "arrangement": {"accompaniment": "a repeating piano figure (arpeggios or oom-pah-pah) that never stops", "colours": ["accordion melody", "mandolin for distant, festive moments", "music-box or celeste chimes", "a typewriter or hand-claps as percussion"], "form": "the main waltz returns in several versions (piano alone, accordion, full)"},
+      "tags": [
+        "Yann Tiersen"
+      ],
+      "alsoTags": [
+        "soundtrack:Amélie",
+        "genre:french-waltz",
+        "instrument:accordion",
+        "instrument:piano"
+      ],
+      "style": {
+        "id": "tiersen",
+        "meter": "3/4",
+        "comp": "pulse",
+        "swing": 50,
+        "name": "Parisian waltz",
+        "lane": "Yann Tiersen",
+        "desc": "Waltzes that turn like a merry-go-round: rippling piano arpeggios, an accordion tune, simple repeating patterns and small toy-like colours.",
+        "mode": "aeolian",
+        "key": 4,
+        "bpm": 100,
+        "sevenths": false,
+        "density": 0.55,
+        "leap": 0.2,
+        "register": [
+          60,
+          84
+        ],
+        "sound": "keys",
+        "drums": false,
+        "structure": "ballad",
+        "contour": 0,
+        "space": 1.2,
+        "mopts": {
+          "chorus": {
+            "shift": 0
+          }
+        },
+        "rhythms": [
+          [
+            1,
+            1,
+            1
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            1,
+            0.5,
+            0.5,
+            1
+          ],
+          [
+            3
+          ],
+          [
+            0.5,
+            0.5,
+            1,
+            1
+          ]
+        ],
+        "m": {
+          "0": {
+            "5": 4,
+            "2": 2,
+            "6": 1
+          },
+          "1": {
+            "4": 1
+          },
+          "2": {
+            "6": 4,
+            "5": 1
+          },
+          "3": {
+            "0": 3
+          },
+          "4": {
+            "0": 3
+          },
+          "5": {
+            "2": 4,
+            "0": 1,
+            "3": 1
+          },
+          "6": {
+            "0": 5,
+            "2": 1
+          }
+        }
+      },
+      "bass": "root",
+      "groove": "waltz",
+      "kit": "acoustic",
+      "instr": {
+        "chords": "i:piano",
+        "lead": "accordion (needs a new instrument; organ is the stand-in)"
+      },
+      "quirks": "natural",
+      "feel": {
+        "kick": 0,
+        "snare": 0,
+        "hat": 0,
+        "jit": 0.006,
+        "vj": 0.12,
+        "ghost": 0,
+        "acc": 0.3
+      },
+      "sug": {
+        "ext": 0.1,
+        "borrow": 0.2,
+        "sec": 0.3,
+        "tri": 0,
+        "sus": 0.2
+      },
+      "trans": {
+        "chorus": [],
+        "verse": [],
+        "bridge": [],
+        "pre": []
+      },
+      "art": {
+        "legato": 0.4,
+        "vibLong": 0.2,
+        "scoopStart": 0,
+        "fallEnd": 0.05,
+        "slideLeap": 0,
+        "ghost": 0,
+        "stacc": 0.35,
+        "accent": 0.3,
+        "grace": 0.15,
+        "tenuto": 0.3,
+        "info": "Light and clear: detached waltz notes, the odd grace note, no slides."
+      },
+      "arrangement": {
+        "accompaniment": "a repeating piano figure (arpeggios or oom-pah-pah) that never stops",
+        "colours": [
+          "accordion melody",
+          "mandolin for distant, festive moments",
+          "music-box or celeste chimes",
+          "a typewriter or hand-claps as percussion"
+        ],
+        "form": "the main waltz returns in several versions (piano alone, accordion, full)"
+      },
       "mixHint": "Intimate and dry, like a small room; no drums; instruments panned as if around a table.",
-      "dna": {"tagline": "merry-go-round waltzes for piano and accordion",
+      "dna": {
+        "tagline": "merry-go-round waltzes for piano and accordion",
         "intro": "Yann Tiersen's Amélie score is built from waltzes and simple repeating patterns, with the accordion giving it its French character and small colours (chimes, mandolin, a typewriter) adding charm.",
-        "stats": [["Meter", "3/4 waltz"], ["Lead colour", "accordion, piano"], ["Texture", "repeating patterns"]],
+        "stats": [
+          [
+            "Meter",
+            "3/4 waltz"
+          ],
+          [
+            "Lead colour",
+            "accordion, piano"
+          ],
+          [
+            "Texture",
+            "repeating patterns"
+          ]
+        ],
         "points": [
-          {"c": "high", "t": "The accordion is the most prominent instrument and gives the score its French character.", "used": "lead accordion (new instrument)", "src": ["https://www.mfiles.co.uk/reviews/amelie.htm"]},
-          {"c": "high", "t": "Waltzes are central: the main theme comes in three versions and waltzes recur, giving a merry-go-round effect.", "used": "meter 3/4, groove waltz, form", "src": ["https://www.mfiles.co.uk/reviews/amelie.htm"]},
-          {"c": "high", "t": "The piano pieces use simple accompaniment patterns, arpeggios and rippling figures; one is described as Chopinesque.", "used": "comp pulse, accompaniment figure", "src": ["https://www.mfiles.co.uk/reviews/amelie.htm"]},
-          {"c": "high", "t": "Colour instruments include mandolins, celeste-like chimes, a music box, hand-claps, a typewriter and ondes Martenot.", "used": "arrangement.colours", "src": ["https://www.mfiles.co.uk/reviews/amelie.htm"]},
-          {"c": "low", "t": "Harmony mostly simple diatonic minor and major loops.", "used": "low extension weights"}
-        ]}
+          {
+            "c": "high",
+            "t": "The accordion is the most prominent instrument and gives the score its French character.",
+            "used": "lead accordion (new instrument)",
+            "src": [
+              "https://www.mfiles.co.uk/reviews/amelie.htm"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Waltzes are central: the main theme comes in three versions and waltzes recur, giving a merry-go-round effect.",
+            "used": "meter 3/4, groove waltz, form",
+            "src": [
+              "https://www.mfiles.co.uk/reviews/amelie.htm"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "The piano pieces use simple accompaniment patterns, arpeggios and rippling figures; one is described as Chopinesque.",
+            "used": "comp pulse, accompaniment figure",
+            "src": [
+              "https://www.mfiles.co.uk/reviews/amelie.htm"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Colour instruments include mandolins, celeste-like chimes, a music box, hand-claps, a typewriter and ondes Martenot.",
+            "used": "arrangement.colours",
+            "src": [
+              "https://www.mfiles.co.uk/reviews/amelie.htm"
+            ]
+          },
+          {
+            "c": "low",
+            "t": "Harmony mostly simple diatonic minor and major loops.",
+            "used": "low extension weights"
+          }
+        ]
+      }
     },
     {
       "id": "strangerthings",
       "kind": "soundtrack",
-      "tags": ["Stranger Things"],
-      "alsoTags": ["genre:synthwave", "era:80s", "mood:tense", "instrument:analog-synths"],
-      "style": {"id": "strangerthings", "meter": "4/4", "comp": "eighths", "swing": 50, "name": "Analog synth score", "lane": "Stranger Things (Survive)", "desc": "Warm analog synth arpeggios and pads, a slow pulse, dissonance used to build dread; few or no drums.", "mode": "aeolian", "key": 9, "bpm": 84, "sevenths": true, "density": 0.4, "leap": 0.2, "register": [48, 72], "sound": "saw", "drums": false, "structure": "ballad", "contour": -0.2, "space": 1.6, "mopts": {"chorus": {"shift": 0}},
-        "rhythms": [[2, 2], [4], [1, 1, 2], [3, 1], [0.5, 0.5, 1, 2]],
-        "m": {"0": {"5": 3, "6": 2, "3": 2}, "1": {"0": 1}, "2": {"6": 2}, "3": {"0": 3, "5": 1}, "4": {"0": 1}, "5": {"6": 3, "0": 2}, "6": {"0": 4, "5": 1}}},
-      "bass": "held", "groove": "halftime", "kit": "electro", "instr": {"chords": "i:junopoly", "bass": "i:junobass", "lead": "i:prolead"},
-      "quirks": "synthwave", "feel": {"kick": 0, "snare": 0, "hat": 0, "jit": 0.001, "vj": 0.04, "ghost": 0, "acc": 0.2},
-      "sug": {"ext": 0.5, "borrow": 0.6, "sec": 0.2, "tri": 0.4, "sus": 0.5},
-      "trans": {"chorus": ["riser", "sweep"], "verse": [], "bridge": ["sweep"], "pre": ["rev"], "outro": ["down"]},
-      "art": {"legato": 0.6, "vibLong": 0.1, "scoopStart": 0, "fallEnd": 0, "slideLeap": 0.4, "ghost": 0, "stacc": 0.3, "accent": 0.15, "grace": 0, "tenuto": 0.3, "info": "A synth lead: long tones and slow glides, no vocal-style ornaments."},
-      "arrangement": {"ostinato": "an arpeggiated synth pattern runs through each cue", "build": "layers enter one at a time; intense scenes 'go even harder'", "drums": "none, or a pulse only"},
+      "tags": [
+        "Stranger Things"
+      ],
+      "alsoTags": [
+        "genre:synthwave",
+        "era:80s",
+        "mood:tense",
+        "instrument:analog-synths"
+      ],
+      "style": {
+        "id": "strangerthings",
+        "meter": "4/4",
+        "comp": "eighths",
+        "swing": 50,
+        "name": "Analog synth score",
+        "lane": "Stranger Things (Survive)",
+        "desc": "Warm analog synth arpeggios and pads, a slow pulse, dissonance used to build dread; few or no drums.",
+        "mode": "aeolian",
+        "key": 9,
+        "bpm": 84,
+        "sevenths": true,
+        "density": 0.4,
+        "leap": 0.2,
+        "register": [
+          48,
+          72
+        ],
+        "sound": "saw",
+        "drums": false,
+        "structure": "ballad",
+        "contour": -0.2,
+        "space": 1.6,
+        "mopts": {
+          "chorus": {
+            "shift": 0
+          }
+        },
+        "rhythms": [
+          [
+            2,
+            2
+          ],
+          [
+            4
+          ],
+          [
+            1,
+            1,
+            2
+          ],
+          [
+            3,
+            1
+          ],
+          [
+            0.5,
+            0.5,
+            1,
+            2
+          ]
+        ],
+        "m": {
+          "0": {
+            "5": 3,
+            "6": 2,
+            "3": 2
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "6": 2
+          },
+          "3": {
+            "0": 3,
+            "5": 1
+          },
+          "4": {
+            "0": 1
+          },
+          "5": {
+            "6": 3,
+            "0": 2
+          },
+          "6": {
+            "0": 4,
+            "5": 1
+          }
+        }
+      },
+      "bass": "held",
+      "groove": "halftime",
+      "kit": "electro",
+      "instr": {
+        "chords": "i:junopoly",
+        "bass": "i:junobass",
+        "lead": "i:prolead"
+      },
+      "quirks": "synthwave",
+      "feel": {
+        "kick": 0,
+        "snare": 0,
+        "hat": 0,
+        "jit": 0.001,
+        "vj": 0.04,
+        "ghost": 0,
+        "acc": 0.2
+      },
+      "sug": {
+        "ext": 0.5,
+        "borrow": 0.6,
+        "sec": 0.2,
+        "tri": 0.4,
+        "sus": 0.5
+      },
+      "trans": {
+        "chorus": [
+          "riser",
+          "sweep"
+        ],
+        "verse": [],
+        "bridge": [
+          "sweep"
+        ],
+        "pre": [
+          "rev"
+        ],
+        "outro": [
+          "down"
+        ]
+      },
+      "art": {
+        "legato": 0.6,
+        "vibLong": 0.1,
+        "scoopStart": 0,
+        "fallEnd": 0,
+        "slideLeap": 0.4,
+        "ghost": 0,
+        "stacc": 0.3,
+        "accent": 0.15,
+        "grace": 0,
+        "tenuto": 0.3,
+        "info": "A synth lead: long tones and slow glides, no vocal-style ornaments."
+      },
+      "arrangement": {
+        "ostinato": "an arpeggiated synth pattern runs through each cue",
+        "build": "layers enter one at a time; intense scenes 'go even harder'",
+        "drums": "none, or a pulse only"
+      },
       "mixHint": "Warm and 70s-sounding rather than cold digital 80s; depth and slow movement, never harsh.",
-      "dna": {"tagline": "warm analog synth dread, Carpenter-style",
+      "dna": {
+        "tagline": "warm analog synth dread, Carpenter-style",
         "intro": "Kyle Dixon and Michael Stein of the band Survive scored Stranger Things on analog synths; the show was pitched to them as John Carpenter meets Italian giallo and Giorgio Moroder.",
-        "stats": [["Instruments", "analog synths (e.g. Roland SH-101), modular"], ["Influences", "John Carpenter, Goblin, Moroder, Tangerine Dream"], ["Drums", "few or none"]],
+        "stats": [
+          [
+            "Instruments",
+            "analog synths (e.g. Roland SH-101), modular"
+          ],
+          [
+            "Influences",
+            "John Carpenter, Goblin, Moroder, Tangerine Dream"
+          ],
+          [
+            "Drums",
+            "few or none"
+          ]
+        ],
         "points": [
-          {"c": "high", "t": "Analog synths throughout; Stein's SH-101 is on nearly every record, plus kit-built modular gear.", "used": "instruments, sound saw", "src": ["https://www.rollingstone.com/music/features/stranger-things-survive-talk-their-creepy-nostalgic-score-w431789"]},
-          {"c": "high", "t": "The show's sound was pitched as John Carpenter, Italian giallo and Giorgio Moroder; Carpenter's use of dissonance to drive scenes is a cited influence.", "used": "tri/sus weights (tension)", "src": ["https://www.rollingstone.com/music/features/stranger-things-survive-talk-their-creepy-nostalgic-score-w431789"]},
-          {"c": "high", "t": "They prefer warm, 70s-style recording to cold digital 80s sounds, aiming for depth and movement rather than harshness.", "used": "mixHint", "src": ["https://www.rollingstone.com/music/features/stranger-things-survive-talk-their-creepy-nostalgic-score-w431789"]},
-          {"c": "med", "t": "Arpeggiated synth patterns are a signature of the main theme.", "used": "comp eighths", "src": ["https://www.synthtopia.com/content/2017/05/14/the-iconic-soundtrack-of-stranger-things/"]},
-          {"c": "low", "t": "Slow tempos, roughly 80–90 BPM for the main cues.", "used": "bpm 84"}
-        ]}
+          {
+            "c": "high",
+            "t": "Analog synths throughout; Stein's SH-101 is on nearly every record, plus kit-built modular gear.",
+            "used": "instruments, sound saw",
+            "src": [
+              "https://www.rollingstone.com/music/features/stranger-things-survive-talk-their-creepy-nostalgic-score-w431789"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "The show's sound was pitched as John Carpenter, Italian giallo and Giorgio Moroder; Carpenter's use of dissonance to drive scenes is a cited influence.",
+            "used": "tri/sus weights (tension)",
+            "src": [
+              "https://www.rollingstone.com/music/features/stranger-things-survive-talk-their-creepy-nostalgic-score-w431789"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "They prefer warm, 70s-style recording to cold digital 80s sounds, aiming for depth and movement rather than harshness.",
+            "used": "mixHint",
+            "src": [
+              "https://www.rollingstone.com/music/features/stranger-things-survive-talk-their-creepy-nostalgic-score-w431789"
+            ]
+          },
+          {
+            "c": "med",
+            "t": "Arpeggiated synth patterns are a signature of the main theme.",
+            "used": "comp eighths",
+            "src": [
+              "https://www.synthtopia.com/content/2017/05/14/the-iconic-soundtrack-of-stranger-things/"
+            ]
+          },
+          {
+            "c": "low",
+            "t": "Slow tempos, roughly 80–90 BPM for the main cues.",
+            "used": "bpm 84"
+          }
+        ]
+      }
     },
     {
       "id": "jazz",
       "kind": "genre",
-      "tags": ["Jazz", "Jazz: swing"],
-      "alsoTags": ["mood:romantic", "instrument:upright-bass"],
-      "style": {"id": "jazz", "meter": "4/4", "comp": "stabs", "swing": 64, "name": "Swing jazz", "lane": "Jazz standards", "desc": "ii–V–I progressions with sevenths and extensions, a walking bass, swung eighths, a ride-cymbal groove and comping chords off the beat.", "mode": "ionian", "key": 5, "bpm": 132, "sevenths": true, "density": 0.55, "leap": 0.3, "register": [55, 77], "sound": "keys", "drums": true, "structure": "ballad", "contour": 0, "space": 1.0, "mopts": {"chorus": {"shift": 2}},
-        "rhythms": [[1.5, 0.5, 2], [0.5, 1, 0.5, 2], [1, 0.5, 1, 0.5, 1], [0.5, 0.5, 0.5, 0.5, 2], [2.5, 0.5, 1]],
-        "m": {"0": {"5": 3, "1": 3, "3": 2}, "1": {"4": 6}, "2": {"5": 4}, "3": {"6": 2, "1": 2, "4": 2}, "4": {"0": 6, "5": 1}, "5": {"1": 5, "3": 1}, "6": {"2": 3, "0": 1}}},
-      "bass": "walk", "groove": "swing (new: ride-cymbal pattern, hi-hat on 2 and 4, feathered kick)", "kit": "acoustic", "instr": {"chords": "i:piano", "bass": "upright bass (needs a new instrument; bassgtr is the stand-in)"},
-      "quirks": "natural", "feel": {"kick": 0.004, "snare": 0.02, "hat": 0.01, "jit": 0.008, "vj": 0.16, "ghost": 0.5, "acc": 0.4},
-      "sug": {"ext": 1, "borrow": 0.5, "sec": 0.9, "tri": 0.8, "sus": 0.3},
-      "trans": {"chorus": [], "verse": [], "bridge": [], "pre": []},
-      "art": {"legato": 0.5, "vibLong": 0.4, "scoopStart": 0.4, "fallEnd": 0.4, "slideLeap": 0.25, "ghost": 0.35, "stacc": 0.25, "accent": 0.35, "grace": 0.3, "tenuto": 0.2, "info": "Swung phrasing with scoops, falls and ghosted notes; accents on the off-beats."},
+      "tags": [
+        "Jazz",
+        "Jazz: swing"
+      ],
+      "alsoTags": [
+        "mood:romantic",
+        "instrument:upright-bass"
+      ],
+      "style": {
+        "id": "jazz",
+        "meter": "4/4",
+        "comp": "stabs",
+        "swing": 64,
+        "name": "Swing jazz",
+        "lane": "Jazz standards",
+        "desc": "ii–V–I progressions with sevenths and extensions, a walking bass, swung eighths, a ride-cymbal groove and comping chords off the beat.",
+        "mode": "ionian",
+        "key": 5,
+        "bpm": 132,
+        "sevenths": true,
+        "density": 0.55,
+        "leap": 0.3,
+        "register": [
+          55,
+          77
+        ],
+        "sound": "keys",
+        "drums": true,
+        "structure": "ballad",
+        "contour": 0,
+        "space": 1.0,
+        "mopts": {
+          "chorus": {
+            "shift": 2
+          }
+        },
+        "rhythms": [
+          [
+            1.5,
+            0.5,
+            2
+          ],
+          [
+            0.5,
+            1,
+            0.5,
+            2
+          ],
+          [
+            1,
+            0.5,
+            1,
+            0.5,
+            1
+          ],
+          [
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            2
+          ],
+          [
+            2.5,
+            0.5,
+            1
+          ]
+        ],
+        "m": {
+          "0": {
+            "5": 3,
+            "1": 3,
+            "3": 2
+          },
+          "1": {
+            "4": 6
+          },
+          "2": {
+            "5": 4
+          },
+          "3": {
+            "6": 2,
+            "1": 2,
+            "4": 2
+          },
+          "4": {
+            "0": 6,
+            "5": 1
+          },
+          "5": {
+            "1": 5,
+            "3": 1
+          },
+          "6": {
+            "2": 3,
+            "0": 1
+          }
+        }
+      },
+      "bass": "walk",
+      "groove": "swing (new: ride-cymbal pattern, hi-hat on 2 and 4, feathered kick)",
+      "kit": "acoustic",
+      "instr": {
+        "chords": "i:piano",
+        "bass": "upright bass (needs a new instrument; bassgtr is the stand-in)"
+      },
+      "quirks": "natural",
+      "feel": {
+        "kick": 0.004,
+        "snare": 0.02,
+        "hat": 0.01,
+        "jit": 0.008,
+        "vj": 0.16,
+        "ghost": 0.5,
+        "acc": 0.4
+      },
+      "sug": {
+        "ext": 1,
+        "borrow": 0.5,
+        "sec": 0.9,
+        "tri": 0.8,
+        "sus": 0.3
+      },
+      "trans": {
+        "chorus": [],
+        "verse": [],
+        "bridge": [],
+        "pre": []
+      },
+      "art": {
+        "legato": 0.5,
+        "vibLong": 0.4,
+        "scoopStart": 0.4,
+        "fallEnd": 0.4,
+        "slideLeap": 0.25,
+        "ghost": 0.35,
+        "stacc": 0.25,
+        "accent": 0.35,
+        "grace": 0.3,
+        "tenuto": 0.2,
+        "info": "Swung phrasing with scoops, falls and ghosted notes; accents on the off-beats."
+      },
       "form": "32-bar AABA (A = 8 bars) is the default; also 12-bar blues. Sections are named A, A, B (bridge), A, then solo choruses over the same form.",
-      "engineNeeds": ["a 'swing' groove (ride pattern, hi-hat on 2 and 4)", "chord extensions on every chord by default (7, 9, 13) and tritone substitution in the suggestion engine (SUGSTYLE tri already exists)", "an upright-bass instrument", "the AABA and 12-bar blues forms in the structure list", "improvised solo choruses: a melody generator that varies the head over the form"],
+      "engineNeeds": [
+        "a 'swing' groove (ride pattern, hi-hat on 2 and 4)",
+        "chord extensions on every chord by default (7, 9, 13) and tritone substitution in the suggestion engine (SUGSTYLE tri already exists)",
+        "an upright-bass instrument",
+        "the AABA and 12-bar blues forms in the structure list",
+        "improvised solo choruses: a melody generator that varies the head over the form"
+      ],
       "variants": {
-        "Jazz ballad": {"bpm": 66, "swing": 58, "comp": "sustain", "bass": "rootfifth"},
-        "Bossa nova": {"bpm": 128, "swing": 50, "comp": "strum", "bass": "rootfifth", "needs": "a bossa groove and nylon-guitar comping pattern"},
-        "Jazz waltz": {"meter": "3/4", "bpm": 150, "groove": "waltz"}
+        "Jazz ballad": {
+          "bpm": 66,
+          "swing": 58,
+          "comp": "sustain",
+          "bass": "rootfifth"
+        },
+        "Bossa nova": {
+          "bpm": 128,
+          "swing": 50,
+          "comp": "strum",
+          "bass": "rootfifth",
+          "needs": "a bossa groove and nylon-guitar comping pattern"
+        },
+        "Jazz waltz": {
+          "meter": "3/4",
+          "bpm": 150,
+          "groove": "waltz"
+        }
       },
       "mixHint": "Small-room acoustic sound: piano centre, bass close, drums with lots of ride and brushes; little compression.",
-      "dna": {"tagline": "swing: ii–V–I, walking bass, ride cymbal",
+      "dna": {
+        "tagline": "swing: ii–V–I, walking bass, ride cymbal",
         "intro": "Classic small-group jazz runs on ii–V–I progressions with seventh chords, a walking bass line on every beat, swung eighth notes and a ride-cymbal groove, usually in 32-bar AABA or 12-bar blues forms.",
-        "stats": [["Core progression", "ii7–V7–Imaj7"], ["Feel", "swung eighths"], ["Forms", "32-bar AABA, 12-bar blues"]],
-        "points": [
-          {"c": "med", "t": "The ii–V–I is the most common progression in jazz standards.", "used": "chord matrix: ii→V→I strongest"},
-          {"c": "med", "t": "Walking bass: one note per beat, chord tones on strong beats, passing tones leading to the next root.", "used": "bass walk (exists)"},
-          {"c": "med", "t": "Swing eighths are played long–short; the ride cymbal and the hi-hat on 2 and 4 keep time.", "used": "swing 64, new swing groove"},
-          {"c": "med", "t": "32-bar AABA and 12-bar blues are the standard forms.", "used": "form"}
+        "stats": [
+          [
+            "Core progression",
+            "ii7–V7–Imaj7"
+          ],
+          [
+            "Feel",
+            "swung eighths"
+          ],
+          [
+            "Forms",
+            "32-bar AABA, 12-bar blues"
+          ]
         ],
-        "note": "Jazz points are general music-theory knowledge rather than one artist's habits; add sources when the Classroom jazz lesson is written."}
+        "points": [
+          {
+            "c": "med",
+            "t": "The ii–V–I is the most common progression in jazz standards.",
+            "used": "chord matrix: ii→V→I strongest"
+          },
+          {
+            "c": "med",
+            "t": "Walking bass: one note per beat, chord tones on strong beats, passing tones leading to the next root.",
+            "used": "bass walk (exists)"
+          },
+          {
+            "c": "med",
+            "t": "Swing eighths are played long–short; the ride cymbal and the hi-hat on 2 and 4 keep time.",
+            "used": "swing 64, new swing groove"
+          },
+          {
+            "c": "med",
+            "t": "32-bar AABA and 12-bar blues are the standard forms.",
+            "used": "form"
+          }
+        ],
+        "note": "Jazz points are general music-theory knowledge rather than one artist's habits; add sources when the Classroom jazz lesson is written."
+      }
     }
   ],
-
   "producers": [
     {
-      "id": "antonoff", "tags": ["Jack Antonoff"],
-      "layer": {"kit": "electro", "groove": "drive", "instr": {"chords": "i:junopoly", "bass": "i:junobass", "lead": "i:prokeys"}, "sound": "bright", "quirks": "punchy",
-        "mixMoves": ["16th-note tremolo on long synth pads, so held chords pulse", "tape chorus-echo and spring reverb on keys", "a wide room sound on drums and backing vocals", "an arpeggiated synth bass carries the chorus low end"],
-        "arrangement": ["layer a vintage sound with a modern one for contrast", "build parts from processed sustained pads and arpeggios"]},
-      "dna": {"tagline": "80s machines in a modern record",
+      "id": "antonoff",
+      "tags": [
+        "Jack Antonoff"
+      ],
+      "layer": {
+        "kit": "electro",
+        "groove": "drive",
+        "instr": {
+          "chords": "i:junopoly",
+          "bass": "i:junobass",
+          "lead": "i:prokeys"
+        },
+        "sound": "bright",
+        "quirks": "punchy",
+        "mixMoves": [
+          "16th-note tremolo on long synth pads, so held chords pulse",
+          "tape chorus-echo and spring reverb on keys",
+          "a wide room sound on drums and backing vocals",
+          "an arpeggiated synth bass carries the chorus low end"
+        ],
+        "arrangement": [
+          "layer a vintage sound with a modern one for contrast",
+          "build parts from processed sustained pads and arpeggios"
+        ]
+      },
+      "dna": {
+        "tagline": "80s machines in a modern record",
         "intro": "Jack Antonoff (Bleachers; Taylor Swift, Lorde) builds records from 80s drum machines and synths, processed pads and arpeggios, and roomy stereo textures.",
         "points": [
-          {"c": "high", "t": "LinnDrum drum machine across early Bleachers work, for a driving Radio Ga Ga-style beat.", "used": "kit electro, groove drive", "src": ["https://mixdownmag.com.au/features/gear-rundown-jack-antonoff/"]},
-          {"c": "high", "t": "Roland Juno-6 as a favourite: its arpeggiated low end as the foundation of a chorus. Also Korg M1 presets and the Yamaha DX7 for an 80s character.", "used": "instr junopoly / junobass", "src": ["https://mixdownmag.com.au/features/gear-rundown-jack-antonoff/"]},
-          {"c": "high", "t": "Soundtoys Tremolator on long synth pads to make 16th-note arpeggios; Roland RE-501 Chorus Echo for spring reverb.", "used": "mixMoves", "src": ["https://mixdownmag.com.au/features/gear-rundown-jack-antonoff/"]},
-          {"c": "high", "t": "Two room mics in the corners of his home studio for wide stereo room sound and backing vocals.", "used": "mixMoves", "src": ["https://mixdownmag.com.au/features/gear-rundown-jack-antonoff/"]}
-        ]}
+          {
+            "c": "high",
+            "t": "LinnDrum drum machine across early Bleachers work, for a driving Radio Ga Ga-style beat.",
+            "used": "kit electro, groove drive",
+            "src": [
+              "https://mixdownmag.com.au/features/gear-rundown-jack-antonoff/"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Roland Juno-6 as a favourite: its arpeggiated low end as the foundation of a chorus. Also Korg M1 presets and the Yamaha DX7 for an 80s character.",
+            "used": "instr junopoly / junobass",
+            "src": [
+              "https://mixdownmag.com.au/features/gear-rundown-jack-antonoff/"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Soundtoys Tremolator on long synth pads to make 16th-note arpeggios; Roland RE-501 Chorus Echo for spring reverb.",
+            "used": "mixMoves",
+            "src": [
+              "https://mixdownmag.com.au/features/gear-rundown-jack-antonoff/"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Two room mics in the corners of his home studio for wide stereo room sound and backing vocals.",
+            "used": "mixMoves",
+            "src": [
+              "https://mixdownmag.com.au/features/gear-rundown-jack-antonoff/"
+            ]
+          }
+        ]
+      }
     },
     {
-      "id": "maxmartin", "tags": ["Max Martin"],
-      "layer": {"quirks": "punchy",
-        "rules": {"firstChorusBySeconds": 50, "introBarsMax": 4, "oneNewElementPerSection": true, "glueHook": "repeat a lyric phrase across sections", "syllableMatch": "lyric syllables line up with melody notes", "contrast": "strong contrast between verse, pre-chorus and chorus"},
-        "arrangement": ["introduce one new element at a time", "the strongest hook gets the most space without being overused"],
-        "aR": "Raise the A&R check's weight on 'chorus before 0:50' and 'repetition of the hook'; feeds the prosody and rhyme tools."},
-      "dna": {"tagline": "'melodic math': fast choruses, matched syllables, glue hooks",
+      "id": "maxmartin",
+      "tags": [
+        "Max Martin"
+      ],
+      "layer": {
+        "quirks": "punchy",
+        "rules": {
+          "firstChorusBySeconds": 50,
+          "introBarsMax": 4,
+          "oneNewElementPerSection": true,
+          "glueHook": "repeat a lyric phrase across sections",
+          "syllableMatch": "lyric syllables line up with melody notes",
+          "contrast": "strong contrast between verse, pre-chorus and chorus"
+        },
+        "arrangement": [
+          "introduce one new element at a time",
+          "the strongest hook gets the most space without being overused"
+        ],
+        "aR": "Raise the A&R check's weight on 'chorus before 0:50' and 'repetition of the hook'; feeds the prosody and rhyme tools."
+      },
+      "dna": {
+        "tagline": "'melodic math': fast choruses, matched syllables, glue hooks",
         "intro": "Analyses of Max Martin's hits (the 'melodic math' idea, from researcher Asaf Peres; Martin himself may not use the term) point to fast routes to the chorus, syllables matched to melody, and repeated 'glue' hooks.",
         "points": [
-          {"c": "med", "t": "Most of his hits reach the first chorus before about 50 seconds.", "used": "rules.firstChorusBySeconds", "src": ["https://americansongwriter.com/all-those-pop-songs-you-love-thats-not-magic-thats-melodic-math-and-this-is-how-it-works"]},
-          {"c": "med", "t": "Lyric syllables are matched to melody notes, and a 'glue hook' lyric repeats across sections.", "used": "rules.syllableMatch, glueHook", "src": ["https://americansongwriter.com/all-those-pop-songs-you-love-thats-not-magic-thats-melodic-math-and-this-is-how-it-works"]},
-          {"c": "med", "t": "One new musical element at a time; strong contrast between sections; melodies easy to memorise.", "used": "rules", "src": ["https://americansongwriter.com/all-those-pop-songs-you-love-thats-not-magic-thats-melodic-math-and-this-is-how-it-works"]}
+          {
+            "c": "med",
+            "t": "Most of his hits reach the first chorus before about 50 seconds.",
+            "used": "rules.firstChorusBySeconds",
+            "src": [
+              "https://americansongwriter.com/all-those-pop-songs-you-love-thats-not-magic-thats-melodic-math-and-this-is-how-it-works"
+            ]
+          },
+          {
+            "c": "med",
+            "t": "Lyric syllables are matched to melody notes, and a 'glue hook' lyric repeats across sections.",
+            "used": "rules.syllableMatch, glueHook",
+            "src": [
+              "https://americansongwriter.com/all-those-pop-songs-you-love-thats-not-magic-thats-melodic-math-and-this-is-how-it-works"
+            ]
+          },
+          {
+            "c": "med",
+            "t": "One new musical element at a time; strong contrast between sections; melodies easy to memorise.",
+            "used": "rules",
+            "src": [
+              "https://americansongwriter.com/all-those-pop-songs-you-love-thats-not-magic-thats-melodic-math-and-this-is-how-it-works"
+            ]
+          }
         ],
-        "note": "These are songwriting rules, so this tag shapes structure and the A&R check more than sound."}
+        "note": "These are songwriting rules, so this tag shapes structure and the A&R check more than sound."
+      }
     },
     {
-      "id": "finneas", "tags": ["Finneas"],
-      "layer": {"kit": "808", "groove": "trap", "instr": {"chords": "i:piano"}, "sound": "soft", "quirks": "lofi",
-        "mixMoves": ["vocal close and intimate, harmonies about as loud as the lead", "a chopping tremolo (no smoothing) synced to 8ths or 16ths on a vocal or synth", "reverb and delay printed into the parts", "found sounds as percussion (household clicks, a drill, an audience)"],
-        "arrangement": ["sparse: rhythm and layered harmonies matter more than a busy arrangement", "upright piano as the writing instrument"]},
-      "dna": {"tagline": "intimate bedroom pop: close vocals, found sounds, chopped effects",
+      "id": "finneas",
+      "tags": [
+        "Finneas"
+      ],
+      "layer": {
+        "kit": "808",
+        "groove": "trap",
+        "instr": {
+          "chords": "i:piano"
+        },
+        "sound": "soft",
+        "quirks": "lofi",
+        "mixMoves": [
+          "vocal close and intimate, harmonies about as loud as the lead",
+          "a chopping tremolo (no smoothing) synced to 8ths or 16ths on a vocal or synth",
+          "reverb and delay printed into the parts",
+          "found sounds as percussion (household clicks, a drill, an audience)"
+        ],
+        "arrangement": [
+          "sparse: rhythm and layered harmonies matter more than a busy arrangement",
+          "upright piano as the writing instrument"
+        ]
+      },
+      "dna": {
+        "tagline": "intimate bedroom pop: close vocals, found sounds, chopped effects",
         "intro": "Finneas produced Billie Eilish's debut in his bedroom: a tight, quiet room for vocals, heavy vocal effects, non-musical found sounds and harmonies stacked as loud as the lead.",
         "points": [
-          {"c": "high", "t": "Vocals tracked in a small bedroom for a tight, intimate, quiet sound; harmonies often as loud as the lead.", "used": "mixMoves", "src": ["https://www.mixonline.com/recording/finneas-on-producing-billie-eilishs-number-one-album-in-his-bedroom"]},
-          {"c": "high", "t": "A harsh tremolo at 0% smoothing, synced to 8ths or 16ths, to chop a signal; Logic's Vocal Transformer for a vocal effect.", "used": "mixMoves", "src": ["https://www.mixonline.com/recording/finneas-on-producing-billie-eilishs-number-one-album-in-his-bedroom"]},
-          {"c": "high", "t": "Non-musical sound effects in the production (an oven, a dentist drill, audience reactions).", "used": "found-sound percussion (needs a small SFX sample set)", "src": ["https://www.mixonline.com/recording/finneas-on-producing-billie-eilishs-number-one-album-in-his-bedroom"]},
-          {"c": "high", "t": "Writes on acoustic piano, records parts with virtual upright pianos; reverbs and delays printed before the mix.", "used": "instr piano", "src": ["https://www.mixonline.com/recording/finneas-on-producing-billie-eilishs-number-one-album-in-his-bedroom"]}
-        ]}
+          {
+            "c": "high",
+            "t": "Vocals tracked in a small bedroom for a tight, intimate, quiet sound; harmonies often as loud as the lead.",
+            "used": "mixMoves",
+            "src": [
+              "https://www.mixonline.com/recording/finneas-on-producing-billie-eilishs-number-one-album-in-his-bedroom"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "A harsh tremolo at 0% smoothing, synced to 8ths or 16ths, to chop a signal; Logic's Vocal Transformer for a vocal effect.",
+            "used": "mixMoves",
+            "src": [
+              "https://www.mixonline.com/recording/finneas-on-producing-billie-eilishs-number-one-album-in-his-bedroom"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Non-musical sound effects in the production (an oven, a dentist drill, audience reactions).",
+            "used": "found-sound percussion (needs a small SFX sample set)",
+            "src": [
+              "https://www.mixonline.com/recording/finneas-on-producing-billie-eilishs-number-one-album-in-his-bedroom"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Writes on acoustic piano, records parts with virtual upright pianos; reverbs and delays printed before the mix.",
+            "used": "instr piano",
+            "src": [
+              "https://www.mixonline.com/recording/finneas-on-producing-billie-eilishs-number-one-album-in-his-bedroom"
+            ]
+          }
+        ]
+      }
     },
     {
-      "id": "mikedean", "tags": ["Mike Dean"],
-      "layer": {"kit": "808", "groove": "trap", "instr": {"chords": "i:propad", "bass": "i:probass", "lead": "i:prolead"}, "sound": "saw",
-        "mixMoves": ["big analog synth pads", "a throbbing synth bass", "an expressive synth solo with bends and glides, often over the outro", "808 and tuning locked to the song's key"],
+      "id": "mikedean",
+      "tags": [
+        "Mike Dean"
+      ],
+      "layer": {
+        "kit": "808",
+        "groove": "trap",
+        "instr": {
+          "chords": "i:propad",
+          "bass": "i:probass",
+          "lead": "i:prolead"
+        },
+        "sound": "saw",
+        "mixMoves": [
+          "big analog synth pads",
+          "a throbbing synth bass",
+          "an expressive synth solo with bends and glides, often over the outro",
+          "808 and tuning locked to the song's key"
+        ],
         "harmony": "minor keys with a brief lift to the relative major, then back to minor for melancholy",
-        "arrangement": ["add an outro section for a synth solo", "leave gaps for an extra layer to fit in"]},
-      "dna": {"tagline": "huge analog synths and expressive solos over hip-hop",
+        "arrangement": [
+          "add an outro section for a synth solo",
+          "leave gaps for an extra layer to fit in"
+        ]
+      },
+      "dna": {
+        "tagline": "huge analog synths and expressive solos over hip-hop",
         "intro": "Mike Dean (Kanye West, Travis Scott) is known for big analog synth pads, throbbing bass and expressive synth solos, on Moog, Oberheim, Jupiter-8 and Yamaha CS-80 synths.",
         "points": [
-          {"c": "high", "t": "Moog synths (Matriarch, Grandmother, Memorymoog, Minimoog), Roland Jupiter-8, Yamaha CS-80, Oberheim OB-X and Four Voice; he calls the CS-80 the most expressive synth.", "used": "instr pro* synths", "src": ["https://musicradar.com/news/mike-dean-analogue-synths-track"]},
-          {"c": "high", "t": "His instrumentals feature a throbbing bassline, large synth pads and a synth solo over the top.", "used": "mixMoves, outro solo", "src": ["https://musicradar.com/news/mike-dean-analogue-synths-track"]},
-          {"c": "high", "t": "He uses minor keys with a brief move to the relative major, then back to minor for a melancholy feel; he insists the 808 and Auto-Tune match the key.", "used": "layer.harmony", "src": ["https://thefader.com/2018/10/08/mike-dean-interview-travis-scott-and-kanye-west"]}
-        ]}
+          {
+            "c": "high",
+            "t": "Moog synths (Matriarch, Grandmother, Memorymoog, Minimoog), Roland Jupiter-8, Yamaha CS-80, Oberheim OB-X and Four Voice; he calls the CS-80 the most expressive synth.",
+            "used": "instr pro* synths",
+            "src": [
+              "https://musicradar.com/news/mike-dean-analogue-synths-track"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "His instrumentals feature a throbbing bassline, large synth pads and a synth solo over the top.",
+            "used": "mixMoves, outro solo",
+            "src": [
+              "https://musicradar.com/news/mike-dean-analogue-synths-track"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "He uses minor keys with a brief move to the relative major, then back to minor for a melancholy feel; he insists the 808 and Auto-Tune match the key.",
+            "used": "layer.harmony",
+            "src": [
+              "https://thefader.com/2018/10/08/mike-dean-interview-travis-scott-and-kanye-west"
+            ]
+          }
+        ]
+      }
     },
     {
-      "id": "redone", "tags": ["RedOne"],
-      "layer": {"kit": "electro", "groove": "fourfloor", "instr": {"chords": "i:junobrass", "bass": "i:junobass", "lead": "i:prolead"}, "sound": "saw", "quirks": "punchy",
-        "bpm": [118, 122],
-        "mixMoves": ["80s-inspired synth stabs", "a clipped, marching dance beat", "a stuttering vocal hook after the chorus", "a spoken or chanted vocal hook to open the song"],
-        "arrangement": ["rock influences under dance-pop: big, simple, memorable"]},
-      "dna": {"tagline": "2000s electro dance-pop with stutter hooks",
+      "id": "redone",
+      "tags": [
+        "RedOne"
+      ],
+      "layer": {
+        "kit": "electro",
+        "groove": "fourfloor",
+        "instr": {
+          "chords": "i:junobrass",
+          "bass": "i:junobass",
+          "lead": "i:prolead"
+        },
+        "sound": "saw",
+        "quirks": "punchy",
+        "bpm": [
+          118,
+          122
+        ],
+        "mixMoves": [
+          "80s-inspired synth stabs",
+          "a clipped, marching dance beat",
+          "a stuttering vocal hook after the chorus",
+          "a spoken or chanted vocal hook to open the song"
+        ],
+        "arrangement": [
+          "rock influences under dance-pop: big, simple, memorable"
+        ]
+      },
+      "dna": {
+        "tagline": "2000s electro dance-pop with stutter hooks",
         "intro": "RedOne co-wrote and produced Lady Gaga's breakthrough hits; he calls himself 'a rock guy' and blends familiar sounds with a twist aimed at the moment.",
         "points": [
-          {"c": "high", "t": "Produced, programmed and played Just Dance (119 BPM) and Poker Face (120 BPM): synth-pop and dance-pop with 80s-inspired synths.", "used": "bpm range, instruments", "src": ["https://en.wikipedia.org/wiki/Just_Dance_(song)", "https://en.wikipedia.org/wiki/Poker_Face_(song)"]},
-          {"c": "high", "t": "A vocal hook opens Poker Face and a stuttering hook follows the chorus.", "used": "mixMoves", "src": ["https://en.wikipedia.org/wiki/Poker_Face_(song)"]},
-          {"c": "high", "t": "Rock influences (Led Zeppelin, Deep Purple, Kansas, Foreigner); he blends familiar sounds with a current twist.", "src": ["https://www.bmi.com/news/entry/redone_rising"]}
-        ]}
+          {
+            "c": "high",
+            "t": "Produced, programmed and played Just Dance (119 BPM) and Poker Face (120 BPM): synth-pop and dance-pop with 80s-inspired synths.",
+            "used": "bpm range, instruments",
+            "src": [
+              "https://en.wikipedia.org/wiki/Just_Dance_(song)",
+              "https://en.wikipedia.org/wiki/Poker_Face_(song)"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "A vocal hook opens Poker Face and a stuttering hook follows the chorus.",
+            "used": "mixMoves",
+            "src": [
+              "https://en.wikipedia.org/wiki/Poker_Face_(song)"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Rock influences (Led Zeppelin, Deep Purple, Kansas, Foreigner); he blends familiar sounds with a current twist.",
+            "src": [
+              "https://www.bmi.com/news/entry/redone_rising"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "rubin",
+      "tags": [
+        "Rick Rubin"
+      ],
+      "layer": {
+        "kit": "acoustic",
+        "quirks": "natural",
+        "density": -0.15,
+        "feel": {
+          "kick": 0.002,
+          "snare": 0.01,
+          "hat": 0.006,
+          "jit": 0.007,
+          "vj": 0.14,
+          "ghost": 0.3,
+          "acc": 0.35
+        },
+        "mixMoves": [
+          "dry and upfront: little reverb, few effects",
+          "performance over polish: keep small timing pushes and pulls"
+        ],
+        "arrangement": [
+          "strip it back: offer to mute every part that isn't essential, section by section, as one undoable card ('reduce')",
+          "fewer parts, each one clearer",
+          "variant 'Def Jam': programmed drum-machine beats with live rock guitar"
+        ],
+        "suggests": "A 'Reduce' button: Semitone proposes which parts to take out of each section and plays the stripped version; you keep what you like."
+      },
+      "dna": {
+        "tagline": "the reducer: only what the song needs",
+        "intro": "Rick Rubin calls himself a 'reducer' rather than a producer: he strips a song down to see what is actually necessary, works by feel and taste, and aims for honest, intense performances (Run-DMC, Beastie Boys, Johnny Cash, Red Hot Chili Peppers).",
+        "points": [
+          {
+            "c": "high",
+            "t": "Calls himself a 'reducer': gets the point across with the least information possible, stripping a track down to what is necessary.",
+            "used": "density −0.15, the Reduce suggestion",
+            "src": [
+              "https://www.cbsnews.com/news/rick-rubin-anderson-cooper-60-minutes-interview-2023-01-15/"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Works by taste and feel rather than technical skill; his aim is the artist's best work, not a signature sound of his own.",
+            "used": "why this layer changes arrangement more than sound",
+            "src": [
+              "https://www.cbsnews.com/news/rick-rubin-anderson-cooper-60-minutes-interview-2023-01-15/"
+            ]
+          },
+          {
+            "c": "med",
+            "t": "Encourages removing layers until only the most authentic performance remains (linked to his Johnny Cash records); early Def Jam records mixed drum-machine programming with live rock instruments.",
+            "used": "arrangement, Def Jam variant",
+            "src": [
+              "https://www.vintagedigital.com.au/engineers-producers/rick-rubin/"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "On Blood Sugar Sex Magik he helped arrange drum beats, guitar melodies and lyrics; critics heard his 'cold precision' in the sound.",
+            "src": [
+              "https://en.wikipedia.org/wiki/Blood_Sugar_Sex_Magik"
+            ]
+          }
+        ],
+        "note": "Rubin is known for an approach rather than a fixed sound, so this tag mostly removes things and keeps performances natural."
+      }
+    },
+    {
+      "id": "nigro",
+      "tags": [
+        "Dan Nigro",
+        "Daniel Nigro"
+      ],
+      "layer": {
+        "kit": "acoustic",
+        "groove": "backbeat",
+        "instr": {
+          "chords": "i:piano"
+        },
+        "quirks": "punchy",
+        "mixMoves": [
+          "vocal compressed twice in series with a vintage-style reverb",
+          "programmed drums layered with samples (extra kicks, snares, small clinks, cymbals) for size",
+          "parts nudged by hand so the groove pushes and pulls"
+        ],
+        "arrangement": [
+          "start on piano and voice, build to a full band (the piano-ballad-to-rock arc)",
+          "a section can switch from half-time to double-time drums",
+          "tempo may drift or push up a few BPM towards the end (uses the tempo curve)",
+          "colour layers: big stacked strings, Mellotron, Juno organ sounds"
+        ],
+        "suggests": "A 'Build it up' card: proposes the ballad-to-rock arc across your sections (piano only → band → double-time last chorus)."
+      },
+      "dna": {
+        "tagline": "piano confessionals that build into rock",
+        "intro": "Dan Nigro (Olivia Rodrigo, Chappell Roan) builds songs that often start on piano and grow into full band rock, with programmed drums made human, layered strings and vintage keyboard colours.",
+        "points": [
+          {
+            "c": "high",
+            "t": "Vampire grew from a half-time groove to double-time drums at about 132–135 BPM; the first verse was slowed by 1 BPM by hand.",
+            "used": "half/double-time switch, tempo curve",
+            "src": [
+              "https://www.soundonsound.com/techniques/inside-track-olivia-rodrigo-vampire"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "The intro piano was re-recorded on a grand piano for more body; strings were stacked in about 100 tracks; Mellotron and Juno 60 organ sounds add colour.",
+            "used": "instr piano, colour layers",
+            "src": [
+              "https://www.soundonsound.com/techniques/inside-track-olivia-rodrigo-vampire"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Programmed drums layered with samples (kicks, snares, small clinks, extra cymbals) and nudged in the timeline for a human push and pull; live drums re-recorded later.",
+            "used": "feel, mixMoves",
+            "src": [
+              "https://www.soundonsound.com/techniques/inside-track-olivia-rodrigo-vampire"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Vocal chain: EQ, two 1176-style compressors in series, a de-esser and a vintage-style reverb.",
+            "used": "mixMoves",
+            "src": [
+              "https://www.soundonsound.com/techniques/inside-track-olivia-rodrigo-vampire"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "On Chappell Roan's Good Luck, Babe! he produced and co-wrote; the tempo drifts between about 113 and 121 BPM.",
+            "used": "links to the Chappell Roan profile",
+            "src": [
+              "https://www.musicradar.com/news/chappell-roan-good-luck-babe-theory"
+            ]
+          }
+        ]
+      }
     }
   ],
-
   "orchestral": [
     {
-      "id": "djawadi", "kind": "composer", "tags": ["Ramin Djawadi"], "alsoTags": ["soundtrack:Game of Thrones", "soundtrack:Westworld", "mood:dark", "instrument:strings"],
-      "template": {"name": "Dark fantasy saga", "like": "Ramin Djawadi", "mood": "A cello-led theme over a driving string riff, minor and major traded back and forth, octave doublings that grow with every repeat.", "mode": "aeolian", "key": 0, "bpm": 84, "meter": "3/4 (check: triple-time riff)", "char": "dark",
+      "id": "djawadi",
+      "kind": "composer",
+      "tags": [
+        "Ramin Djawadi"
+      ],
+      "alsoTags": [
+        "soundtrack:Game of Thrones",
+        "soundtrack:Westworld",
+        "mood:dark",
+        "instrument:strings"
+      ],
+      "template": {
+        "name": "Dark fantasy saga",
+        "like": "Ramin Djawadi",
+        "mood": "A cello-led theme over a driving string riff, minor and major traded back and forth, octave doublings that grow with every repeat.",
+        "mode": "aeolian",
+        "key": 0,
+        "bpm": 84,
+        "meter": "3/4 (check: triple-time riff)",
+        "char": "dark",
         "sections": [
-          {"name": "Riff", "bars": 4, "dyn": "mf", "prog": [[0, "min"], [0, "min"], [0, "maj"], [0, "maj"]], "lesson": "A string riff states the rhythm that drives the whole cue. Trading C minor for C major (the parallel key) keeps you unsure whether the story is hopeful or doomed.", "roles": "violins II and violas: riff (ostinato); cellos and basses: root; timpani: soft pulse"},
-          {"name": "Theme A", "bars": 8, "dyn": "mf", "prog": [[0, "min"], [7, "min"], [10, "maj"], [5, "min"]], "lesson": "The cello carries the theme: wide range and a dark sound. The harmony walks i–v–♭VII–iv before coming home. The second violins keep the riff going so the sections stay linked.", "roles": "cellos: melody; violins II: riff; violas/horns: harmony; basses: bass"},
-          {"name": "Theme B", "bars": 8, "dyn": "f", "prog": [[8, "maj"], [3, "maj"], [5, "min"], [0, "min"]], "lesson": "Starting on ♭VI instead of i gives a sense of adventure. Big leaps (octaves) and turning the theme's shape upside down make it new.", "roles": "violins I + cellos in octaves: melody; horns: counter; low brass: bass"},
-          {"name": "Climax", "bars": 8, "dyn": "ff", "prog": [[0, "min"], [7, "min"], [10, "maj"], [5, "min"]], "lesson": "The theme returns an octave higher with the full orchestra: Djawadi raises the melody by an octave on repeats to add drama.", "roles": "violins I/II + cellos: melody in octaves; brass: harmony and hits; percussion: drive"},
-          {"name": "Coda", "bars": 4, "dyn": "p", "prog": [[0, "min"], [0, "maj"], [0, "min"], [0, "min"]], "lesson": "Back to the riff alone, still swapping minor and major, ending on minor.", "roles": "solo cello: riff; strings: held"}
-        ]},
-      "variants": {"Player-piano covers": "A Westworld-style option: re-arrange the user's own song as a solo player piano or string quartet cover. Only the user's own songs, never other people's."},
-      "dna": {"tagline": "cello themes, string riffs, minor/major tension",
+          {
+            "name": "Riff",
+            "bars": 4,
+            "dyn": "mf",
+            "prog": [
+              [
+                0,
+                "min"
+              ],
+              [
+                0,
+                "min"
+              ],
+              [
+                0,
+                "maj"
+              ],
+              [
+                0,
+                "maj"
+              ]
+            ],
+            "lesson": "A string riff states the rhythm that drives the whole cue. Trading C minor for C major (the parallel key) keeps you unsure whether the story is hopeful or doomed.",
+            "roles": "violins II and violas: riff (ostinato); cellos and basses: root; timpani: soft pulse"
+          },
+          {
+            "name": "Theme A",
+            "bars": 8,
+            "dyn": "mf",
+            "prog": [
+              [
+                0,
+                "min"
+              ],
+              [
+                7,
+                "min"
+              ],
+              [
+                10,
+                "maj"
+              ],
+              [
+                5,
+                "min"
+              ]
+            ],
+            "lesson": "The cello carries the theme: wide range and a dark sound. The harmony walks i–v–♭VII–iv before coming home. The second violins keep the riff going so the sections stay linked.",
+            "roles": "cellos: melody; violins II: riff; violas/horns: harmony; basses: bass"
+          },
+          {
+            "name": "Theme B",
+            "bars": 8,
+            "dyn": "f",
+            "prog": [
+              [
+                8,
+                "maj"
+              ],
+              [
+                3,
+                "maj"
+              ],
+              [
+                5,
+                "min"
+              ],
+              [
+                0,
+                "min"
+              ]
+            ],
+            "lesson": "Starting on ♭VI instead of i gives a sense of adventure. Big leaps (octaves) and turning the theme's shape upside down make it new.",
+            "roles": "violins I + cellos in octaves: melody; horns: counter; low brass: bass"
+          },
+          {
+            "name": "Climax",
+            "bars": 8,
+            "dyn": "ff",
+            "prog": [
+              [
+                0,
+                "min"
+              ],
+              [
+                7,
+                "min"
+              ],
+              [
+                10,
+                "maj"
+              ],
+              [
+                5,
+                "min"
+              ]
+            ],
+            "lesson": "The theme returns an octave higher with the full orchestra: Djawadi raises the melody by an octave on repeats to add drama.",
+            "roles": "violins I/II + cellos: melody in octaves; brass: harmony and hits; percussion: drive"
+          },
+          {
+            "name": "Coda",
+            "bars": 4,
+            "dyn": "p",
+            "prog": [
+              [
+                0,
+                "min"
+              ],
+              [
+                0,
+                "maj"
+              ],
+              [
+                0,
+                "min"
+              ],
+              [
+                0,
+                "min"
+              ]
+            ],
+            "lesson": "Back to the riff alone, still swapping minor and major, ending on minor.",
+            "roles": "solo cello: riff; strings: held"
+          }
+        ]
+      },
+      "variants": {
+        "Player-piano covers": "A Westworld-style option: re-arrange the user's own song as a solo player piano or string quartet cover. Only the user's own songs, never other people's."
+      },
+      "dna": {
+        "tagline": "cello themes, string riffs, minor/major tension",
         "intro": "Ramin Djawadi's Game of Thrones theme switches between C minor and C major, uses a driving riff shared by the second violins, and puts the cello up front.",
-        "stats": [["Lead instrument", "cello"], ["Harmony", "parallel minor/major, i–v–♭VII–iv"], ["Influences", "Romantic composers and 80s rock"]],
+        "stats": [
+          [
+            "Lead instrument",
+            "cello"
+          ],
+          [
+            "Harmony",
+            "parallel minor/major, i–v–♭VII–iv"
+          ],
+          [
+            "Influences",
+            "Romantic composers and 80s rock"
+          ]
+        ],
         "points": [
-          {"c": "high", "t": "Opens on C minor for two bars, then C major (the parallel key); the A section moves i–v–♭VII–iv; the B section starts on ♭VI.", "used": "template progressions", "src": ["https://splice.com/blog/game-of-thrones-main-title-theme-music-theory"]},
-          {"c": "high", "t": "The cello was chosen as the main instrument for its range and dark sound (the show's creators banned pianos and flutes).", "used": "cello melody", "src": ["https://splice.com/blog/game-of-thrones-main-title-theme-music-theory"]},
-          {"c": "high", "t": "A riff drives the piece and the second violin shares it in later sections; contour inversions, octave leaps and raising the melody an octave on repeats are recurring devices.", "used": "roles, Climax", "src": ["https://splice.com/blog/game-of-thrones-main-title-theme-music-theory"]},
-          {"c": "high", "t": "Influences include Beethoven, Brahms, Tchaikovsky and 80s rock, especially Metallica.", "src": ["https://splice.com/blog/game-of-thrones-main-title-theme-music-theory"]},
-          {"c": "med", "t": "Westworld's score features player-piano style covers of rock songs.", "used": "variant (user's own songs only)", "src": ["https://screencrush.com/westworld-music-itunes-piano-covers/"]},
-          {"c": "low", "t": "Tempo and exact meter of the main title not confirmed from a source; set as a starting point.", "used": "bpm 84, meter to check"}
-        ]}
+          {
+            "c": "high",
+            "t": "Opens on C minor for two bars, then C major (the parallel key); the A section moves i–v–♭VII–iv; the B section starts on ♭VI.",
+            "used": "template progressions",
+            "src": [
+              "https://splice.com/blog/game-of-thrones-main-title-theme-music-theory"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "The cello was chosen as the main instrument for its range and dark sound (the show's creators banned pianos and flutes).",
+            "used": "cello melody",
+            "src": [
+              "https://splice.com/blog/game-of-thrones-main-title-theme-music-theory"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "A riff drives the piece and the second violin shares it in later sections; contour inversions, octave leaps and raising the melody an octave on repeats are recurring devices.",
+            "used": "roles, Climax",
+            "src": [
+              "https://splice.com/blog/game-of-thrones-main-title-theme-music-theory"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Influences include Beethoven, Brahms, Tchaikovsky and 80s rock, especially Metallica.",
+            "src": [
+              "https://splice.com/blog/game-of-thrones-main-title-theme-music-theory"
+            ]
+          },
+          {
+            "c": "med",
+            "t": "Westworld's score features player-piano style covers of rock songs.",
+            "used": "variant (user's own songs only)",
+            "src": [
+              "https://screencrush.com/westworld-music-itunes-piano-covers/"
+            ]
+          },
+          {
+            "c": "low",
+            "t": "Tempo and exact meter of the main title not confirmed from a source; set as a starting point.",
+            "used": "bpm 84, meter to check"
+          }
+        ]
+      }
     }
   ],
-
   "soundtrackLibrary": {
     "about": "Media you can pick as a tag. Each maps to a profile, a blend of tags, or both; the user sees it as one tag. Add more by the same pattern; anything without a researched profile is a blend of existing tags and is labelled 'approximate'.",
     "entries": [
-      {"tag": "Stranger Things", "uses": ["profile:strangerthings"]},
-      {"tag": "Amélie", "uses": ["profile:tiersen"]},
-      {"tag": "Game of Thrones", "uses": ["orchestral:djawadi"]},
-      {"tag": "Westworld", "uses": ["orchestral:djawadi", "instrument:piano"], "approximate": true},
-      {"tag": "Drive (film)", "uses": ["genre:synth", "mood:melancholy", "era:80s"], "approximate": true},
-      {"tag": "Studio Ghibli", "uses": ["orchestral:OT.whimsy"]},
-      {"tag": "Interstellar", "uses": ["orchestral:OT.trailer", "instrument:organ", "mood:melancholy"], "approximate": true}
+      {
+        "tag": "Stranger Things",
+        "uses": [
+          "profile:strangerthings"
+        ]
+      },
+      {
+        "tag": "Amélie",
+        "uses": [
+          "profile:tiersen"
+        ]
+      },
+      {
+        "tag": "Game of Thrones",
+        "uses": [
+          "orchestral:djawadi"
+        ]
+      },
+      {
+        "tag": "Westworld",
+        "uses": [
+          "orchestral:djawadi",
+          "instrument:piano"
+        ],
+        "approximate": true
+      },
+      {
+        "tag": "Drive (film)",
+        "uses": [
+          "genre:synth",
+          "mood:melancholy",
+          "era:80s"
+        ],
+        "approximate": true
+      },
+      {
+        "tag": "Studio Ghibli",
+        "uses": [
+          "orchestral:OT.whimsy"
+        ]
+      },
+      {
+        "tag": "Interstellar",
+        "uses": [
+          "orchestral:OT.trailer",
+          "instrument:organ",
+          "mood:melancholy"
+        ],
+        "approximate": true
+      }
     ]
   },
-
   "referenceTag": {
     "about": "'Use a song or album as the style'. Two routes: (1) the song analyser reads audio files the user owns, on their computer, and saves only numbers (key, mode, tempo, section lengths, energy curve, chord-change statistics, loudness and tonal balance) as a private profile named after the file; nothing from the recording itself is stored or shared. Several files (an album) are averaged. (2) Typing a title that isn't in the library: offer the closest tags (genre, mood, era, instrument) for the user to confirm; if the built-in assistant (AGENTS.md idea 24) is approved later, it can draft a profile for review.",
-    "keeps": ["key", "mode", "tempo and tempo drift", "time signature", "section lengths and order", "energy per section", "chord-change statistics (as an m matrix)", "loudness", "tonal balance"],
-    "neverKeeps": ["audio", "melodies", "lyrics", "MIDI"]
+    "keeps": [
+      "key",
+      "mode",
+      "tempo and tempo drift",
+      "time signature",
+      "section lengths and order",
+      "energy per section",
+      "chord-change statistics (as an m matrix)",
+      "loudness",
+      "tonal balance"
+    ],
+    "neverKeeps": [
+      "audio",
+      "melodies",
+      "lyrics",
+      "MIDI"
+    ]
   }
 }
