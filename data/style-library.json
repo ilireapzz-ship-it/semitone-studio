@@ -385,13 +385,14 @@
             "2": 1
           },
           "1": {
-            "5": 1,
             "3": 1,
+            "5": 1,
             "4": 1,
             "2": 1
           },
           "2": {
-            "3": 1
+            "3": 1,
+            "1": 1
           },
           "3": {
             "0": 6,
@@ -400,13 +401,13 @@
             "6": 1
           },
           "4": {
+            "3": 2,
             "0": 1,
-            "3": 1,
             "5": 1,
             "1": 1
           },
           "5": {
-            "3": 3,
+            "3": 2,
             "1": 1
           },
           "6": {
@@ -424,13 +425,14 @@
             "2": 1
           },
           "1": {
-            "5": 1,
             "3": 1,
+            "5": 1,
             "4": 1,
             "2": 1
           },
           "2": {
-            "3": 1
+            "3": 1,
+            "1": 1
           },
           "3": {
             "0": 6,
@@ -439,13 +441,13 @@
             "6": 1
           },
           "4": {
+            "3": 2,
             "0": 1,
-            "3": 1,
             "5": 1,
             "1": 1
           },
           "5": {
-            "3": 3,
+            "3": 2,
             "1": 1
           },
           "6": {
@@ -455,30 +457,30 @@
         },
         "mMinor": {
           "0": {
-            "0": 1
+            "2": 6
           },
           "1": {
             "0": 1
           },
           "2": {
-            "0": 1
+            "4": 6
           },
           "3": {
             "0": 1
           },
           "4": {
-            "0": 1
+            "5": 6
           },
           "5": {
-            "0": 1
+            "0": 6
           },
           "6": {
             "0": 1
           }
         },
         "modeShare": {
-          "major": 1.0,
-          "minor": 0.0
+          "major": 0.96,
+          "minor": 0.04
         },
         "bpmRange": [
           84,
@@ -556,7 +558,7 @@
         "stats": [
           [
             "Songs analysed",
-            "9"
+            "14"
           ],
           [
             "Tempo range",
@@ -630,57 +632,106 @@
       "songsAnalysed": [
         {
           "song": "Good Luck, Babe!",
+          "album": "Singles (2024–2025)",
           "key": "D major",
           "bpm": 117,
           "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/good-luck-babe"
         },
         {
           "song": "Pink Pony Club",
+          "album": "The Rise and Fall of a Midwest Princess",
           "key": "F# major",
           "bpm": 107,
           "src": "https://hooktheory.com/theorytab/view/chappell-roan/pink-pony-club"
         },
         {
           "song": "Hot To Go!",
+          "album": "The Rise and Fall of a Midwest Princess",
           "key": "F# major",
           "bpm": 140,
           "src": "https://hooktheory.com/theorytab/view/chappell-roan/hot-to-go"
         },
         {
           "song": "Femininomenon",
+          "album": "The Rise and Fall of a Midwest Princess",
           "key": "Eb major",
           "bpm": 125,
           "src": "https://hooktheory.com/theorytab/view/chappell-roan/femininomenon"
         },
         {
           "song": "Casual",
+          "album": "The Rise and Fall of a Midwest Princess",
           "key": "Db major",
           "bpm": 131,
           "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/casual"
         },
         {
           "song": "The Subway",
+          "album": "Singles (2024–2025)",
           "key": "Bb major",
           "bpm": 84,
           "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/the-subway"
         },
         {
           "song": "My Kink Is Karma",
+          "album": "The Rise and Fall of a Midwest Princess",
           "key": "A major",
           "bpm": 85,
           "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/my-kink-is-karma"
         },
         {
           "song": "After Midnight",
+          "album": "The Rise and Fall of a Midwest Princess",
           "key": "F major",
           "bpm": 110,
           "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/after-midnight"
         },
         {
           "song": "The Giver",
+          "album": "Singles (2024–2025)",
           "key": "B mixolydian",
           "bpm": 94,
           "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/the-giver"
+        },
+        {
+          "song": "Red Wine Supernova",
+          "album": "The Rise and Fall of a Midwest Princess",
+          "key": "A major",
+          "bpm": 124,
+          "c": "med",
+          "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/red-wine-supernova"
+        },
+        {
+          "song": "California",
+          "album": "The Rise and Fall of a Midwest Princess",
+          "key": "Db major",
+          "bpm": 130,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/california"
+        },
+        {
+          "song": "Guilty Pleasure",
+          "album": "The Rise and Fall of a Midwest Princess",
+          "key": "D mixolydian",
+          "bpm": 124,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/guilty-pleasure"
+        },
+        {
+          "song": "Naked in Manhattan",
+          "album": "The Rise and Fall of a Midwest Princess",
+          "key": "Bb minor",
+          "bpm": 120,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/naked-in-manhattan"
+        },
+        {
+          "song": "Super Graphic Ultra Modern Girl",
+          "album": "The Rise and Fall of a Midwest Princess",
+          "key": "Ab mixolydian",
+          "bpm": 126,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/super-graphic-ultra-modern-girl"
         }
       ]
     },
@@ -765,106 +816,130 @@
         "m": {
           "0": {
             "5": 6,
-            "2": 4,
-            "6": 1,
-            "4": 1
+            "2": 6,
+            "6": 6,
+            "3": 2,
+            "4": 2,
+            "1": 1
           },
           "1": {
-            "0": 1
+            "0": 2
           },
           "2": {
-            "5": 2,
-            "6": 2,
-            "0": 1
+            "0": 3,
+            "6": 3,
+            "5": 3,
+            "1": 1,
+            "4": 1
           },
           "3": {
-            "0": 2,
+            "0": 3,
+            "2": 3,
+            "4": 2,
             "6": 1
           },
           "4": {
-            "0": 1,
-            "6": 1
+            "0": 3,
+            "5": 2,
+            "3": 1
           },
           "5": {
-            "0": 6,
-            "3": 1,
-            "2": 1,
-            "4": 1,
-            "6": 1
+            "0": 5,
+            "6": 3,
+            "3": 3,
+            "4": 2,
+            "2": 1
           },
           "6": {
-            "0": 3,
-            "3": 2,
-            "5": 1
+            "0": 6,
+            "5": 3,
+            "3": 3,
+            "2": 1
           }
         },
         "mMajor": {
           "0": {
-            "4": 6,
-            "3": 3,
-            "5": 3
+            "6": 3,
+            "4": 2,
+            "5": 2,
+            "3": 1,
+            "2": 1
           },
           "1": {
-            "4": 3
+            "4": 1,
+            "3": 1
           },
           "2": {
-            "0": 1
+            "3": 1
           },
           "3": {
-            "0": 6
+            "0": 6,
+            "4": 2,
+            "5": 1,
+            "1": 1,
+            "6": 1
           },
           "4": {
-            "5": 6,
-            "0": 5
+            "0": 3,
+            "5": 2,
+            "3": 2
           },
           "5": {
             "3": 3,
-            "4": 3,
-            "1": 3
+            "4": 1,
+            "1": 1
           },
           "6": {
-            "0": 1
+            "3": 4
           }
         },
         "mMinor": {
           "0": {
             "5": 6,
-            "2": 4,
-            "6": 1,
-            "4": 1
+            "2": 6,
+            "6": 6,
+            "3": 2,
+            "4": 2,
+            "1": 1
           },
           "1": {
-            "0": 1
+            "0": 2
           },
           "2": {
-            "5": 2,
-            "6": 2,
-            "0": 1
+            "0": 3,
+            "6": 3,
+            "5": 3,
+            "1": 1,
+            "4": 1
           },
           "3": {
-            "0": 2,
+            "0": 3,
+            "2": 3,
+            "4": 2,
             "6": 1
           },
           "4": {
-            "0": 1,
-            "6": 1
+            "0": 3,
+            "5": 2,
+            "3": 1
           },
           "5": {
-            "0": 6,
-            "3": 1,
-            "2": 1,
-            "4": 1,
-            "6": 1
+            "0": 5,
+            "6": 3,
+            "3": 3,
+            "4": 2,
+            "2": 1
           },
           "6": {
-            "0": 3,
-            "3": 2,
-            "5": 1
+            "0": 6,
+            "5": 3,
+            "3": 3,
+            "2": 1
           }
         },
         "modeShare": {
-          "major": 0.21,
-          "minor": 0.79
+          "major": 0.32,
+          "minor": 0.68
         },
         "bpmRange": [
           96,
@@ -939,7 +1014,7 @@
         "stats": [
           [
             "Songs analysed",
-            "7"
+            "21"
           ],
           [
             "Tempo range",
@@ -998,47 +1073,168 @@
       "songsAnalysed": [
         {
           "song": "Just Dance",
+          "album": "The Fame",
           "key": "C# minor",
           "bpm": 119,
           "src": "https://en.wikipedia.org/wiki/Just_Dance_(song)"
         },
         {
           "song": "Poker Face",
+          "album": "The Fame",
           "key": "G# minor",
           "bpm": 120,
           "src": "https://en.wikipedia.org/wiki/Poker_Face_(song)"
         },
         {
           "song": "Bad Romance",
+          "album": "The Fame Monster",
           "key": "A minor",
           "bpm": 119,
           "src": "https://hooktheory.com/theorytab/view/lady-gaga/bad-romance"
         },
         {
           "song": "Applause",
+          "album": "Artpop",
           "key": "G minor",
           "bpm": 140,
           "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/applause"
         },
         {
           "song": "Paparazzi",
+          "album": "The Fame",
           "key": "C minor / Ab major",
           "bpm": 115,
           "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/paparazzi"
         },
         {
           "song": "Rain On Me (with Ariana Grande)",
+          "album": "Chromatica",
           "key": "C# minor",
           "bpm": 123,
           "src": "https://www.hooktheory.com/theorytab/view/lady-gaga-and-ariana-grande/rain-on-me"
         },
         {
-          "song": "Shallow (with Bradley Cooper)",
-          "key": "G major / E dorian",
-          "bpm": 96,
-          "src": "https://hooktheory.com/theorytab/view/lady-gaga-and-bradley-cooper/shallow"
+          "song": "The Edge of Glory",
+          "album": "Born This Way",
+          "key": "A major",
+          "bpm": 124,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/the-edge-of-glory"
+        },
+        {
+          "song": "Judas",
+          "album": "Born This Way",
+          "key": "C minor",
+          "bpm": 131,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/judas"
+        },
+        {
+          "song": "Born This Way",
+          "album": "Born This Way",
+          "key": "F# mixolydian",
+          "bpm": 124,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/born-this-way"
+        },
+        {
+          "song": "Marry the Night",
+          "album": "Born This Way",
+          "key": "A minor",
+          "bpm": 131,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/marry-the-night"
+        },
+        {
+          "song": "Stupid Love",
+          "album": "Chromatica",
+          "key": "Bb mixolydian",
+          "bpm": 120,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/stupid-love"
+        },
+        {
+          "song": "Alice",
+          "album": "Chromatica",
+          "key": "F# minor",
+          "bpm": 123,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/alice"
+        },
+        {
+          "song": "1000 Doves",
+          "album": "Chromatica",
+          "key": "A major",
+          "bpm": 123,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/1000-doves"
+        },
+        {
+          "song": "Babylon",
+          "album": "Chromatica",
+          "key": "E phrygian",
+          "bpm": 116,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/babylon"
+        },
+        {
+          "song": "Abracadabra",
+          "album": "Mayhem",
+          "key": "F dorian",
+          "bpm": 125,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/abracadabra"
+        },
+        {
+          "song": "Disease",
+          "album": "Mayhem",
+          "key": "B minor",
+          "bpm": 101,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/disease"
+        },
+        {
+          "song": "Vanish into You",
+          "album": "Mayhem",
+          "key": "B minor / D major",
+          "bpm": 112,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/vanish-into-you"
+        },
+        {
+          "song": "Zombieboy",
+          "album": "Mayhem",
+          "key": "C minor",
+          "bpm": 122,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/zombieboy"
+        },
+        {
+          "song": "Garden of Eden",
+          "album": "Mayhem",
+          "key": "D# minor",
+          "bpm": 125,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/garden-of-eden"
+        },
+        {
+          "song": "How Bad Do U Want Me",
+          "album": "Mayhem",
+          "key": "F# minor",
+          "bpm": 125,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/how-bad-do-u-want-me"
+        },
+        {
+          "song": "Die with a Smile",
+          "album": "Mayhem",
+          "key": "Ab major",
+          "bpm": 94,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/die-with-a-smile-%28with-bruno-mars%29"
         }
-      ]
+      ],
+      "eraName": "The Fame to Chromatica (dance-pop)"
     },
     {
       "id": "fleetwood",
@@ -1109,28 +1305,32 @@
         ],
         "m": {
           "0": {
-            "4": 5,
-            "3": 3,
-            "1": 1
+            "3": 5,
+            "4": 4,
+            "1": 1,
+            "5": 1,
+            "2": 1
           },
           "1": {
             "0": 1
           },
           "2": {
-            "0": 1
+            "5": 1
           },
           "3": {
             "0": 6,
-            "4": 1
+            "4": 2,
+            "5": 1
           },
           "4": {
-            "3": 2,
-            "5": 2,
-            "0": 2
+            "0": 4,
+            "3": 3,
+            "5": 1
           },
           "5": {
+            "4": 1,
             "3": 1,
-            "4": 1
+            "0": 1
           },
           "6": {
             "0": 1
@@ -1138,28 +1338,32 @@
         },
         "mMajor": {
           "0": {
-            "4": 5,
-            "3": 3,
-            "1": 1
+            "3": 5,
+            "4": 4,
+            "1": 1,
+            "5": 1,
+            "2": 1
           },
           "1": {
             "0": 1
           },
           "2": {
-            "0": 1
+            "5": 1
           },
           "3": {
             "0": 6,
-            "4": 1
+            "4": 2,
+            "5": 1
           },
           "4": {
-            "3": 2,
-            "5": 2,
-            "0": 2
+            "0": 4,
+            "3": 3,
+            "5": 1
           },
           "5": {
+            "4": 1,
             "3": 1,
-            "4": 1
+            "0": 1
           },
           "6": {
             "0": 1
@@ -1167,7 +1371,8 @@
         },
         "mMinor": {
           "0": {
-            "5": 3,
+            "5": 4,
+            "3": 1,
             "6": 1
           },
           "1": {
@@ -1177,23 +1382,27 @@
             "0": 1
           },
           "3": {
-            "0": 1
+            "0": 2,
+            "6": 1,
+            "4": 1
           },
           "4": {
-            "0": 1
+            "3": 1
           },
           "5": {
             "6": 6,
-            "0": 3
+            "0": 2,
+            "3": 1
           },
           "6": {
             "5": 5,
-            "0": 1
+            "0": 2,
+            "3": 1
           }
         },
         "modeShare": {
-          "major": 0.58,
-          "minor": 0.42
+          "major": 0.74,
+          "minor": 0.26
         },
         "bpmRange": [
           115,
@@ -1261,7 +1470,7 @@
         "stats": [
           [
             "Songs analysed",
-            "6"
+            "21"
           ],
           [
             "Tempo",
@@ -1328,41 +1537,168 @@
       "songsAnalysed": [
         {
           "song": "Dreams",
+          "album": "Rumours",
           "key": "A minor",
           "bpm": 120,
           "src": "https://hooktheory.com/theorytab/view/fleetwood-mac/dreams"
         },
         {
           "song": "Go Your Own Way",
+          "album": "Rumours",
           "key": "F major / D minor",
           "bpm": 136,
           "src": "https://hooktheory.com/theorytab/view/fleetwood-mac/go-your-own-way"
         },
         {
           "song": "Rhiannon",
+          "album": "Fleetwood Mac (1975)",
           "key": "A minor",
           "bpm": 129,
           "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/rhiannon"
         },
         {
           "song": "Landslide",
+          "album": "Fleetwood Mac (1975)",
           "key": "Bb major",
           "bpm": 159,
           "src": "https://hooktheory.com/theorytab/view/fleetwood-mac/landslide"
         },
         {
           "song": "Everywhere",
+          "album": "Tango in the Night",
           "key": "E major",
           "bpm": 115,
           "src": "https://hooktheory.com/theorytab/view/fleetwood-mac/everywhere"
         },
         {
           "song": "Don't Stop",
+          "album": "Rumours",
           "key": "E major",
           "bpm": 119,
           "src": "https://hooktheory.com/theorytab/view/fleetwood-mac/dont-stop"
+        },
+        {
+          "song": "The Chain",
+          "album": "Rumours",
+          "key": "E minor",
+          "bpm": 75,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/the-chain"
+        },
+        {
+          "song": "Gold Dust Woman",
+          "album": "Rumours",
+          "key": "D dorian",
+          "bpm": 124,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/gold-dust-woman"
+        },
+        {
+          "song": "Never Going Back Again",
+          "album": "Rumours",
+          "key": "F# major",
+          "bpm": 88,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/never-going-back-again"
+        },
+        {
+          "song": "You Make Loving Fun",
+          "album": "Rumours",
+          "key": "G major",
+          "bpm": 125,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/you-make-loving-fun"
+        },
+        {
+          "song": "Second Hand News",
+          "album": "Rumours",
+          "key": "Bb major",
+          "bpm": 126,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/second-hand-news"
+        },
+        {
+          "song": "Songbird",
+          "album": "Rumours",
+          "key": "F major",
+          "bpm": 93,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/songbird"
+        },
+        {
+          "song": "Sara",
+          "album": "Tusk",
+          "key": "F major",
+          "bpm": 127,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/sara"
+        },
+        {
+          "song": "Silver Springs",
+          "album": "Rumours sessions (B-side)",
+          "key": "C major",
+          "bpm": 84,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/silver-springs"
+        },
+        {
+          "song": "Say You Love Me",
+          "album": "Fleetwood Mac (1975)",
+          "key": "A major",
+          "bpm": 117,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/say-you-love-me"
+        },
+        {
+          "song": "Over My Head",
+          "album": "Fleetwood Mac (1975)",
+          "key": "A major",
+          "bpm": 129,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/over-my-head"
+        },
+        {
+          "song": "Warm Ways",
+          "album": "Fleetwood Mac (1975)",
+          "key": "D major",
+          "bpm": 99,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/warm-ways"
+        },
+        {
+          "song": "Little Lies",
+          "album": "Tango in the Night",
+          "key": "F# minor / A major",
+          "bpm": 125,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/little-lies"
+        },
+        {
+          "song": "Seven Wonders",
+          "album": "Tango in the Night",
+          "key": "E major",
+          "bpm": 118,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/seven-wonders"
+        },
+        {
+          "song": "Hold Me",
+          "album": "Mirage",
+          "key": "Eb major",
+          "bpm": 92,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/hold-me"
+        },
+        {
+          "song": "Gypsy",
+          "album": "Mirage",
+          "key": "F major",
+          "bpm": 132,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/gypsy"
         }
-      ]
+      ],
+      "eraName": "Buckingham–Nicks era"
     },
     {
       "id": "rhcp",
@@ -1445,53 +1781,68 @@
         "m": {
           "0": {
             "5": 6,
+            "6": 4,
             "4": 2,
-            "6": 2,
             "2": 1
           },
           "1": {
-            "0": 1
+            "2": 1
           },
           "2": {
-            "6": 2,
+            "6": 3,
+            "4": 1,
             "0": 1,
-            "4": 1
+            "5": 1
           },
           "3": {
             "0": 3
           },
           "4": {
-            "0": 2,
-            "5": 1
+            "0": 3,
+            "5": 2
           },
           "5": {
             "0": 4,
-            "2": 3
+            "2": 3,
+            "6": 1,
+            "3": 1
           },
           "6": {
-            "3": 3,
-            "0": 1
+            "0": 3,
+            "3": 2,
+            "4": 2,
+            "2": 1,
+            "1": 1
           }
         },
         "mMajor": {
           "0": {
-            "4": 6
+            "4": 6,
+            "3": 2,
+            "1": 1
           },
           "1": {
-            "0": 4
+            "5": 3
           },
           "2": {
-            "3": 2
+            "3": 2,
+            "0": 1
           },
           "3": {
-            "0": 2
+            "0": 4,
+            "4": 4,
+            "2": 2
           },
           "4": {
-            "1": 4,
-            "5": 2
+            "5": 5,
+            "0": 2,
+            "2": 1,
+            "1": 1
           },
           "5": {
-            "2": 2
+            "3": 6,
+            "0": 2,
+            "1": 1
           },
           "6": {
             "0": 1
@@ -1500,37 +1851,43 @@
         "mMinor": {
           "0": {
             "5": 6,
+            "6": 4,
             "4": 2,
-            "6": 2,
             "2": 1
           },
           "1": {
-            "0": 1
+            "2": 1
           },
           "2": {
-            "6": 2,
+            "6": 3,
+            "4": 1,
             "0": 1,
-            "4": 1
+            "5": 1
           },
           "3": {
             "0": 3
           },
           "4": {
-            "0": 2,
-            "5": 1
+            "0": 3,
+            "5": 2
           },
           "5": {
             "0": 4,
-            "2": 3
+            "2": 3,
+            "6": 1,
+            "3": 1
           },
           "6": {
-            "3": 3,
-            "0": 1
+            "0": 3,
+            "3": 2,
+            "4": 2,
+            "2": 1,
+            "1": 1
           }
         },
         "modeShare": {
-          "major": 0.15,
-          "minor": 0.85
+          "major": 0.31,
+          "minor": 0.69
         },
         "bpmRange": [
           84,
@@ -1597,7 +1954,7 @@
         "stats": [
           [
             "Songs analysed",
-            "4 (+3 described)"
+            "15"
           ],
           [
             "Mode",
@@ -1663,29 +2020,123 @@
       "songsAnalysed": [
         {
           "song": "Californication",
+          "album": "Californication",
           "key": "A minor",
           "bpm": 95,
           "src": "https://hooktheory.com/theorytab/view/red-hot-chili-peppers/californication"
         },
         {
-          "song": "Under the Bridge",
-          "key": "E major / A minor",
-          "bpm": 84,
-          "src": "https://hooktheory.com/theorytab/view/red-hot-chili-peppers/under-the-bridge"
-        },
-        {
           "song": "Otherside",
+          "album": "Californication",
           "key": "A minor",
           "bpm": 122,
           "src": "https://hooktheory.com/theorytab/view/red-hot-chili-peppers/otherside"
         },
         {
           "song": "Dani California",
+          "album": "Stadium Arcadium",
           "key": "A minor",
           "bpm": 96,
           "src": "https://hooktheory.com/theorytab/view/red-hot-chili-peppers/dani-california"
+        },
+        {
+          "song": "Scar Tissue",
+          "album": "Californication",
+          "key": "D minor",
+          "bpm": 90,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/red-hot-chili-peppers/scar-tissue"
+        },
+        {
+          "song": "Around the World",
+          "album": "Californication",
+          "key": "Eb major",
+          "bpm": 95,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/red-hot-chili-peppers/around-the-world"
+        },
+        {
+          "song": "Parallel Universe",
+          "album": "Californication",
+          "key": "C dorian / C minor",
+          "bpm": 124,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/red-hot-chili-peppers/parallel-universe"
+        },
+        {
+          "song": "The Zephyr Song",
+          "album": "By the Way",
+          "key": "A minor / D major",
+          "bpm": 118,
+          "c": "med",
+          "src": "https://www.hooktheory.com/theorytab/view/red-hot-chili-peppers/the-zephyr-song"
+        },
+        {
+          "song": "By the Way",
+          "album": "By the Way",
+          "key": "F major",
+          "bpm": 124,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/red-hot-chili-peppers/by-the-way"
+        },
+        {
+          "song": "Can't Stop",
+          "album": "By the Way",
+          "key": "E minor / G major",
+          "bpm": 91,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/red-hot-chili-peppers/cant-stop"
+        },
+        {
+          "song": "Dosed",
+          "album": "By the Way",
+          "key": "G major",
+          "bpm": 104,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/red-hot-chili-peppers/dosed"
+        },
+        {
+          "song": "I Could Die for You",
+          "album": "By the Way",
+          "key": "A major",
+          "bpm": 82,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/red-hot-chili-peppers/i-could-die-for-you"
+        },
+        {
+          "song": "Snow (Hey Oh)",
+          "album": "Stadium Arcadium",
+          "key": "G# minor / B major",
+          "bpm": 105,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/red-hot-chili-peppers/snow-(hey-oh)"
+        },
+        {
+          "song": "Hey",
+          "album": "Stadium Arcadium",
+          "key": "C minor",
+          "bpm": 122,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/red-hot-chili-peppers/hey"
+        },
+        {
+          "song": "Tell Me Baby",
+          "album": "Stadium Arcadium",
+          "key": "C major",
+          "bpm": 108,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/red-hot-chili-peppers/tell-me-baby"
+        },
+        {
+          "song": "Black Summer",
+          "album": "Unlimited Love",
+          "key": "D# minor",
+          "bpm": 103,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/red-hot-chili-peppers/black-summer"
         }
-      ]
+      ],
+      "eraName": "Melodic era (Californication on)"
     },
     {
       "id": "tiersen",
@@ -2661,75 +3112,64 @@
         ],
         "m": {
           "0": {
-            "5": 2,
-            "3": 1,
-            "4": 1
+            "5": 4,
+            "1": 3,
+            "4": 2
           },
           "1": {
-            "4": 1,
-            "5": 1,
-            "2": 1
+            "6": 2,
+            "2": 2
           },
           "2": {
+            "0": 4,
             "3": 2,
-            "1": 1,
-            "5": 1
+            "5": 2
           },
           "3": {
-            "4": 6,
-            "1": 1,
-            "2": 1
-          },
-          "4": {
-            "5": 3,
             "2": 2,
             "0": 2,
-            "3": 2
+            "5": 2
+          },
+          "4": {
+            "5": 4,
+            "3": 2,
+            "0": 2
           },
           "5": {
-            "3": 3,
-            "0": 1,
-            "6": 1,
-            "4": 1,
-            "1": 1
+            "4": 6,
+            "6": 2,
+            "2": 2,
+            "0": 2
           },
           "6": {
-            "0": 1
+            "2": 2,
+            "3": 2
           }
         },
         "mMajor": {
           "0": {
-            "5": 2,
-            "3": 1,
-            "4": 1
+            "4": 6,
+            "3": 3
           },
           "1": {
-            "4": 1,
-            "5": 1,
-            "2": 1
+            "4": 4,
+            "5": 3
           },
           "2": {
-            "3": 2,
-            "1": 1,
-            "5": 1
+            "1": 4
           },
           "3": {
-            "4": 6,
-            "1": 1,
-            "2": 1
+            "4": 4,
+            "1": 3
           },
           "4": {
-            "5": 3,
-            "2": 2,
-            "0": 2,
-            "3": 2
+            "0": 6,
+            "2": 4,
+            "5": 4
           },
           "5": {
-            "3": 3,
-            "0": 1,
-            "6": 1,
-            "4": 1,
-            "1": 1
+            "3": 4,
+            "0": 3
           },
           "6": {
             "0": 1
@@ -2737,40 +3177,43 @@
         },
         "mMinor": {
           "0": {
-            "5": 6,
-            "4": 3,
-            "1": 2
+            "5": 4,
+            "1": 3,
+            "4": 2
           },
           "1": {
-            "6": 2
+            "6": 2,
+            "2": 2
           },
           "2": {
-            "0": 6,
-            "3": 3
+            "0": 4,
+            "3": 2,
+            "5": 2
           },
           "3": {
-            "2": 3,
-            "0": 3,
+            "2": 2,
+            "0": 2,
             "5": 2
           },
           "4": {
-            "5": 6,
-            "3": 3
+            "5": 4,
+            "3": 2,
+            "0": 2
           },
           "5": {
             "4": 6,
-            "6": 3,
-            "2": 3,
+            "6": 2,
+            "2": 2,
             "0": 2
           },
           "6": {
-            "2": 3,
+            "2": 2,
             "3": 2
           }
         },
         "modeShare": {
-          "major": 0.64,
-          "minor": 0.36
+          "major": 0.4,
+          "minor": 0.6
         },
         "bpmRange": [
           92,
@@ -2929,51 +3372,62 @@
       "songsAnalysed": [
         {
           "song": "360",
+          "album": "Brat",
           "key": "A minor",
           "bpm": 120,
           "src": "https://hooktheory.com/theorytab/view/charli-xcx/360"
         },
         {
-          "song": "I Think About It All The Time",
+          "song": "I Think About It All the Time",
+          "album": "Brat",
           "key": "A minor",
           "src": "https://www.musicradar.com/news/charli-xcx-brat-theory"
         },
         {
           "song": "Sympathy Is a Knife",
+          "album": "Brat",
           "key": "Eb major (Lydian colour)",
           "src": "https://www.musicradar.com/news/charli-xcx-brat-theory"
         },
         {
           "song": "B2B",
+          "album": "Brat",
           "key": "D# minor",
           "bpm": 116,
           "src": "https://hooktheory.com/theorytab/view/charli-xcx/b2b"
         },
         {
           "song": "Apple",
+          "album": "Brat",
           "key": "C major",
           "bpm": 126,
           "src": "https://hooktheory.com/theorytab/view/charli-xcx/apple"
         },
         {
-          "song": "Track 10",
-          "key": "F major",
-          "bpm": 100,
-          "src": "https://hooktheory.com/theorytab/view/charli-xcx/track-10"
-        },
-        {
-          "song": "Boom Clap",
-          "key": "E major",
-          "bpm": 92,
-          "src": "https://hooktheory.com/theorytab/view/charli-xcx/boom-clap"
-        },
-        {
           "song": "Speed Drive",
+          "album": "Barbie the Album (single)",
           "key": "D minor",
           "bpm": 173,
           "src": "https://hooktheory.com/theorytab/view/charli-xcx/speed-drive"
+        },
+        {
+          "song": "Von Dutch",
+          "album": "Brat",
+          "key": "F minor",
+          "bpm": 130,
+          "c": "med",
+          "src": "https://www.hooktheory.com/theorytab/view/charli-xcx/von-dutch"
+        },
+        {
+          "song": "Club Classics",
+          "album": "Brat",
+          "key": "G major",
+          "bpm": 144,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/charli-xcx/club-classics"
         }
-      ]
+      ],
+      "eraName": "Brat"
     },
     {
       "id": "lana-btd",
@@ -6286,7 +6740,7 @@
         "name": "Psychedelic",
         "lane": "Psychedelic",
         "desc": "Modal vamps (dorian i–IV, phrygian I–II, mixolydian I–♭VII) and surprising key moves between sections, droning bass, swirling phaser and flanger, backwards sounds, long jams; from 60s psych rock to modern Tame Impala psych-pop.",
-        "mode": "mixolydian",
+        "mode": "dorian",
         "key": 4,
         "bpm": 112,
         "sevenths": true,
@@ -6341,121 +6795,127 @@
         ],
         "mMajor": {
           "0": {
-            "5": 5,
-            "1": 5,
             "3": 5,
-            "4": 4
+            "5": 4,
+            "4": 4,
+            "1": 1
           },
           "1": {
-            "0": 6,
-            "5": 2,
-            "2": 1
+            "0": 4,
+            "5": 1
           },
           "2": {
-            "3": 1,
-            "4": 1
+            "0": 1
           },
           "3": {
             "4": 6,
-            "0": 4
+            "0": 3
           },
           "4": {
             "0": 4,
-            "5": 4,
+            "5": 3,
             "1": 2,
             "3": 1
           },
           "5": {
-            "6": 3,
             "3": 3,
-            "0": 2,
+            "6": 2,
             "4": 1,
             "1": 1,
-            "2": 1
+            "0": 1
           },
           "6": {
-            "0": 3
+            "0": 2
           }
         },
         "mMinor": {
           "0": {
-            "3": 5,
-            "2": 4,
-            "1": 3,
+            "1": 6,
+            "3": 3,
+            "2": 2,
             "6": 2,
+            "5": 1,
             "4": 1
           },
           "1": {
-            "0": 3,
-            "2": 1
+            "0": 4,
+            "2": 2,
+            "5": 1
           },
           "2": {
             "4": 4,
-            "3": 4,
-            "0": 2,
+            "3": 3,
+            "0": 1,
             "6": 1
           },
           "3": {
-            "0": 5,
-            "4": 5,
-            "2": 3
+            "0": 4,
+            "4": 3,
+            "2": 2
           },
           "4": {
-            "5": 6,
-            "0": 4,
+            "5": 5,
+            "0": 3,
             "1": 1
           },
           "5": {
-            "3": 5,
-            "6": 1,
+            "3": 3,
+            "6": 2,
+            "2": 1,
+            "0": 1,
             "4": 1
           },
           "6": {
             "2": 2,
-            "0": 1,
+            "0": 2,
             "5": 1
           }
         },
         "modeShare": {
-          "major": 0.56,
-          "minor": 0.44
+          "major": 0.41,
+          "minor": 0.59
         },
         "m": {
           "0": {
-            "5": 5,
-            "1": 5,
-            "3": 5,
-            "4": 4
-          },
-          "1": {
-            "0": 6,
-            "5": 2,
-            "2": 1
-          },
-          "2": {
-            "3": 1,
+            "1": 6,
+            "3": 3,
+            "2": 2,
+            "6": 2,
+            "5": 1,
             "4": 1
           },
+          "1": {
+            "0": 4,
+            "2": 2,
+            "5": 1
+          },
+          "2": {
+            "4": 4,
+            "3": 3,
+            "0": 1,
+            "6": 1
+          },
           "3": {
-            "4": 6,
-            "0": 4
+            "0": 4,
+            "4": 3,
+            "2": 2
           },
           "4": {
-            "0": 4,
-            "5": 4,
-            "1": 2,
-            "3": 1
+            "5": 5,
+            "0": 3,
+            "1": 1
           },
           "5": {
-            "6": 3,
             "3": 3,
-            "0": 2,
-            "4": 1,
-            "1": 1,
-            "2": 1
+            "6": 2,
+            "2": 1,
+            "0": 1,
+            "4": 1
           },
           "6": {
-            "0": 3
+            "2": 2,
+            "0": 2,
+            "5": 1
           }
         }
       },
@@ -6707,6 +7167,1850 @@
         "playful",
         "nostalgic"
       ]
+    },
+    {
+      "id": "gaga-joanne",
+      "kind": "artist",
+      "tags": [
+        "Lady Gaga"
+      ],
+      "alsoTags": [
+        "genre:soft rock",
+        "genre:country"
+      ],
+      "style": {
+        "id": "gaga-joanne",
+        "meter": "4/4",
+        "comp": "strum",
+        "swing": 50,
+        "name": "Lady Gaga · Joanne / A Star Is Born",
+        "lane": "Lady Gaga",
+        "desc": "Soft rock, Americana and country ballads: major-key I–vi–IV–V and IV–I–vi–V, mixolydian two-chord vamps, live band and piano, raw vocals that build to a big chorus.",
+        "mode": "ionian",
+        "key": 8,
+        "bpm": 90,
+        "sevenths": false,
+        "density": 0.45,
+        "leap": 0.28,
+        "register": [
+          52,
+          77
+        ],
+        "sound": "keys",
+        "drums": true,
+        "structure": "pop",
+        "contour": 0,
+        "space": 1.2,
+        "mopts": {
+          "verse": {
+            "shift": -2
+          },
+          "chorus": {
+            "shift": 4
+          }
+        },
+        "rhythms": [
+          [
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            1,
+            1
+          ],
+          [
+            1,
+            0.5,
+            0.5,
+            1,
+            1
+          ],
+          [
+            0.5,
+            1,
+            0.5,
+            2
+          ],
+          [
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            0.5,
+            0.5,
+            1,
+            0.5,
+            1.5
+          ]
+        ],
+        "bpmRange": [
+          65,
+          150
+        ],
+        "mMajor": {
+          "0": {
+            "5": 4,
+            "3": 3,
+            "4": 3,
+            "6": 2,
+            "2": 1,
+            "1": 1
+          },
+          "1": {
+            "4": 1,
+            "0": 1,
+            "5": 1
+          },
+          "2": {
+            "5": 1
+          },
+          "3": {
+            "0": 6,
+            "4": 2,
+            "1": 1
+          },
+          "4": {
+            "0": 4,
+            "3": 3,
+            "5": 2
+          },
+          "5": {
+            "4": 4,
+            "3": 2,
+            "1": 1,
+            "0": 1
+          },
+          "6": {
+            "0": 2
+          }
+        },
+        "mMinor": {
+          "0": {
+            "6": 6,
+            "4": 3,
+            "5": 1
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "5": 2,
+            "6": 1
+          },
+          "3": {
+            "0": 2
+          },
+          "4": {
+            "5": 2,
+            "0": 2,
+            "6": 1
+          },
+          "5": {
+            "0": 4,
+            "2": 3,
+            "4": 2
+          },
+          "6": {
+            "5": 4,
+            "3": 2,
+            "0": 2
+          }
+        },
+        "modeShare": {
+          "major": 0.55,
+          "minor": 0.45
+        },
+        "m": {
+          "0": {
+            "5": 4,
+            "3": 3,
+            "4": 3,
+            "6": 2,
+            "2": 1,
+            "1": 1
+          },
+          "1": {
+            "4": 1,
+            "0": 1,
+            "5": 1
+          },
+          "2": {
+            "5": 1
+          },
+          "3": {
+            "0": 6,
+            "4": 2,
+            "1": 1
+          },
+          "4": {
+            "0": 4,
+            "3": 3,
+            "5": 2
+          },
+          "5": {
+            "4": 4,
+            "3": 2,
+            "1": 1,
+            "0": 1
+          },
+          "6": {
+            "0": 2
+          }
+        }
+      },
+      "bass": "rootfifth",
+      "groove": "backbeat",
+      "kit": "acoustic",
+      "instr": {
+        "chords": "i:piano",
+        "bass": "i:bassgtr",
+        "lead": "i:steel"
+      },
+      "quirks": "punchy",
+      "feel": {
+        "kick": 0,
+        "snare": 0,
+        "hat": -0.003,
+        "jit": 0.001,
+        "vj": 0.05,
+        "ghost": 0,
+        "acc": 0.45
+      },
+      "sug": {
+        "ext": 0.2,
+        "borrow": 0.4,
+        "sec": 0.3,
+        "tri": 0.1,
+        "sus": 0.4
+      },
+      "trans": {
+        "chorus": [
+          "riser",
+          "impact",
+          "drop"
+        ],
+        "verse": [
+          "down"
+        ],
+        "bridge": [
+          "sweep"
+        ],
+        "pre": [
+          "rev"
+        ],
+        "outro": [
+          "down"
+        ]
+      },
+      "art": {
+        "legato": 0.2,
+        "vibLong": 0.3,
+        "scoopStart": 0.1,
+        "fallEnd": 0.1,
+        "slideLeap": 0.15,
+        "ghost": 0.05,
+        "stacc": 0.7,
+        "accent": 0.55,
+        "grace": 0.05,
+        "tenuto": 0.3,
+        "info": "Clipped, robotic verse lines and accented hooks; the chorus opens into longer notes."
+      },
+      "arrangement": {
+        "hooks": "a vocal hook opens the song; a stuttering hook follows the chorus",
+        "needs": "a stutter-edit effect for the post-chorus hook (not in the engine yet)"
+      },
+      "mixHint": "Live room, raw vocal with little tuning, piano and acoustic guitar up front; big drums only in the last chorus.",
+      "dna": {
+        "tagline": "raw voice, live band, big ballads",
+        "intro": "Joanne (2016) and the A Star Is Born songs: Gaga's soft-rock, country and power-ballad side.",
+        "stats": [
+          [
+            "Songs analysed",
+            "8"
+          ],
+          [
+            "Harmony",
+            "mostly major; a few minor rock songs"
+          ]
+        ],
+        "points": [
+          {
+            "c": "high",
+            "t": "Joanne mixes soft rock, Americana and country with dance-pop; untreated vocals; live guitars (Josh Homme).",
+            "src": [
+              "https://en.wikipedia.org/wiki/Joanne_(Lady_Gaga_album)"
+            ],
+            "used": "instruments, mix"
+          },
+          {
+            "c": "high",
+            "t": "Million Reasons I–vi–IV–V; Always Remember Us This Way i–VI–III–VII into a major chorus; Shallow builds from country to a power-ballad chorus.",
+            "src": [
+              "https://www.hooktheory.com/theorytab/view/lady-gaga/million-reasons",
+              "https://www.hooktheory.com/theorytab/view/lady-gaga/always-remember-us-this-way"
+            ],
+            "used": "chord matrix"
+          }
+        ]
+      },
+      "eraOf": "Lady Gaga",
+      "eraName": "Joanne / A Star Is Born",
+      "songsAnalysed": [
+        {
+          "song": "Shallow",
+          "album": "A Star Is Born (soundtrack)",
+          "key": "G major / E dorian",
+          "bpm": 96,
+          "src": "https://hooktheory.com/theorytab/view/lady-gaga-and-bradley-cooper/shallow"
+        },
+        {
+          "song": "Always Remember Us This Way",
+          "album": "A Star Is Born (soundtrack)",
+          "key": "A minor / C major",
+          "bpm": 130,
+          "c": "med",
+          "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/always-remember-us-this-way"
+        },
+        {
+          "song": "Million Reasons",
+          "album": "Joanne",
+          "key": "C major",
+          "bpm": 65,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/million-reasons"
+        },
+        {
+          "song": "Diamond Heart",
+          "album": "Joanne",
+          "key": "Eb dorian / D# minor",
+          "bpm": 128,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/diamond-heart"
+        },
+        {
+          "song": "A-Yo",
+          "album": "Joanne",
+          "key": "A mixolydian",
+          "bpm": 150,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/a-yo"
+        },
+        {
+          "song": "Angel Down",
+          "album": "Joanne",
+          "key": "A major",
+          "bpm": 120,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/angel-down"
+        },
+        {
+          "song": "Perfect Illusion",
+          "album": "Joanne",
+          "key": "F# minor",
+          "bpm": 125,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/perfect-illusion"
+        },
+        {
+          "song": "You and I",
+          "album": "Born This Way",
+          "key": "G major",
+          "bpm": 75,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/you-and-i"
+        }
+      ]
+    },
+    {
+      "id": "gaga-mayhem",
+      "kind": "artist",
+      "tags": [
+        "Lady Gaga"
+      ],
+      "alsoTags": [
+        "mood:dark",
+        "genre:industrial"
+      ],
+      "style": {
+        "id": "gaga-mayhem",
+        "meter": "4/4",
+        "comp": "eighths",
+        "swing": 50,
+        "name": "Lady Gaga · Mayhem",
+        "lane": "Lady Gaga",
+        "desc": "Dark pop with industrial, electro-grunge and glam rock: minor and phrygian loops (iv–v–i, i–III–VI–iv), a phrygian-dominant verse, funk and disco grooves, distorted guitars and solos.",
+        "mode": "aeolian",
+        "key": 8,
+        "bpm": 118,
+        "sevenths": false,
+        "density": 0.6,
+        "leap": 0.28,
+        "register": [
+          50,
+          77
+        ],
+        "sound": "saw",
+        "drums": true,
+        "structure": "pop",
+        "contour": 0,
+        "space": 0.9,
+        "mopts": {
+          "verse": {
+            "shift": -2
+          },
+          "chorus": {
+            "shift": 4
+          }
+        },
+        "rhythms": [
+          [
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            1,
+            1
+          ],
+          [
+            1,
+            0.5,
+            0.5,
+            1,
+            1
+          ],
+          [
+            0.5,
+            1,
+            0.5,
+            2
+          ],
+          [
+            1,
+            1,
+            1,
+            1
+          ],
+          [
+            0.5,
+            0.5,
+            1,
+            0.5,
+            1.5
+          ]
+        ],
+        "bpmRange": [
+          94,
+          125
+        ]
+      },
+      "bass": "octave",
+      "groove": "drive",
+      "kit": "electro",
+      "instr": {
+        "chords": "i:junobrass",
+        "bass": "i:junobass",
+        "lead": "i:prolead"
+      },
+      "quirks": "punchy",
+      "feel": {
+        "kick": 0,
+        "snare": 0,
+        "hat": -0.003,
+        "jit": 0.001,
+        "vj": 0.05,
+        "ghost": 0,
+        "acc": 0.45
+      },
+      "sug": {
+        "ext": 0.2,
+        "borrow": 0.4,
+        "sec": 0.3,
+        "tri": 0.1,
+        "sus": 0.4
+      },
+      "trans": {
+        "chorus": [
+          "riser",
+          "impact",
+          "drop"
+        ],
+        "verse": [
+          "down"
+        ],
+        "bridge": [
+          "sweep"
+        ],
+        "pre": [
+          "rev"
+        ],
+        "outro": [
+          "down"
+        ]
+      },
+      "art": {
+        "legato": 0.2,
+        "vibLong": 0.3,
+        "scoopStart": 0.1,
+        "fallEnd": 0.1,
+        "slideLeap": 0.15,
+        "ghost": 0.05,
+        "stacc": 0.7,
+        "accent": 0.55,
+        "grace": 0.05,
+        "tenuto": 0.3,
+        "info": "Clipped, robotic verse lines and accented hooks; the chorus opens into longer notes."
+      },
+      "arrangement": {
+        "hooks": "a vocal hook opens the song; a stuttering hook follows the chorus",
+        "needs": "a stutter-edit effect for the post-chorus hook (not in the engine yet)"
+      },
+      "mixHint": "Distorted guitars and industrial drums against glossy synths; dry, aggressive vocal; a guitar solo where a bridge would be.",
+      "dna": {
+        "tagline": "dark pop with distorted guitars and funk",
+        "intro": "Mayhem (2025), produced with Andrew Watt, Cirkut and Gesaffelstein.",
+        "stats": [
+          [
+            "Songs analysed",
+            "7"
+          ],
+          [
+            "Harmony",
+            "mostly minor, phrygian colour"
+          ]
+        ],
+        "points": [
+          {
+            "c": "high",
+            "t": "Electropop and dark pop fused with industrial and rock (Disease), Bowie-inspired glam (Vanish into You), Nine Inch Nails-like electro-funk (Killah), 80s synth-pop (How Bad Do U Want Me).",
+            "src": [
+              "https://en.wikipedia.org/wiki/Mayhem_(Lady_Gaga_album)"
+            ],
+            "used": "sounds, groove"
+          },
+          {
+            "c": "high",
+            "t": "Disease uses B phrygian dominant in the verse and i–III–VI–iv in the chorus; Abracadabra F dorian i–v–IV–III with a phrygian lead-out.",
+            "src": [
+              "https://www.hooktheory.com/theorytab/view/lady-gaga/disease",
+              "https://www.hooktheory.com/theorytab/view/lady-gaga/abracadabra"
+            ],
+            "used": "chord matrix"
+          }
+        ]
+      },
+      "eraOf": "Lady Gaga",
+      "eraName": "Mayhem",
+      "matrixFrom": {
+        "profile": "gaga",
+        "album": "Mayhem"
+      }
+    },
+    {
+      "id": "fleetwood-blues",
+      "kind": "artist",
+      "tags": [
+        "Fleetwood Mac"
+      ],
+      "alsoTags": [
+        "genre:blues"
+      ],
+      "style": {
+        "id": "fleetwood-blues",
+        "meter": "4/4",
+        "comp": "eighths",
+        "swing": 62,
+        "name": "Fleetwood Mac · Peter Green blues era",
+        "lane": "Fleetwood Mac",
+        "desc": "British blues (1968–1970): 12-bar and slow 12/8 blues, shuffles, a lyrical lead guitar, and the dreamy instrumental side (Albatross).",
+        "mode": "mixolydian",
+        "key": 4,
+        "bpm": 90,
+        "sevenths": true,
+        "density": 0.48,
+        "leap": 0.24,
+        "register": [
+          53,
+          74
+        ],
+        "sound": "pluck",
+        "drums": true,
+        "structure": "blues",
+        "contour": -0.1,
+        "space": 1.2,
+        "mopts": {
+          "chorus": {
+            "shift": 3
+          }
+        },
+        "rhythms": [
+          [
+            1,
+            1,
+            2
+          ],
+          [
+            2,
+            1,
+            1
+          ],
+          [
+            1,
+            0.5,
+            0.5,
+            2
+          ],
+          [
+            1.5,
+            0.5,
+            2
+          ],
+          [
+            1,
+            1,
+            1,
+            1
+          ]
+        ],
+        "bpmRange": [
+          60,
+          140
+        ],
+        "mMajor": {
+          "0": {
+            "3": 6
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "0": 1
+          },
+          "3": {
+            "0": 6
+          },
+          "4": {
+            "0": 1
+          },
+          "5": {
+            "0": 1
+          },
+          "6": {
+            "0": 1
+          }
+        },
+        "mMinor": {
+          "0": {
+            "0": 1
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "0": 1
+          },
+          "3": {
+            "0": 1
+          },
+          "4": {
+            "0": 1
+          },
+          "5": {
+            "0": 1
+          },
+          "6": {
+            "0": 1
+          }
+        },
+        "modeShare": {
+          "major": 1.0,
+          "minor": 0.0
+        },
+        "m": {
+          "0": {
+            "3": 6
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "0": 1
+          },
+          "3": {
+            "0": 6
+          },
+          "4": {
+            "0": 1
+          },
+          "5": {
+            "0": 1
+          },
+          "6": {
+            "0": 1
+          }
+        }
+      },
+      "bass": "walk",
+      "groove": "shuffle (needs the swing/shuffle groove; backbeat is the stand-in)",
+      "kit": "acoustic",
+      "instr": {
+        "chords": "i:steel",
+        "bass": "i:bassgtr",
+        "lead": "reverb electric guitar (stand-in steel)"
+      },
+      "quirks": "natural",
+      "feel": {
+        "kick": 0,
+        "snare": 0.01,
+        "hat": 0.004,
+        "jit": 0.004,
+        "vj": 0.1,
+        "ghost": 0.2,
+        "acc": 0.3
+      },
+      "sug": {
+        "ext": 0.45,
+        "borrow": 0.5,
+        "sec": 0.35,
+        "tri": 0,
+        "sus": 0.5
+      },
+      "trans": {
+        "chorus": [
+          "rev"
+        ],
+        "verse": [],
+        "bridge": [
+          "sweep"
+        ],
+        "pre": [
+          "rev"
+        ]
+      },
+      "art": {
+        "legato": 0.5,
+        "vibLong": 0.35,
+        "scoopStart": 0.2,
+        "fallEnd": 0.25,
+        "slideLeap": 0.2,
+        "ghost": 0.05,
+        "stacc": 0.15,
+        "accent": 0.25,
+        "grace": 0.1,
+        "tenuto": 0.4,
+        "info": "Relaxed, conversational lines; held notes lightly shaped, never belted."
+      },
+      "arrangement": {
+        "harmony": "three-part harmony on the chorus, doubled",
+        "sections": "verse, pre-chorus and chorus can share the same chords; change texture instead (a tom accent into the pre-chorus, vibraphone with delay, congas at the back)",
+        "drums": "an 8-bar drum loop feel: steady and hypnotic"
+      },
+      "mixHint": "Dry, live 60s blues band; lead guitar with spring reverb up front.",
+      "dna": {
+        "tagline": "British blues with a singing lead guitar",
+        "intro": "Fleetwood Mac before Buckingham and Nicks, led by Peter Green.",
+        "stats": [
+          [
+            "Songs analysed",
+            "2"
+          ]
+        ],
+        "points": [
+          {
+            "c": "med",
+            "t": "Albatross is a slow guitar instrumental on IV–I; Need Your Love So Bad (a cover) is a slow 12/8 ballad with strings.",
+            "src": [
+              "https://www.hooktheory.com/theorytab/view/fleetwood-mac/albatross",
+              "https://www.hooktheory.com/theorytab/view/fleetwood-mac/need-your-love-so-bad"
+            ],
+            "used": "chord matrix"
+          },
+          {
+            "c": "low",
+            "t": "Most of this era is 12-bar blues and shuffles: the blues form and swing shuffle are needed (AGENTS.md engine additions)."
+          }
+        ]
+      },
+      "eraOf": "Fleetwood Mac",
+      "eraName": "Peter Green blues era",
+      "songsAnalysed": [
+        {
+          "song": "Albatross",
+          "album": "Singles (1968–1969)",
+          "key": "E major",
+          "bpm": 100,
+          "c": "med",
+          "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/albatross"
+        },
+        {
+          "song": "Need Your Love So Bad",
+          "album": "Singles (1968–1969)",
+          "key": "A major",
+          "bpm": 80,
+          "c": "med",
+          "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/need-your-love-so-bad"
+        }
+      ]
+    },
+    {
+      "id": "rhcp-funk",
+      "kind": "artist",
+      "tags": [
+        "Red Hot Chili Peppers"
+      ],
+      "alsoTags": [
+        "genre:funk rock"
+      ],
+      "style": {
+        "id": "rhcp-funk",
+        "meter": "4/4",
+        "comp": "stabs",
+        "swing": 54,
+        "name": "Red Hot Chili Peppers · Funk era (to Blood Sugar Sex Magik)",
+        "lane": "Red Hot Chili Peppers",
+        "desc": "Funk rock and funk-punk: one-chord riff vamps, slap and fingered bass up front, rap-sung verses, tight dry drums; plus the melodic ballads (Under the Bridge, Breaking the Girl).",
+        "mode": "mixolydian",
+        "key": 9,
+        "bpm": 100,
+        "sevenths": true,
+        "density": 0.6,
+        "leap": 0.26,
+        "register": [
+          50,
+          72
+        ],
+        "sound": "pluck",
+        "drums": true,
+        "structure": "pop",
+        "contour": 0,
+        "space": 0.9,
+        "mopts": {
+          "verse": {
+            "shift": -3
+          },
+          "chorus": {
+            "shift": 4
+          }
+        },
+        "rhythms": [
+          [
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            1,
+            1
+          ],
+          [
+            0.5,
+            0.25,
+            0.25,
+            1,
+            2
+          ],
+          [
+            1,
+            0.5,
+            0.5,
+            1,
+            1
+          ],
+          [
+            0.25,
+            0.25,
+            0.5,
+            1,
+            2
+          ],
+          [
+            1.5,
+            0.5,
+            2
+          ]
+        ],
+        "bpmRange": [
+          60,
+          130
+        ],
+        "mMajor": {
+          "0": {
+            "4": 6,
+            "1": 3,
+            "3": 1,
+            "6": 1
+          },
+          "1": {
+            "0": 5
+          },
+          "2": {
+            "3": 1
+          },
+          "3": {
+            "0": 4,
+            "5": 1
+          },
+          "4": {
+            "5": 4,
+            "1": 2,
+            "0": 1
+          },
+          "5": {
+            "3": 3,
+            "2": 1,
+            "0": 1
+          },
+          "6": {
+            "4": 1
+          }
+        },
+        "mMinor": {
+          "0": {
+            "4": 4,
+            "2": 3
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "6": 6
+          },
+          "3": {
+            "0": 1
+          },
+          "4": {
+            "5": 4
+          },
+          "5": {
+            "0": 4
+          },
+          "6": {
+            "0": 3,
+            "2": 3
+          }
+        },
+        "modeShare": {
+          "major": 0.75,
+          "minor": 0.25
+        },
+        "m": {
+          "0": {
+            "4": 6,
+            "1": 3,
+            "3": 1,
+            "6": 1
+          },
+          "1": {
+            "0": 5
+          },
+          "2": {
+            "3": 1
+          },
+          "3": {
+            "0": 4,
+            "5": 1
+          },
+          "4": {
+            "5": 4,
+            "1": 2,
+            "0": 1
+          },
+          "5": {
+            "3": 3,
+            "2": 1,
+            "0": 1
+          },
+          "6": {
+            "4": 1
+          }
+        }
+      },
+      "bass": "syncop",
+      "groove": "backbeat",
+      "kit": "acoustic",
+      "instr": {
+        "chords": "i:steel",
+        "bass": "i:bassgtr"
+      },
+      "quirks": "natural",
+      "feel": {
+        "kick": 0.002,
+        "snare": 0.012,
+        "hat": 0.006,
+        "jit": 0.006,
+        "vj": 0.14,
+        "ghost": 0.55,
+        "acc": 0.45
+      },
+      "sug": {
+        "ext": 0.6,
+        "borrow": 0.3,
+        "sec": 0.3,
+        "tri": 0.2,
+        "sus": 0.3
+      },
+      "trans": {
+        "chorus": [
+          "impact"
+        ],
+        "verse": [],
+        "bridge": [
+          "sweep"
+        ],
+        "pre": []
+      },
+      "art": {
+        "legato": 0.2,
+        "vibLong": 0.25,
+        "scoopStart": 0.2,
+        "fallEnd": 0.2,
+        "slideLeap": 0.2,
+        "ghost": 0.4,
+        "stacc": 0.55,
+        "accent": 0.5,
+        "grace": 0.15,
+        "tenuto": 0.2,
+        "info": "Rhythmic, half-rapped verse lines full of short notes and ghosted syllables; choruses sing out."
+      },
+      "arrangement": {
+        "bass": "slap and fingered bass up front (slap articulation is on the engine list)",
+        "guitar": "clean, raw Strat-into-amp tone; clear single lines and varied textures rather than distortion walls",
+        "process": "riffs and structures from jams",
+        "needs": "a slap-bass articulation option (not in the engine yet)"
+      },
+      "mixHint": "Dry, roomy, live: bass and drums loud, guitar thin and funky, vocals rhythmic.",
+      "dna": {
+        "tagline": "slap bass, riffs and rap-sung verses",
+        "intro": "Mother's Milk (1989) and Blood Sugar Sex Magik (1991), Rick Rubin's mansion sessions.",
+        "stats": [
+          [
+            "Songs analysed",
+            "3"
+          ]
+        ],
+        "points": [
+          {
+            "c": "high",
+            "t": "Blood Sugar Sex Magik is funk rock with less distortion than Mother's Milk; Hammond B-3, Mellotron, toy celeste and tambourine colour it.",
+            "src": [
+              "https://en.wikipedia.org/wiki/Blood_Sugar_Sex_Magik"
+            ],
+            "used": "instruments, kit"
+          },
+          {
+            "c": "low",
+            "t": "The funk songs mostly vamp on one or two chords, so the chord data here comes from the melodic songs; use riff-based writing (one-chord vamp, syncopated bass) for the funk songs."
+          }
+        ]
+      },
+      "eraOf": "Red Hot Chili Peppers",
+      "eraName": "Funk era (to Blood Sugar Sex Magik)",
+      "songsAnalysed": [
+        {
+          "song": "Under the Bridge",
+          "album": "Blood Sugar Sex Magik",
+          "key": "E major / A minor",
+          "bpm": 84,
+          "src": "https://hooktheory.com/theorytab/view/red-hot-chili-peppers/under-the-bridge"
+        },
+        {
+          "song": "Breaking the Girl",
+          "album": "Blood Sugar Sex Magik",
+          "key": "Ab mixolydian / G# minor",
+          "bpm": 60,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/red-hot-chili-peppers/breaking-the-girl"
+        },
+        {
+          "song": "Soul to Squeeze",
+          "album": "BSSM sessions (1993 single)",
+          "key": "F major",
+          "bpm": 88,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/red-hot-chili-peppers/soul-to-squeeze"
+        }
+      ]
+    },
+    {
+      "id": "charli-pop2",
+      "kind": "artist",
+      "tags": [
+        "Charli XCX"
+      ],
+      "alsoTags": [
+        "genre:hyperpop",
+        "producer:A. G. Cook"
+      ],
+      "style": {
+        "id": "charli-pop2",
+        "meter": "4/4",
+        "comp": "stabs",
+        "swing": 50,
+        "name": "Charli XCX · Pop 2 / Charli / How I'm Feeling Now",
+        "lane": "Charli XCX",
+        "desc": "PC Music hyperpop and futurepop: bright, metallic synths, pitched and auto-tuned vocals, many guests, emotional slow-build closers (Track 10, Visions).",
+        "mode": "ionian",
+        "key": 0,
+        "bpm": 130,
+        "sevenths": true,
+        "density": 0.5,
+        "leap": 0.26,
+        "register": [
+          55,
+          76
+        ],
+        "sound": "saw",
+        "drums": true,
+        "structure": "pop",
+        "contour": 0,
+        "space": 1.0,
+        "mopts": {
+          "chorus": {
+            "shift": 3
+          }
+        },
+        "rhythms": [
+          [
+            0.5,
+            0.5,
+            1,
+            2
+          ],
+          [
+            1,
+            0.5,
+            0.5,
+            1,
+            1
+          ],
+          [
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            1,
+            1
+          ],
+          [
+            1.5,
+            0.5,
+            2
+          ],
+          [
+            1,
+            1,
+            2
+          ]
+        ],
+        "bpmRange": [
+          105,
+          160
+        ],
+        "mMajor": {
+          "0": {
+            "4": 3,
+            "3": 3,
+            "2": 2,
+            "5": 2
+          },
+          "1": {
+            "0": 2,
+            "2": 1
+          },
+          "2": {
+            "5": 3,
+            "3": 3,
+            "4": 2
+          },
+          "3": {
+            "4": 5,
+            "2": 3,
+            "0": 3,
+            "1": 2
+          },
+          "4": {
+            "3": 6,
+            "5": 4,
+            "0": 2,
+            "2": 1
+          },
+          "5": {
+            "4": 3,
+            "6": 2,
+            "3": 2,
+            "0": 2,
+            "1": 1
+          },
+          "6": {
+            "0": 2
+          }
+        },
+        "mMinor": {
+          "0": {
+            "0": 1
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "0": 1
+          },
+          "3": {
+            "0": 1
+          },
+          "4": {
+            "5": 6
+          },
+          "5": {
+            "4": 6
+          },
+          "6": {
+            "0": 1
+          }
+        },
+        "modeShare": {
+          "major": 0.9,
+          "minor": 0.1
+        },
+        "m": {
+          "0": {
+            "4": 3,
+            "3": 3,
+            "2": 2,
+            "5": 2
+          },
+          "1": {
+            "0": 2,
+            "2": 1
+          },
+          "2": {
+            "5": 3,
+            "3": 3,
+            "4": 2
+          },
+          "3": {
+            "4": 5,
+            "2": 3,
+            "0": 3,
+            "1": 2
+          },
+          "4": {
+            "3": 6,
+            "5": 4,
+            "0": 2,
+            "2": 1
+          },
+          "5": {
+            "4": 3,
+            "6": 2,
+            "3": 2,
+            "0": 2,
+            "1": 1
+          },
+          "6": {
+            "0": 2
+          }
+        }
+      },
+      "bass": "held",
+      "groove": "fourfloor",
+      "kit": "electro",
+      "instr": {
+        "chords": "i:propolymod",
+        "bass": "i:probass",
+        "lead": "i:prolead"
+      },
+      "quirks": "punchy",
+      "feel": {
+        "kick": 0,
+        "snare": 0,
+        "hat": 0,
+        "jit": 0.001,
+        "vj": 0.04,
+        "ghost": 0,
+        "acc": 0.5
+      },
+      "sug": {
+        "ext": 0.6,
+        "borrow": 0.8,
+        "sec": 0.2,
+        "tri": 0.3,
+        "sus": 0.6
+      },
+      "trans": {
+        "chorus": [
+          "riser",
+          "impact",
+          "drop"
+        ],
+        "verse": [
+          "down"
+        ],
+        "bridge": [
+          "sweep"
+        ],
+        "pre": [
+          "rev"
+        ],
+        "outro": [
+          "down"
+        ]
+      },
+      "art": {
+        "legato": 0.3,
+        "vibLong": 0.1,
+        "scoopStart": 0.05,
+        "fallEnd": 0.1,
+        "slideLeap": 0.2,
+        "ghost": 0.1,
+        "stacc": 0.55,
+        "accent": 0.5,
+        "grace": 0.05,
+        "tenuto": 0.3,
+        "info": "Talk-sung, clipped lines with Auto-Tune polish: almost no vibrato, accented hooks."
+      },
+      "arrangement": {
+        "process": "start from a loop and build structure by muting and deleting (subtraction)",
+        "silence": "drop the music out where a downbeat is expected (a sudden gap, maybe just claps)",
+        "stutter": "copy and repeat a 16th note of vocal for a stutter",
+        "voicings": "stacked fourths and close clashes (a minor second inside a chord)",
+        "harmony": "hint at two or three keys without settling; a raised 4th can tint a major chorus Lydian",
+        "needs": [
+          "a vocal Auto-Tune effect for the guide vocal",
+          "the stutter-edit effect (also for RedOne)",
+          "random filter cutoff per chord on the lead synth"
+        ]
+      },
+      "mixHint": "'Very loud and bold' minimalism: few parts, all huge; bit-crushed, formant-filtered saw synths; dry, upfront, Auto-Tuned vocal.",
+      "dna": {
+        "tagline": "hyperpop: shiny, metallic, emotional",
+        "intro": "Vroom Vroom (2016) to How I'm Feeling Now (2020), mostly with A. G. Cook and Sophie.",
+        "stats": [
+          [
+            "Songs analysed",
+            "7"
+          ]
+        ],
+        "points": [
+          {
+            "c": "high",
+            "t": "Pop 2 is experimental pop and hyperpop, produced by A. G. Cook, Sophie and EasyFun, with many featured artists.",
+            "src": [
+              "https://en.wikipedia.org/wiki/Pop_2_(mixtape)"
+            ],
+            "used": "sounds, vocals"
+          },
+          {
+            "c": "high",
+            "t": "Unlock It vi–IV–I–iii; 1999 IV–I–vi–V; Claws VI–v; Party 4 U IV–V–vi–I.",
+            "src": [
+              "https://www.hooktheory.com/theorytab/view/charli-xcx/unlock-it",
+              "https://www.hooktheory.com/theorytab/view/charli-xcx/claws"
+            ],
+            "used": "chord matrix"
+          }
+        ]
+      },
+      "eraOf": "Charli XCX",
+      "eraName": "Pop 2 / Charli / How I'm Feeling Now",
+      "songsAnalysed": [
+        {
+          "song": "Track 10",
+          "album": "Pop 2",
+          "key": "F major",
+          "bpm": 100,
+          "src": "https://hooktheory.com/theorytab/view/charli-xcx/track-10"
+        },
+        {
+          "song": "Vroom Vroom",
+          "album": "Vroom Vroom (EP)",
+          "key": "B major",
+          "bpm": 75,
+          "c": "med",
+          "src": "https://www.hooktheory.com/theorytab/view/charli-xcx/vroom-vroom"
+        },
+        {
+          "song": "Unlock It",
+          "album": "Pop 2",
+          "key": "A major",
+          "bpm": 135,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/charli-xcx/unlock-it"
+        },
+        {
+          "song": "1999",
+          "album": "Charli",
+          "key": "Bb major",
+          "bpm": 135,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/charli-xcx/1999"
+        },
+        {
+          "song": "I Don't Wanna Know",
+          "album": "Charli",
+          "key": "C major",
+          "bpm": 105,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/charli-xcx/i-dont-wanna-know"
+        },
+        {
+          "song": "Claws",
+          "album": "How I'm Feeling Now",
+          "key": "B minor",
+          "bpm": 124,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/charli-xcx/claws"
+        },
+        {
+          "song": "Party 4 U",
+          "album": "How I'm Feeling Now",
+          "key": "Db major",
+          "bpm": 158,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/charli-xcx/party-4-u"
+        }
+      ]
+    },
+    {
+      "id": "charli-pop",
+      "kind": "artist",
+      "tags": [
+        "Charli XCX"
+      ],
+      "alsoTags": [
+        "genre:pop"
+      ],
+      "style": {
+        "id": "charli-pop",
+        "meter": "4/4",
+        "comp": "stabs",
+        "swing": 50,
+        "name": "Charli XCX · Sucker / Crash (major-label pop)",
+        "lane": "Charli XCX",
+        "desc": "Pop-punk and new wave (Sucker) and 80s-leaning pop (Crash: new jack swing, synthwave, UK garage): big choruses, guitars or funk basslines.",
+        "mode": "ionian",
+        "key": 0,
+        "bpm": 120,
+        "sevenths": true,
+        "density": 0.5,
+        "leap": 0.26,
+        "register": [
+          55,
+          76
+        ],
+        "sound": "bright",
+        "drums": true,
+        "structure": "pop",
+        "contour": 0,
+        "space": 1.0,
+        "mopts": {
+          "chorus": {
+            "shift": 3
+          }
+        },
+        "rhythms": [
+          [
+            0.5,
+            0.5,
+            1,
+            2
+          ],
+          [
+            1,
+            0.5,
+            0.5,
+            1,
+            1
+          ],
+          [
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            1,
+            1
+          ],
+          [
+            1.5,
+            0.5,
+            2
+          ],
+          [
+            1,
+            1,
+            2
+          ]
+        ],
+        "bpmRange": [
+          92,
+          140
+        ],
+        "mMajor": {
+          "0": {
+            "5": 6
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "0": 1
+          },
+          "3": {
+            "4": 6
+          },
+          "4": {
+            "0": 6
+          },
+          "5": {
+            "3": 6
+          },
+          "6": {
+            "0": 1
+          }
+        },
+        "mMinor": {
+          "0": {
+            "0": 1
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "0": 1
+          },
+          "3": {
+            "0": 1
+          },
+          "4": {
+            "0": 1
+          },
+          "5": {
+            "0": 1
+          },
+          "6": {
+            "0": 1
+          }
+        },
+        "modeShare": {
+          "major": 1.0,
+          "minor": 0.0
+        },
+        "m": {
+          "0": {
+            "5": 6
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "0": 1
+          },
+          "3": {
+            "4": 6
+          },
+          "4": {
+            "0": 6
+          },
+          "5": {
+            "3": 6
+          },
+          "6": {
+            "0": 1
+          }
+        }
+      },
+      "bass": "held",
+      "groove": "fourfloor",
+      "kit": "electro",
+      "instr": {
+        "chords": "i:propolymod",
+        "bass": "i:probass",
+        "lead": "i:prolead"
+      },
+      "quirks": "punchy",
+      "feel": {
+        "kick": 0,
+        "snare": 0,
+        "hat": 0,
+        "jit": 0.001,
+        "vj": 0.04,
+        "ghost": 0,
+        "acc": 0.5
+      },
+      "sug": {
+        "ext": 0.6,
+        "borrow": 0.8,
+        "sec": 0.2,
+        "tri": 0.3,
+        "sus": 0.6
+      },
+      "trans": {
+        "chorus": [
+          "riser",
+          "impact",
+          "drop"
+        ],
+        "verse": [
+          "down"
+        ],
+        "bridge": [
+          "sweep"
+        ],
+        "pre": [
+          "rev"
+        ],
+        "outro": [
+          "down"
+        ]
+      },
+      "art": {
+        "legato": 0.3,
+        "vibLong": 0.1,
+        "scoopStart": 0.05,
+        "fallEnd": 0.1,
+        "slideLeap": 0.2,
+        "ghost": 0.1,
+        "stacc": 0.55,
+        "accent": 0.5,
+        "grace": 0.05,
+        "tenuto": 0.3,
+        "info": "Talk-sung, clipped lines with Auto-Tune polish: almost no vibrato, accented hooks."
+      },
+      "arrangement": {
+        "process": "start from a loop and build structure by muting and deleting (subtraction)",
+        "silence": "drop the music out where a downbeat is expected (a sudden gap, maybe just claps)",
+        "stutter": "copy and repeat a 16th note of vocal for a stutter",
+        "voicings": "stacked fourths and close clashes (a minor second inside a chord)",
+        "harmony": "hint at two or three keys without settling; a raised 4th can tint a major chorus Lydian",
+        "needs": [
+          "a vocal Auto-Tune effect for the guide vocal",
+          "the stutter-edit effect (also for RedOne)",
+          "random filter cutoff per chord on the lead synth"
+        ]
+      },
+      "mixHint": "'Very loud and bold' minimalism: few parts, all huge; bit-crushed, formant-filtered saw synths; dry, upfront, Auto-Tuned vocal.",
+      "dna": {
+        "tagline": "big pop: punk guitars to new jack swing",
+        "intro": "Sucker (2014) and Crash (2022).",
+        "stats": [
+          [
+            "Songs analysed",
+            "1"
+          ]
+        ],
+        "points": [
+          {
+            "c": "high",
+            "t": "Sucker is pop, pop-punk, new wave and power pop.",
+            "src": [
+              "https://en.wikipedia.org/wiki/Sucker_(Charli_XCX_album)"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Crash draws on new jack swing, 80s synth-pop, UK garage and post-disco.",
+            "src": [
+              "https://en.wikipedia.org/wiki/Crash_(Charli_XCX_album)"
+            ]
+          },
+          {
+            "c": "low",
+            "t": "Only Boom Clap has chord data so far: the chords use the main Charli profile until more songs are added."
+          }
+        ]
+      },
+      "eraOf": "Charli XCX",
+      "eraName": "Sucker / Crash (major-label pop)",
+      "matrixFrom": {
+        "profile": "charli",
+        "note": "until more songs are analysed"
+      },
+      "songsAnalysed": [
+        {
+          "song": "Boom Clap",
+          "album": "Sucker",
+          "key": "E major",
+          "bpm": 92,
+          "src": "https://hooktheory.com/theorytab/view/charli-xcx/boom-clap"
+        }
+      ]
+    },
+    {
+      "id": "charli-mff",
+      "kind": "artist",
+      "tags": [
+        "Charli XCX"
+      ],
+      "alsoTags": [
+        "genre:rock",
+        "producer:A. G. Cook"
+      ],
+      "style": {
+        "id": "charli-mff",
+        "meter": "4/4",
+        "comp": "stabs",
+        "swing": 50,
+        "name": "Charli XCX · Music, Fashion, Film (2026)",
+        "lane": "Charli XCX",
+        "desc": "Pop with electronic rock: distorted guitars, auto-tune and guitar-synth textures, doubled harmonies, very short songs with sharp dynamic contrasts.",
+        "mode": "ionian",
+        "key": 0,
+        "bpm": 125,
+        "sevenths": true,
+        "density": 0.5,
+        "leap": 0.26,
+        "register": [
+          55,
+          76
+        ],
+        "sound": "saw",
+        "drums": true,
+        "structure": "pop",
+        "contour": 0,
+        "space": 1.0,
+        "mopts": {
+          "chorus": {
+            "shift": 3
+          }
+        },
+        "rhythms": [
+          [
+            0.5,
+            0.5,
+            1,
+            2
+          ],
+          [
+            1,
+            0.5,
+            0.5,
+            1,
+            1
+          ],
+          [
+            0.5,
+            0.5,
+            0.5,
+            0.5,
+            1,
+            1
+          ],
+          [
+            1.5,
+            0.5,
+            2
+          ],
+          [
+            1,
+            1,
+            2
+          ]
+        ],
+        "bpmRange": [
+          100,
+          140
+        ]
+      },
+      "bass": "held",
+      "groove": "fourfloor",
+      "kit": "electro",
+      "instr": {
+        "chords": "distorted guitar (needs a new instrument; propolymod is the stand-in)",
+        "bass": "i:probass",
+        "lead": "i:prolead"
+      },
+      "quirks": "punchy",
+      "feel": {
+        "kick": 0,
+        "snare": 0,
+        "hat": 0,
+        "jit": 0.001,
+        "vj": 0.04,
+        "ghost": 0,
+        "acc": 0.5
+      },
+      "sug": {
+        "ext": 0.6,
+        "borrow": 0.8,
+        "sec": 0.2,
+        "tri": 0.3,
+        "sus": 0.6
+      },
+      "trans": {
+        "chorus": [
+          "riser",
+          "impact",
+          "drop"
+        ],
+        "verse": [
+          "down"
+        ],
+        "bridge": [
+          "sweep"
+        ],
+        "pre": [
+          "rev"
+        ],
+        "outro": [
+          "down"
+        ]
+      },
+      "art": {
+        "legato": 0.3,
+        "vibLong": 0.1,
+        "scoopStart": 0.05,
+        "fallEnd": 0.1,
+        "slideLeap": 0.2,
+        "ghost": 0.1,
+        "stacc": 0.55,
+        "accent": 0.5,
+        "grace": 0.05,
+        "tenuto": 0.3,
+        "info": "Talk-sung, clipped lines with Auto-Tune polish: almost no vibrato, accented hooks."
+      },
+      "arrangement": {
+        "process": "start from a loop and build structure by muting and deleting (subtraction)",
+        "silence": "drop the music out where a downbeat is expected (a sudden gap, maybe just claps)",
+        "stutter": "copy and repeat a 16th note of vocal for a stutter",
+        "voicings": "stacked fourths and close clashes (a minor second inside a chord)",
+        "harmony": "hint at two or three keys without settling; a raised 4th can tint a major chorus Lydian",
+        "needs": [
+          "a vocal Auto-Tune effect for the guide vocal",
+          "the stutter-edit effect (also for RedOne)",
+          "random filter cutoff per chord on the lead synth"
+        ]
+      },
+      "mixHint": "'Very loud and bold' minimalism: few parts, all huge; bit-crushed, formant-filtered saw synths; dry, upfront, Auto-Tuned vocal.",
+      "dna": {
+        "tagline": "electronic rock pop, short and sharp",
+        "intro": "Music, Fashion, Film (July 2026) with A. G. Cook and Finn Keane, recorded in Paris.",
+        "stats": [
+          [
+            "Songs analysed",
+            "0"
+          ]
+        ],
+        "points": [
+          {
+            "c": "high",
+            "t": "A pop album with a strong electronic-rock influence: distorted guitars, auto-tune, guitar-synth textures, doubled harmonies, sharp dynamic contrasts.",
+            "src": [
+              "https://en.wikipedia.org/wiki/Music,_Fashion,_Film"
+            ],
+            "used": "sounds, mix"
+          },
+          {
+            "c": "low",
+            "t": "No chord data yet: chords come from the main Charli profile; analyse the songs to give this era its own."
+          }
+        ]
+      },
+      "eraOf": "Charli XCX",
+      "eraName": "Music, Fashion, Film (2026)",
+      "matrixFrom": {
+        "profile": "charli",
+        "note": "no chord data yet"
+      }
     }
   ],
   "producers": [
@@ -9687,7 +11991,7 @@
     }
   },
   "artistEras": {
-    "about": "Artists whose albums sound very different get one profile per era. Picking the artist tag shows the eras as chips; with none picked, Semitone uses the artist's default profile. Picking one era uses only that era's chords, tempo, sounds and mix. Picking two or more blends them by the normal blend rules (first is the core). Eras are never mixed silently. A song tag (\"piano\", \"cinematic\") can also narrow the songs used: the matrix is rebuilt from only the matching songs in data/catalog.json, if at least 4 match.",
+    "about": "Artists whose albums sound very different get one profile per era. Picking the artist tag shows the eras as chips; with none picked, Semitone uses the artist's default profile. Picking one era uses only that era's chords, tempo, sounds and mix. Picking two or more blends them by the normal blend rules (first is the core). Eras are never mixed silently. A song tag (\"piano\", \"cinematic\") can also narrow the songs used: the matrix is rebuilt from only the matching songs in data/catalog.json, if at least 4 match. \"matrixFrom\" on a profile means its chords come from another profile (or only that profile's songs from one album) until it has enough songs of its own.",
     "Lana Del Rey": {
       "default": "sadcore",
       "eras": [
@@ -9696,6 +12000,37 @@
         "lana-honeymoon",
         "lana-nfr",
         "lana-bb"
+      ]
+    },
+    "Lady Gaga": {
+      "default": "gaga",
+      "eras": [
+        "gaga",
+        "gaga-joanne",
+        "gaga-mayhem"
+      ]
+    },
+    "Fleetwood Mac": {
+      "default": "fleetwood",
+      "eras": [
+        "fleetwood",
+        "fleetwood-blues"
+      ]
+    },
+    "Red Hot Chili Peppers": {
+      "default": "rhcp",
+      "eras": [
+        "rhcp-funk",
+        "rhcp"
+      ]
+    },
+    "Charli XCX": {
+      "default": "charli",
+      "eras": [
+        "charli-pop",
+        "charli-pop2",
+        "charli",
+        "charli-mff"
       ]
     }
   },

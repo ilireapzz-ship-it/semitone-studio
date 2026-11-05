@@ -11,7 +11,8 @@
           "verse": "IV V I vi",
           "chorus": "IV V I vi"
         },
-        "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/good-luck-babe"
+        "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/good-luck-babe",
+        "album": "Singles (2024–2025)"
       },
       {
         "song": "Pink Pony Club",
@@ -22,7 +23,8 @@
           "chorus": "I ii vi IV",
           "bridge": "IV V vi ii"
         },
-        "src": "https://hooktheory.com/theorytab/view/chappell-roan/pink-pony-club"
+        "src": "https://hooktheory.com/theorytab/view/chappell-roan/pink-pony-club",
+        "album": "The Rise and Fall of a Midwest Princess"
       },
       {
         "song": "Hot To Go!",
@@ -32,7 +34,8 @@
           "verse": "I IV",
           "chorus": "I IV"
         },
-        "src": "https://hooktheory.com/theorytab/view/chappell-roan/hot-to-go"
+        "src": "https://hooktheory.com/theorytab/view/chappell-roan/hot-to-go",
+        "album": "The Rise and Fall of a Midwest Princess"
       },
       {
         "song": "Femininomenon",
@@ -43,7 +46,8 @@
           "pre": "I vi IV vii IV",
           "chorus": "I vi IV vii IV"
         },
-        "src": "https://hooktheory.com/theorytab/view/chappell-roan/femininomenon"
+        "src": "https://hooktheory.com/theorytab/view/chappell-roan/femininomenon",
+        "album": "The Rise and Fall of a Midwest Princess"
       },
       {
         "song": "Casual",
@@ -53,7 +57,8 @@
           "pre": "V IV",
           "chorus": "I IV ii IV"
         },
-        "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/casual"
+        "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/casual",
+        "album": "The Rise and Fall of a Midwest Princess"
       },
       {
         "song": "The Subway",
@@ -64,7 +69,8 @@
           "leadout": "IV iv I",
           "outro": "I IV ii V"
         },
-        "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/the-subway"
+        "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/the-subway",
+        "album": "Singles (2024–2025)"
       },
       {
         "song": "My Kink Is Karma",
@@ -74,7 +80,8 @@
           "chorus": "I iii IV",
           "bridge (A mixolydian)": "bVII I IV bIII I"
         },
-        "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/my-kink-is-karma"
+        "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/my-kink-is-karma",
+        "album": "The Rise and Fall of a Midwest Princess"
       },
       {
         "song": "After Midnight",
@@ -83,7 +90,8 @@
         "sections": {
           "chorus": "IV I V ii iii"
         },
-        "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/after-midnight"
+        "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/after-midnight",
+        "album": "The Rise and Fall of a Midwest Princess"
       },
       {
         "song": "The Giver",
@@ -93,7 +101,65 @@
           "intro": "bVII IV I IV I",
           "chorus": "bVII IV I IV I"
         },
-        "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/the-giver"
+        "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/the-giver",
+        "album": "Singles (2024–2025)"
+      },
+      {
+        "song": "Red Wine Supernova",
+        "album": "The Rise and Fall of a Midwest Princess",
+        "key": "A major",
+        "sections": {
+          "theme": "I ii IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/red-wine-supernova",
+        "c": "med",
+        "bpm": 124,
+        "note": "page gives one progression for every section"
+      },
+      {
+        "song": "California",
+        "album": "The Rise and Fall of a Midwest Princess",
+        "key": "Db major",
+        "sections": {
+          "chorus": "ii IV I iii"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/california",
+        "c": "high",
+        "bpm": 130
+      },
+      {
+        "song": "Guilty Pleasure",
+        "album": "The Rise and Fall of a Midwest Princess",
+        "key": "D mixolydian",
+        "sections": {
+          "verse": "v IV",
+          "chorus": "IV I v"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/guilty-pleasure",
+        "c": "high",
+        "bpm": 124
+      },
+      {
+        "song": "Naked in Manhattan",
+        "album": "The Rise and Fall of a Midwest Princess",
+        "key": "Bb minor",
+        "sections": {
+          "pre": "VI i III v"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/naked-in-manhattan",
+        "c": "high",
+        "bpm": 120
+      },
+      {
+        "song": "Super Graphic Ultra Modern Girl",
+        "album": "The Rise and Fall of a Midwest Princess",
+        "key": "Ab mixolydian",
+        "sections": {
+          "chorus": "I bVII IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/chappell-roan/super-graphic-ultra-modern-girl",
+        "c": "high",
+        "bpm": 126
       }
     ],
     "gaga": [
@@ -104,7 +170,8 @@
         "sections": {
           "verse": "i III VII iv"
         },
-        "src": "https://en.wikipedia.org/wiki/Just_Dance_(song)"
+        "src": "https://en.wikipedia.org/wiki/Just_Dance_(song)",
+        "album": "The Fame"
       },
       {
         "song": "Poker Face",
@@ -113,7 +180,8 @@
         "sections": {
           "chorus": "i VI III VII"
         },
-        "src": "https://en.wikipedia.org/wiki/Poker_Face_(song)"
+        "src": "https://en.wikipedia.org/wiki/Poker_Face_(song)",
+        "album": "The Fame"
       },
       {
         "song": "Bad Romance",
@@ -124,7 +192,8 @@
           "chorus": "VI VII i III VI",
           "leadout": "i VI"
         },
-        "src": "https://hooktheory.com/theorytab/view/lady-gaga/bad-romance"
+        "src": "https://hooktheory.com/theorytab/view/lady-gaga/bad-romance",
+        "album": "The Fame Monster"
       },
       {
         "song": "Applause",
@@ -134,7 +203,8 @@
           "verse": "i VII VI iv VII",
           "chorus": "i VII VI iv VII"
         },
-        "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/applause"
+        "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/applause",
+        "album": "Artpop"
       },
       {
         "song": "Paparazzi",
@@ -144,7 +214,8 @@
           "verse": "i VI",
           "chorus (Ab major)": "I V vi IV"
         },
-        "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/paparazzi"
+        "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/paparazzi",
+        "album": "The Fame"
       },
       {
         "song": "Rain On Me (with Ariana Grande)",
@@ -154,18 +225,194 @@
           "verse": "i VI",
           "chorus": "i III VI v"
         },
-        "src": "https://www.hooktheory.com/theorytab/view/lady-gaga-and-ariana-grande/rain-on-me"
+        "src": "https://www.hooktheory.com/theorytab/view/lady-gaga-and-ariana-grande/rain-on-me",
+        "album": "Chromatica"
       },
       {
-        "song": "Shallow (with Bradley Cooper)",
-        "key": "G major / E dorian",
-        "bpm": 96,
+        "song": "The Edge of Glory",
+        "album": "Born This Way",
+        "key": "A major",
         "sections": {
-          "pre": "vi V I IV I",
-          "chorus": "ii V I V vi",
-          "bridge (E dorian)": "v VII IV i"
+          "verse": "I V IV",
+          "pre": "IV V vi II IV",
+          "chorus": "I V vi IV",
+          "bridge": "ii V I IV"
         },
-        "src": "https://hooktheory.com/theorytab/view/lady-gaga-and-bradley-cooper/shallow"
+        "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/the-edge-of-glory",
+        "c": "high",
+        "bpm": 124
+      },
+      {
+        "song": "Judas",
+        "album": "Born This Way",
+        "key": "C minor",
+        "sections": {
+          "chorus": "VI iv i VII"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/judas",
+        "c": "high",
+        "bpm": 131
+      },
+      {
+        "song": "Born This Way",
+        "album": "Born This Way",
+        "key": "F# mixolydian",
+        "sections": {
+          "verse": "I bVII IV",
+          "chorus": "I bVII IV I IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/born-this-way",
+        "c": "high",
+        "bpm": 124
+      },
+      {
+        "song": "Marry the Night",
+        "album": "Born This Way",
+        "key": "A minor",
+        "sections": {
+          "verse": "i VII iv III VII",
+          "pre": "VII i",
+          "chorus": "i VII VI VII",
+          "bridge (E minor)": "VI VII i"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/marry-the-night",
+        "c": "high",
+        "bpm": 131
+      },
+      {
+        "song": "Stupid Love",
+        "album": "Chromatica",
+        "key": "Bb mixolydian",
+        "sections": {
+          "verse": "I bVII IV",
+          "pre": "bVII IV I bVII IV",
+          "chorus": "I bVII IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/stupid-love",
+        "c": "high",
+        "bpm": 120
+      },
+      {
+        "song": "Alice",
+        "album": "Chromatica",
+        "key": "F# minor",
+        "sections": {
+          "chorus": "iv i VI VII"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/alice",
+        "c": "high",
+        "bpm": 123
+      },
+      {
+        "song": "1000 Doves",
+        "album": "Chromatica",
+        "key": "A major",
+        "sections": {
+          "chorus": "IV vi V",
+          "lead-out": "IV vi V I iii"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/1000-doves",
+        "c": "high",
+        "bpm": 123
+      },
+      {
+        "song": "Babylon",
+        "album": "Chromatica",
+        "key": "E phrygian",
+        "sections": {
+          "verse": "i vii iv III i"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/babylon",
+        "c": "high",
+        "bpm": 116
+      },
+      {
+        "song": "Abracadabra",
+        "album": "Mayhem",
+        "key": "F dorian",
+        "sections": {
+          "pre": "i VII IV III",
+          "chorus": "i v IV III",
+          "lead-out (F phrygian)": "i II"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/abracadabra",
+        "c": "high",
+        "bpm": 125
+      },
+      {
+        "song": "Disease",
+        "album": "Mayhem",
+        "key": "B minor",
+        "sections": {
+          "verse (B phrygian dominant)": "I bIII II I VI",
+          "chorus": "i III VI iv"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/disease",
+        "c": "high",
+        "bpm": 101
+      },
+      {
+        "song": "Vanish into You",
+        "album": "Mayhem",
+        "key": "B minor / D major",
+        "sections": {
+          "verse": "i III VII VI iv",
+          "pre": "VI VII i III VI",
+          "chorus (D major)": "IV V I vi"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/vanish-into-you",
+        "c": "high",
+        "bpm": 112
+      },
+      {
+        "song": "Zombieboy",
+        "album": "Mayhem",
+        "key": "C minor",
+        "sections": {
+          "verse": "iv v i",
+          "chorus": "iv v i",
+          "bridge": "VI III VII III v"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/zombieboy",
+        "c": "high",
+        "bpm": 122
+      },
+      {
+        "song": "Garden of Eden",
+        "album": "Mayhem",
+        "key": "D# minor",
+        "sections": {
+          "verse": "III i",
+          "chorus": "iv III VII i"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/garden-of-eden",
+        "c": "high",
+        "bpm": 125
+      },
+      {
+        "song": "How Bad Do U Want Me",
+        "album": "Mayhem",
+        "key": "F# minor",
+        "sections": {
+          "verse": "i v VI v i",
+          "chorus": "i v VI v",
+          "bridge": "i vii VI"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/how-bad-do-u-want-me",
+        "c": "high",
+        "bpm": 125
+      },
+      {
+        "song": "Die with a Smile",
+        "album": "Mayhem",
+        "key": "Ab major",
+        "sections": {
+          "verse": "I vi IV V",
+          "chorus": "IV V I vi"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/die-with-a-smile-%28with-bruno-mars%29",
+        "c": "high",
+        "bpm": 94
       }
     ],
     "fleetwood": [
@@ -178,7 +425,8 @@
           "chorus": "VI VII",
           "solo": "VI VII VI i VII"
         },
-        "src": "https://hooktheory.com/theorytab/view/fleetwood-mac/dreams"
+        "src": "https://hooktheory.com/theorytab/view/fleetwood-mac/dreams",
+        "album": "Rumours"
       },
       {
         "song": "Go Your Own Way",
@@ -188,7 +436,8 @@
           "verse": "I V IV",
           "chorus (D minor)": "i VI VII"
         },
-        "src": "https://hooktheory.com/theorytab/view/fleetwood-mac/go-your-own-way"
+        "src": "https://hooktheory.com/theorytab/view/fleetwood-mac/go-your-own-way",
+        "album": "Rumours"
       },
       {
         "song": "Rhiannon",
@@ -197,7 +446,8 @@
         "sections": {
           "verse": "i VI"
         },
-        "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/rhiannon"
+        "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/rhiannon",
+        "album": "Fleetwood Mac (1975)"
       },
       {
         "song": "Landslide",
@@ -207,7 +457,8 @@
           "verse": "IV I ii I",
           "chorus": "I V vi IV I"
         },
-        "src": "https://hooktheory.com/theorytab/view/fleetwood-mac/landslide"
+        "src": "https://hooktheory.com/theorytab/view/fleetwood-mac/landslide",
+        "album": "Fleetwood Mac (1975)"
       },
       {
         "song": "Everywhere",
@@ -217,7 +468,8 @@
           "verse": "I V",
           "chorus": "V vi IV V vi"
         },
-        "src": "https://hooktheory.com/theorytab/view/fleetwood-mac/everywhere"
+        "src": "https://hooktheory.com/theorytab/view/fleetwood-mac/everywhere",
+        "album": "Tango in the Night"
       },
       {
         "song": "Don't Stop",
@@ -227,7 +479,185 @@
           "verse": "I IV",
           "chorus": "I V IV"
         },
-        "src": "https://hooktheory.com/theorytab/view/fleetwood-mac/dont-stop"
+        "src": "https://hooktheory.com/theorytab/view/fleetwood-mac/dont-stop",
+        "album": "Rumours"
+      },
+      {
+        "song": "The Chain",
+        "album": "Rumours",
+        "key": "E minor",
+        "sections": {
+          "verse": "IV iv v iv i",
+          "chorus": "iv i VI VII"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/the-chain",
+        "c": "high",
+        "bpm": 75
+      },
+      {
+        "song": "Gold Dust Woman",
+        "album": "Rumours",
+        "key": "D dorian",
+        "sections": {
+          "verse": "I IV VII IV I",
+          "chorus": "VI IV VII I"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/gold-dust-woman",
+        "c": "high",
+        "bpm": 124
+      },
+      {
+        "song": "Never Going Back Again",
+        "album": "Rumours",
+        "key": "F# major",
+        "sections": {
+          "theme": "I V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/never-going-back-again",
+        "c": "high",
+        "bpm": 88
+      },
+      {
+        "song": "You Make Loving Fun",
+        "album": "Rumours",
+        "key": "G major",
+        "sections": {
+          "chorus": "I ii I IV V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/you-make-loving-fun",
+        "c": "high",
+        "bpm": 125
+      },
+      {
+        "song": "Second Hand News",
+        "album": "Rumours",
+        "key": "Bb major",
+        "sections": {
+          "chorus": "I IV vi V IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/second-hand-news",
+        "c": "high",
+        "bpm": 126
+      },
+      {
+        "song": "Songbird",
+        "album": "Rumours",
+        "key": "F major",
+        "sections": {
+          "verse": "I IV",
+          "chorus": "I V IV vi IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/songbird",
+        "c": "high",
+        "bpm": 93
+      },
+      {
+        "song": "Sara",
+        "album": "Tusk",
+        "key": "F major",
+        "sections": {
+          "intro (F lydian)": "I II",
+          "verse": "I vi IV V IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/sara",
+        "c": "high",
+        "bpm": 127
+      },
+      {
+        "song": "Silver Springs",
+        "album": "Rumours sessions (B-side)",
+        "key": "C major",
+        "sections": {
+          "verse": "I IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/silver-springs",
+        "c": "high",
+        "bpm": 84
+      },
+      {
+        "song": "Say You Love Me",
+        "album": "Fleetwood Mac (1975)",
+        "key": "A major",
+        "sections": {
+          "verse": "I IV",
+          "chorus": "I IV I V",
+          "bridge": "I IV V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/say-you-love-me",
+        "c": "high",
+        "bpm": 117
+      },
+      {
+        "song": "Over My Head",
+        "album": "Fleetwood Mac (1975)",
+        "key": "A major",
+        "sections": {
+          "verse": "I V I vi I",
+          "chorus": "vi V IV I vi"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/over-my-head",
+        "c": "high",
+        "bpm": 129
+      },
+      {
+        "song": "Warm Ways",
+        "album": "Fleetwood Mac (1975)",
+        "key": "D major",
+        "sections": {
+          "verse": "I IV I ii I",
+          "chorus": "I IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/warm-ways",
+        "c": "high",
+        "bpm": 99
+      },
+      {
+        "song": "Little Lies",
+        "album": "Tango in the Night",
+        "key": "F# minor / A major",
+        "sections": {
+          "intro": "VI VII",
+          "chorus (A major)": "vi I IV I V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/little-lies",
+        "c": "high",
+        "bpm": 125
+      },
+      {
+        "song": "Seven Wonders",
+        "album": "Tango in the Night",
+        "key": "E major",
+        "sections": {
+          "verse": "IV I vi V",
+          "chorus": "I V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/seven-wonders",
+        "c": "high",
+        "bpm": 118
+      },
+      {
+        "song": "Hold Me",
+        "album": "Mirage",
+        "key": "Eb major",
+        "sections": {
+          "verse": "V I",
+          "chorus": "I iii vi V IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/hold-me",
+        "c": "high",
+        "bpm": 92
+      },
+      {
+        "song": "Gypsy",
+        "album": "Mirage",
+        "key": "F major",
+        "sections": {
+          "verse": "IV V",
+          "bridge": "vi V I IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/gypsy",
+        "c": "high",
+        "bpm": 132
       }
     ],
     "rhcp": [
@@ -240,18 +670,8 @@
           "pre": "i VI",
           "chorus": "III VII iv i"
         },
-        "src": "https://hooktheory.com/theorytab/view/red-hot-chili-peppers/californication"
-      },
-      {
-        "song": "Under the Bridge",
-        "key": "E major / A minor",
-        "bpm": 84,
-        "sections": {
-          "verse": "I V vi iii IV",
-          "chorus": "ii I V",
-          "bridge (A minor)": "I i v VI"
-        },
-        "src": "https://hooktheory.com/theorytab/view/red-hot-chili-peppers/under-the-bridge"
+        "src": "https://hooktheory.com/theorytab/view/red-hot-chili-peppers/californication",
+        "album": "Californication"
       },
       {
         "song": "Otherside",
@@ -263,7 +683,8 @@
           "chorus": "i VI III VII",
           "bridge (E minor)": "i VI III"
         },
-        "src": "https://hooktheory.com/theorytab/view/red-hot-chili-peppers/otherside"
+        "src": "https://hooktheory.com/theorytab/view/red-hot-chili-peppers/otherside",
+        "album": "Californication"
       },
       {
         "song": "Dani California",
@@ -274,7 +695,150 @@
           "chorus": "i VII iv",
           "bridge (B minor)": "i VI III v"
         },
-        "src": "https://hooktheory.com/theorytab/view/red-hot-chili-peppers/dani-california"
+        "src": "https://hooktheory.com/theorytab/view/red-hot-chili-peppers/dani-california",
+        "album": "Stadium Arcadium"
+      },
+      {
+        "song": "Scar Tissue",
+        "album": "Californication",
+        "key": "D minor",
+        "sections": {
+          "theme": "III VII i VII"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/red-hot-chili-peppers/scar-tissue",
+        "c": "high",
+        "bpm": 90
+      },
+      {
+        "song": "Around the World",
+        "album": "Californication",
+        "key": "Eb major",
+        "sections": {
+          "chorus": "IV I ii vi"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/red-hot-chili-peppers/around-the-world",
+        "c": "high",
+        "bpm": 95
+      },
+      {
+        "song": "Parallel Universe",
+        "album": "Californication",
+        "key": "C dorian / C minor",
+        "sections": {
+          "verse (C dorian)": "i VII ii III v",
+          "chorus": "i V VI III V",
+          "bridge": "i v VI iv i"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/red-hot-chili-peppers/parallel-universe",
+        "c": "high",
+        "bpm": 124
+      },
+      {
+        "song": "The Zephyr Song",
+        "album": "By the Way",
+        "key": "A minor / D major",
+        "sections": {
+          "verse": "i VII v VI",
+          "chorus (D major)": "I IV V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/red-hot-chili-peppers/the-zephyr-song",
+        "c": "med",
+        "bpm": 118
+      },
+      {
+        "song": "By the Way",
+        "album": "By the Way",
+        "key": "F major",
+        "sections": {
+          "chorus": "I V vi I V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/red-hot-chili-peppers/by-the-way",
+        "c": "high",
+        "bpm": 124
+      },
+      {
+        "song": "Can't Stop",
+        "album": "By the Way",
+        "key": "E minor / G major",
+        "sections": {
+          "verse": "i VII v VI",
+          "chorus (G major)": "I V iii IV",
+          "bridge": "i VII v VI VII"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/red-hot-chili-peppers/cant-stop",
+        "c": "high",
+        "bpm": 91
+      },
+      {
+        "song": "Dosed",
+        "album": "By the Way",
+        "key": "G major",
+        "sections": {
+          "verse": "IV V vi",
+          "chorus": "I V vi IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/red-hot-chili-peppers/dosed",
+        "c": "high",
+        "bpm": 104
+      },
+      {
+        "song": "I Could Die for You",
+        "album": "By the Way",
+        "key": "A major",
+        "sections": {
+          "verse": "I IV III IV III",
+          "chorus": "I V ii vi I"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/red-hot-chili-peppers/i-could-die-for-you",
+        "c": "high",
+        "bpm": 82
+      },
+      {
+        "song": "Snow (Hey Oh)",
+        "album": "Stadium Arcadium",
+        "key": "G# minor / B major",
+        "sections": {
+          "verse": "i VI III VII",
+          "bridge (B major)": "IV V vi ii vi"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/red-hot-chili-peppers/snow-(hey-oh)",
+        "c": "high",
+        "bpm": 105
+      },
+      {
+        "song": "Hey",
+        "album": "Stadium Arcadium",
+        "key": "C minor",
+        "sections": {
+          "verse": "i VI",
+          "chorus": "i VI VII v"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/red-hot-chili-peppers/hey",
+        "c": "high",
+        "bpm": 122
+      },
+      {
+        "song": "Tell Me Baby",
+        "album": "Stadium Arcadium",
+        "key": "C major",
+        "sections": {
+          "chorus": "IV I V vi IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/red-hot-chili-peppers/tell-me-baby",
+        "c": "high",
+        "bpm": 108
+      },
+      {
+        "song": "Black Summer",
+        "album": "Unlimited Love",
+        "key": "D# minor",
+        "sections": {
+          "verse": "i III VII IV i",
+          "chorus": "VI III VII I III"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/red-hot-chili-peppers/black-summer",
+        "c": "high",
+        "bpm": 103
       }
     ],
     "charli": [
@@ -285,16 +849,18 @@
         "sections": {
           "chorus": "v VI"
         },
-        "src": "https://hooktheory.com/theorytab/view/charli-xcx/360"
+        "src": "https://hooktheory.com/theorytab/view/charli-xcx/360",
+        "album": "Brat"
       },
       {
-        "song": "I Think About It All The Time",
+        "song": "I Think About It All the Time",
         "key": "A minor",
         "sections": {
           "loop": "i VI VII III"
         },
         "note": "Am, a stacked-fourths chord, F major, G–C (voicings vary)",
-        "src": "https://www.musicradar.com/news/charli-xcx-brat-theory"
+        "src": "https://www.musicradar.com/news/charli-xcx-brat-theory",
+        "album": "Brat"
       },
       {
         "song": "Sympathy Is a Knife",
@@ -303,7 +869,8 @@
           "chorus": "iii II V"
         },
         "note": "Gm, F, Bb in Eb with a raised 4th",
-        "src": "https://www.musicradar.com/news/charli-xcx-brat-theory"
+        "src": "https://www.musicradar.com/news/charli-xcx-brat-theory",
+        "album": "Brat"
       },
       {
         "song": "B2B",
@@ -313,7 +880,8 @@
           "verse": "i v iv III",
           "chorus": "i ii VII iv VI"
         },
-        "src": "https://hooktheory.com/theorytab/view/charli-xcx/b2b"
+        "src": "https://hooktheory.com/theorytab/view/charli-xcx/b2b",
+        "album": "Brat"
       },
       {
         "song": "Apple",
@@ -323,29 +891,8 @@
           "verse": "V vi IV",
           "leadout": "ii vi I IV"
         },
-        "src": "https://hooktheory.com/theorytab/view/charli-xcx/apple"
-      },
-      {
-        "song": "Track 10",
-        "key": "F major",
-        "bpm": 100,
-        "sections": {
-          "pre": "IV V iii IV V",
-          "chorus": "ii iii IV V vi",
-          "bridge": "V vi bVII I",
-          "outro": "IV iii vi V"
-        },
-        "src": "https://hooktheory.com/theorytab/view/charli-xcx/track-10"
-      },
-      {
-        "song": "Boom Clap",
-        "key": "E major",
-        "bpm": 92,
-        "sections": {
-          "verse": "IV V I vi",
-          "chorus": "IV V I vi"
-        },
-        "src": "https://hooktheory.com/theorytab/view/charli-xcx/boom-clap"
+        "src": "https://hooktheory.com/theorytab/view/charli-xcx/apple",
+        "album": "Brat"
       },
       {
         "song": "Speed Drive",
@@ -354,7 +901,31 @@
         "sections": {
           "chorus": "VI III iv i"
         },
-        "src": "https://hooktheory.com/theorytab/view/charli-xcx/speed-drive"
+        "src": "https://hooktheory.com/theorytab/view/charli-xcx/speed-drive",
+        "album": "Barbie the Album (single)"
+      },
+      {
+        "song": "Von Dutch",
+        "album": "Brat",
+        "key": "F minor",
+        "sections": {
+          "chorus": "I ii III VI V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/charli-xcx/von-dutch",
+        "c": "med",
+        "bpm": 130,
+        "note": "unusual numerals on the page; check"
+      },
+      {
+        "song": "Club Classics",
+        "album": "Brat",
+        "key": "G major",
+        "sections": {
+          "chorus": "I V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/charli-xcx/club-classics",
+        "c": "high",
+        "bpm": 144
       }
     ],
     "tiersen": [
@@ -1774,6 +2345,271 @@
         "src": "https://www.hooktheory.com/theorytab/view/the-doors/light-my-fire",
         "c": "high",
         "bpm": 128
+      }
+    ],
+    "gaga-joanne": [
+      {
+        "song": "Shallow",
+        "key": "G major / E dorian",
+        "bpm": 96,
+        "sections": {
+          "pre": "vi V I IV I",
+          "chorus": "ii V I V vi",
+          "bridge (E dorian)": "v VII IV i"
+        },
+        "src": "https://hooktheory.com/theorytab/view/lady-gaga-and-bradley-cooper/shallow",
+        "album": "A Star Is Born (soundtrack)"
+      },
+      {
+        "song": "Always Remember Us This Way",
+        "album": "A Star Is Born (soundtrack)",
+        "key": "A minor / C major",
+        "sections": {
+          "verse": "i VI III VII",
+          "chorus (C major)": "IV I vi V I"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/always-remember-us-this-way",
+        "c": "med",
+        "bpm": 130,
+        "note": "130 BPM listed; feels like 65 (half-time ballad)"
+      },
+      {
+        "song": "Million Reasons",
+        "album": "Joanne",
+        "key": "C major",
+        "sections": {
+          "verse": "I vi IV V",
+          "chorus": "IV I vi V",
+          "bridge": "vi IV I V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/million-reasons",
+        "c": "high",
+        "bpm": 65,
+        "note": "page lists 130 for verse/chorus and 65 for the bridge: a slow ballad"
+      },
+      {
+        "song": "Diamond Heart",
+        "album": "Joanne",
+        "key": "Eb dorian / D# minor",
+        "sections": {
+          "verse": "i VII IV",
+          "pre": "VI i VII i VII",
+          "chorus": "VI i VII",
+          "bridge": "VI III"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/diamond-heart",
+        "c": "high",
+        "bpm": 128
+      },
+      {
+        "song": "A-Yo",
+        "album": "Joanne",
+        "key": "A mixolydian",
+        "sections": {
+          "chorus": "I bVII"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/a-yo",
+        "c": "high",
+        "bpm": 150
+      },
+      {
+        "song": "Angel Down",
+        "album": "Joanne",
+        "key": "A major",
+        "sections": {
+          "chorus": "IV I III vi V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/angel-down",
+        "c": "high",
+        "bpm": 120
+      },
+      {
+        "song": "Perfect Illusion",
+        "album": "Joanne",
+        "key": "F# minor",
+        "sections": {
+          "verse": "i v VI v i",
+          "chorus": "i v VI v",
+          "bridge": "i vii VI"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/perfect-illusion",
+        "c": "high",
+        "bpm": 125
+      },
+      {
+        "song": "You and I",
+        "album": "Born This Way",
+        "key": "G major",
+        "sections": {
+          "verse": "I V IV",
+          "chorus": "ii I IV V I",
+          "bridge": "vi I IV ii vi"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lady-gaga/you-and-i",
+        "c": "high",
+        "bpm": 75,
+        "note": "page lists 150; a half-time rock ballad (~75)"
+      }
+    ],
+    "fleetwood-blues": [
+      {
+        "song": "Albatross",
+        "album": "Singles (1968–1969)",
+        "key": "E major",
+        "sections": {
+          "theme": "IV I"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/albatross",
+        "c": "med",
+        "bpm": 100,
+        "note": "page lists 200 BPM: a slow instrumental counted in eighths"
+      },
+      {
+        "song": "Need Your Love So Bad",
+        "album": "Singles (1968–1969)",
+        "key": "A major",
+        "sections": {
+          "verse": "I IV IV #iv I"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/fleetwood-mac/need-your-love-so-bad",
+        "c": "med",
+        "bpm": 80,
+        "note": "a Little Willie John song (cover): page lists 161 BPM, a slow 12/8 ballad"
+      }
+    ],
+    "rhcp-funk": [
+      {
+        "song": "Under the Bridge",
+        "key": "E major / A minor",
+        "bpm": 84,
+        "sections": {
+          "verse": "I V vi iii IV",
+          "chorus": "ii I V",
+          "bridge (A minor)": "I i v VI"
+        },
+        "src": "https://hooktheory.com/theorytab/view/red-hot-chili-peppers/under-the-bridge",
+        "album": "Blood Sugar Sex Magik"
+      },
+      {
+        "song": "Breaking the Girl",
+        "album": "Blood Sugar Sex Magik",
+        "key": "Ab mixolydian / G# minor",
+        "sections": {
+          "verse": "I ii i IV I",
+          "pre (G# minor)": "III VII i III VII",
+          "chorus": "i ii i VII V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/red-hot-chili-peppers/breaking-the-girl",
+        "c": "high",
+        "bpm": 60,
+        "note": "3/4 feel; page lists ~180"
+      },
+      {
+        "song": "Soul to Squeeze",
+        "album": "BSSM sessions (1993 single)",
+        "key": "F major",
+        "sections": {
+          "verse": "I V vi IV vi",
+          "chorus": "I V vi IV I"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/red-hot-chili-peppers/soul-to-squeeze",
+        "c": "high",
+        "bpm": 88
+      }
+    ],
+    "charli-pop2": [
+      {
+        "song": "Track 10",
+        "key": "F major",
+        "bpm": 100,
+        "sections": {
+          "pre": "IV V iii IV V",
+          "chorus": "ii iii IV V vi",
+          "bridge": "V vi bVII I",
+          "outro": "IV iii vi V"
+        },
+        "src": "https://hooktheory.com/theorytab/view/charli-xcx/track-10",
+        "album": "Pop 2"
+      },
+      {
+        "song": "Vroom Vroom",
+        "album": "Vroom Vroom (EP)",
+        "key": "B major",
+        "sections": {
+          "chorus": "I IV iii V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/charli-xcx/vroom-vroom",
+        "c": "med",
+        "bpm": 75,
+        "note": "intro listed at 159 BPM; chorus half-time"
+      },
+      {
+        "song": "Unlock It",
+        "album": "Pop 2",
+        "key": "A major",
+        "sections": {
+          "chorus": "vi IV I iii"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/charli-xcx/unlock-it",
+        "c": "high",
+        "bpm": 135
+      },
+      {
+        "song": "1999",
+        "album": "Charli",
+        "key": "Bb major",
+        "sections": {
+          "verse": "IV I vi V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/charli-xcx/1999",
+        "c": "high",
+        "bpm": 135
+      },
+      {
+        "song": "I Don't Wanna Know",
+        "album": "Charli",
+        "key": "C major",
+        "sections": {
+          "chorus": "I V IV ii"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/charli-xcx/i-dont-wanna-know",
+        "c": "high",
+        "bpm": 105
+      },
+      {
+        "song": "Claws",
+        "album": "How I'm Feeling Now",
+        "key": "B minor",
+        "sections": {
+          "theme": "VI v"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/charli-xcx/claws",
+        "c": "high",
+        "bpm": 124
+      },
+      {
+        "song": "Party 4 U",
+        "album": "How I'm Feeling Now",
+        "key": "Db major",
+        "sections": {
+          "chorus": "IV V vi I"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/charli-xcx/party-4-u",
+        "c": "high",
+        "bpm": 158
+      }
+    ],
+    "charli-pop": [
+      {
+        "song": "Boom Clap",
+        "key": "E major",
+        "bpm": 92,
+        "sections": {
+          "verse": "IV V I vi",
+          "chorus": "IV V I vi"
+        },
+        "src": "https://hooktheory.com/theorytab/view/charli-xcx/boom-clap",
+        "album": "Sucker"
       }
     ]
   },

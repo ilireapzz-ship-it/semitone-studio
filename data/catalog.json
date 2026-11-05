@@ -36,7 +36,17 @@
       "heartbroken",
       "tense",
       "angry",
-      "anxious"
+      "anxious",
+      "confident",
+      "camp",
+      "fierce",
+      "bittersweet",
+      "joyful",
+      "sensual",
+      "ironic",
+      "cathartic",
+      "longing",
+      "chaotic"
     ],
     "vibe": [
       "late-night drive",
@@ -73,7 +83,10 @@
       "tempo drop in chorus",
       "tempo changes",
       "slow build",
-      "long jam"
+      "long jam",
+      "fast",
+      "half-time",
+      "double-time ending"
     ],
     "instruments": [
       "piano",
@@ -95,7 +108,23 @@
       "celesta",
       "synth",
       "synth bass",
-      "808"
+      "808",
+      "slap bass",
+      "wah guitar",
+      "clavinet",
+      "Moog",
+      "talk box",
+      "vocal harmonies",
+      "drum machine",
+      "trumpet",
+      "harpsichord",
+      "marching band",
+      "electric piano",
+      "dobro",
+      "Fairlight",
+      "pitched vocals",
+      "distorted guitar",
+      "acoustic piano"
     ],
     "production": [
       "hip-hop beat",
@@ -110,7 +139,33 @@
       "two-chord vamp",
       "psychedelic",
       "jazzy",
-      "folk"
+      "folk",
+      "funk",
+      "rock",
+      "disco",
+      "house",
+      "techno",
+      "industrial",
+      "hyperpop",
+      "punk",
+      "blues",
+      "country",
+      "gospel",
+      "R&B",
+      "hip-hop",
+      "new wave",
+      "synth-pop",
+      "glam",
+      "Eurodance",
+      "70s soft rock",
+      "rap verses",
+      "auto-tune",
+      "four-on-the-floor",
+      "lo-fi home recording",
+      "ballad",
+      "cabaret",
+      "interlude",
+      "instrumental"
     ]
   },
   "artists": {
@@ -1136,6 +1191,4397 @@
             "bedroom confessional",
             "smoky lounge"
           ]
+        }
+      ]
+    },
+    "Chappell Roan": {
+      "profileDefault": "chappell",
+      "albums": [
+        {
+          "album": "School Nights",
+          "year": 2017,
+          "era": "chappell",
+          "producers": [
+            "Dan Nigro and others"
+          ],
+          "sound": [
+            "earlier, darker and moodier electro-pop than the camp era"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Chappell_Roan_discography"
+          ],
+          "songs": [],
+          "kind": "EP",
+          "useForProfile": false,
+          "note": "listed for completeness; songs not catalogued yet; its moodier sound is not part of the main Chappell Roan profile"
+        },
+        {
+          "album": "The Rise and Fall of a Midwest Princess",
+          "year": 2023,
+          "era": "chappell",
+          "producers": [
+            "Dan Nigro",
+            "Mike Wise",
+            "Ryan Linvill"
+          ],
+          "sound": [
+            "synth-pop and bubblegum dance-pop",
+            "80s synths and drums",
+            "camp, theatrical vocal",
+            "a few folk-pop ballads"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/The_Rise_and_Fall_of_a_Midwest_Princess"
+          ],
+          "songs": [
+            {
+              "title": "Femininomenon",
+              "tags": [
+                "camp",
+                "euphoric",
+                "synth-pop",
+                "Moog",
+                "strings",
+                "fast"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Red Wine Supernova",
+              "tags": [
+                "playful",
+                "sensual",
+                "synth-pop",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "After Midnight",
+              "tags": [
+                "joyful",
+                "camp",
+                "disco",
+                "live band",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Coffee",
+              "tags": [
+                "tender",
+                "bittersweet",
+                "acoustic piano",
+                "acoustic guitar",
+                "flute",
+                "slow",
+                "ballad"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Casual",
+              "tags": [
+                "longing",
+                "bittersweet",
+                "synth-pop",
+                "mid-tempo",
+                "slow build"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Super Graphic Ultra Modern Girl",
+              "tags": [
+                "confident",
+                "playful",
+                "synth-pop",
+                "new wave",
+                "fast"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Hot To Go!",
+              "tags": [
+                "joyful",
+                "camp",
+                "Moog",
+                "drum machine",
+                "fast"
+              ],
+              "chords": true
+            },
+            {
+              "title": "My Kink Is Karma",
+              "tags": [
+                "ironic",
+                "rock",
+                "distorted guitar",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Picture You",
+              "tags": [
+                "tender",
+                "longing",
+                "strings",
+                "saxophone",
+                "slow",
+                "ballad"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Kaleidoscope",
+              "tags": [
+                "melancholy",
+                "tender",
+                "acoustic piano",
+                "mellotron",
+                "strings",
+                "slow",
+                "ballad"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Pink Pony Club",
+              "tags": [
+                "euphoric",
+                "camp",
+                "synth-pop",
+                "acoustic piano",
+                "slow build"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Naked in Manhattan",
+              "tags": [
+                "playful",
+                "sensual",
+                "synth-pop",
+                "drum machine",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "California",
+              "tags": [
+                "longing",
+                "nostalgic",
+                "strings",
+                "brass",
+                "ballad",
+                "slow build"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Guilty Pleasure",
+              "tags": [
+                "playful",
+                "camp",
+                "Moog",
+                "synth",
+                "mid-tempo"
+              ],
+              "chords": true
+            }
+          ]
+        },
+        {
+          "album": "Singles (2024–2025)",
+          "year": 2025,
+          "era": "chappell",
+          "producers": [
+            "Dan Nigro"
+          ],
+          "sound": [
+            "bigger, more cinematic synth-pop; a country turn on The Giver"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Chappell_Roan_discography"
+          ],
+          "songs": [
+            {
+              "title": "Good Luck, Babe!",
+              "tags": [
+                "bittersweet",
+                "cathartic",
+                "synth-pop",
+                "strings",
+                "slow build"
+              ],
+              "chords": true
+            },
+            {
+              "title": "The Giver",
+              "tags": [
+                "playful",
+                "camp",
+                "country",
+                "live band",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "The Subway",
+              "tags": [
+                "longing",
+                "melancholy",
+                "ballad",
+                "slow build"
+              ],
+              "chords": true
+            }
+          ],
+          "kind": "singles"
+        }
+      ]
+    },
+    "Lady Gaga": {
+      "profileDefault": "gaga",
+      "albums": [
+        {
+          "album": "The Fame",
+          "year": 2008,
+          "era": "gaga",
+          "producers": [
+            "RedOne",
+            "Rob Fusari",
+            "Martin Kierszenbaum"
+          ],
+          "sound": [
+            "electropop and synth-pop",
+            "four-on-the-floor dance beats",
+            "big hooks, robotic verses"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/The_Fame"
+          ],
+          "songs": [
+            {
+              "title": "Just Dance",
+              "tags": [
+                "euphoric",
+                "playful",
+                "synth-pop",
+                "four-on-the-floor",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "LoveGame",
+              "tags": [
+                "sensual",
+                "playful",
+                "synth-pop",
+                "four-on-the-floor"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Paparazzi",
+              "tags": [
+                "longing",
+                "sultry",
+                "synth-pop",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Poker Face",
+              "tags": [
+                "dark",
+                "confident",
+                "synth-pop",
+                "four-on-the-floor",
+                "auto-tune"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Eh, Eh (Nothing Else I Can Say)",
+              "tags": [
+                "joyful",
+                "synth-pop",
+                "mid-tempo"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Beautiful, Dirty, Rich",
+              "tags": [
+                "ironic",
+                "playful",
+                "synth-pop",
+                "four-on-the-floor"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "The Fame",
+              "tags": [
+                "glamorous",
+                "glam",
+                "distorted guitar"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Money Honey",
+              "tags": [
+                "playful",
+                "techno",
+                "mid-tempo"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Starstruck",
+              "tags": [
+                "playful",
+                "R&B",
+                "synth bass"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Boys Boys Boys",
+              "tags": [
+                "playful",
+                "glam",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Paper Gangsta",
+              "tags": [
+                "defiant",
+                "hip-hop",
+                "rap verses"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Brown Eyes",
+              "tags": [
+                "tender",
+                "ballad",
+                "acoustic piano",
+                "slow"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "I Like It Rough",
+              "tags": [
+                "playful",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Summerboy",
+              "tags": [
+                "joyful",
+                "new wave",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            }
+          ]
+        },
+        {
+          "album": "The Fame Monster",
+          "year": 2009,
+          "era": "gaga",
+          "producers": [
+            "RedOne",
+            "Fernando Garibay",
+            "Darkchild",
+            "Ron Fair",
+            "Teddy Riley"
+          ],
+          "sound": [
+            "darker electropop with gothic, disco and industrial touches"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/The_Fame_Monster"
+          ],
+          "songs": [
+            {
+              "title": "Bad Romance",
+              "tags": [
+                "dark",
+                "cathartic",
+                "synth-pop",
+                "four-on-the-floor"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Alejandro",
+              "tags": [
+                "melancholy",
+                "Eurodance",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Monster",
+              "tags": [
+                "dark",
+                "playful",
+                "synth-pop",
+                "auto-tune"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Speechless",
+              "tags": [
+                "yearning",
+                "ballad",
+                "rock",
+                "acoustic piano",
+                "vocal harmonies"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Dance in the Dark",
+              "tags": [
+                "dark",
+                "synth-pop",
+                "slow build"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Telephone",
+              "tags": [
+                "playful",
+                "defiant",
+                "synth-pop",
+                "fast"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "So Happy I Could Die",
+              "tags": [
+                "dreamy",
+                "hazy",
+                "synth-pop",
+                "auto-tune"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Teeth",
+              "tags": [
+                "sultry",
+                "gospel",
+                "R&B"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            }
+          ],
+          "kind": "EP"
+        },
+        {
+          "album": "Born This Way",
+          "year": 2011,
+          "era": "gaga",
+          "producers": [
+            "Lady Gaga",
+            "Fernando Garibay",
+            "RedOne",
+            "Jeppe Laursen",
+            "DJ White Shadow"
+          ],
+          "sound": [
+            "dance-pop with heavy metal, Euro disco and 80s rock",
+            "church bells, saxophone, big drums"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Born_This_Way_(Lady_Gaga_album)"
+          ],
+          "songs": [
+            {
+              "title": "Marry the Night",
+              "tags": [
+                "triumphant",
+                "cathartic",
+                "four-on-the-floor",
+                "house",
+                "slow build"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Born This Way",
+              "tags": [
+                "defiant",
+                "joyful",
+                "disco",
+                "four-on-the-floor"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Government Hooker",
+              "tags": [
+                "dark",
+                "techno",
+                "industrial"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Judas",
+              "tags": [
+                "dark",
+                "fierce",
+                "house",
+                "industrial",
+                "four-on-the-floor"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Americano",
+              "tags": [
+                "playful",
+                "house",
+                "disco"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Hair",
+              "tags": [
+                "triumphant",
+                "rock",
+                "saxophone"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Scheiße",
+              "tags": [
+                "fierce",
+                "Eurodance",
+                "techno"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Bloody Mary",
+              "tags": [
+                "dark",
+                "synth-pop",
+                "choir",
+                "slow"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Bad Kids",
+              "tags": [
+                "defiant",
+                "synth-pop",
+                "distorted guitar"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Highway Unicorn (Road to Love)",
+              "tags": [
+                "triumphant",
+                "rock",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Heavy Metal Lover",
+              "tags": [
+                "sensual",
+                "techno",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Electric Chapel",
+              "tags": [
+                "dark",
+                "rock",
+                "Eurodance"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "You and I",
+              "tags": [
+                "longing",
+                "rock",
+                "ballad",
+                "acoustic piano",
+                "half-time"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "The Edge of Glory",
+              "tags": [
+                "triumphant",
+                "euphoric",
+                "synth-pop",
+                "saxophone"
+              ],
+              "chords": true
+            }
+          ]
+        },
+        {
+          "album": "Artpop",
+          "year": 2013,
+          "era": "gaga",
+          "producers": [
+            "DJ White Shadow",
+            "Zedd",
+            "Lady Gaga",
+            "Rick Rubin"
+          ],
+          "sound": [
+            "EDM, techno and synth-pop",
+            "retro-futurist, maximal"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Artpop"
+          ],
+          "songs": [
+            {
+              "title": "Aura",
+              "tags": [
+                "dark",
+                "chaotic",
+                "house"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Venus",
+              "tags": [
+                "playful",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "G.U.Y.",
+              "tags": [
+                "sensual",
+                "house",
+                "industrial"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Sexxx Dreams",
+              "tags": [
+                "sensual",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Jewels n' Drugs",
+              "tags": [
+                "dark",
+                "hip-hop",
+                "rap verses"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Manicure",
+              "tags": [
+                "playful",
+                "rock",
+                "funk"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Do What U Want",
+              "tags": [
+                "sensual",
+                "R&B",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Artpop",
+              "tags": [
+                "dreamy",
+                "techno"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Swine",
+              "tags": [
+                "angry",
+                "chaotic",
+                "industrial"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Donatella",
+              "tags": [
+                "ironic",
+                "playful",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Fashion!",
+              "tags": [
+                "playful",
+                "disco",
+                "funk"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Mary Jane Holland",
+              "tags": [
+                "hazy",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Dope",
+              "tags": [
+                "heartbroken",
+                "ballad",
+                "acoustic piano",
+                "slow"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Gypsy",
+              "tags": [
+                "hopeful",
+                "Eurodance",
+                "acoustic piano"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Applause",
+              "tags": [
+                "euphoric",
+                "synth-pop",
+                "Eurodance"
+              ],
+              "chords": true
+            }
+          ]
+        },
+        {
+          "album": "Joanne",
+          "year": 2016,
+          "era": "gaga-joanne",
+          "producers": [
+            "Lady Gaga",
+            "Mark Ronson",
+            "BloodPop",
+            "Josh Homme",
+            "Jeff Bhasker"
+          ],
+          "sound": [
+            "soft rock and Americana with country, disco-rock and dance-pop",
+            "raw vocals, live guitars"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Joanne_(Lady_Gaga_album)"
+          ],
+          "songs": [
+            {
+              "title": "Diamond Heart",
+              "tags": [
+                "defiant",
+                "rock",
+                "distorted guitar"
+              ],
+              "chords": true
+            },
+            {
+              "title": "A-Yo",
+              "tags": [
+                "playful",
+                "country",
+                "two-chord vamp",
+                "live band"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Joanne",
+              "tags": [
+                "tender",
+                "mournful",
+                "acoustic guitar",
+                "sparse",
+                "slow"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "John Wayne",
+              "tags": [
+                "playful",
+                "rock",
+                "distorted guitar"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Dancin' in Circles",
+              "tags": [
+                "sensual",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Perfect Illusion",
+              "tags": [
+                "cathartic",
+                "disco",
+                "rock",
+                "fast"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Million Reasons",
+              "tags": [
+                "heartbroken",
+                "country",
+                "acoustic piano",
+                "acoustic guitar",
+                "ballad",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Sinner's Prayer",
+              "tags": [
+                "yearning",
+                "country",
+                "R&B",
+                "live band"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Come to Mama",
+              "tags": [
+                "hopeful",
+                "rock",
+                "acoustic piano"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Hey Girl",
+              "tags": [
+                "warm",
+                "R&B",
+                "acoustic piano"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Angel Down",
+              "tags": [
+                "mournful",
+                "ballad",
+                "sparse",
+                "slow"
+              ],
+              "chords": true
+            }
+          ]
+        },
+        {
+          "album": "A Star Is Born (soundtrack)",
+          "year": 2018,
+          "era": "gaga-joanne",
+          "producers": [
+            "Lady Gaga",
+            "Bradley Cooper",
+            "Lukas Nelson",
+            "Benjamin Rice",
+            "Dave Cobb"
+          ],
+          "sound": [
+            "country-rock and blues rock for Jackson; big pop and power ballads for Ally"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/A_Star_Is_Born_(2018_soundtrack)"
+          ],
+          "songs": [
+            {
+              "title": "Black Eyes",
+              "tags": [
+                "defiant",
+                "rock",
+                "distorted guitar"
+              ],
+              "sung": "Bradley Cooper",
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "La Vie en Rose",
+              "tags": [
+                "romantic",
+                "cabaret"
+              ],
+              "cover": true,
+              "note": "a cover of another writer's song: listed, not analysed",
+              "chords": false
+            },
+            {
+              "title": "Maybe It's Time",
+              "tags": [
+                "weary",
+                "country",
+                "acoustic guitar",
+                "sparse"
+              ],
+              "sung": "Bradley Cooper",
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Alibi",
+              "tags": [
+                "raw",
+                "blues",
+                "rock",
+                "acoustic piano"
+              ],
+              "sung": "Bradley Cooper",
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Shallow",
+              "tags": [
+                "cathartic",
+                "country",
+                "acoustic guitar",
+                "slow build",
+                "ballad"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Music to My Eyes",
+              "tags": [
+                "warm",
+                "country",
+                "ballad"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Diggin' My Grave",
+              "tags": [
+                "playful",
+                "blues"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Always Remember Us This Way",
+              "tags": [
+                "nostalgic",
+                "yearning",
+                "ballad",
+                "acoustic piano",
+                "slow build"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Look What I Found",
+              "tags": [
+                "joyful",
+                "acoustic piano",
+                "R&B"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Heal Me",
+              "tags": [
+                "longing",
+                "synth-pop",
+                "R&B"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "I Don't Know What Love Is",
+              "tags": [
+                "romantic",
+                "rock",
+                "strings"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Is That Alright?",
+              "tags": [
+                "tender",
+                "acoustic piano",
+                "ballad"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Why Did You Do That?",
+              "tags": [
+                "playful",
+                "disco",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Hair Body Face",
+              "tags": [
+                "confident",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Before I Cry",
+              "tags": [
+                "heartbroken",
+                "ballad",
+                "strings"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "I'll Never Love Again",
+              "tags": [
+                "heartbroken",
+                "cathartic",
+                "ballad",
+                "acoustic piano",
+                "strings",
+                "slow build"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            }
+          ],
+          "kind": "soundtrack"
+        },
+        {
+          "album": "Chromatica",
+          "year": 2020,
+          "era": "gaga",
+          "producers": [
+            "BloodPop",
+            "Burns",
+            "Axwell",
+            "Tchami",
+            "Madeon",
+            "Max Martin",
+            "Skrillex"
+          ],
+          "sound": [
+            "house, disco and 90s dance-pop",
+            "orchestral interludes between three acts"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Chromatica_(album)"
+          ],
+          "songs": [
+            {
+              "title": "Chromatica I",
+              "tags": [
+                "cinematic",
+                "strings",
+                "interlude",
+                "instrumental"
+              ],
+              "interlude": true,
+              "chords": false
+            },
+            {
+              "title": "Alice",
+              "tags": [
+                "euphoric",
+                "house",
+                "four-on-the-floor"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Stupid Love",
+              "tags": [
+                "joyful",
+                "disco",
+                "synth-pop"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Rain on Me",
+              "tags": [
+                "cathartic",
+                "euphoric",
+                "house",
+                "four-on-the-floor"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Free Woman",
+              "tags": [
+                "defiant",
+                "house"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Fun Tonight",
+              "tags": [
+                "bittersweet",
+                "Eurodance"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Chromatica II",
+              "tags": [
+                "cinematic",
+                "strings",
+                "interlude",
+                "instrumental"
+              ],
+              "interlude": true,
+              "chords": false
+            },
+            {
+              "title": "911",
+              "tags": [
+                "dark",
+                "synth-pop",
+                "auto-tune",
+                "funk"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Plastic Doll",
+              "tags": [
+                "fierce",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Sour Candy",
+              "tags": [
+                "playful",
+                "house"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Enigma",
+              "tags": [
+                "sensual",
+                "funk",
+                "brass"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Replay",
+              "tags": [
+                "dark",
+                "house"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Chromatica III",
+              "tags": [
+                "cinematic",
+                "strings",
+                "interlude",
+                "instrumental"
+              ],
+              "interlude": true,
+              "chords": false
+            },
+            {
+              "title": "Sine from Above",
+              "tags": [
+                "triumphant",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "1000 Doves",
+              "tags": [
+                "hopeful",
+                "acoustic piano",
+                "synth-pop"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Babylon",
+              "tags": [
+                "playful",
+                "house",
+                "saxophone",
+                "acoustic piano"
+              ],
+              "chords": true
+            }
+          ]
+        },
+        {
+          "album": "Mayhem",
+          "year": 2025,
+          "era": "gaga-mayhem",
+          "producers": [
+            "Lady Gaga",
+            "Andrew Watt",
+            "Cirkut",
+            "Gesaffelstein"
+          ],
+          "sound": [
+            "dark pop, electro-grunge and industrial",
+            "glam rock, funk and disco",
+            "80s synth-pop",
+            "rock guitars and guitar solos"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Mayhem_(Lady_Gaga_album)"
+          ],
+          "songs": [
+            {
+              "title": "Disease",
+              "tags": [
+                "dark",
+                "fierce",
+                "industrial",
+                "rock"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Abracadabra",
+              "tags": [
+                "dark",
+                "euphoric",
+                "house",
+                "Eurodance"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Garden of Eden",
+              "tags": [
+                "euphoric",
+                "synth-pop",
+                "distorted guitar"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Perfect Celebrity",
+              "tags": [
+                "ironic",
+                "dark",
+                "rock",
+                "distorted guitar"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Vanish into You",
+              "tags": [
+                "longing",
+                "glam",
+                "rock"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Killah",
+              "tags": [
+                "fierce",
+                "industrial",
+                "funk"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Zombieboy",
+              "tags": [
+                "playful",
+                "funk",
+                "disco"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "LoveDrug",
+              "tags": [
+                "cathartic",
+                "rock"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "How Bad Do U Want Me",
+              "tags": [
+                "longing",
+                "synth-pop",
+                "new wave"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Don't Call Tonight",
+              "tags": [
+                "longing",
+                "funk",
+                "talk box"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Shadow of a Man",
+              "tags": [
+                "defiant",
+                "disco",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "The Beast",
+              "tags": [
+                "dark",
+                "rock",
+                "guitar solo"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Blade of Grass",
+              "tags": [
+                "tender",
+                "ballad",
+                "sparse",
+                "slow"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Die with a Smile",
+              "tags": [
+                "romantic",
+                "R&B",
+                "ballad",
+                "slow"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Can't Stop the High",
+              "tags": [
+                "chaotic",
+                "rock"
+              ],
+              "reissue": true,
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "The Dead Dance",
+              "tags": [
+                "playful",
+                "funk",
+                "synth"
+              ],
+              "reissue": true,
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Kill for Love",
+              "tags": [
+                "dark",
+                "synth-pop"
+              ],
+              "reissue": true,
+              "chords": false,
+              "note": "no chord data yet"
+            }
+          ]
+        },
+        {
+          "album": "Cheek to Cheek / Love for Sale (with Tony Bennett)",
+          "year": 2014,
+          "era": "jazz",
+          "producers": [
+            "Dae Bennett"
+          ],
+          "sound": [
+            "jazz standards with big band"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Lady_Gaga_discography"
+          ],
+          "songs": [],
+          "kind": "duets",
+          "useForProfile": false,
+          "note": "jazz standards by other writers: listed, not analysed; use the Jazz genre tag for this sound"
+        }
+      ]
+    },
+    "Fleetwood Mac": {
+      "profileDefault": "fleetwood",
+      "albums": [
+        {
+          "album": "Peter Green era: Fleetwood Mac (1968), Mr. Wonderful, Then Play On",
+          "year": 1968,
+          "era": "fleetwood-blues",
+          "producers": [
+            "Mike Vernon",
+            "Fleetwood Mac"
+          ],
+          "sound": [
+            "British blues and blues rock",
+            "Peter Green's lyrical lead guitar",
+            "slow 12/8 blues, shuffles, a dreamy instrumental (Albatross)"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Fleetwood_Mac_discography"
+          ],
+          "songs": [
+            {
+              "title": "Albatross",
+              "tags": [
+                "dreamy",
+                "hazy",
+                "instrumental",
+                "guitar solo",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Need Your Love So Bad",
+              "tags": [
+                "yearning",
+                "blues",
+                "strings",
+                "slow",
+                "ballad"
+              ],
+              "cover": true,
+              "note": "a cover of another writer's song: listed, not analysed",
+              "chords": false
+            },
+            {
+              "title": "Oh Well",
+              "tags": [
+                "defiant",
+                "blues",
+                "rock"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Man of the World",
+              "tags": [
+                "melancholy",
+                "blues",
+                "ballad",
+                "slow"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Black Magic Woman",
+              "tags": [
+                "sultry",
+                "blues",
+                "rock"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            }
+          ],
+          "kind": "era",
+          "note": "songs from the 1968–1970 singles and albums; Albatross and Need Your Love So Bad have chord data"
+        },
+        {
+          "album": "Transition years: Kiln House to Heroes Are Hard to Find",
+          "year": 1970,
+          "era": "fleetwood",
+          "producers": [
+            "Fleetwood Mac"
+          ],
+          "sound": [
+            "soft rock and folk rock with Christine McVie and Bob Welch"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Fleetwood_Mac_discography"
+          ],
+          "songs": [],
+          "kind": "era",
+          "useForProfile": false,
+          "note": "album-level only"
+        },
+        {
+          "album": "Fleetwood Mac (1975)",
+          "year": 1975,
+          "era": "fleetwood",
+          "producers": [
+            "Fleetwood Mac",
+            "Keith Olsen"
+          ],
+          "sound": [
+            "soft rock, folk rock and pop rock",
+            "first album with Buckingham and Nicks",
+            "Hohner Pianet, layered guitars, harmonies"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Fleetwood_Mac_(1975_album)"
+          ],
+          "songs": [
+            {
+              "title": "Monday Morning",
+              "tags": [
+                "hopeful",
+                "rock",
+                "live band"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Warm Ways",
+              "tags": [
+                "tender",
+                "electric piano",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Blue Letter",
+              "tags": [
+                "playful",
+                "rock"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Rhiannon",
+              "tags": [
+                "sultry",
+                "dreamy",
+                "70s soft rock",
+                "vocal harmonies"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Over My Head",
+              "tags": [
+                "longing",
+                "electric piano",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Crystal",
+              "tags": [
+                "tender",
+                "acoustic guitar",
+                "ballad"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Say You Love Me",
+              "tags": [
+                "joyful",
+                "acoustic piano",
+                "vocal harmonies"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Landslide",
+              "tags": [
+                "reflective",
+                "tender",
+                "acoustic guitar",
+                "sparse",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "World Turning",
+              "tags": [
+                "restless",
+                "rock",
+                "live band"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Sugar Daddy",
+              "tags": [
+                "playful",
+                "rock"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "I'm So Afraid",
+              "tags": [
+                "dark",
+                "rock",
+                "guitar solo",
+                "slow build"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            }
+          ]
+        },
+        {
+          "album": "Rumours",
+          "year": 1977,
+          "era": "fleetwood",
+          "producers": [
+            "Fleetwood Mac",
+            "Ken Caillat",
+            "Richard Dashut"
+          ],
+          "sound": [
+            "pop rock and soft rock",
+            "interlocking guitars, Rhodes and piano, three-part harmonies",
+            "steady hypnotic grooves"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Rumours_(album)"
+          ],
+          "songs": [
+            {
+              "title": "Second Hand News",
+              "tags": [
+                "joyful",
+                "acoustic guitar",
+                "vocal harmonies",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Dreams",
+              "tags": [
+                "dreamy",
+                "melancholy",
+                "two-chord vamp",
+                "70s California",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Never Going Back Again",
+              "tags": [
+                "bittersweet",
+                "acoustic guitar",
+                "sparse"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Don't Stop",
+              "tags": [
+                "hopeful",
+                "joyful",
+                "acoustic piano",
+                "vocal harmonies"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Go Your Own Way",
+              "tags": [
+                "defiant",
+                "cathartic",
+                "rock",
+                "four-on-the-floor",
+                "guitar solo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Songbird",
+              "tags": [
+                "tender",
+                "acoustic piano",
+                "sparse",
+                "ballad",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "The Chain",
+              "tags": [
+                "dark",
+                "defiant",
+                "rock",
+                "slow build"
+              ],
+              "chords": true
+            },
+            {
+              "title": "You Make Loving Fun",
+              "tags": [
+                "joyful",
+                "clavinet",
+                "R&B"
+              ],
+              "chords": true
+            },
+            {
+              "title": "I Don't Want to Know",
+              "tags": [
+                "playful",
+                "acoustic guitar",
+                "vocal harmonies"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Oh Daddy",
+              "tags": [
+                "melancholy",
+                "slow"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Gold Dust Woman",
+              "tags": [
+                "dark",
+                "hazy",
+                "harpsichord",
+                "dobro",
+                "psychedelic"
+              ],
+              "chords": true
+            }
+          ]
+        },
+        {
+          "album": "Tusk",
+          "year": 1979,
+          "era": "fleetwood",
+          "producers": [
+            "Fleetwood Mac",
+            "Richard Dashut",
+            "Ken Caillat"
+          ],
+          "sound": [
+            "experimental pop rock and new wave",
+            "home-recorded Buckingham tracks next to lush McVie and Nicks songs",
+            "marching band on Tusk"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Tusk_(album)"
+          ],
+          "songs": [
+            {
+              "title": "Over & Over",
+              "tags": [
+                "tender",
+                "lush"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "The Ledge",
+              "tags": [
+                "restless",
+                "lo-fi home recording",
+                "punk"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Think About Me",
+              "tags": [
+                "joyful",
+                "rock"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Save Me a Place",
+              "tags": [
+                "tender",
+                "lo-fi home recording"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Sara",
+              "tags": [
+                "dreamy",
+                "nostalgic",
+                "acoustic piano",
+                "lush",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "What Makes You Think You're the One",
+              "tags": [
+                "raw",
+                "lo-fi home recording",
+                "rock"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Storms",
+              "tags": [
+                "melancholy",
+                "acoustic guitar"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "That's All for Everyone",
+              "tags": [
+                "dreamy",
+                "vocal harmonies"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Not That Funny",
+              "tags": [
+                "restless",
+                "new wave"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Sisters of the Moon",
+              "tags": [
+                "dark",
+                "rock"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Angel",
+              "tags": [
+                "playful",
+                "rock"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "That's Enough for Me",
+              "tags": [
+                "restless",
+                "lo-fi home recording",
+                "fast"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Brown Eyes",
+              "tags": [
+                "sultry",
+                "slow"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Never Make Me Cry",
+              "tags": [
+                "tender",
+                "slow"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "I Know I'm Not Wrong",
+              "tags": [
+                "restless",
+                "new wave"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Honey Hi",
+              "tags": [
+                "tender"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Beautiful Child",
+              "tags": [
+                "tender",
+                "lush",
+                "slow"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Walk a Thin Line",
+              "tags": [
+                "reflective",
+                "vocal harmonies"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Tusk",
+              "tags": [
+                "chaotic",
+                "marching band",
+                "two-chord vamp"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Never Forget",
+              "tags": [
+                "hopeful"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            }
+          ]
+        },
+        {
+          "album": "Mirage",
+          "year": 1982,
+          "era": "fleetwood",
+          "producers": [
+            "Fleetwood Mac",
+            "Lindsey Buckingham",
+            "Richard Dashut",
+            "Ken Caillat"
+          ],
+          "sound": [
+            "polished 80s soft rock"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Fleetwood_Mac_discography"
+          ],
+          "songs": [
+            {
+              "title": "Hold Me",
+              "tags": [
+                "longing",
+                "rock",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Gypsy",
+              "tags": [
+                "nostalgic",
+                "dreamy",
+                "mid-tempo"
+              ],
+              "chords": true
+            }
+          ],
+          "note": "only two songs catalogued so far"
+        },
+        {
+          "album": "Tango in the Night",
+          "year": 1987,
+          "era": "fleetwood",
+          "producers": [
+            "Lindsey Buckingham",
+            "Richard Dashut"
+          ],
+          "sound": [
+            "80s pop rock: Fairlight textures, half-speed recording, stacked harmonies"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Tango_in_the_Night"
+          ],
+          "songs": [
+            {
+              "title": "Big Love",
+              "tags": [
+                "restless",
+                "Fairlight",
+                "rock"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Seven Wonders",
+              "tags": [
+                "dreamy",
+                "synth",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Everywhere",
+              "tags": [
+                "joyful",
+                "dreamy",
+                "synth",
+                "vocal harmonies"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Caroline",
+              "tags": [
+                "restless",
+                "drum machine"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Tango in the Night",
+              "tags": [
+                "dark",
+                "rock",
+                "guitar solo"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Mystified",
+              "tags": [
+                "dreamy",
+                "synth"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Little Lies",
+              "tags": [
+                "bittersweet",
+                "synth",
+                "vocal harmonies"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Family Man",
+              "tags": [
+                "playful",
+                "Fairlight"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Welcome to the Room... Sara",
+              "tags": [
+                "melancholy",
+                "synth"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Isn't It Midnight",
+              "tags": [
+                "restless",
+                "rock"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "When I See You Again",
+              "tags": [
+                "tender",
+                "slow"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "You and I, Part II",
+              "tags": [
+                "hopeful",
+                "synth"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            }
+          ]
+        },
+        {
+          "album": "Behind the Mask, Time, Say You Will",
+          "year": 1990,
+          "era": "fleetwood",
+          "producers": [
+            "various"
+          ],
+          "sound": [
+            "later soft rock line-ups"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Fleetwood_Mac_discography"
+          ],
+          "songs": [],
+          "kind": "era",
+          "useForProfile": false,
+          "note": "album-level only"
+        }
+      ]
+    },
+    "Red Hot Chili Peppers": {
+      "profileDefault": "rhcp",
+      "albums": [
+        {
+          "album": "Early funk-punk: The Red Hot Chili Peppers, Freaky Styley, The Uplift Mofo Party Plan",
+          "year": 1984,
+          "era": "rhcp-funk",
+          "producers": [
+            "Andy Gill",
+            "George Clinton",
+            "Michael Beinhorn"
+          ],
+          "sound": [
+            "funk-punk, slap bass, rap verses"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Red_Hot_Chili_Peppers_discography"
+          ],
+          "songs": [],
+          "kind": "era",
+          "useForProfile": false,
+          "note": "album-level only"
+        },
+        {
+          "album": "Mother's Milk",
+          "year": 1989,
+          "era": "rhcp-funk",
+          "producers": [
+            "Michael Beinhorn"
+          ],
+          "sound": [
+            "funk metal and funk rock: heavy riffs, dense overdubs",
+            "Frusciante brings more melody"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Mother's_Milk_(album)"
+          ],
+          "songs": [
+            {
+              "title": "Good Time Boys",
+              "tags": [
+                "playful",
+                "funk",
+                "rock",
+                "fast"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Higher Ground",
+              "tags": [
+                "joyful",
+                "funk",
+                "slap bass"
+              ],
+              "cover": true,
+              "note": "a cover of another writer's song: listed, not analysed",
+              "chords": false
+            },
+            {
+              "title": "Subway to Venus",
+              "tags": [
+                "playful",
+                "funk",
+                "brass"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Magic Johnson",
+              "tags": [
+                "joyful",
+                "funk",
+                "rap verses"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Nobody Weird Like Me",
+              "tags": [
+                "chaotic",
+                "funk",
+                "slap bass",
+                "fast"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Knock Me Down",
+              "tags": [
+                "mournful",
+                "rock"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Taste the Pain",
+              "tags": [
+                "reflective",
+                "rock"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Stone Cold Bush",
+              "tags": [
+                "playful",
+                "funk",
+                "slap bass"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Fire",
+              "tags": [
+                "chaotic",
+                "rock",
+                "fast"
+              ],
+              "cover": true,
+              "note": "a cover of another writer's song: listed, not analysed",
+              "chords": false
+            },
+            {
+              "title": "Pretty Little Ditty",
+              "tags": [
+                "dreamy",
+                "sparse",
+                "instrumental"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Punk Rock Classic",
+              "tags": [
+                "ironic",
+                "punk",
+                "fast"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Sexy Mexican Maid",
+              "tags": [
+                "sensual",
+                "funk"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Johnny, Kick a Hole in the Sky",
+              "tags": [
+                "defiant",
+                "funk",
+                "rock"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            }
+          ]
+        },
+        {
+          "album": "Blood Sugar Sex Magik",
+          "year": 1991,
+          "era": "rhcp-funk",
+          "producers": [
+            "Rick Rubin"
+          ],
+          "sound": [
+            "funk rock recorded live in a mansion: dry, tight drums, slap and fingered bass, less distortion",
+            "a few melodic ballads (Under the Bridge, Breaking the Girl)"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Blood_Sugar_Sex_Magik"
+          ],
+          "songs": [
+            {
+              "title": "The Power of Equality",
+              "tags": [
+                "defiant",
+                "funk",
+                "rap verses"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "If You Have to Ask",
+              "tags": [
+                "playful",
+                "funk",
+                "wah guitar"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Breaking the Girl",
+              "tags": [
+                "melancholy",
+                "6/8",
+                "mellotron",
+                "live band"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Funky Monks",
+              "tags": [
+                "playful",
+                "funk"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Suck My Kiss",
+              "tags": [
+                "fierce",
+                "funk",
+                "rock",
+                "organ"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "I Could Have Lied",
+              "tags": [
+                "heartbroken",
+                "acoustic guitar",
+                "slow"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Mellowship Slinky in B Major",
+              "tags": [
+                "playful",
+                "funk",
+                "acoustic piano"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "The Righteous & the Wicked",
+              "tags": [
+                "angry",
+                "funk",
+                "rock"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Give It Away",
+              "tags": [
+                "chaotic",
+                "joyful",
+                "funk",
+                "rap verses",
+                "slap bass",
+                "two-chord vamp"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Blood Sugar Sex Magik",
+              "tags": [
+                "dark",
+                "sensual",
+                "funk",
+                "rock"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Under the Bridge",
+              "tags": [
+                "lonely",
+                "melancholy",
+                "clean electric guitar",
+                "choir",
+                "slow build"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Naked in the Rain",
+              "tags": [
+                "playful",
+                "funk",
+                "slap bass"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Apache Rose Peacock",
+              "tags": [
+                "playful",
+                "funk",
+                "trumpet"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "The Greeting Song",
+              "tags": [
+                "playful",
+                "rock",
+                "fast"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "My Lovely Man",
+              "tags": [
+                "mournful",
+                "funk",
+                "rock"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Sir Psycho Sexy",
+              "tags": [
+                "sensual",
+                "funk",
+                "slow build",
+                "long jam"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "They're Red Hot",
+              "tags": [
+                "playful",
+                "blues",
+                "fast"
+              ],
+              "cover": true,
+              "note": "a cover of another writer's song: listed, not analysed",
+              "chords": false
+            }
+          ]
+        },
+        {
+          "album": "One Hot Minute",
+          "year": 1995,
+          "era": "rhcp-funk",
+          "producers": [
+            "Rick Rubin"
+          ],
+          "sound": [
+            "heavier, darker alt-metal with Dave Navarro"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Red_Hot_Chili_Peppers_discography"
+          ],
+          "songs": [],
+          "useForProfile": false,
+          "note": "album-level only"
+        },
+        {
+          "album": "Californication",
+          "year": 1999,
+          "era": "rhcp",
+          "producers": [
+            "Rick Rubin"
+          ],
+          "sound": [
+            "melodic alternative rock with funk underneath",
+            "sparse clean guitars, melodic bass, sung choruses"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Californication_(album)"
+          ],
+          "songs": [
+            {
+              "title": "Around the World",
+              "tags": [
+                "joyful",
+                "funk",
+                "slap bass",
+                "fast"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Parallel Universe",
+              "tags": [
+                "restless",
+                "rock",
+                "distorted guitar"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Scar Tissue",
+              "tags": [
+                "bittersweet",
+                "slide guitar",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Otherside",
+              "tags": [
+                "melancholy",
+                "rock",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Get on Top",
+              "tags": [
+                "playful",
+                "funk",
+                "wah guitar",
+                "rap verses"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Californication",
+              "tags": [
+                "melancholy",
+                "reflective",
+                "clean electric guitar",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Easily",
+              "tags": [
+                "hopeful",
+                "rock"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Porcelain",
+              "tags": [
+                "tender",
+                "sparse",
+                "slow"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Emit Remmus",
+              "tags": [
+                "dark",
+                "rock"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "I Like Dirt",
+              "tags": [
+                "playful",
+                "funk"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "This Velvet Glove",
+              "tags": [
+                "yearning",
+                "acoustic guitar"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Savior",
+              "tags": [
+                "cathartic",
+                "rock",
+                "psychedelic"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Purple Stain",
+              "tags": [
+                "playful",
+                "funk"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Right on Time",
+              "tags": [
+                "playful",
+                "funk",
+                "fast"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Road Trippin'",
+              "tags": [
+                "tender",
+                "acoustic guitar",
+                "strings",
+                "sparse"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            }
+          ]
+        },
+        {
+          "album": "By the Way",
+          "year": 2002,
+          "era": "rhcp",
+          "producers": [
+            "Rick Rubin"
+          ],
+          "sound": [
+            "their most melodic album: layered harmonies, Frusciante's backing vocals, strings and keys",
+            "less funk"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/By_the_Way_(Red_Hot_Chili_Peppers_song)"
+          ],
+          "songs": [
+            {
+              "title": "By the Way",
+              "tags": [
+                "restless",
+                "joyful",
+                "rock",
+                "rap verses"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Universally Speaking",
+              "tags": [
+                "hopeful",
+                "vocal harmonies"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "This Is the Place",
+              "tags": [
+                "dark",
+                "rock"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Dosed",
+              "tags": [
+                "dreamy",
+                "tender",
+                "vocal harmonies"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Don't Forget Me",
+              "tags": [
+                "yearning",
+                "rock",
+                "slow build"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "The Zephyr Song",
+              "tags": [
+                "dreamy",
+                "joyful",
+                "vocal harmonies"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Can't Stop",
+              "tags": [
+                "joyful",
+                "funk",
+                "rap verses"
+              ],
+              "chords": true
+            },
+            {
+              "title": "I Could Die for You",
+              "tags": [
+                "tender",
+                "acoustic guitar"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Midnight",
+              "tags": [
+                "romantic",
+                "strings"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Throw Away Your Television",
+              "tags": [
+                "restless",
+                "funk"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Cabron",
+              "tags": [
+                "playful",
+                "acoustic guitar"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Tear",
+              "tags": [
+                "tender",
+                "acoustic piano",
+                "trumpet"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "On Mercury",
+              "tags": [
+                "playful",
+                "new wave"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Minor Thing",
+              "tags": [
+                "playful",
+                "rock"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Warm Tape",
+              "tags": [
+                "reflective",
+                "synth"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Venice Queen",
+              "tags": [
+                "mournful",
+                "slow build"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            }
+          ],
+          "tracklistSrc": "tracklist from memory (no fetched source): check"
+        },
+        {
+          "album": "Stadium Arcadium",
+          "year": 2006,
+          "era": "rhcp",
+          "producers": [
+            "Rick Rubin"
+          ],
+          "sound": [
+            "a double album of melodic funk rock and long guitar solos",
+            "slowed-tape harpsichord guitars, horns, cello"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Stadium_Arcadium"
+          ],
+          "songs": [
+            {
+              "title": "Dani California",
+              "tags": [
+                "restless",
+                "rock",
+                "guitar solo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Snow (Hey Oh)",
+              "tags": [
+                "hopeful",
+                "bittersweet",
+                "clean electric guitar",
+                "fast"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Charlie",
+              "tags": [
+                "playful",
+                "funk"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Stadium Arcadium",
+              "tags": [
+                "dreamy",
+                "brass"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Hump de Bump",
+              "tags": [
+                "playful",
+                "funk"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "She's Only 18",
+              "tags": [
+                "sensual",
+                "funk"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Slow Cheetah",
+              "tags": [
+                "tender",
+                "acoustic guitar"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Torture Me",
+              "tags": [
+                "restless",
+                "rock"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Strip My Mind",
+              "tags": [
+                "reflective",
+                "guitar solo"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Especially in Michigan",
+              "tags": [
+                "restless",
+                "guitar solo"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Warlocks",
+              "tags": [
+                "playful",
+                "funk",
+                "clavinet"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "C'mon Girl",
+              "tags": [
+                "playful",
+                "funk"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Wet Sand",
+              "tags": [
+                "melancholy",
+                "harpsichord",
+                "guitar solo",
+                "slow build"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Hey",
+              "tags": [
+                "bittersweet",
+                "guitar solo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Desecration Smile",
+              "tags": [
+                "tender",
+                "acoustic guitar"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Tell Me Baby",
+              "tags": [
+                "joyful",
+                "funk"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Hard to Concentrate",
+              "tags": [
+                "tender",
+                "sparse"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "21st Century",
+              "tags": [
+                "restless",
+                "funk"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "She Looks to Me",
+              "tags": [
+                "tender",
+                "strings"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Readymade",
+              "tags": [
+                "fierce",
+                "rock"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "If",
+              "tags": [
+                "tender",
+                "sparse",
+                "slow"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Make You Feel Better",
+              "tags": [
+                "joyful",
+                "rock"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Animal Bar",
+              "tags": [
+                "restless",
+                "rock"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "So Much I",
+              "tags": [
+                "playful",
+                "rock"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Storm in a Teacup",
+              "tags": [
+                "playful",
+                "funk"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "We Believe",
+              "tags": [
+                "hopeful",
+                "funk",
+                "choir"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Turn It Again",
+              "tags": [
+                "triumphant",
+                "guitar solo",
+                "slow build",
+                "long jam"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Death of a Martian",
+              "tags": [
+                "dreamy",
+                "slow"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            }
+          ]
+        },
+        {
+          "album": "I'm with You, The Getaway, Unlimited Love, Return of the Dream Canteen",
+          "year": 2011,
+          "era": "rhcp",
+          "producers": [
+            "Rick Rubin",
+            "Danger Mouse"
+          ],
+          "sound": [
+            "later records: Klinghoffer era (2011–2016), Frusciante back (2022)"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Red_Hot_Chili_Peppers_discography"
+          ],
+          "songs": [
+            {
+              "title": "Black Summer",
+              "tags": [
+                "reflective",
+                "guitar solo"
+              ],
+              "chords": true
+            }
+          ],
+          "useForProfile": true,
+          "note": "only Black Summer catalogued so far"
+        }
+      ]
+    },
+    "Charli XCX": {
+      "profileDefault": "charli",
+      "albums": [
+        {
+          "album": "True Romance",
+          "year": 2013,
+          "era": "charli-pop",
+          "producers": [
+            "Ariel Rechtshaid",
+            "Patrik Berger",
+            "others"
+          ],
+          "sound": [
+            "dark synth-pop and witch-house-tinged electropop"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Charli_XCX_discography"
+          ],
+          "songs": [],
+          "useForProfile": false,
+          "note": "album-level only"
+        },
+        {
+          "album": "Sucker",
+          "year": 2014,
+          "era": "charli-pop",
+          "producers": [
+            "Patrik Berger",
+            "J.L. Raisen",
+            "Greg Kurstin",
+            "Ariel Rechtshaid",
+            "Stargate"
+          ],
+          "sound": [
+            "pop, pop-punk, new wave and power pop"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Sucker_(Charli_XCX_album)"
+          ],
+          "songs": [
+            {
+              "title": "Sucker",
+              "tags": [
+                "defiant",
+                "punk",
+                "distorted guitar",
+                "fast"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Break the Rules",
+              "tags": [
+                "defiant",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "London Queen",
+              "tags": [
+                "playful",
+                "punk",
+                "new wave"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Breaking Up",
+              "tags": [
+                "defiant",
+                "punk"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Gold Coins",
+              "tags": [
+                "playful",
+                "new wave"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Boom Clap",
+              "tags": [
+                "joyful",
+                "synth-pop",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Doing It",
+              "tags": [
+                "joyful",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Body of My Own",
+              "tags": [
+                "confident",
+                "punk"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Famous",
+              "tags": [
+                "confident",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Hanging Around",
+              "tags": [
+                "restless",
+                "punk"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Die Tonight",
+              "tags": [
+                "romantic",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Caught in the Middle",
+              "tags": [
+                "bittersweet",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Need Ur Luv",
+              "tags": [
+                "tender",
+                "slow"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            }
+          ]
+        },
+        {
+          "album": "Vroom Vroom (EP) and Number 1 Angel",
+          "year": 2016,
+          "era": "charli-pop2",
+          "producers": [
+            "Sophie",
+            "A. G. Cook"
+          ],
+          "sound": [
+            "the turn to PC Music: metallic, rubbery, bright synths"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Charli_XCX_discography"
+          ],
+          "songs": [
+            {
+              "title": "Vroom Vroom",
+              "tags": [
+                "confident",
+                "chaotic",
+                "hyperpop"
+              ],
+              "chords": true
+            }
+          ],
+          "kind": "era",
+          "note": "only Vroom Vroom catalogued so far"
+        },
+        {
+          "album": "Pop 2",
+          "year": 2017,
+          "era": "charli-pop2",
+          "producers": [
+            "A. G. Cook",
+            "Sophie",
+            "EasyFun"
+          ],
+          "sound": [
+            "experimental pop and hyperpop",
+            "pitched, auto-tuned vocals and many featured guests"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Pop_2_(mixtape)"
+          ],
+          "songs": [
+            {
+              "title": "Backseat",
+              "tags": [
+                "longing",
+                "hyperpop",
+                "auto-tune"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Out of My Head",
+              "tags": [
+                "restless",
+                "hyperpop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Lucky",
+              "tags": [
+                "melancholy",
+                "auto-tune",
+                "slow build"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Tears",
+              "tags": [
+                "heartbroken",
+                "auto-tune"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "I Got It",
+              "tags": [
+                "fierce",
+                "chaotic",
+                "hyperpop",
+                "rap verses"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Femmebot",
+              "tags": [
+                "playful",
+                "hyperpop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Delicious",
+              "tags": [
+                "dreamy",
+                "auto-tune"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Unlock It",
+              "tags": [
+                "joyful",
+                "synth-pop",
+                "auto-tune"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Porsche",
+              "tags": [
+                "confident",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Track 10",
+              "tags": [
+                "chaotic",
+                "cathartic",
+                "hyperpop",
+                "slow build"
+              ],
+              "chords": true
+            }
+          ],
+          "kind": "mixtape"
+        },
+        {
+          "album": "Charli",
+          "year": 2019,
+          "era": "charli-pop2",
+          "producers": [
+            "A. G. Cook",
+            "Lotus IV",
+            "Oscar Holter",
+            "Stargate",
+            "Andrew Watt"
+          ],
+          "sound": [
+            "avant-pop, electropop and futurepop"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Charli_(album)"
+          ],
+          "songs": [
+            {
+              "title": "Next Level Charli",
+              "tags": [
+                "confident",
+                "hyperpop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Gone",
+              "tags": [
+                "restless",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Cross You Out",
+              "tags": [
+                "melancholy",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "1999",
+              "tags": [
+                "nostalgic",
+                "joyful",
+                "synth-pop"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Click",
+              "tags": [
+                "chaotic",
+                "hyperpop",
+                "rap verses"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Warm",
+              "tags": [
+                "longing",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Thoughts",
+              "tags": [
+                "melancholy",
+                "auto-tune"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Blame It on Your Love",
+              "tags": [
+                "joyful",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "White Mercedes",
+              "tags": [
+                "tender",
+                "ballad"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Silver Cross",
+              "tags": [
+                "euphoric",
+                "hyperpop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "I Don't Wanna Know",
+              "tags": [
+                "melancholy",
+                "synth-pop"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Official",
+              "tags": [
+                "tender",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Shake It",
+              "tags": [
+                "chaotic",
+                "rap verses",
+                "hyperpop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "February 2017",
+              "tags": [
+                "reflective",
+                "auto-tune"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "2099",
+              "tags": [
+                "chaotic",
+                "hyperpop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            }
+          ]
+        },
+        {
+          "album": "How I'm Feeling Now",
+          "year": 2020,
+          "era": "charli-pop2",
+          "producers": [
+            "A. G. Cook",
+            "Dylan Brady",
+            "BJ Burton",
+            "Danny L Harle"
+          ],
+          "sound": [
+            "made in lockdown in about six weeks",
+            "hyperpop and electropop with clipped, distorted textures"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Charli_XCX_discography"
+          ],
+          "songs": [
+            {
+              "title": "Pink Diamond",
+              "tags": [
+                "fierce",
+                "chaotic",
+                "hyperpop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Forever",
+              "tags": [
+                "bittersweet",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Claws",
+              "tags": [
+                "joyful",
+                "hyperpop"
+              ],
+              "chords": true
+            },
+            {
+              "title": "7 Years",
+              "tags": [
+                "tender",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Detonate",
+              "tags": [
+                "restless",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Enemy",
+              "tags": [
+                "melancholy",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "I Finally Understand",
+              "tags": [
+                "reflective",
+                "house"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "C2.0",
+              "tags": [
+                "nostalgic",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Party 4 U",
+              "tags": [
+                "longing",
+                "synth-pop",
+                "slow build"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Anthems",
+              "tags": [
+                "restless",
+                "hyperpop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Visions",
+              "tags": [
+                "chaotic",
+                "hyperpop",
+                "slow build"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            }
+          ],
+          "tracklistSrc": "tracklist from memory (no fetched source): check"
+        },
+        {
+          "album": "Crash",
+          "year": 2022,
+          "era": "charli-pop",
+          "producers": [
+            "A. G. Cook",
+            "George Daniel",
+            "Lotus IV",
+            "Oscar Holter",
+            "Justin Raisen",
+            "Ariel Rechtshaid"
+          ],
+          "sound": [
+            "80s-leaning major-label pop: new jack swing, synthwave, UK garage, post-disco"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Crash_(Charli_XCX_album)"
+          ],
+          "songs": [
+            {
+              "title": "Crash",
+              "tags": [
+                "fierce",
+                "funk",
+                "new wave"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "New Shapes",
+              "tags": [
+                "confident",
+                "synth-pop",
+                "funk"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Good Ones",
+              "tags": [
+                "bittersweet",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Constant Repeat",
+              "tags": [
+                "restless",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Beg for You",
+              "tags": [
+                "longing",
+                "house"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Move Me",
+              "tags": [
+                "yearning",
+                "ballad"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Baby",
+              "tags": [
+                "sensual",
+                "funk",
+                "disco"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Lightning",
+              "tags": [
+                "playful",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Every Rule",
+              "tags": [
+                "tender",
+                "sparse",
+                "slow"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Yuck",
+              "tags": [
+                "playful",
+                "funk",
+                "disco"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Used to Know Me",
+              "tags": [
+                "nostalgic",
+                "house"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Twice",
+              "tags": [
+                "reflective",
+                "acoustic piano",
+                "slow build"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            }
+          ]
+        },
+        {
+          "album": "Brat",
+          "year": 2024,
+          "era": "charli",
+          "producers": [
+            "A. G. Cook",
+            "Finn Keane",
+            "George Daniel",
+            "Cirkut",
+            "Gesaffelstein",
+            "Hudson Mohawke",
+            "El Guincho"
+          ],
+          "sound": [
+            "club-pop, electroclash and hyperpop from the 2000s London rave scene",
+            "subtraction: abrupt mutes and gaps",
+            "confessional lyrics over hard club beats"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Brat_(album)"
+          ],
+          "songs": [
+            {
+              "title": "360",
+              "tags": [
+                "confident",
+                "playful",
+                "house",
+                "auto-tune"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Club Classics",
+              "tags": [
+                "euphoric",
+                "house",
+                "four-on-the-floor"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Sympathy Is a Knife",
+              "tags": [
+                "anxious",
+                "dark",
+                "industrial"
+              ],
+              "chords": true
+            },
+            {
+              "title": "I Might Say Something Stupid",
+              "tags": [
+                "anxious",
+                "sparse",
+                "slow"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Talk Talk",
+              "tags": [
+                "longing",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Von Dutch",
+              "tags": [
+                "fierce",
+                "confident",
+                "house",
+                "industrial"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Everything Is Romantic",
+              "tags": [
+                "romantic",
+                "chaotic",
+                "strings"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Rewind",
+              "tags": [
+                "nostalgic",
+                "synth-pop"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "So I",
+              "tags": [
+                "mournful",
+                "auto-tune",
+                "slow build"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Girl, So Confusing",
+              "tags": [
+                "restless",
+                "house"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Apple",
+              "tags": [
+                "playful",
+                "synth-pop"
+              ],
+              "chords": true
+            },
+            {
+              "title": "B2B",
+              "tags": [
+                "dark",
+                "techno"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Mean Girls",
+              "tags": [
+                "playful",
+                "acoustic piano",
+                "house"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "I Think About It All the Time",
+              "tags": [
+                "reflective",
+                "tender",
+                "sparse"
+              ],
+              "chords": true
+            },
+            {
+              "title": "365",
+              "tags": [
+                "euphoric",
+                "techno",
+                "four-on-the-floor"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Hello Goodbye",
+              "tags": [
+                "longing",
+                "synth-pop"
+              ],
+              "deluxe": true,
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Guess",
+              "tags": [
+                "playful",
+                "house"
+              ],
+              "deluxe": true,
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Spring Breakers",
+              "tags": [
+                "defiant",
+                "synth-pop"
+              ],
+              "deluxe": true,
+              "chords": false,
+              "note": "no chord data yet"
+            }
+          ]
+        },
+        {
+          "album": "Wuthering Heights (soundtrack)",
+          "year": 2026,
+          "era": "charli",
+          "producers": [
+            "Charli XCX",
+            "Finn Keane"
+          ],
+          "sound": [
+            "film soundtrack"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Charli_XCX_discography"
+          ],
+          "songs": [],
+          "kind": "soundtrack",
+          "useForProfile": false,
+          "note": "released Feb 2026; songs not catalogued yet"
+        },
+        {
+          "album": "Music, Fashion, Film",
+          "year": 2026,
+          "era": "charli-mff",
+          "producers": [
+            "A. G. Cook",
+            "Finn Keane"
+          ],
+          "sound": [
+            "pop with electronic rock: distorted guitars, auto-tune, guitar-synth textures",
+            "doubled harmonies, sharp dynamic contrasts, short songs"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Music,_Fashion,_Film"
+          ],
+          "songs": [
+            {
+              "title": "Rock Music",
+              "tags": [
+                "defiant",
+                "rock",
+                "distorted guitar",
+                "auto-tune",
+                "fast"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "SS26",
+              "tags": [
+                "restless",
+                "rock",
+                "drum machine",
+                "slow build"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Card Declined",
+              "tags": [
+                "ironic",
+                "rock"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Camera",
+              "tags": [
+                "confessional",
+                "rock",
+                "synth"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "2007",
+              "tags": [
+                "nostalgic"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "I'm Afraid",
+              "tags": [
+                "anxious"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Yeah",
+              "tags": [
+                "playful"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Wink Wink",
+              "tags": [
+                "playful",
+                "rock",
+                "synth",
+                "mid-tempo",
+                "spoken section"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Persona",
+              "tags": [
+                "reflective"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "Magic Metal Montana",
+              "tags": [
+                "tender",
+                "rock",
+                "tempo changes"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            },
+            {
+              "title": "No One Lasts Forever",
+              "tags": [
+                "mournful",
+                "spoken section"
+              ],
+              "chords": false,
+              "note": "no chord data yet"
+            }
+          ],
+          "note": "released July 2026; no chord data yet"
         }
       ]
     }

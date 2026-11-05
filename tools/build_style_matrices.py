@@ -16,7 +16,7 @@ NUM = re.compile(r'^(b|#)?(vii|vi|iv|v|iii|ii|i)', re.I)
 def family(label, key):
     m = re.search(r'\(([^)]*)\)', label)
     k = (m.group(1) if m else key.split('/')[0]).lower()
-    return 'minor' if ('minor' in k or 'dorian' in k or 'aeolian' in k) else 'major'
+    return 'minor' if any(w in k for w in ('minor', 'dorian', 'aeolian', 'phrygian', 'locrian', 'harmonic')) else 'major'
 
 def degree(tok, fam):
     m = NUM.match(tok)
