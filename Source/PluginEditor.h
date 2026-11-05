@@ -19,6 +19,8 @@ private:
     void saveFile (const juce::String& name, const juce::String& base64);
     void dragFile (const juce::String& name, const juce::String& base64);
     void dragAudio (const juce::var& v);
+    void sendMarkers (const juce::var& v);
+    void prepareMarkers();
     void startDrag (const juce::File& f);
     void dragDone (bool ok, const juce::String& why);
     static juce::File dragDir();

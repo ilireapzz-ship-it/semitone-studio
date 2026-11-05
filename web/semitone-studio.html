@@ -788,6 +788,8 @@ h2 .info-i{width:19px;height:19px;font-size:12px;margin-left:8px;position:relati
 .sec-drag{display:inline-flex;align-items:center;gap:.3rem;padding:.18rem .6rem;border:1px dashed currentColor;border-radius:999px;font-weight:600;cursor:grab;user-select:none;-webkit-user-select:none}
 body.is-native #timeline .sec,body.is-native #oTimeline .sec{cursor:grab}
 #timeline .sec.dragging,#oTimeline .sec.dragging,.sec-drag.dragging{opacity:.55;cursor:grabbing}
+.fl-setup{flex-basis:100%;margin-top:.2rem}.fl-setup summary{cursor:pointer;font-weight:600}.fl-setup ol{margin:.3rem 0 .2rem 1.2rem;padding:0}.fl-setup li{margin:.12rem 0}
+.fl-mk{font-weight:600}
 </style>
 
 <header class="topbar">
@@ -7088,7 +7090,7 @@ function nativeInit(){ if(!NATIVE.on) return;
     const fo=$('#nbFollow'); if(fo) fo.onchange=e=>{ NATIVE.follow=e.target.checked; };
     $('#nbSetup').onclick=()=>{ const sc2=nativeScope(); const box=document.querySelector(`.mout-box[data-scope="${sc2==='orch'?'orch':'song'}"]`); if(box){ if(sc2==='song') location.hash='#compose'; box.scrollIntoView({behavior:'smooth',block:'center'}); } };
     $('#nbTempo').onclick=()=>{ const bpm=Math.round(NATIVE.hs.bpm); if(nativeScope()==='song'){ S.bpm=bpm; $('#bpm').value=bpm; $('#bpm').dispatchEvent(new Event('input')); } else { O.bpm=bpm; $('#oBpm').value=bpm; $('#oBpm').dispatchEvent(new Event('input')); } toast('Song tempo matched to '+bpm+' BPM'); };
-    NATIVE.recent=d.recent||[]; NATIVE.songFile=d.songFile||''; if(d.project) nativeRestore(d.project); NATIVE.inited=true; initNativeFiles(); if(NATIVE.songFile&&d.project) NATIVE.fileState=d.songFileSame?songStateJSON():null; if(NATIVE.songFile&&!d.songFileSame) NATIVE.fileState=''; renderMout(); nativeSync(); nativeSaveState(); try{ initNativeSound(d); }catch(e){ console.warn('native sound',e); } try{ initSectionDrag(); }catch(e){ console.warn('section drag',e); } });
+    NATIVE.recent=d.recent||[]; NATIVE.songFile=d.songFile||''; if(d.project) nativeRestore(d.project); NATIVE.inited=true; initNativeFiles(); if(NATIVE.songFile&&d.project) NATIVE.fileState=d.songFileSame?songStateJSON():null; if(NATIVE.songFile&&!d.songFileSame) NATIVE.fileState=''; renderMout(); nativeSync(); nativeSaveState(); try{ initNativeSound(d); }catch(e){ console.warn('native sound',e); } try{ initSectionDrag(); initFLMarkers(); }catch(e){ console.warn('section drag',e); } });
   nOn('st_host',nativeHost);
   nOn('st_midiin',nativeMidiIn);
   nOn('st_saved',d=>toast(d.ok?'Saved to '+d.path:'Not saved'));
@@ -7265,6 +7267,24 @@ function initNativeSound(d){ if(!NATIVE.plugin) return; NSND.mode=d&&d.soundMode
   nOn('st_audio_need',x=>{ if(!x||x.seq!==NSND.seq) return; if(x.sr) NSND.sr=x.sr; NSND.queue=(x.ids||[]).slice(); nSndStatus(); nAudioPump(); });
   nOn('st_audio_got',()=>nSndStatus());
   setInterval(nAudioTick,1000); addEventListener('hashchange',()=>setTimeout(nAudioTick,80)); nAudioTick(); }
+/* ---- plugin in FL Studio: the song structure as Playlist markers, through Semitone's FL controller script ---- */
+function structureMarkers(orch){ const secs=orch?O.sections:S.song.sections, B=orch?4:METERS[S.meter].B, out=[]; let at=0; secs.forEach(sec=>{ out.push([+at.toFixed(4),sec.name]); at+=sec.bars*B; }); out.push([+at.toFixed(4),'End']); return out; }
+function flSetupHTML(){ return `<details class="fl-setup"${NATIVE.flSetupOpen?' open':''}><summary>One-time setup in FL Studio</summary><ol>
+  <li>In FL: <b>Options → MIDI Settings</b>.</li>
+  <li>In the <b>Input</b> list, click <b>Semitone Studio markers</b> and tick <b>Enable</b>.</li>
+  <li>Set <b>Controller type</b> to <b>Semitone Studio (user)</b>. Not in the list? Quit and reopen FL once, so it finds the script Semitone just installed.</li>
+  <li>Close the window and press <b>⚑ Send structure to FL</b> again.</li></ol>
+  <p class="muted">The markers start at bar 1 of the Playlist. FL can add markers but not remove them, so before sending a changed structure, delete the old ones (right-click a marker → Delete). Make FL’s tempo match the song first so the bars line up.</p></details>`; }
+function initFLMarkers(){ if(!NATIVE.plugin||NATIVE.host!=='FL Studio') return;
+  document.querySelectorAll('.sec-drag-hint').forEach(h=>h.insertAdjacentHTML('beforeend',flSetupHTML()));
+  document.addEventListener('click',e=>{ const b=e.target.closest&&e.target.closest('.fl-mk'); if(!b) return; const orch=!!b.dataset.orch; NATIVE.lastMkOrch=orch;
+    const h=NATIVE.hs, bpm=orch?O.bpm:S.bpm; if(h&&Math.abs(h.bpm-bpm)>=.5) toast(`FL is at ${Math.round(h.bpm)} BPM and the ${orch?'piece':'song'} at ${bpm}: the markers go on the right bars anyway, but the audio won’t line up until the tempos match`);
+    nEmit('st_markers',{markers:structureMarkers(orch)}); });
+  nOn('st_markers_done',d=>{ if(!d) return; const open=()=>document.querySelectorAll('.fl-setup').forEach(x=>x.open=true);
+    if(d.script===-1){ toast('Couldn’t find FL’s user data folder (Documents/Image-Line/FL Studio) to install the Semitone script'); return; }
+    if(!d.port){ toast('Markers need the Mac version for now (Windows needs a virtual MIDI port, such as loopMIDI)'); return; }
+    if(d.script===1){ NATIVE.flSetupOpen=true; open(); toast('Semitone’s FL script is installed: do the one-time setup below, then send again'); return; }
+    toast(`Sent ${d.sent} markers to FL. Nothing above the Playlist? Check the one-time setup below.`); }); }
 /* ---- plugin: drag song sections (or the whole song) from the structure bar onto the DAW timeline ---- */
 const SDRAG={b:null,x:0,y:0,sent:false,until:0,alt:false};
 function secFileBase(si,orch){ const s=(orch?O.sections:S.song.sections)[si]; return ((orch?(O.name||'Orchestral piece'):fileBase())+' - '+(si+1)+' '+s.name).replace(/[\\/:*?"<>|]/g,''); }
@@ -7281,7 +7301,8 @@ function secDragChip(orch){ return `<span class="sec-drag dx-sec" data-sall="1"$
 function initSectionDrag(){ if(!NATIVE.plugin) return;
   [['#timeline',false],['#oTimeline',true]].forEach(([sel,orch])=>{ const tl=$(sel); if(!tl) return;
     const hint=document.createElement('div'); hint.className='qhint sec-drag-hint'; hint.id=orch?'oSecDragHint':'secDragHint';
-    hint.innerHTML=`${dragChip(orch?'orch':'song','__struct','Structure only','#8a8a8a')} the section names as markers, no notes: a guide to arrange to. ${secDragChip(orch)} Or drag a section, or the whole ${orch?'piece':'song'}, onto the ${esc(NATIVE.host==='FL Studio'?'Playlist':'timeline')} as audio (hold ⌥ for MIDI).`;
+    const fl=NATIVE.host==='FL Studio';
+    hint.innerHTML=`${fl?`<button class="btn mini-btn fl-mk" data-orch="${orch?1:''}" title="Put a marker above FL’s Playlist at the start of every section">⚑ Send structure to FL</button>`:''}${dragChip(orch?'orch':'song','__struct','Structure only','#8a8a8a')} ${fl?'section markers for the Playlist, or a markers-only MIDI file':'the section names as markers, no notes: a guide to arrange to'}. ${secDragChip(orch)} Or drag a section, or the whole ${orch?'piece':'song'}, onto the ${esc(NATIVE.host==='FL Studio'?'Playlist':'timeline')} as audio (hold ⌥ for MIDI).`;
     tl.insertAdjacentElement('afterend',hint); });
   const startEl=e=>e.target.closest&&(e.target.closest('#timeline .sec')||e.target.closest('#oTimeline .sec')||e.target.closest('.dx-sec'));
   document.addEventListener('pointerdown',e=>{ const b=startEl(e); if(!b||e.button!==0) return; SDRAG.b=b; SDRAG.x=e.clientX; SDRAG.y=e.clientY; SDRAG.sent=false; SDRAG.alt=e.altKey; },true);

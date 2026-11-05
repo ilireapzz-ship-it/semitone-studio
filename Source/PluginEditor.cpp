@@ -2,6 +2,7 @@
 #include "BinaryData.h"
 #include "MacDrag.h"
 #include "SongFiles.h"
+#include "FLMarkers.h"
 
 SemitoneEditor::SemitoneEditor (SemitoneProcessor& p)
     : AudioProcessorEditor (p), proc (p), browser (makeOptions())
@@ -19,6 +20,7 @@ SemitoneEditor::SemitoneEditor (SemitoneProcessor& p)
     setSize (juce::jmax (720, w), juce::jmax (480, h));
     browser.goToURL (juce::WebBrowserComponent::getResourceProviderRoot());
     incoming.reserve (1024);
+    prepareMarkers();
     startTimerHz (60);
 }
 
@@ -78,6 +80,8 @@ juce::WebBrowserComponent::Options SemitoneEditor::makeOptions()
             proc.setStandaloneTransport ((bool) v.getProperty ("play", false), (double) v.getProperty ("beat", 0.0), (double) v.getProperty ("bpm", 120.0));
         })
         .withEventListener ("st_save", [this] (const juce::var& v) { saveFile (v.getProperty ("name", "Semitone export").toString(), v.getProperty ("b64", "").toString()); })
+        // song structure -> FL Studio Playlist markers, through Semitone's controller script
+        .withEventListener ("st_markers", [this] (const juce::var& v) { sendMarkers (v); })
         .withEventListener ("st_drag_audio", [this] (const juce::var& v) { dragAudio (v); })
         .withEventListener ("st_drag", [this] (const juce::var& v) { dragFile (v.getProperty ("name", "Semitone part.mid").toString(), v.getProperty ("b64", "").toString()); });
 }
@@ -295,6 +299,36 @@ void SemitoneEditor::dragAudio (const juce::var& v)
         if (! w->writeFromAudioSampleBuffer (buf, 0, total)) { dragDone (false, "write"); return; }
     }
     startDrag (f);
+}
+
+void SemitoneEditor::sendMarkers (const juce::var& v)
+{
+    auto* o = new juce::DynamicObject();
+    const int inst = st::flmarkers::installScript();
+    o->setProperty ("script", inst);                       // 1 installed now, 0 already there, -1 FL folder not found
+    o->setProperty ("scriptPath", st::flmarkers::scriptFile().getFullPathName());
+    auto* out = st::flmarkers::port();
+    int sent = 0;
+    if (out != nullptr)
+        if (auto* arr = v.getProperty ("markers", juce::var()).getArray())
+            for (const auto& m : *arr)
+                if (auto* a = m.getArray(); a != nullptr && a->size() >= 2)
+                {
+                    st::flmarkers::sendMarker (*out, (double) (*a)[0], (*a)[1].toString());
+                    ++sent;
+                    juce::Thread::sleep (2);   // let FL's MIDI input keep up
+                }
+    o->setProperty ("port", out != nullptr);
+    o->setProperty ("sent", sent);
+    browser.emitEventIfBrowserIsVisible ("st_markers_done", juce::var (o));
+}
+
+// make the port and the script exist as soon as Semitone opens in FL, so FL's MIDI settings list them
+void SemitoneEditor::prepareMarkers()
+{
+    if (! juce::PluginHostType().isFruityLoops()) return;
+    st::flmarkers::installScript();
+    st::flmarkers::port();
 }
 
 // ---------- songs as files ----------
