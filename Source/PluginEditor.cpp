@@ -100,6 +100,7 @@ juce::WebBrowserComponent::Options SemitoneEditor::makeOptions()
         .withEventListener ("st_host_scan", [this] (const juce::var&) { if (proc.host) proc.host->startScan(); })
         .withEventListener ("st_host_list", [this] (const juce::var&) { sendHostList(); })
         .withEventListener ("st_host_load", [this] (const juce::var& v) { if (proc.host) proc.host->load ((int) v.getProperty ("ch", 0), v.getProperty ("id", "").toString(), v.getProperty ("state", "").toString()); })
+        .withEventListener ("st_host_test", [this] (const juce::var& v) { if (proc.host) proc.host->testNote ((int) v.getProperty ("ch", 0)); })
         .withEventListener ("st_host_open", [this] (const juce::var& v) { if (proc.host) proc.host->openWindow ((int) v.getProperty ("ch", 0)); })
         .withEventListener ("st_host_state", [this] (const juce::var& v)
         {

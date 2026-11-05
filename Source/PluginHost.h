@@ -43,7 +43,7 @@ public:
         sr = rate; bs = juce::jmax (32, blockSize);
         const juce::SpinLock::ScopedLockType sl (lock);
         for (auto& i : inst) if (i) { i->releaseResources(); i->setRateAndBufferSizeDetails (sr, bs); i->prepareToPlay (sr, bs); }
-        temp.setSize (2, bs * 2, false, false, true);
+        temp.setSize (maxChannels, bs * 2, false, false, true);
     }
 
     void startScan()
@@ -75,7 +75,10 @@ public:
         fm.createPluginInstanceAsync (*d, sr, bs, [this, ch, stateB64] (std::unique_ptr<juce::AudioPluginInstance> p, const juce::String& err)
         {
             if (p == nullptr) { if (onLoaded) onLoaded (ch, false, err); return; }
-            p->enableAllBuses();
+            // just the main stereo output: big instruments offer dozens of extra outputs and side inputs
+            for (int i = p->getBusCount (true) - 1; i >= 0; --i) p->getBus (true, i)->enable (false);
+            for (int i = p->getBusCount (false) - 1; i >= 1; --i) p->getBus (false, i)->enable (false);
+            if (auto* main = p->getBus (false, 0)) main->enable (true);
             p->setRateAndBufferSizeDetails (sr, bs);
             if (stateB64.isNotEmpty()) { juce::MemoryBlock mb; if (mb.fromBase64Encoding (stateB64)) p->setStateInformation (mb.getData(), (int) mb.getSize()); }
             p->prepareToPlay (sr, bs);
@@ -107,6 +110,8 @@ public:
         return mb.toBase64Encoding();
     }
 
+    void testNote (int ch) { testCh = ch; }
+
     bool hasAny() const { for (const auto& i : inst) if (i) return true; return false; }
 
     // Audio thread: skips the block if a plug-in is being swapped.
@@ -121,8 +126,9 @@ public:
             midi.clear();
             for (const auto& e : events)
                 if ((e.status & 15) == ch) midi.addEvent (juce::MidiMessage (e.status & 0xF0, e.d1, e.d2), e.offset);
-            const int outs = juce::jmax (2, p->getTotalNumOutputChannels());
-            if (temp.getNumChannels() < outs) continue;
+            if (testCh.load() == ch) { testCh = -1; heldCh = ch; heldLeft = (int) (sr * .7); midi.addEvent (juce::MidiMessage (0x90, 60, 100), 0); }
+            if (heldCh == ch && (heldLeft -= n) <= 0) { heldCh = -1; midi.addEvent (juce::MidiMessage (0x80, 60, 0), 0); }
+            const int outs = juce::jlimit (2, maxChannels, juce::jmax (p->getTotalNumOutputChannels(), p->getTotalNumInputChannels()));
             juce::AudioBuffer<float> view (temp.getArrayOfWritePointers(), outs, n);
             view.clear();
             p->processBlock (view, midi);
@@ -167,7 +173,10 @@ private:
     std::array<std::unique_ptr<juce::AudioPluginInstance>, 16> inst;
     std::array<std::unique_ptr<HostWindow>, 16> windows;
     juce::SpinLock lock;
-    juce::AudioBuffer<float> temp { 8, 8192 };
+    std::atomic<int> testCh { -1 };
+    int heldCh = -1, heldLeft = 0;
+    static constexpr int maxChannels = 128;
+    juce::AudioBuffer<float> temp { maxChannels, 8192 };
     juce::MidiBuffer midi;
 };
 }
