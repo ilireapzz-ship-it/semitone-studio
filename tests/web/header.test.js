@@ -12,9 +12,9 @@ const {chromium}=require('playwright'); const url='file://'+require('path').reso
  const q=await p.evaluate(()=>{ recipeSet('producer','antonoff','x'); const id=(TL.d.producers.find(x=>/antonoff/.test(x.id+x.tags[0]))||TL.d.producers[0]).id; recipeSet('producer',id,'x'); return {id,t:recipeWords().find(x=>x.k==='producer').t}; });
  ok(!!q.t,'producer shows in the sentence: '+q.t); await p.evaluate(()=>{ passOpen(); }); await p.waitForTimeout(200); ok(await p.evaluate(()=>PASS.q&&PASS.q.id)===q.id,'the pass opens on the recipe producer'); await p.evaluate(()=>{ passDiscard(); }); await p.waitForTimeout(150);
  // lenses
- await p.click('#lensProduce'); ok(await p.evaluate(()=>!$('#trLens').hidden&&!$('#view-compose').hidden),'Produce shows its transport tools');
- await p.click('#lensMix'); await p.waitForTimeout(150); ok(await p.evaluate(()=>location.hash==='#mix'&&$('#lensMix').getAttribute('aria-selected')==='true'),'Mix lens');
- await p.click('#lensWrite'); await p.waitForTimeout(150); ok(await p.evaluate(()=>!$('#view-compose').hidden&&$('#trLens').hidden),'Write lens');
+ await p.click('#lensProduce'); ok(await p.evaluate(()=>$('#lensProduce').getAttribute('aria-selected')==='true'&&!$('#view-compose').hidden),'Produce lens');
+ await p.click('#lensMix'); await p.waitForTimeout(150); ok(await p.evaluate(()=>$('#lensMix').getAttribute('aria-selected')==='true'&&!$('#view-compose').hidden&&$('#cMix').getClientRects().length>0),'Mix lens shows the strips in the drawer, on the same timeline');
+ await p.click('#lensWrite'); await p.waitForTimeout(150); ok(await p.evaluate(()=>!$('#view-compose').hidden&&$('#cMix').getClientRects().length===0),'Write lens leaves the mixer');
  // time display
  const lcd=await p.evaluate(async()=>{ S.bpm=120; play('song'); await new Promise(r=>setTimeout(r,500)); const a=$('#songTime').textContent, bar=$('#trBar').textContent, lab=$('#songBtn').getAttribute('aria-label'); stopPlay(); return {a,bar,lab,lab2:$('#songBtn').getAttribute('aria-label')}; });
  console.log(JSON.stringify(lcd)); ok(/^\d\d:\d\d\.\d$/.test(lcd.a)&&/^\d+ \. \d+ \. \d+$/.test(lcd.bar),'time and bar.beat.tick'); ok(lcd.lab==='Stop'&&lcd.lab2==='Play the song','play button changes');

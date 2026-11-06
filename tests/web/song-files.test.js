@@ -11,7 +11,7 @@ const {chromium}=require('playwright');
  const sv=await last('st_song_save'); console.log('save req',sv.name,sv.saveAs,sv.json.length);
  await p.evaluate(()=>__fire('st_song_saved',{ok:true,path:'/Users/j/Songs/Summer Ghost.semitone',name:'Summer Ghost',recent:[{path:'/Users/j/Songs/Summer Ghost.semitone',name:'Summer Ghost'},{path:'/Users/j/Songs/Old one.semitone',name:'Old one'}]})); await p.waitForTimeout(1300);
  console.log('after save title',(await last('st_title')).title,'| info',await p.evaluate(()=>$('#projInfo').textContent));
- await p.evaluate(()=>shellDock('roll')); await p.waitForTimeout(100); await p.click('#newBtn'); await p.waitForTimeout(1300); console.log('after edit title',(await last('st_title')).title,'| info',await p.evaluate(()=>$('#projInfo').textContent));
+ await p.evaluate(()=>shellDock('roll')); await p.waitForTimeout(100); await p.evaluate(()=>$('#newBtn').click()); await p.waitForTimeout(1300); console.log('after edit title',(await last('st_title')).title,'| info',await p.evaluate(()=>$('#projInfo').textContent));
  await p.keyboard.press('Meta+s'); await p.waitForTimeout(100); console.log('2nd save saveAs?',(await last('st_song_save')).saveAs);
  const json=sv.json; await p.evaluate(j=>__fire('st_song_opened',{ok:true,json:j,path:'/Users/j/Songs/Old one.semitone',name:'Old one',recent:[]}),json); await p.waitForTimeout(1300);
  console.log('opened: name',await p.evaluate(()=>$('#projName').value),'title',(await last('st_title')).title,'seed',await p.evaluate(()=>S.seed));
