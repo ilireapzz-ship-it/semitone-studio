@@ -1,0 +1,824 @@
+{
+  "version": 1,
+  "about": "What each kind of part does in a song, how Semitone writes it, how it should sit in the mix, what the song doctor checks, and which extra parts each style and producer tends to use. Read by Add a part, producer passes, emotion rules, the song doctor, the mix and the lessons. Style and producer notes describe musical habits, based on how they're known to work; they never copy melodies, lyrics or recordings. Agreed with Jamie 6 Nov 2026.",
+  "roles": {
+    "lead": {
+      "name": "Melody",
+      "family": "melody",
+      "core": true,
+      "does": "Carries the song: the line the singer sings and the hook people remember.",
+      "register": [
+        55,
+        79
+      ],
+      "density": "medium",
+      "relation": "the reference every other part is measured against",
+      "mix": {
+        "levelVsLead": 0,
+        "pan": 0,
+        "eq": "presence 2–5 kHz; nothing else may mask this band while the lead sings"
+      }
+    },
+    "counter": {
+      "name": "Counter melody",
+      "family": "melody",
+      "does": "A second melody that answers the lead: it moves when the lead rests or holds, and holds when the lead moves.",
+      "register": [
+        52,
+        84
+      ],
+      "density": "low–medium",
+      "relation": "complementary rhythm, mostly a 3rd or 6th away, contrary or oblique motion",
+      "sections": "verse 2 onwards and choruses; rarely verse 1, which should stay bare",
+      "mix": {
+        "levelVsLead": -5,
+        "pan": "opposite side to any panned guitar, 20–40% off centre",
+        "eq": "dip 2–4 kHz by 2 dB while the lead sings"
+      }
+    },
+    "harmony": {
+      "name": "Harmony / backing vocal",
+      "family": "melody",
+      "does": "Sings with the lead on the same words, usually a diatonic 3rd above or a 6th below, to make a line feel bigger.",
+      "register": [
+        52,
+        84
+      ],
+      "density": "follows the lead",
+      "relation": "parallel to the lead, same rhythm and lyrics",
+      "sections": "choruses and the last line of a verse; whole song only for stacked styles",
+      "mix": {
+        "levelVsLead": -7,
+        "pan": "doubled pair at ±40–70%",
+        "eq": "high-pass 150 Hz, softer 3 kHz than the lead"
+      }
+    },
+    "double": {
+      "name": "Double / octave",
+      "family": "melody",
+      "does": "The same line again, in unison or an octave away, to thicken or brighten it.",
+      "register": "lead ± 12",
+      "density": "follows the source",
+      "relation": "linked copy of a part",
+      "mix": {
+        "levelVsLead": -9,
+        "pan": "unison doubles wide (±60%), octave doubles centre"
+      }
+    },
+    "chords": {
+      "name": "Chords",
+      "family": "harmony",
+      "core": true,
+      "does": "Plays the harmony and sets the colour of each section.",
+      "register": [
+        48,
+        72
+      ],
+      "density": "medium",
+      "relation": "voicings stay below the lead's lowest note in its range",
+      "mix": {
+        "levelVsLead": -6,
+        "pan": "wide or stereo",
+        "eq": "cut 2–4 kHz under the lead"
+      }
+    },
+    "pad": {
+      "name": "Pad / strings bed",
+      "family": "harmony",
+      "does": "Long held notes that glue the chords together and fill the space without drawing attention.",
+      "register": [
+        48,
+        76
+      ],
+      "density": "very low",
+      "relation": "holds chord tones, smallest movement between chords (voice leading)",
+      "sections": "builds: choruses, bridges, last chorus; often out in verse 1",
+      "mix": {
+        "levelVsLead": -12,
+        "pan": "wide",
+        "eq": "high-pass 200 Hz, gentle low-pass"
+      }
+    },
+    "arp": {
+      "name": "Arpeggio",
+      "family": "harmony",
+      "does": "Plays the chord one note at a time in a repeating pattern, adding motion and pulse.",
+      "register": [
+        55,
+        88
+      ],
+      "density": "high",
+      "relation": "chord tones only, pattern locked to the grid (8ths or 16ths)",
+      "mix": {
+        "levelVsLead": -9,
+        "pan": "slightly off centre or ping-pong",
+        "eq": "high-pass 250 Hz"
+      }
+    },
+    "bass": {
+      "name": "Bass",
+      "family": "low",
+      "core": true,
+      "does": "Roots the harmony and locks with the kick.",
+      "register": [
+        28,
+        52
+      ],
+      "density": "medium",
+      "relation": "root or chord tone on beat 1 of each chord",
+      "mix": {
+        "levelVsLead": -3,
+        "pan": 0,
+        "eq": "mono below 120 Hz"
+      }
+    },
+    "bass2": {
+      "name": "Second bass",
+      "family": "low",
+      "does": "A second low part: a sub under the bass, an octave above it, or a synth bass layered with a real one.",
+      "register": [
+        24,
+        60
+      ],
+      "density": "low",
+      "relation": "kinds: sub (octave below, sine, follows roots), octave (above, brighter), layer (same notes, other sound)",
+      "sections": "usually choruses and drops; out in verses so the low end breathes",
+      "mix": {
+        "levelVsLead": -6,
+        "pan": 0,
+        "eq": "sub: only below 80 Hz and high-pass the main bass at ~60 Hz; octave: high-pass 120 Hz"
+      }
+    },
+    "drums": {
+      "name": "Drums",
+      "family": "rhythm",
+      "core": true,
+      "does": "The groove and the energy of each section.",
+      "mix": {
+        "levelVsLead": -2,
+        "pan": "kit image",
+        "eq": "kick and bass share the low end: duck one under the other"
+      }
+    },
+    "perc": {
+      "name": "Extra percussion",
+      "family": "rhythm",
+      "does": "Shaker, tambourine, claps or toms that lift a section without changing the beat.",
+      "density": "high",
+      "relation": "off-beats and 16ths the kit leaves empty",
+      "sections": "choruses and builds",
+      "mix": {
+        "levelVsLead": -14,
+        "pan": "±50%",
+        "eq": "high-pass 400 Hz"
+      }
+    },
+    "texture": {
+      "name": "Texture / FX",
+      "family": "colour",
+      "does": "Risers, reverses, field sounds and swells that mark changes between sections.",
+      "sections": "the last bar before a new section",
+      "mix": {
+        "levelVsLead": -12,
+        "pan": "wide"
+      }
+    },
+    "loop": {
+      "name": "Loop",
+      "family": "colour",
+      "does": "A dropped-in audio loop (e.g. from Splice), fitted to the song's tempo and key.",
+      "mix": {
+        "levelVsLead": -8,
+        "pan": "as recorded",
+        "eq": "high-pass 150 Hz unless it is a bass or drum loop"
+      }
+    },
+    "audio": {
+      "name": "Audio part",
+      "family": "recorded",
+      "does": "A recorded voice or instrument; its role (lead, harmony, guitar, …) is chosen when recording."
+    }
+  },
+  "generate": {
+    "counter": {
+      "steps": [
+        "Find the gaps: beats where the lead rests, holds a note longer than a beat, or the phrase ends.",
+        "Put the counter's movement in those gaps; while the lead moves, the counter holds or rests.",
+        "Choose notes from the current chord first, then the scale; on strong beats use chord tones.",
+        "Keep it a 3rd, 6th or 10th from the lead when both sound; never a minor 2nd, major 7th or minor 9th on a strong beat.",
+        "Prefer contrary or oblique motion to the lead; avoid parallel 5ths and octaves with it.",
+        "Stay in its own register: at least a 4th below or above the lead's tessitura, never crossing it for more than a beat.",
+        "Echo one small rhythmic or melodic idea from the hook so it sounds related, not random.",
+        "Thin it in verses, fullest in the last chorus."
+      ],
+      "variants": [
+        "answer (call and response, default)",
+        "descant (above the lead, choruses)",
+        "inner line (between lead and chords, slow)",
+        "riff (repeating 1–2 bar figure)"
+      ]
+    },
+    "harmony": {
+      "steps": [
+        "Copy the lead's rhythm and lyrics.",
+        "Move each note to the diatonic 3rd above (or 6th below); if that clashes with the chord, use the nearest chord tone.",
+        "Smooth leaps bigger than a 4th that the lead doesn't make.",
+        "Only on the lines the style harmonises (see styleParts); default: chorus lines and the last line of a verse."
+      ]
+    },
+    "bass2": {
+      "steps": [
+        "Sub: one octave under Bass, roots only, sustained, sine or triangle.",
+        "Octave: one octave above, same rhythm, brighter sound.",
+        "Layer: same notes, a different sound (e.g. synth on real bass).",
+        "Default sections: choruses and drops; out in verses."
+      ]
+    },
+    "arp": {
+      "steps": [
+        "Take the chord tones in the arp's register.",
+        "Pattern by style: up, up-down, broken (1-5-8-10), or pedal (root between each tone).",
+        "Rate by tempo: 16ths under 100 BPM, 8ths above 120 BPM.",
+        "Re-voice at each chord change with the smallest movement."
+      ]
+    },
+    "pad": {
+      "steps": [
+        "Hold the chord's 3rd and 7th (or 5th) for the whole chord.",
+        "Move each voice to the nearest tone of the next chord.",
+        "Open in the chorus (wider spread), close in the verse."
+      ]
+    },
+    "perc": {
+      "steps": [
+        "Fill the 16ths or off-beats the drums leave empty.",
+        "Shaker or tambourine in choruses, claps on 2 and 4 in builds."
+      ]
+    },
+    "layer": {
+      "steps": [
+        "A linked copy of another part: same notes, its own sound, octave, level, effects and sections.",
+        "Unlink to make an independent copy."
+      ]
+    }
+  },
+  "doctor": [
+    {
+      "id": "clash",
+      "check": "A minor 2nd, major 7th or minor 9th between the lead and any melody-family part on a strong beat.",
+      "fix": "Move the other part to the nearest chord tone."
+    },
+    {
+      "id": "mask",
+      "check": "A counter or harmony sits within 2 semitones of the lead's register for more than two bars while both sound.",
+      "fix": "Move it an octave, or into the lead's gaps."
+    },
+    {
+      "id": "busy",
+      "check": "Lead and counter both move (notes shorter than a beat) at the same time for more than a bar.",
+      "fix": "Hold the counter while the lead moves."
+    },
+    {
+      "id": "parallel",
+      "check": "Parallel 5ths or octaves between lead and counter (shown as a taste note, not an error).",
+      "fix": "Use contrary motion on one of them."
+    },
+    {
+      "id": "mud",
+      "check": "Two low parts (bass, bass2, low pad) both above −18 dB below 150 Hz in the same section.",
+      "fix": "High-pass one, or drop Bass 2 in that section."
+    },
+    {
+      "id": "crowd",
+      "check": "More than three melody-family parts sound at once.",
+      "fix": "Mute one for that section, or make it a layer."
+    },
+    {
+      "id": "noroom",
+      "check": "An extra part plays in verse 1 and every later section, so nothing builds.",
+      "fix": "Bring it in later."
+    }
+  ],
+  "emotion": {
+    "euphoric": {
+      "add": [
+        "harmony in chorus",
+        "counter descant in last chorus",
+        "arp or perc in chorus"
+      ],
+      "mix": "widen extra parts on the chorus downbeat"
+    },
+    "melancholy": {
+      "add": [
+        "counter inner line, slow",
+        "pad, close voicing"
+      ],
+      "remove": [
+        "perc"
+      ]
+    },
+    "intimate": {
+      "remove": [
+        "counter",
+        "harmony",
+        "perc",
+        "bass2"
+      ],
+      "keep": "lead, one chord part, maybe bass"
+    },
+    "hopeful": {
+      "add": [
+        "counter answer rising at phrase ends",
+        "pad opening up"
+      ]
+    },
+    "tense": {
+      "add": [
+        "arp pedal on the root",
+        "texture riser"
+      ],
+      "remove": [
+        "harmony"
+      ]
+    },
+    "nostalgic": {
+      "add": [
+        "counter on a vintage keys or strings sound",
+        "double an octave up on the hook"
+      ]
+    },
+    "dreamy": {
+      "add": [
+        "pad wide",
+        "arp slow, lots of echo",
+        "double of the lead an octave up, quiet"
+      ]
+    },
+    "angry": {
+      "add": [
+        "bass2 octave or distorted layer",
+        "double of the lead in unison"
+      ],
+      "remove": [
+        "pad"
+      ]
+    },
+    "triumphant": {
+      "add": [
+        "harmony in chorus",
+        "counter descant in last chorus",
+        "bass2 octave in last chorus"
+      ],
+      "mix": "everything wider and brighter in the last chorus"
+    },
+    "heartbroken": {
+      "add": [
+        "counter inner line, slow, late in the song"
+      ],
+      "remove": [
+        "perc",
+        "arp"
+      ]
+    },
+    "tender": {
+      "add": [
+        "pad, very quiet"
+      ],
+      "remove": [
+        "perc",
+        "bass2",
+        "harmony in verses"
+      ]
+    },
+    "hazy": {
+      "add": [
+        "pad wide, low-passed",
+        "double of the lead, detuned and quiet"
+      ]
+    },
+    "dark": {
+      "add": [
+        "bass2 sub",
+        "pad low and close",
+        "texture drone"
+      ]
+    },
+    "defiant": {
+      "add": [
+        "double of the lead in unison",
+        "harmony a 4th or 5th on the hook"
+      ]
+    },
+    "playful": {
+      "add": [
+        "counter riff, short and bouncy",
+        "perc"
+      ]
+    },
+    "sultry": {
+      "add": [
+        "counter answer, slow, on a breathy sound"
+      ],
+      "remove": [
+        "arp"
+      ]
+    },
+    "romantic": {
+      "add": [
+        "counter descant on strings in the chorus",
+        "pad"
+      ]
+    },
+    "cinematic": {
+      "add": [
+        "pad strings",
+        "arp ostinato",
+        "texture swells"
+      ]
+    },
+    "lonely": {
+      "remove": [
+        "harmony",
+        "counter",
+        "perc"
+      ],
+      "keep": "one sparse part and the lead"
+    },
+    "anxious": {
+      "add": [
+        "arp fast pedal",
+        "texture"
+      ],
+      "remove": [
+        "pad"
+      ]
+    }
+  },
+  "partMoves": {
+    "about": "Producer-pass and emotion moves that add, change or remove parts. Grammar: add:<role>[:<variant>]@<where>, layer:<part>:<sound>@<where>, drop:<role>@<where>, thin:<role>@<where>. <where> uses the same section words as other moves (verse1, chorus, last-chorus, all). Each added part is suggested with a reason and its own switch, like any move.",
+    "examples": [
+      "add:counter:answer@verse2,chorus",
+      "add:harmony@chorus",
+      "add:bass2:sub@chorus",
+      "layer:lead:i:strings@chorus",
+      "drop:counter@verse1",
+      "thin:arp@verse"
+    ]
+  },
+  "styleParts": {
+    "chappell": {
+      "extras": [
+        "harmony",
+        "arp",
+        "double"
+      ],
+      "notes": "Big stacked backing vocals and harmonies in choruses; 80s synth arps and bright synth counter lines.",
+      "moves": [
+        "add:harmony@chorus",
+        "add:arp@chorus"
+      ]
+    },
+    "gaga": {
+      "extras": [
+        "harmony",
+        "bass2",
+        "arp"
+      ],
+      "notes": "Stacked vocal harmonies, synth bass doubling the bass in choruses, sequenced synth arps.",
+      "moves": [
+        "add:bass2:layer@chorus",
+        "add:harmony@chorus"
+      ]
+    },
+    "gaga-joanne": {
+      "extras": [
+        "harmony",
+        "counter"
+      ],
+      "notes": "Acoustic and country-rock: harmony a 3rd above in choruses, guitar fills answering the vocal.",
+      "moves": [
+        "add:counter:answer@verse2,chorus"
+      ]
+    },
+    "gaga-mayhem": {
+      "extras": [
+        "bass2",
+        "harmony",
+        "double"
+      ],
+      "notes": "Layered synth and live bass, doubled vocals, guitars as counter riffs.",
+      "moves": [
+        "add:bass2:layer@chorus",
+        "add:counter:riff@chorus"
+      ]
+    },
+    "fleetwood": {
+      "extras": [
+        "harmony",
+        "counter"
+      ],
+      "notes": "Three-part vocal harmonies are central; lead guitar lines answer the vocal; melodic bass moves between chord tones.",
+      "moves": [
+        "add:harmony@chorus",
+        "add:counter:answer@verse2,chorus"
+      ]
+    },
+    "fleetwood-blues": {
+      "extras": [
+        "counter"
+      ],
+      "notes": "Blues guitar fills in call and response with the vocal at the end of each line.",
+      "moves": [
+        "add:counter:answer@all"
+      ]
+    },
+    "rhcp": {
+      "extras": [
+        "counter",
+        "harmony"
+      ],
+      "notes": "The bass often acts as a second melody; guitar fills answer the vocal; high falsetto backing harmonies in choruses.",
+      "moves": [
+        "add:harmony@chorus",
+        "add:counter:answer@chorus"
+      ]
+    },
+    "rhcp-funk": {
+      "extras": [
+        "counter"
+      ],
+      "notes": "Busy slap bass as the counter line; funk guitar stabs in the gaps.",
+      "moves": [
+        "add:counter:riff@all"
+      ]
+    },
+    "tiersen": {
+      "extras": [
+        "counter",
+        "arp"
+      ],
+      "notes": "Accordion, toy piano or glockenspiel counter melodies over a repeating piano or strings figure.",
+      "moves": [
+        "add:counter:descant@chorus",
+        "add:arp@all"
+      ]
+    },
+    "tiersen-piano": {
+      "extras": [
+        "counter",
+        "arp"
+      ],
+      "notes": "Left hand ostinato with a right-hand counter melody; layers added one at a time each repeat.",
+      "moves": [
+        "add:arp@all",
+        "add:counter:inner@verse2,chorus"
+      ]
+    },
+    "tiersen-postrock": {
+      "extras": [
+        "double",
+        "pad",
+        "texture"
+      ],
+      "notes": "Tremolo guitar layers that build and stack towards a climax.",
+      "moves": [
+        "layer:chords:i:tremguitar@chorus",
+        "add:pad@last-chorus"
+      ]
+    },
+    "strangerthings": {
+      "extras": [
+        "arp",
+        "pad",
+        "bass2"
+      ],
+      "notes": "Analogue synth arpeggios, long pads and a pulsing bass ostinato.",
+      "moves": [
+        "add:arp@all",
+        "add:pad@chorus"
+      ]
+    },
+    "jazz": {
+      "extras": [
+        "counter"
+      ],
+      "notes": "Horn or piano answers between vocal phrases; walking bass; comping fills the gaps.",
+      "moves": [
+        "add:counter:answer@all"
+      ]
+    },
+    "charli": {
+      "extras": [
+        "bass2",
+        "double",
+        "texture"
+      ],
+      "notes": "Distorted sub bass under the bass, pitched vocal doubles, glitchy FX between sections.",
+      "moves": [
+        "add:bass2:sub@chorus",
+        "add:texture@chorus"
+      ]
+    },
+    "charli-pop": {
+      "extras": [
+        "bass2",
+        "double"
+      ],
+      "notes": "Bright synth stabs, pitched vocal layers, heavy sub in drops.",
+      "moves": [
+        "add:bass2:sub@chorus"
+      ]
+    },
+    "charli-pop2": {
+      "extras": [
+        "bass2",
+        "double",
+        "arp"
+      ],
+      "notes": "Hyperpop: detuned synth arps, distorted sub, stacked pitched vocals.",
+      "moves": [
+        "add:bass2:sub@chorus",
+        "add:arp@chorus"
+      ]
+    },
+    "charli-mff": {
+      "extras": [
+        "bass2",
+        "texture"
+      ],
+      "notes": "Club-leaning: sub bass layer and FX risers into drops.",
+      "moves": [
+        "add:bass2:sub@chorus",
+        "add:texture@chorus"
+      ]
+    },
+    "lana-btd": {
+      "extras": [
+        "pad",
+        "counter",
+        "harmony"
+      ],
+      "notes": "Orchestral strings as a bed and as counter lines, stacked backing vocals, hip-hop drums.",
+      "moves": [
+        "add:pad@chorus",
+        "add:counter:descant@chorus",
+        "add:harmony@chorus"
+      ]
+    },
+    "lana-uv": {
+      "extras": [
+        "counter"
+      ],
+      "notes": "Reverb-heavy guitar lines answering the vocal; sparse, few extra parts; room to breathe.",
+      "moves": [
+        "add:counter:answer@verse2,chorus",
+        "drop:harmony@verse"
+      ]
+    },
+    "lana-honeymoon": {
+      "extras": [
+        "pad",
+        "counter"
+      ],
+      "notes": "Slow strings and brass swells as a bed, sustained counter lines under the vocal.",
+      "moves": [
+        "add:pad@all",
+        "add:counter:inner@chorus"
+      ]
+    },
+    "lana-nfr": {
+      "extras": [
+        "harmony",
+        "double",
+        "counter"
+      ],
+      "notes": "Piano-led with stacked, doubled backing vocals and slide or Mellotron colour lines.",
+      "moves": [
+        "add:harmony@chorus",
+        "add:counter:answer@chorus"
+      ]
+    },
+    "lana-bb": {
+      "extras": [
+        "counter"
+      ],
+      "notes": "Mostly piano and voice; at most one gentle counter line or soft strings late in the song.",
+      "moves": [
+        "add:counter:inner@last-chorus"
+      ]
+    },
+    "cinematic": {
+      "extras": [
+        "counter",
+        "pad",
+        "arp",
+        "texture"
+      ],
+      "notes": "String counter lines, ostinato arps, brass and choir swells, risers into big moments.",
+      "moves": [
+        "add:arp@all",
+        "add:counter:descant@chorus",
+        "add:texture@chorus"
+      ]
+    },
+    "country": {
+      "extras": [
+        "harmony",
+        "counter"
+      ],
+      "notes": "Harmony vocal a 3rd above in choruses; fiddle, pedal steel or dobro fills answering each vocal line.",
+      "moves": [
+        "add:harmony@chorus",
+        "add:counter:answer@all"
+      ]
+    },
+    "edm": {
+      "extras": [
+        "bass2",
+        "arp",
+        "double",
+        "texture"
+      ],
+      "notes": "Sub plus mid bass (two basses), plucky arps, supersaw layers on the hook, risers into drops.",
+      "moves": [
+        "add:bass2:sub@chorus",
+        "add:arp@chorus",
+        "add:texture@chorus"
+      ]
+    },
+    "psych": {
+      "extras": [
+        "counter",
+        "pad",
+        "texture",
+        "harmony"
+      ],
+      "notes": "Fuzz or organ counter riffs, swirling pads, reversed FX, close harmonies.",
+      "moves": [
+        "add:counter:riff@chorus",
+        "add:pad@all"
+      ]
+    }
+  },
+  "producerParts": {
+    "antonoff": {
+      "notes": "Doubled and octave-stacked vocals, one synth family layered across parts, big room drums in choruses.",
+      "moves": [
+        "layer:lead:double-octave@chorus",
+        "add:harmony@last-chorus"
+      ]
+    },
+    "maxmartin": {
+      "notes": "Every section has a hook: post-chorus vocal hooks, harmonies that lift the pre-chorus, a counter hook in the last chorus.",
+      "moves": [
+        "add:harmony@pre",
+        "add:counter:descant@last-chorus"
+      ]
+    },
+    "finneas": {
+      "notes": "Minimal: whispered doubles close to the lead, a deep sub under sparse parts, few extra lines.",
+      "moves": [
+        "layer:lead:double@chorus",
+        "add:bass2:sub@chorus",
+        "drop:counter@verse"
+      ]
+    },
+    "mikedean": {
+      "notes": "Lush synth pads and expressive analogue synth lead lines as counter melodies or solos.",
+      "moves": [
+        "add:pad@all",
+        "add:counter:answer@chorus"
+      ]
+    },
+    "redone": {
+      "notes": "Synth stabs and chant-like group vocals on the hook, heavy synth bass layers.",
+      "moves": [
+        "add:harmony@chorus",
+        "add:bass2:layer@chorus"
+      ]
+    },
+    "rubin": {
+      "notes": "Strips songs back: removes extra parts so the voice and one instrument carry it.",
+      "moves": [
+        "drop:counter@all",
+        "drop:pad@verse",
+        "drop:bass2@all"
+      ]
+    },
+    "nigro": {
+      "notes": "Stacked theatrical harmonies and guitar layers that grow through the song.",
+      "moves": [
+        "add:harmony@chorus",
+        "add:counter:riff@last-chorus"
+      ]
+    },
+    "agcook": {
+      "notes": "Pitched vocal layers, glossy synth arps and distorted sub bass.",
+      "moves": [
+        "layer:lead:double-octave@chorus",
+        "add:arp@chorus",
+        "add:bass2:sub@chorus"
+      ]
+    }
+  }
+}

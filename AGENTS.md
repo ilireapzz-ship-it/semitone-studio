@@ -10,6 +10,28 @@ one drawer, one Session panel, popovers, a premium look, borrowed DAW ideas (Cap
 **Read `docs/design/merged/README.md`.** It is the spec, with pictures and a build order. Where it disagrees with
 the older `docs/design/N-*.png` screens or the design notes below, the merged design wins.
 
+### The brain for open-ended parts: `data/part-roles.json` (6 Nov 2026)
+With any number of parts, every smart feature has to reason by **role**, not by the four fixed parts. The file
+(embedded as `partRoles`, checked by `check_style_data.py`) holds:
+- `roles`: what each kind of part does (lead, counter, harmony, double, chords, pad, arp, bass, bass2, drums, perc, texture,
+  loop, audio), its register, density, relation to the lead, sections, and mix defaults (level vs lead, pan, EQ).
+- `generate`: the rules "Write it for me" follows for counter melody, harmony, second bass, arp, pad, perc and layers. A counter
+  melody moves in the lead's gaps, stays a 3rd or 6th away, uses contrary motion, keeps its own register, and echoes the hook.
+- `doctor`: new song-doctor checks between parts (clash, mask, busy, parallel, mud, crowd, noroom).
+- `emotion`: which parts each emotion adds or removes (all 20 emotions in sound-library).
+- `partMoves`: the grammar producer passes and emotion moves use to add, layer, drop or thin parts:
+  `add:counter:answer@verse2,chorus`, `layer:lead:i:strings@chorus`, `drop:bass2@verse`.
+- `styleParts` (all 26 profiles) and `producerParts` (all 8 producers): the extra parts each style and producer tends to use,
+  with moves. These are habits, based on how they're known to work, never copied lines.
+What to change in code when open-ended parts land (design step 5):
+- Parts carry a `role`. `PASS_PART`, `passOp`, `FEEL_DO`, the song doctor, the mix, `nativeSoundInfo`, MIDI/stems export and
+  `PartHost` work over every part and pick parts by role.
+- `passOp` understands `add:` / `layer:` / `drop:` / `thin:`. Each added part is a suggested move with its own switch and its own undo step.
+- Profiles' free-text `arrangement.extras` stay for the cards; `styleParts` is what code reads.
+Also fix: `check_style_data.py` reports 3 ISSUES from the plug-in producer moves (`plug-sweep`, `plug-dark-verse`,
+`plug-climb` have empty `src`). Give each a source from that producer's existing sources, or mark it as a stand-in the
+way other guesses are.
+
 ## Start here (handover, 5 Nov 2026)
 You can't open Jamie's claude.ai design canvas or plan doc, so copies are in the repo:
 - **Design:** `docs/design/1-Start.png` … `7-Sounds.png` are the target screens (Start, Song view, Record, Mix,

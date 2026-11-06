@@ -90,6 +90,25 @@ for k,v in L.get('artistEras',{}).items():
     if k=='about': continue
     for e in v['eras']:
         if e not in [p['id'] for p in L['profiles']]: I(f"artistEras {k}: {e} missing")
+# part roles (data/part-roles.json)
+R=json.load(open('data/part-roles.json'))
+pids=[p['id'] for p in L['profiles']]; prids=[p['id'] for p in L['producers']]
+for k,v in R['styleParts'].items():
+    if k not in pids: I(f"part-roles styleParts: {k} is not a profile")
+    for x in v['extras']:
+        if x not in R['roles']: I(f"part-roles styleParts {k}: role {x} unknown")
+for k in pids:
+    if k not in R['styleParts']: W(f"part-roles: profile {k} has no styleParts")
+for k in R['producerParts']:
+    if k not in prids: I(f"part-roles producerParts: {k} is not a producer")
+import re as _re
+for k,v in list(R['styleParts'].items())+list(R['producerParts'].items()):
+    for m in v['moves']:
+        g=_re.match(r'(add|drop|thin):(\w+)',m)
+        if g and g.group(2) not in R['roles']: I(f"part-roles {k}: move {m} uses unknown role")
+        if not _re.match(r'(add|drop|thin):\w+(:[\w-]+)?@[\w,-]+$|layer:\w+:[\w:-]+@[\w,-]+$',m): I(f"part-roles {k}: move {m} doesn't match the grammar")
+for e in R['emotion']:
+    if e not in S['emotionRules']['emotions']: W(f"part-roles emotion {e} has no emotion rule")
 print('ISSUES',len(issues)); [print(' -',x) for x in issues]
 print('WARNINGS',len(warn)); [print(' -',x) for x in warn]
 sys.exit(1 if issues else 0)
