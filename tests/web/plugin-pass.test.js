@@ -71,6 +71,10 @@ const plain=[{i:0,name:'Lowpass Cutoff',v:1},{i:1,name:'Highpass Cutoff',v:0},{i
  ok(eng.playing&&eng.a.si===eng.b.si&&Math.abs(eng.a.beat-eng.b.beat)<.6,'A/B carries on from the same place');
  ok(Math.abs(eng.restart-(eng.first+eng.a.beat))<.6,'the engine picks up at that place too');
 
+ // a preview is never saved, and a pass already in the song says so
+ const sv=await p.evaluate(()=>{ passOpen('antonoff'); const A=PASS.A, bState=JSON.parse(songStateJSON()), inB=/plug\./.test(JSON.stringify(S.auto)), saved=JSON.stringify((bState.song||bState).auto)===JSON.stringify(JSON.parse(A).auto), banner0=!!$('#passSame'); passKeep(); passOpen('antonoff'); const banner=!!$('#passSame'), line=$('#passView').innerText.includes('already in your song'); passDiscard(); histUndo(); return {inB,saved,banner0,banner,line}; });
+ console.log(JSON.stringify(sv)); ok(sv.inB&&sv.saved,'saving during a pass saves your version, not the preview'); ok(!sv.banner0&&sv.banner&&sv.line,'reopening a kept pass says A and B match');
+
  // values are read fresh when a pass opens
  const fresh=await p.evaluate(()=>{ __nlog.length=0; const ch=hostCh('chords'); passOpen('redone'); const asked=__nlog.some(x=>x[0]==='st_host_params'&&x[1].ch===ch); __fire('st_host_paramlist',{ch,list:[{i:1,name:'Filter 1 On',v:0},{i:2,name:'Filter 1 Freq',v:.7},{i:4,name:'Main Vol',v:.5}]}); const line=passMoves().find(m=>m.id==='plug-dark-verse').plug[0].text; passDiscard(); return {asked,line}; });
  ok(fresh.asked&&/switched off in this patch/.test(fresh.line),'the pass reads the patch as it is now and warns about a switched-off filter');
