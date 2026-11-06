@@ -106,8 +106,13 @@ juce::WebBrowserComponent::Options SemitoneEditor::makeOptions()
             if (! proc.host) return;
             auto* o = new juce::DynamicObject();
             const int ch = (int) v.getProperty ("ch", 0);
-            o->setProperty ("ch", ch); o->setProperty ("list", proc.host->paramsVar (ch));
+            o->setProperty ("ch", ch); o->setProperty ("list", proc.host->paramsVar (ch, v.getProperty ("also", juce::var())));
             browser.emitEventIfBrowserIsVisible ("st_host_paramlist", juce::var (o));
+        })
+        .withEventListener ("st_host_learn", [this] (const juce::var& v)
+        {
+            if (! proc.host) return;
+            if ((bool) v.getProperty ("on", false)) proc.host->learnStart ((int) v.getProperty ("ch", 0)); else proc.host->learnStop();
         })
         .withEventListener ("st_host_test", [this] (const juce::var& v) { if (proc.host) proc.host->testNote ((int) v.getProperty ("ch", 0)); })
         .withEventListener ("st_host_open", [this] (const juce::var& v) { if (proc.host) proc.host->openWindow ((int) v.getProperty ("ch", 0)); })
@@ -186,6 +191,16 @@ void SemitoneEditor::clipChunk (const juce::var& v)
 void SemitoneEditor::timerCallback()
 {
     if ((ticks % 60) == 0) proc.releaseRetired();
+    if (proc.host && proc.host->learning() >= 0 && (ticks % 3) == 0)
+    {
+        const int ch = proc.host->learning(); int i = -1; juce::String name; float value = 0;
+        if (proc.host->learnPoll (i, name, value))
+        {
+            auto* o = new juce::DynamicObject();
+            o->setProperty ("ch", ch); o->setProperty ("i", i); o->setProperty ("name", name); o->setProperty ("v", value);
+            browser.emitEventIfBrowserIsVisible ("st_host_learned", juce::var (o));
+        }
+    }
     // standalone app: keep a crash-safe autosave of the song, every couple of seconds while it changes
     if (proc.isStandalone() && (ticks % 120) == 0)
     {

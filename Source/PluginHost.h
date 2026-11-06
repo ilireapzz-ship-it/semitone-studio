@@ -115,7 +115,7 @@ public:
     void testNote (int ch) { testCh = ch; }
 
     // The controls worth drawing: automatable, named, and not the long lists of MIDI CC stand-ins plug-ins add.
-    juce::var paramsVar (int ch) const
+    juce::var paramsVar (int ch, const juce::var& also = {}) const
     {
         juce::Array<juce::var> first, rest;
         auto* p = inst[(size_t) ch].get();
@@ -136,7 +136,58 @@ public:
         // the controls people reach for first, then the rest, up to what a menu can hold
         for (const auto& v : rest) { if (first.size() >= 400) break; first.add (v); }
         first.removeLast (juce::jmax (0, first.size() - 400));
+        // controls you taught Semitone, which the list above may leave out
+        if (auto* extra = also.getArray())
+            for (const auto& x : *extra)
+            {
+                const int i = (int) x;
+                if (i < 0 || i >= ps.size()) continue;
+                bool have = false;
+                for (const auto& v : first) have = have || (int) v.getProperty ("i", -1) == i;
+                if (have) continue;
+                auto* o = new juce::DynamicObject();
+                o->setProperty ("i", i); o->setProperty ("name", ps[i]->getName (64)); o->setProperty ("v", ps[i]->getValue());
+                first.add (juce::var (o));
+            }
         return first;
+    }
+
+    // Learn: watch every control, including unnamed ones, for the one you move in the plug-in's window.
+    // The first half second only marks controls that move by themselves, so they can't be mistaken for your knob.
+    void learnStart (int ch)
+    {
+        learnCh = -1;
+        auto* p = (ch >= 0 && ch < 16) ? inst[(size_t) ch].get() : nullptr;
+        if (p == nullptr) return;
+        const auto& ps = p->getParameters();
+        learnBase.resize ((size_t) ps.size()); learnNoisy.assign ((size_t) ps.size(), false);
+        for (int i = 0; i < ps.size(); ++i) learnBase[(size_t) i] = ps[i]->getValue();
+        learnCh = ch; learnPolls = 0; learnSettle = 0;
+    }
+
+    void learnStop() { learnCh = -1; }
+    int learning() const { return learnCh; }
+
+    // Message thread, about 20 times a second. True once a control has clearly moved.
+    bool learnPoll (int& index, juce::String& name, float& value)
+    {
+        auto* p = (learnCh >= 0) ? inst[(size_t) learnCh].get() : nullptr;
+        if (p == nullptr) return false;
+        const auto& ps = p->getParameters();
+        if ((size_t) ps.size() != learnBase.size()) return false;
+        ++learnPolls;
+        float best = 0; int at = -1;
+        for (int i = 0; i < ps.size(); ++i)
+        {
+            const float d = std::abs (ps[i]->getValue() - learnBase[(size_t) i]);
+            if (learnPolls <= 10) { if (d > .0005f) learnNoisy[(size_t) i] = true; continue; }
+            if (! learnNoisy[(size_t) i] && d > best) { best = d; at = i; }
+        }
+        if (at < 0 || best < .015f) return false;
+        if (++learnSettle < 6) return false;      // let the knob travel, so the biggest mover wins over linked controls
+        index = at; name = ps[at]->getName (64); value = ps[at]->getValue();
+        learnCh = -1;
+        return true;
     }
 
     // Audio thread, inside process(): lanes are applied before each block.
@@ -219,6 +270,9 @@ private:
     std::atomic<int> testCh { -1 };
     std::shared_ptr<const std::vector<Lane>> lanes;
     bool lanesMoving = false;
+    int learnCh = -1, learnPolls = 0, learnSettle = 0;
+    std::vector<float> learnBase;
+    std::vector<bool> learnNoisy;
     int heldCh = -1, heldLeft = 0;
     static constexpr int maxChannels = 128;
     juce::AudioBuffer<float> temp { maxChannels, 8192 };
