@@ -21,6 +21,7 @@ node tests/web/regression.test.js
 | `loops.test.js` | loops hidden until used, tempo and key from name or audio, stretch and key fit, plays, saved, folds away, Bridge status and loop points |
 | `screens.test.js` | Start, Words (syllables, stress, rhyme letters, rhymes), Versions (saved, compare, copy), Ideas shelf |
 | `pitch.test.js` | range check, nearest key, pack files, real PDFs, loudness match, credits, hearing another key without changing the song |
+| `length.test.js` | length suggests a shape, lands near its range at many tempos, hook timing, lyric target, pass moves, radio edit |
 | `themes.test.js` | every token from themes.json, five themes with no reload, saved locally, follow the system, contrast, plug-in shares the setting (`THEME_SHOTS=folder` saves a picture per theme) |
 | `song-files.test.js` | .semitone save / open / recents / title |
 | `sounds-in-daw.test.js` | section layout, rendering and chunked clips sent to the plugin (slow: renders the whole song) |
