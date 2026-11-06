@@ -223,6 +223,12 @@ void SemitoneEditor::clipChunk (const juce::var& v)
 void SemitoneEditor::timerCallback()
 {
     if ((ticks % 60) == 0) proc.releaseRetired();
+    if (proc.host && (ticks % 30) == 0 && proc.host->latencySamples() != lastHostLatency)
+    {
+        lastHostLatency = proc.host->latencySamples();
+        auto* o = new juce::DynamicObject(); o->setProperty ("seconds", lastHostLatency / juce::jmax (1.0, proc.getSampleRate()));
+        browser.emitEventIfBrowserIsVisible ("st_host_latency", juce::var (o));
+    }
     if (proc.host && proc.host->learning() >= 0 && (ticks % 3) == 0)
     {
         const int ch = proc.host->learning(); int i = -1; juce::String name; float value = 0;

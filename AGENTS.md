@@ -64,7 +64,7 @@ First version done: native takes in the desktop app (`Source/TakeRecorder.h`, `n
   waveforms and controls. Inside a DAW, leave recording to the DAW.
 
 ### Later phases (see the plan doc)
-3 your VST3/AU plugins inside Semitone (first slice done: one instrument per part in the desktop app, `Source/PluginHost.h`, with lanes, producer moves, maps of main controls, Learn a control, Link by MIDI, presets, saved sounds, style starts and your effects; effects on built-in parts, mixer strips and Export audio, latency, and running a scan in a separate process still to do) · 4 mix and master · 5 share everywhere (export to every DAW, iPad, share links).
+3 your VST3/AU plugins inside Semitone (first slice done: one instrument per part in the desktop app, `Source/PluginHost.h`, with lanes, producer moves, maps of main controls, Learn a control, Link by MIDI, presets, saved sounds, style starts and your effects; effects on built-in parts, mixer strips and Export audio, and running a scan in a separate process still to do) · 4 mix and master · 5 share everywhere (export to every DAW, iPad, share links).
 
 ## Ideas to build (agreed with Jamie, 5 Nov 2026)
 Fit these into the phases as marked; the **design canvas** "Semitone Studio — song-first DAW redesign" shows the

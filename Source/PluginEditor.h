@@ -44,6 +44,7 @@ private:
     std::unique_ptr<juce::FileChooser> chooser;
     std::vector<juce::uint32> incoming;
     juce::String lastAutosaved;
+    int lastHostLatency = 0;
     juce::File takeFile;
     bool lastPlaying = false;
     int ticks = 0;

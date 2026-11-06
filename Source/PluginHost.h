@@ -367,6 +367,20 @@ public:
                         else if (k.fxParam >= 0 && k.fxParam < ps.size()) ps[k.fxParam]->setValue (v);
                     }
         lanesMoving = beat >= 0;
+
+        // Timing: some plug-ins and effects hand their sound back late. Everything else waits for the slowest,
+        // so each part lands together, however much delay any one of them adds.
+        std::array<int, 16> late {};
+        int slowest = 0;
+        for (int ch = 0; ch < 16; ++ch)
+            if (auto* p = inst[(size_t) ch].get())
+            {
+                late[(size_t) ch] = chainLatency (ch) + p->getLatencySamples();
+                slowest = juce::jmax (slowest, late[(size_t) ch]);
+            }
+        slowest = juce::jmin (slowest, LineUp::size - 8192);
+        partLatency = slowest + chainLatency (masterFx);
+        lineUp[16].run (L, R, n, slowest);    // what's already in the buffer: the built-in sounds
         // Link by MIDI: a slow sweep up and down, for the plug-in's own MIDI Learn to catch
         if (wiggleLeft > 0)
         {
@@ -392,11 +406,14 @@ public:
             view.clear();
             p->processBlock (view, midi);
             runFx (ch, view.getWritePointer (0), view.getWritePointer (1), n);
+            lineUp[(size_t) ch].run (view.getWritePointer (0), view.getWritePointer (1), n, juce::jmax (0, slowest - late[(size_t) ch]));
             juce::FloatVectorOperations::add (L, view.getReadPointer (0), n);
             if (R != nullptr && R != L) juce::FloatVectorOperations::add (R, view.getReadPointer (1), n);
         }
         ccCount = 0;
     }
+
+    int latencySamples() const { return partLatency.load(); }
 
     static constexpr int ccBase = 100000;   // a lane with an index from here sends MIDI controller (index - ccBase)
     void sendCcSweep (int ch, int cc) { wiggleCh = ch; wiggleCc = juce::jlimit (0, 127, cc); wiggleLeft = (int) (sr * 1.5); }
@@ -439,6 +456,27 @@ private:
     juce::SpinLock lock;
     std::atomic<int> testCh { -1 };
     std::shared_ptr<const std::vector<Lane>> lanes;
+    struct LineUp
+    {
+        static constexpr int size = 1 << 16;      // about 1.4 s at 48 kHz
+        std::vector<float> l = std::vector<float> ((size_t) size, 0.0f), r = std::vector<float> ((size_t) size, 0.0f);
+        int at = 0;
+        void run (float* L, float* R, int n, int delay)
+        {
+            if (delay <= 0) return;
+            for (int i = 0; i < n; ++i)
+            {
+                const int back = (at - delay) & (size - 1);
+                l[(size_t) at] = L[i]; L[i] = l[(size_t) back];
+                if (R != nullptr && R != L) { r[(size_t) at] = R[i]; R[i] = r[(size_t) back]; }
+                at = (at + 1) & (size - 1);
+            }
+        }
+    };
+    std::array<LineUp, 17> lineUp;
+    std::atomic<int> partLatency { 0 };
+    int chainLatency (int t) const { int sum = 0; for (const auto& p : fx[(size_t) t]) if (p) sum += p->getLatencySamples(); return sum; }
+
     void runFx (int t, float* L, float* R, int n)
     {
         for (auto& p : fx[(size_t) t])
