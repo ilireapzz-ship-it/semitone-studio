@@ -16,6 +16,7 @@ node tests/web/regression.test.js
 | `native-bridge.test.js` | plugin bar, timeline sent to native, tempo match, state save/restore, standalone transport |
 | `header.test.js` | one header and transport: recipe sentence, undoable recipe, lenses, time display, menu, phone width |
 | `timeline-session.test.js` | one timeline, lenses, drawer tabs, pins, pass drawn on the song, old screens in the drawer, rail per lens, Describe a change |
+| `parts.test.js` | Add a part menu, Write it for me, linked layers, unlink, one undo step, MIDI and engine, saved songs, pass grammar, song doctor checks, channel limit |
 | `themes.test.js` | every token from themes.json, five themes with no reload, saved locally, follow the system, contrast, plug-in shares the setting (`THEME_SHOTS=folder` saves a picture per theme) |
 | `song-files.test.js` | .semitone save / open / recents / title |
 | `sounds-in-daw.test.js` | section layout, rendering and chunked clips sent to the plugin (slow: renders the whole song) |
