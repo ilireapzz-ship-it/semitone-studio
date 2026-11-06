@@ -14,6 +14,7 @@ node tests/web/regression.test.js
 |---|---|
 | `regression.test.js` | every style renders, orchestral render has no NaN, phone layout doesn't overflow |
 | `native-bridge.test.js` | plugin bar, timeline sent to native, tempo match, state save/restore, standalone transport |
+| `themes.test.js` | every token from themes.json, five themes with no reload, saved locally, follow the system, contrast, plug-in shares the setting (`THEME_SHOTS=folder` saves a picture per theme) |
 | `song-files.test.js` | .semitone save / open / recents / title |
 | `sounds-in-daw.test.js` | section layout, rendering and chunked clips sent to the plugin (slow: renders the whole song) |
 | `section-drag.test.js` | Compose section blocks drag out as audio, ⌥ as MIDI, Whole song chip, click still selects |

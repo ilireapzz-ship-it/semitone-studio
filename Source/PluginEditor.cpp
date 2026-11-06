@@ -8,6 +8,8 @@
  #include <juce_audio_plugin_client/Standalone/juce_StandaloneFilterWindow.h>
 #endif
 
+static juce::File prefsFile() { return st::files::appData().getChildFile ("settings.json"); }
+
 SemitoneEditor::SemitoneEditor (SemitoneProcessor& p)
     : AudioProcessorEditor (p), proc (p), browser (makeOptions())
 {
@@ -60,7 +62,7 @@ juce::WebBrowserComponent::Options SemitoneEditor::makeOptions()
     o = o.withBackend (Opt::Backend::webview2);
    #endif
     return o
-        .withWinWebView2Options (Opt::WinWebView2{}.withUserDataFolder (dataDir).withBackgroundColour (juce::Colour (0xffE8ECE5)))
+        .withWinWebView2Options (Opt::WinWebView2{}.withUserDataFolder (dataDir).withBackgroundColour (juce::Colour (0xff0A0B0D)))
         .withNativeIntegrationEnabled()
         .withKeepPageLoadedWhenBrowserIsHidden()
         .withResourceProvider ([this] (const juce::String& url) { return getResource (url); })
@@ -75,7 +77,14 @@ juce::WebBrowserComponent::Options SemitoneEditor::makeOptions()
             o->setProperty ("soundMode", proc.getSoundMode());
             o->setProperty ("sr", proc.getSampleRateNow());
             { const juce::File sf (proc.songFile); o->setProperty ("songFileSame", sf.existsAsFile() && sf.loadFileAsString() == proc.getProjectState()); }
+            o->setProperty ("prefs", juce::JSON::parse (prefsFile()));  // app settings, shared by the app and the plug-in window
             browser.emitEventIfBrowserIsVisible ("st_init", juce::var (o));
+        })
+        .withEventListener ("st_pref", [] (const juce::var& v) {
+            auto now = juce::JSON::parse (prefsFile());
+            if (now.getDynamicObject() == nullptr) now = juce::var (new juce::DynamicObject());
+            now.getDynamicObject()->setProperty (v.getProperty ("key", "").toString(), v.getProperty ("value", {}));
+            prefsFile().replaceWithText (juce::JSON::toString (now));
         })
         .withEventListener ("st_song_save", [this] (const juce::var& v) { saveSong (v); })
         .withEventListener ("st_song_open", [this] (const juce::var& v) {
