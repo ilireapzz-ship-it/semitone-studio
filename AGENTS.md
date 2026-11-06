@@ -6,7 +6,7 @@ how to build and test, the sound engine rules, and FL Studio lessons learned the
 ## New: the merged design (6 Nov 2026), build this next
 Jamie approved a redesign that joins the app into one screen: one timeline, Write / Produce / Mix lenses,
 one drawer, one Session panel, popovers, a premium look, borrowed DAW ideas (Capture, takes, ghost notes,
-⌘K actions, section drag, mix snapshots), and loops plus Splice Bridge support that only appears when used.
+⌘K actions, section drag, mix snapshots), and loops plus Splice Bridge support that only appears when used, five switchable themes (`docs/design/merged/themes.json`) and a collapsible Session panel.
 **Read `docs/design/merged/README.md`.** It is the spec, with pictures and a build order. Where it disagrees with
 the older `docs/design/N-*.png` screens or the design notes below, the merged design wins.
 

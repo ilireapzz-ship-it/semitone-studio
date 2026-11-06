@@ -87,8 +87,33 @@ the Sound drawer appear, and they fold away again when the last loop or Bridge i
 - Popovers and ⌘K: translucent dark with blur, a hairline border and a large soft shadow.
 - No bright saturated blocks anywhere. A chorus is a slightly deeper tint than a verse, not a bright blue slab.
 
+## Themes (agreed 6 Nov 2026)
+Five themes. Studio Black is the default (described under "Look" above). The others are Console (Pro Tools meets Ableton),
+Warm studio, Daylight (modern Apple/iOS, light) and Riso zine (creative, light). Pictures: `theme-*.png` and
+`6-Themes-and-collapsed-panel.png`. Every value is in **`themes.json`**.
+- Build the interface on CSS variables (`--st-bg`, `--st-accent`, `--st-melody`, `--st-radius`, `--st-font-ui`, …), one per
+  token in themes.json. No colour, radius or font stays hard-coded in a rule. A theme is just a `data-theme` attribute on
+  `<html>` that sets those variables. Track colours, the clip fill strength (`clipAlpha`) and note colour on clips (`noteOnClip`)
+  are tokens too, so Console's solid clips work.
+- Some themes change shape, not just colour: Console uses square corners and bevelled buttons; Daylight uses pill buttons, larger radii
+  and green switches; Riso zine uses ink outlines, hard offset shadows and a halftone background. Do this with per-theme rules
+  on a few classes (`.ghost`, `.prim`, popovers, switches). Don't fork the markup.
+- Picker: a ◐ button in the header opens the Theme card (a preview tile per theme, the active one ringed) with
+  "Follow the system: light by day, dark at night", which switches between Studio Black and Daylight with the OS appearance.
+- The choice is saved locally (app settings, not the song) and applies at once with no reload. Inside a DAW the plugin window
+  uses the same setting.
+- Fonts: bundle them in the app (no network at runtime). Check each theme for contrast (text on panel ≥ 4.5:1).
+
+## Collapsible Session panel
+- A ⟩ button in the Session header (and ⌥⌘S) collapses the panel to a 58px rail. The timeline and drawer take the space.
+- The rail shows one icon per helper with a count badge (Producer 5, Song doctor 2, Sound 1, Emotion 1). Clicking an icon
+  opens the panel filtered to that helper. ✦ at the bottom opens "Describe a change". ⟨ reopens the panel.
+- The numbered pins stay on the timeline while the panel is collapsed. Clicking a pin opens the panel at that item.
+- The open/closed state is saved locally, per lens (e.g. open in Produce, closed in Mix).
+
 ## Order to build
-1. Look tokens (colours, type, buttons, tabs) across the existing UI. This is the cheapest and most visible step.
+1. Look tokens as CSS variables across the existing UI, Studio Black first, then the theme picker and the other
+   four themes from `themes.json`. This is the cheapest and most visible step.
 2. Header with the recipe sentence and lens switch, plus the transport. Remove the second toolbar.
 3. Lenses on the one timeline. Move Producer pass, Emotion & vibe and Real sounds onto it and into the Session
    panel, the drawer and popovers. Delete their separate screens and the duplicate timelines. Replace the 11-tab dock with
