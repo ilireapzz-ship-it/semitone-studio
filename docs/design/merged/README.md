@@ -111,6 +111,34 @@ Warm studio, Daylight (modern Apple/iOS, light) and Riso zine (creative, light).
 - The numbered pins stay on the timeline while the panel is collapsed. Clicking a pin opens the panel at that item.
 - The open/closed state is saved locally, per lens (e.g. open in Produce, closed in Mix).
 
+## Add a part, layers and duplicates (agreed 6 Nov 2026)
+Pictures: `7-Add-a-part.png` (the menu) and `8-Parts-added.png` (after). Today Compose has fixed parts (Melody,
+Chords, Bass, Drums); extra sounds only exist as per-section chord layers (`S.secLayer`). This makes parts open-ended.
+- **＋ Add a part** sits under the last track header (and in ⌘K). It opens a two-column menu:
+  - **Write it for me** (fits the song's key, chords and sections, suggest-and-accept as usual):
+    - Counter melody: answers the melody in the gaps where it rests or holds, mostly a 3rd or 6th away, and avoids clashing
+      with long melody notes.
+    - Second bass: sub, octave or synth bass under Bass.
+    - Harmony / backing vocal: a 3rd or 6th with the melody, using the lyrics.
+    - Arpeggio from the chords.
+    - Pad or strings bed.
+    - Extra percussion.
+  - **From the selected part:**
+    - *Layer it (linked)*: same notes, a new sound.
+    - *Duplicate it*: an independent copy.
+    - *Move it an octave*: a linked copy up or down.
+  - **Empty:** *Pick an instrument…* (built-in sounds or your plug-ins), *Audio part* (record).
+- **Linked layers** sit indented under their parent, with a LINKED tag and the parent's notes drawn in the layer's colour.
+  A layer has its own sound, octave shift, level, pan, effects and plug-in, but no notes of its own: edit the parent and
+  the layer follows. "Unlink" turns it into a normal copy. A layer can be switched on per section (e.g. strings only in choruses).
+- **New generated parts** get a NEW tag and brass outlines until the user keeps them. Regenerate gives another take,
+  and each part is one undo step.
+- When a generated part is selected, the drawer shows it with Melody and Chords as ghost notes, plus a short "why" card.
+- Parts are a list in the song (`S.parts` of {id, name, role, sound, linkTo?, octave?, sections?}). The four originals
+  become ordinary entries. Producer passes, emotion, mix, MIDI, stems, the native engine (`nativeSoundInfo`) and the
+  plug-in host must all handle any number of parts, each on its own MIDI channel. Old songs load unchanged.
+- Helpers can suggest parts too (Session: "Strings layer only in the choruses", "Bass 2 doubles the root: thin it in verses").
+
 ## Order to build
 1. Look tokens as CSS variables across the existing UI, Studio Black first, then the theme picker and the other
    four themes from `themes.json`. This is the cheapest and most visible step.
@@ -119,6 +147,7 @@ Warm studio, Daylight (modern Apple/iOS, light) and Riso zine (creative, light).
    panel, the drawer and popovers. Delete their separate screens and the duplicate timelines. Replace the 11-tab dock with
    the 4-tab drawer (Lessons/Theory move into "why it works" cards and ⌘K).
 4. Session panel as the single feed for every helper.
-5. Capture, the takes lane, ghost notes and scale lock, ⌘K actions, section drag, mix snapshots.
-6. Loops: drop, paste and fit, then Splice Bridge recognition, the hidden audition track and host sync.
+5. Open-ended parts: Add a part, linked layers, duplicates, counter melody and second bass.
+6. Capture, the takes lane, ghost notes and scale lock, ⌘K actions, section drag, mix snapshots.
+7. Loops: drop, paste and fit, then Splice Bridge recognition, the hidden audition track and host sync.
 Each step needs tests in `tests/web/` and a plain-words note for Jamie, and must keep working as a plain web page.
