@@ -8,6 +8,12 @@
  #include <juce_audio_plugin_client/Standalone/juce_StandaloneFilterWindow.h>
 #endif
 
+static juce::File loopFile (const juce::String& id)
+{
+    auto d = st::files::appData().getChildFile ("Loops"); d.createDirectory();
+    return d.getChildFile (juce::File::createLegalFileName (id));
+}
+
 static juce::File prefsFile() { return st::files::appData().getChildFile ("settings.json"); }
 
 SemitoneEditor::SemitoneEditor (SemitoneProcessor& p)
@@ -34,6 +40,12 @@ SemitoneEditor::SemitoneEditor (SemitoneProcessor& p)
             auto* o = new juce::DynamicObject(); o->setProperty ("ch", ch); o->setProperty ("ok", ok); o->setProperty ("info", info);
             self->browser.emitEventIfBrowserIsVisible ("st_host_loaded", juce::var (o));
         };
+        proc.host->onBridge = [self] (bool ok, juce::String info)
+        {
+            if (self == nullptr) return;
+            auto* o = new juce::DynamicObject(); o->setProperty ("on", ok); o->setProperty ("info", info);
+            self->browser.emitEventIfBrowserIsVisible ("st_bridge_state", juce::var (o));
+        };
         proc.host->onFxLoaded = [self] (int t, int slot, bool ok, juce::String info)
         {
             if (self == nullptr) return;
@@ -45,6 +57,41 @@ SemitoneEditor::SemitoneEditor (SemitoneProcessor& p)
     incoming.reserve (1024);
     prepareMarkers();
     startTimerHz (60);
+}
+
+// A loop's audio stays beside the app, so the app and the plug-in window both find it. Chunks of base64, like the section clips.
+void SemitoneEditor::loopPut (const juce::var& v)
+{
+    const auto f = loopFile (v.getProperty ("id", "").toString());
+    if ((int) v.getProperty ("i", 0) == 0) f.deleteFile();
+    juce::MemoryBlock mb; if (! mb.fromBase64Encoding (v.getProperty ("b64", "").toString())) return;
+    f.appendData (mb.getData(), mb.getSize());
+}
+
+void SemitoneEditor::loopSend (const juce::String& id, const juce::File& f, const juce::String& event)
+{
+    juce::MemoryBlock mb; if (! f.loadFileAsData (mb)) return;
+    constexpr size_t chunk = 384 * 1024;
+    const int n = (int) ((mb.getSize() + chunk - 1) / chunk);
+    for (int i = 0; i < n; ++i)
+    {
+        const size_t at = (size_t) i * chunk, len = juce::jmin (chunk, mb.getSize() - at);
+        auto* o = new juce::DynamicObject();
+        o->setProperty ("id", id); o->setProperty ("name", f.getFileName()); o->setProperty ("i", i); o->setProperty ("n", n);
+        o->setProperty ("b64", juce::Base64::toBase64 (static_cast<const char*> (mb.getData()) + at, len));
+        browser.emitEventIfBrowserIsVisible (event, juce::var (o));
+    }
+}
+
+void SemitoneEditor::loopGet (const juce::String& id) { const auto f = loopFile (id); if (f.existsAsFile()) loopSend (id, f, "st_loop_data"); }
+
+// ⌘V: the file Splice's "Copy modified sample" left on the clipboard.
+void SemitoneEditor::clipFile()
+{
+#if JUCE_MAC
+    const juce::File f (st::clipboardFilePath());
+    if (f.existsAsFile()) loopSend ("clip", f, "st_clip_data");
+#endif
 }
 
 SemitoneEditor::~SemitoneEditor() { stopTimer(); if (proc.host) { proc.host->onList = nullptr; proc.host->onLoaded = nullptr; proc.host->onFxLoaded = nullptr; } }
@@ -114,6 +161,15 @@ juce::WebBrowserComponent::Options SemitoneEditor::makeOptions()
         .withEventListener ("st_save", [this] (const juce::var& v) { saveFile (v.getProperty ("name", "Semitone export").toString(), v.getProperty ("b64", "").toString()); })
         // song structure -> FL Studio Playlist markers, through Semitone's controller script
         .withEventListener ("st_markers", [this] (const juce::var& v) { sendMarkers (v); })
+        .withEventListener ("st_bridge", [this] (const juce::var& v) {
+            if (! proc.host) return;
+            const auto what = v.getProperty ("do", "").toString();
+            if (what == "load") proc.host->bridgeLoad(); else if (what == "open") proc.host->bridgeOpen(); else if (what == "close") proc.host->bridgeClear();
+            else if (what == "loop") proc.host->setLoop ((double) v.getProperty ("a", 0.0), (double) v.getProperty ("b", 0.0));
+        })
+        .withEventListener ("st_loop_put", [this] (const juce::var& v) { loopPut (v); })
+        .withEventListener ("st_loop_get", [this] (const juce::var& v) { loopGet (v.getProperty ("id", "").toString()); })
+        .withEventListener ("st_clip_file", [this] (const juce::var&) { clipFile(); })
         .withEventListener ("st_host_scan", [this] (const juce::var&) { if (proc.host) proc.host->startScan(); })
         .withEventListener ("st_host_list", [this] (const juce::var&) { sendHostList(); })
         .withEventListener ("st_host_load", [this] (const juce::var& v) { if (proc.host) proc.host->load ((int) v.getProperty ("ch", 0), v.getProperty ("id", "").toString(), v.getProperty ("state", "").toString()); })
@@ -462,6 +518,7 @@ void SemitoneEditor::sendHostList()
     if (! proc.host) return;
     auto* o = new juce::DynamicObject();
     o->setProperty ("list", proc.host->listVar()); o->setProperty ("effects", proc.host->effectsVar()); o->setProperty ("scanning", proc.host->scanning); o->setProperty ("name", proc.host->scanningName); o->setProperty ("progress", proc.host->progress);
+    o->setProperty ("bridge", proc.host != nullptr && proc.host->hasBridge());
     browser.emitEventIfBrowserIsVisible ("st_host_plugins", juce::var (o));
 }
 

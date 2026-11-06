@@ -92,4 +92,15 @@ DragResult startMacFileDrag (void* nsViewPtr, const juce::String& path)
         return source.lastOperation != NSDragOperationNone ? DragResult::started : DragResult::refused;
     }
 }
+
+    juce::String clipboardFilePath()
+    {
+        @autoreleasepool
+        {
+            NSArray* urls = [[NSPasteboard generalPasteboard] readObjectsForClasses: @[ [NSURL class] ]
+                                                                            options: @{ NSPasteboardURLReadingFileURLsOnlyKey: @YES }];
+            NSURL* u = urls.firstObject;
+            return u != nil ? juce::String::fromUTF8 (u.path.UTF8String) : juce::String();
+        }
+    }
 }

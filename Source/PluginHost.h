@@ -10,6 +10,24 @@
 // Finding plug-ins opens each one, so it runs a file at a time on request, and a plug-in that crashes is skipped next time.
 namespace st
 {
+// The song's position for hosted plug-ins, so anything synced to the host follows Semitone.
+struct SongHead : juce::AudioPlayHead
+{
+    std::atomic<double> bpm { 120 }, ppq { 0 }, loopA { 0 }, loopB { 0 };
+    std::atomic<bool> playing { false }, looping { false };
+    std::atomic<int> top { 4 }, bot { 4 };
+    juce::Optional<PositionInfo> getPosition() const override
+    {
+        PositionInfo p;
+        p.setBpm (bpm.load()); p.setPpqPosition (ppq.load()); p.setIsPlaying (playing.load());
+        p.setTimeSignature (TimeSignature { top.load(), bot.load() });
+        p.setTimeInSeconds (ppq.load() * 60.0 / juce::jmax (1.0, bpm.load()));
+        p.setIsLooping (looping.load());
+        if (looping.load()) p.setLoopPoints (LoopPoints { loopA.load(), loopB.load() });
+        return p;
+    }
+};
+
 class HostWindow : public juce::DocumentWindow
 {
 public:
@@ -30,6 +48,8 @@ class PartHost : private juce::Timer
 {
 public:
     std::function<void()> onList;                                   // the plug-in list changed
+    std::function<void (bool, juce::String)> onBridge;              // loaded, name or why not
+    SongHead head;
     std::function<void (int, bool, juce::String)> onLoaded;         // channel, ok, name or why not
     bool scanning = false; juce::String scanningName; float progress = 0;
 
@@ -67,7 +87,7 @@ public:
         juce::StringArray seen;
         for (const auto& d : known.getTypes())
         {
-            // not instruments to run in here: Semitone itself, a DAW, and a helper that crashes when opened this way
+            // not instruments for a part: Semitone itself, a DAW, and Splice Bridge (an audition tool, see bridgeLoad)
             if (! d.isInstrument || d.name == "Semitone Studio" || d.name == "FL Studio" || d.name == "Splice Bridge") continue;
             if (seen.contains (d.name)) continue;      // the same instrument as AU and VST3: show it once
             seen.add (d.name);
@@ -90,6 +110,7 @@ public:
             if (p == nullptr) { if (onLoaded) onLoaded (ch, false, err); return; }
             // leave its buses alone: some instruments crash if outputs are switched off. process() gives room for them all and uses the first two.
             p->setRateAndBufferSizeDetails (sr, bs);
+            p->setPlayHead (&head);
             if (stateB64.isNotEmpty()) { juce::MemoryBlock mb; if (mb.fromBase64Encoding (stateB64)) p->setStateInformation (mb.getData(), (int) mb.getSize()); }
             p->prepareToPlay (sr, bs);
             const auto name = p->getName();
@@ -103,6 +124,55 @@ public:
         windows[(size_t) ch].reset();
         std::unique_ptr<juce::AudioPluginInstance> old;
         { const juce::SpinLock::ScopedLockType sl (lock); old = std::move (inst[(size_t) ch]); ccLast[(size_t) ch].fill (-1); }
+    }
+
+    // Splice Bridge is an audition tool, not a part: it has no strip, isn't exported, and goes straight to the output.
+    bool hasBridge() const { for (const auto& d : known.getTypes()) if (d.name == "Splice Bridge") return true; return false; }
+    void bridgeLoad()
+    {
+        if (audition != nullptr) { if (onBridge) onBridge (true, audition->getName()); return; }
+        std::unique_ptr<juce::PluginDescription> d;
+        for (const auto& t : known.getTypes()) if (t.name == "Splice Bridge") { d = std::make_unique<juce::PluginDescription> (t); break; }
+        if (d == nullptr) { if (onBridge) onBridge (false, "Splice Bridge isn't on this computer"); return; }
+        fm.createPluginInstanceAsync (*d, sr, bs, [this] (std::unique_ptr<juce::AudioPluginInstance> p, const juce::String& err)
+        {
+            if (p == nullptr) { if (onBridge) onBridge (false, err); return; }
+            p->setRateAndBufferSizeDetails (sr, bs);
+            p->setPlayHead (&head);
+            p->prepareToPlay (sr, bs);
+            const auto name = p->getName();
+            { const juce::SpinLock::ScopedLockType sl (lock); audition = std::move (p); }
+            if (onBridge) onBridge (true, name);
+            bridgeOpen();
+        });
+    }
+    void bridgeOpen()
+    {
+        if (audition == nullptr || ! audition->hasEditor() || bridgeWin) return;
+        bridgeWin = std::make_unique<HostWindow> (*audition, [this] { juce::MessageManager::callAsync ([this] { bridgeWin.reset(); }); });
+    }
+    void bridgeClear()
+    {
+        bridgeWin.reset();
+        std::unique_ptr<juce::AudioPluginInstance> old;
+        { const juce::SpinLock::ScopedLockType sl (lock); old = std::move (audition); }
+        if (onBridge) onBridge (false, {});
+    }
+    void setLoop (double a, double b) { head.loopA = a; head.loopB = b; head.looping = b > a; }
+    void setTransport (double bpm, double ppq, bool playing) { head.bpm = bpm; head.ppq = ppq; head.playing = playing; }
+
+    // Audio thread, last of all: whatever Bridge is playing, straight to the output.
+    void processAudition (float* L, float* R, int n)
+    {
+        const juce::SpinLock::ScopedTryLockType sl (lock);
+        if (! sl.isLocked() || audition == nullptr || n > temp.getNumSamples()) return;
+        const int chans = juce::jmax (2, audition->getTotalNumOutputChannels(), audition->getTotalNumInputChannels());
+        if (chans > maxChannels) return;
+        temp.clear();
+        juce::AudioBuffer<float> view (temp.getArrayOfWritePointers(), chans, n);
+        juce::MidiBuffer none;
+        audition->processBlock (view, none);
+        for (int i = 0; i < n; ++i) { L[i] += view.getSample (0, i); if (R != nullptr && R != L) R[i] += view.getSample (1, i); }
     }
 
     void openWindow (int ch)
@@ -161,6 +231,7 @@ public:
             if (p == nullptr) { if (onFxLoaded) onFxLoaded (t, slot, false, err); return; }
             p->setRateAndBufferSizeDetails (sr, bs);
             if (stateB64.isNotEmpty()) { juce::MemoryBlock mb; if (mb.fromBase64Encoding (stateB64)) p->setStateInformation (mb.getData(), (int) mb.getSize()); }
+            p->setPlayHead (&head);
             p->prepareToPlay (sr, bs);
             const auto name = p->getName();
             { const juce::SpinLock::ScopedLockType sl (lock); fx[(size_t) t][(size_t) slot] = std::move (p); }
@@ -525,6 +596,8 @@ private:
     juce::KnownPluginList known;
     int bs = 512;
     double sr = 48000;
+    std::unique_ptr<juce::AudioPluginInstance> audition;
+    std::unique_ptr<HostWindow> bridgeWin;
     std::array<std::unique_ptr<juce::AudioPluginInstance>, 16> inst;
     std::array<std::unique_ptr<HostWindow>, 16> windows;
     juce::SpinLock lock;

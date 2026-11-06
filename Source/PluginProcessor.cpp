@@ -94,6 +94,7 @@ void SemitoneProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
     // so drums and plug-ins share this one clock and land on the same sample.
     const bool viaEngine = host && isStandalone() && engineAll.load() && mode != 2 && buffer.getNumChannels() > 1;
     double hostBeat = -1;
+    if (host) host->setTransport (bpm, ppq, playing);
     if (host) { const double loop = tlLength.load(); if (playing && loop > 0) { hostBeat = std::fmod (ppq, loop); if (hostBeat < 0) hostBeat += loop; hostBeat += tlOffset.load(); } }
     int engineWait = 0;
     if (viaEngine)
@@ -151,6 +152,7 @@ void SemitoneProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
     {
         if (! viaEngine) host->process (events, n, buffer.getWritePointer (0), buffer.getNumChannels() > 1 ? buffer.getWritePointer (1) : nullptr, hostBeat);
         host->processMaster (buffer.getWritePointer (0), buffer.getNumChannels() > 1 ? buffer.getWritePointer (1) : nullptr, n);
+        if (! bouncingNow.load()) host->processAudition (buffer.getWritePointer (0), buffer.getNumChannels() > 1 ? buffer.getWritePointer (1) : nullptr, n);
     }
 
     if (listenHi.load() > 0 && ! bouncingNow.load() && buffer.getNumChannels() > 1)

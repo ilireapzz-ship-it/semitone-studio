@@ -10,5 +10,7 @@ namespace st
     // Used because the drag is requested by the web view (via a message), so there is no
     // AppKit mouse event in flight for JUCE's performExternalDragDropOfFiles to use.
     DragResult startMacFileDrag (void* nsView, const juce::String& path);
+    // The file on the clipboard, if there is one (Splice's Copy modified sample puts one there).
+    juce::String clipboardFilePath();
    #endif
 }

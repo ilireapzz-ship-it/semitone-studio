@@ -22,6 +22,10 @@ private:
     void sendMarkers (const juce::var& v);
     void scanLibrary();
     void sendHostList();
+    void loopPut (const juce::var&);
+    void loopGet (const juce::String& id);
+    void loopSend (const juce::String& id, const juce::File& f, const juce::String& event);
+    void clipFile();
     void takeStart();
     void takeOpenInput (bool granted);
     void takeStop();

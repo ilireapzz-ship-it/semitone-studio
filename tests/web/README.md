@@ -18,6 +18,7 @@ node tests/web/regression.test.js
 | `timeline-session.test.js` | one timeline, lenses, drawer tabs, pins, pass drawn on the song, old screens in the drawer, rail per lens, Describe a change |
 | `parts.test.js` | Add a part menu, Write it for me, linked layers, unlink, one undo step, MIDI and engine, saved songs, pass grammar, song doctor checks, channel limit |
 | `borrowed.test.js` | Capture, scale lock, ghosts, mix snapshots, moving and copying sections, ⌘K saved actions |
+| `loops.test.js` | loops hidden until used, tempo and key from name or audio, stretch and key fit, plays, saved, folds away, Bridge status and loop points |
 | `themes.test.js` | every token from themes.json, five themes with no reload, saved locally, follow the system, contrast, plug-in shares the setting (`THEME_SHOTS=folder` saves a picture per theme) |
 | `song-files.test.js` | .semitone save / open / recents / title |
 | `sounds-in-daw.test.js` | section layout, rendering and chunked clips sent to the plugin (slow: renders the whole song) |
