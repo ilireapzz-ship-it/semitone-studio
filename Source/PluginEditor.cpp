@@ -146,6 +146,7 @@ juce::WebBrowserComponent::Options SemitoneEditor::makeOptions()
             o->setProperty ("t", t); o->setProperty ("slot", slot); o->setProperty ("b64", proc.host->fxState (t, slot));
             browser.emitEventIfBrowserIsVisible ("st_host_fx_stateis", juce::var (o));
         })
+        .withEventListener ("st_bounce", [this] (const juce::var& v) { startBounce (v); })
         .withEventListener ("st_host_test", [this] (const juce::var& v) { if (proc.host) proc.host->testNote ((int) v.getProperty ("ch", 0)); })
         .withEventListener ("st_host_open", [this] (const juce::var& v) { if (proc.host) proc.host->openWindow ((int) v.getProperty ("ch", 0)); })
         .withEventListener ("st_host_state", [this] (const juce::var& v)
@@ -419,6 +420,31 @@ void SemitoneEditor::loadLibraryScan()
 {
     if (st::libscan::file().existsAsFile())
         scanDone (st::libscan::file().loadFileAsString());
+}
+
+void SemitoneEditor::startBounce (const juce::var& v)
+{
+    if (bouncing.exchange (true)) return;
+    const auto folder = juce::File::getSpecialLocation (juce::File::userDocumentsDirectory).getChildFile ("Semitone Studio").getChildFile ("Exports");
+    const auto file = folder.getNonexistentChildFile (juce::File::createLegalFileName (v.getProperty ("name", "Semitone song").toString()), ".wav");
+    const double beats = (double) v.getProperty ("beats", 0.0), bpm = (double) v.getProperty ("bpm", 120.0);
+    std::vector<std::pair<double, double>> tempo;
+    if (auto* t = v.getProperty ("tempo", juce::var()).getArray())
+        for (int i = 0; i + 1 < t->size(); i += 2) tempo.push_back ({ (double) (*t)[i], (double) (*t)[i + 1] });
+    juce::Component::SafePointer<SemitoneEditor> self (this);
+    auto say = [self] (const char* id, juce::var o) { juce::MessageManager::callAsync ([self, id, o] { if (self != nullptr) self->browser.emitEventIfBrowserIsVisible (id, o); }); };
+    juce::Thread::launch ([this, self, file, beats, bpm, tempo, say]
+    {
+        int last = -1;
+        const bool ok = proc.bounce (file, beats, bpm, tempo, [&] (float f)
+        {
+            const int pct = (int) (f * 100);
+            if (pct != last) { last = pct; auto* o = new juce::DynamicObject(); o->setProperty ("pct", pct); say ("st_bounce_progress", juce::var (o)); }
+        });
+        auto* o = new juce::DynamicObject(); o->setProperty ("ok", ok); o->setProperty ("path", file.getFullPathName());
+        say ("st_bounce_done", juce::var (o));
+        bouncing = false;
+    });
 }
 
 void SemitoneEditor::sendHostList()

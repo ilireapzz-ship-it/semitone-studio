@@ -7,7 +7,7 @@ SemitoneProcessor::SemitoneProcessor()
                           ? BusesProperties().withInput ("Input", juce::AudioChannelSet::stereo(), false).withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                           : BusesProperties().withOutput ("Output", juce::AudioChannelSet::stereo(), true))
 {
-    events.reserve (4096);
+    events.reserve (4096); waiting.reserve (8192); soon.reserve (8192);
     // standalone app: come back to the song you were working on, even after a crash
     if (isStandalone())
     {
@@ -21,6 +21,7 @@ void SemitoneProcessor::prepareToPlay (double sampleRate, int maxBlock)
 {
     const bool changed = sampleRate != sr;
     sr = sampleRate;
+    blockNow = maxBlock;
     if (changed) synth.setPatch (nullptr);   // notes rendered for the old rate would play out of tune until the rebuild lands
     synth.prepare (sr);
     if (host) host->prepare (sr, maxBlock);
@@ -91,6 +92,17 @@ void SemitoneProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
     // (the standalone app plays its sound in the interface itself)
     // In the app the page plays too, on its own clock. With a plug-in on a part the engine plays everything instead,
     // so drums and plug-ins share this one clock and land on the same sample.
+    const bool viaEngine = host && isStandalone() && engineAll.load() && mode != 2 && buffer.getNumChannels() > 1;
+    double hostBeat = -1;
+    if (host) { const double loop = tlLength.load(); if (playing && loop > 0) { hostBeat = std::fmod (ppq, loop); if (hostBeat < 0) hostBeat += loop; hostBeat += tlOffset.load(); } }
+    int engineWait = 0;
+    if (viaEngine)
+    {
+        // Your plug-ins first, then the engine mixes them in on their strips. The engine's own notes wait for the slowest plug-in.
+        host->process (events, n, nullptr, nullptr, hostBeat, true);
+        for (int ch = 0; ch < 16; ++ch) synth.setExternal (ch, host->partLeft (ch), host->partRight (ch));
+        engineWait = host->slowestPart();
+    }
     if (mode != 2 && (! isStandalone() || engineAll.load()) && buffer.getNumChannels() > 0)
     {
         float* L = buffer.getWritePointer (0);
@@ -116,17 +128,27 @@ void SemitoneProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
             beat = pos + off;
         }
         synth.takeLevel = tempoMatches ? takeGain.load() : 0.0f;
-        synth.process (events, n, L, R, covered ? 0.0f : 1.0f, beat, bpm / 60.0 / sr);
+        if (engineWait > 0 || ! waiting.empty())
+        {
+            for (const auto& e : events) if (waiting.size() < 8192) waiting.push_back ({ sampleClock + e.offset + engineWait, e });
+            soon.clear();
+            for (size_t i = 0; i < waiting.size();)
+            {
+                if (waiting[i].at < sampleClock + n) { auto e = waiting[i].e; e.offset = (int) juce::jmax ((juce::int64) 0, waiting[i].at - sampleClock); soon.push_back (e); waiting[i] = waiting.back(); waiting.pop_back(); }
+                else ++i;
+            }
+            const double held = beat - engineWait * (bpm / 60.0 / sr);
+            synth.process (soon, n, L, R, covered ? 0.0f : 1.0f, beat < 0 ? -1 : juce::jmax (-1.0, held), bpm / 60.0 / sr);
+        }
+        else synth.process (events, n, L, R, covered ? 0.0f : 1.0f, beat, bpm / 60.0 / sr);
+        sampleClock += n;
     }
     else if (mode == 2) synth.silence();
 
     // your own plug-ins on Semitone's parts (desktop app)
     if (host && buffer.getNumChannels() > 0)
     {
-        const double loop = tlLength.load();
-        double songBeat = -1;
-        if (playing && loop > 0) { songBeat = std::fmod (ppq, loop); if (songBeat < 0) songBeat += loop; songBeat += tlOffset.load(); }
-        host->process (events, n, buffer.getWritePointer (0), buffer.getNumChannels() > 1 ? buffer.getWritePointer (1) : nullptr, songBeat);
+        if (! viaEngine) host->process (events, n, buffer.getWritePointer (0), buffer.getNumChannels() > 1 ? buffer.getWritePointer (1) : nullptr, hostBeat);
         host->processMaster (buffer.getWritePointer (0), buffer.getNumChannels() > 1 ? buffer.getWritePointer (1) : nullptr, n);
     }
 
@@ -352,6 +374,12 @@ void SemitoneProcessor::setSynthSound (const juce::var& sound, const st::Timelin
         if (auto* m = sound.getProperty ("midiMute", juce::var()).getArray())
             for (const auto& c : *m) mute |= 1u << juce::jlimit (0, 15, (int) c);
         midiMute = mute;
+        if (auto* e = sound.getProperty ("hostMix", juce::var()).getArray())
+            for (const auto& o : *e)
+            {
+                const int ch = juce::jlimit (0, 15, (int) o.getProperty ("ch", 0));
+                t->extLevel[(size_t) ch] = num (o, "level", 1); t->extPan[(size_t) ch] = num (o, "pan", 0); t->hasExt = true;
+            }
         const auto r = sound.getProperty ("room", juce::var());
         if (r.isObject())
         {
@@ -438,6 +466,53 @@ void SemitoneProcessor::buildSynthPatch()
         patchNow = built;
         synth.setPatch (patchNow);
     });
+}
+
+// Export audio with your plug-ins: runs the same mix as playback, as fast as the computer can, into a WAV.
+bool SemitoneProcessor::bounce (const juce::File& file, double beats, double bpm, const std::vector<std::pair<double, double>>& tempo, std::function<void (float)> progress)
+{
+    if (! host || beats <= 0 || bpm <= 0) return false;
+    file.getParentDirectory().createDirectory();
+    auto* stream = file.createOutputStream().release();
+    if (stream == nullptr) return false;
+    juce::WavAudioFormat wav;
+    std::unique_ptr<juce::AudioFormatWriter> w (wav.createWriterFor (stream, sr, 2, 24, {}, 0));
+    if (w == nullptr) { delete stream; return false; }
+
+    const int bs = juce::jmax (64, juce::jmin (512, blockNow));
+    suspendProcessing (true);
+    host->setOffline (true);
+    juce::AudioBuffer<float> buf (2, bs);
+    juce::MidiBuffer midi;
+    setStandaloneTransport (false, 0, bpm);
+    for (int i = 0; i < 8; ++i) { buf.clear(); processBlock (buf, midi); }    // let notes from before finish cleanly
+    setStandaloneTransport (true, 0, bpm);
+    int skip = host->latencySamples();
+    size_t mark = 0;
+    double at = 0;
+    bool ok = true;
+    int tail = (int) (sr * 3) + skip;
+    while (ok && (at < beats || tail > 0))
+    {
+        if (at >= beats) { if (stPlaying.load()) stPlaying = false; tail -= bs; }
+        while (mark < tempo.size() && tempo[mark].first <= at) { stBpm = tempo[mark].second; ++mark; }
+        buf.clear();
+        processBlock (buf, midi);
+        at += bs * (stBpm.load() / 60.0) / sr;
+        const int drop = juce::jmin (skip, bs);
+        skip -= drop;
+        if (drop < bs)
+        {
+            const float* ch[2] { buf.getReadPointer (0) + drop, buf.getReadPointer (1) + drop };
+            ok = w->writeFromFloatArrays (ch, 2, bs - drop);
+        }
+        if (progress && at < beats) progress ((float) (at / beats));
+    }
+    w.reset();
+    stBpm = bpm;
+    host->setOffline (false);
+    suspendProcessing (false);
+    return ok;
 }
 
 void SemitoneProcessor::setStandaloneTransport (bool play, double startBeat, double bpm)

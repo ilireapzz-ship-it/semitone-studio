@@ -110,6 +110,8 @@ struct SynthPatch
     std::shared_ptr<std::vector<TakeSeg>> takes;
     std::vector<std::string> takeFiles;
     float transLevel = 1;
+    std::array<float, 16> extLevel {}, extPan {};    // your plug-ins' strips, by channel
+    bool hasExt = false;
     std::vector<PartPatch> parts;
     std::vector<Lane> lanes;
     std::shared_ptr<std::vector<FxDesc>> fxList;   // what the page asked for
@@ -875,7 +877,7 @@ public:
         if (! current || n <= 0) return;
 
         // nothing sounding for a while (the room has rung out): use no CPU at all
-        if (events.empty() && activeVoices() == 0 && ! current->trans && ! current->takes)
+        if (events.empty() && activeVoices() == 0 && ! current->trans && ! current->takes && ! current->hasExt)
         {
             if (idle >= (int64_t) (sr * 8)) { gate = audible; return; }
             idle += n;
@@ -915,6 +917,18 @@ public:
                 if (fxBus && fxBus->any[15]) { busL[15] += tk; busR[15] += tk; busLevel[15] = takeLevel; }
                 else { float pl, pr; panGains (0, false, pl, pr); l += tk * takeLevel * pl; r += tk * takeLevel * pr; }
             }
+            // your plug-ins join here, so they get the part's fader, pan, effects, the room and the master chain
+            if (current->hasExt)
+                for (size_t c = 0; c < 16; ++c)
+                {
+                    if (extL[c] == nullptr) continue;
+                    const float xl = extL[c][i] * extTrim, xr = extR[c][i] * extTrim;
+                    if (fxBus && fxBus->any[c]) { busL[c] += xl; busR[c] += xr; busLevel[c] = current->extLevel[c]; busPan[c] = current->extPan[c]; busStereo[c] = true; continue; }
+                    float pl, pr;
+                    panGains (hasPan[c] ? chPan[c] : current->extPan[c], true, pl, pr);
+                    l += xl * current->extLevel[c] * chGain[c] * pl;
+                    r += xr * current->extLevel[c] * chGain[c] * pr;
+                }
             float chorusIn[3] { 0, 0, 0 };
             for (auto& v : voices)
             {
@@ -995,6 +1009,9 @@ public:
 
 public:
     float takeLevel = 1;
+    // Audio thread, before process(): one block of a plug-in's sound for this channel, or nullptr
+    void setExternal (int ch, const float* l, const float* r) { if (ch >= 0 && ch < 16) { extL[(size_t) ch] = l; extR[(size_t) ch] = r; } }
+    static constexpr float extTrim = 1.0f / .6f;   // cancels the master gain, which is matched to the page's quiet voices
 private:
     void fireTrans (double now)
     {
@@ -1089,6 +1106,7 @@ private:
     std::array<float, 16> chGain { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }, chPan {};
     std::array<bool, 16> hasPan {}, busStereo {};
     std::array<float, 16> busL {}, busR {}, busLevel {}, busPan {};
+    std::array<const float*, 16> extL {}, extR {};
     std::array<int, 3> chorusCh { -1, -1, -1 };
     FxBank* fxBus = nullptr;
     std::array<TransVoice, 8> transVoices;

@@ -52,6 +52,7 @@ public:
     void setSoundMode (int m) { soundMode = juce::jlimit (0, 3, m); }
     int getSoundMode() const { return soundMode.load(); }
     void setStandaloneTempo (double bpm) { if (bpm > 0) stBpm = bpm; }
+    bool bounce (const juce::File& file, double beats, double bpm, const std::vector<std::pair<double, double>>& tempo, std::function<void (float)> progress);
     // layout: [{id, at}] — returns the clip ids this plugin still needs rendered
     juce::StringArray setAudioLayout (const juce::var& items);
     void addClip (const juce::String& id, std::shared_ptr<st::Clip> clip);
@@ -90,6 +91,11 @@ public:
     st::TakeRecorder takeRecorder;   // standalone only: the audio input goes here, never to the speakers
 private:
     std::atomic<int> soundMode { 0 };
+    struct Waiting { juce::int64 at; st::Event e; };
+    std::vector<Waiting> waiting;
+    std::vector<st::Event> soon;
+    juce::int64 sampleClock = 0;
+    int blockNow = 512;
     std::atomic<bool> engineAll { false };   // app only: the engine plays the whole song (a plug-in is on a part)
     std::atomic<double> tlLength { 0.0 }, tlOffset { 0.0 };
     std::map<juce::String, std::shared_ptr<st::Clip>> clips;   // message thread

@@ -45,6 +45,8 @@ private:
     std::vector<juce::uint32> incoming;
     juce::String lastAutosaved;
     int lastHostLatency = 0;
+    std::atomic<bool> bouncing { false };
+    void startBounce (const juce::var&);
     juce::File takeFile;
     bool lastPlaying = false;
     int ticks = 0;

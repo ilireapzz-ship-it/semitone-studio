@@ -47,6 +47,7 @@ public:
         for (auto& t : fx) for (auto& p : t) if (p) { p->releaseResources(); p->setRateAndBufferSizeDetails (sr, bs); p->prepareToPlay (sr, bs); }
         temp.setSize (maxChannels, bs * 2, false, false, true);
         fxTemp.setSize (maxChannels, bs * 2, false, false, true);
+        partOut.setSize (32, bs * 2, false, false, true);
     }
 
     void startScan()
@@ -349,7 +350,7 @@ public:
     bool hasAny() const { for (const auto& i : inst) if (i) return true; return false; }
 
     // Audio thread: skips the block if a plug-in is being swapped.
-    void process (const std::vector<Event>& events, int n, float* L, float* R, double beat = -1)
+    void process (const std::vector<Event>& events, int n, float* L, float* R, double beat = -1, bool toEngine = false)
     {
         const juce::SpinLock::ScopedTryLockType sl (lock);
         if (! sl.isLocked() || n > temp.getNumSamples()) return;
@@ -380,7 +381,9 @@ public:
             }
         slowest = juce::jmin (slowest, LineUp::size - 8192);
         partLatency = slowest + chainLatency (masterFx);
-        lineUp[16].run (L, R, n, slowest);    // what's already in the buffer: the built-in sounds
+        slowestNow = slowest;
+        if (! toEngine) lineUp[16].run (L, R, n, slowest);    // what's already in the buffer: the built-in sounds
+        outReady.fill (false);
         // Link by MIDI: a slow sweep up and down, for the plug-in's own MIDI Learn to catch
         if (wiggleLeft > 0)
         {
@@ -407,6 +410,13 @@ public:
             p->processBlock (view, midi);
             runFx (ch, view.getWritePointer (0), view.getWritePointer (1), n);
             lineUp[(size_t) ch].run (view.getWritePointer (0), view.getWritePointer (1), n, juce::jmax (0, slowest - late[(size_t) ch]));
+            if (toEngine)
+            {
+                juce::FloatVectorOperations::copy (partOut.getWritePointer (ch * 2), view.getReadPointer (0), n);
+                juce::FloatVectorOperations::copy (partOut.getWritePointer (ch * 2 + 1), view.getReadPointer (1), n);
+                outReady[(size_t) ch] = true;
+                continue;
+            }
             juce::FloatVectorOperations::add (L, view.getReadPointer (0), n);
             if (R != nullptr && R != L) juce::FloatVectorOperations::add (R, view.getReadPointer (1), n);
         }
@@ -414,6 +424,16 @@ public:
     }
 
     int latencySamples() const { return partLatency.load(); }
+    int slowestPart() const { return slowestNow; }           // audio thread, after process()
+    const float* partLeft (int ch) const { return outReady[(size_t) ch] ? partOut.getReadPointer (ch * 2) : nullptr; }
+    const float* partRight (int ch) const { return outReady[(size_t) ch] ? partOut.getReadPointer (ch * 2 + 1) : nullptr; }
+
+    // Exporting: faster than real time, so plug-ins use their best quality and load everything they need.
+    void setOffline (bool on)
+    {
+        for (auto& p : inst) if (p) p->setNonRealtime (on);
+        for (auto& t : fx) for (auto& p : t) if (p) p->setNonRealtime (on);
+    }
 
     static constexpr int ccBase = 100000;   // a lane with an index from here sends MIDI controller (index - ccBase)
     void sendCcSweep (int ch, int cc) { wiggleCh = ch; wiggleCc = juce::jlimit (0, 127, cc); wiggleLeft = (int) (sr * 1.5); }
@@ -499,6 +519,9 @@ private:
     std::array<std::array<std::unique_ptr<HostWindow>, 4>, 17> fxWin;
     juce::AudioBuffer<float> fxTemp { maxChannels, 8192 };
     bool lanesMoving = false;
+    juce::AudioBuffer<float> partOut { 32, 8192 };
+    std::array<bool, 16> outReady {};
+    int slowestNow = 0;
     struct CcOut { int ch, cc, v; };
     std::array<CcOut, 64> ccOut {};
     int ccCount = 0;

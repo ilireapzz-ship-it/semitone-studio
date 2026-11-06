@@ -423,6 +423,25 @@ int main()
         printf ("ok: volume and pan lanes follow the song position\n");
     }
 
+    // your plug-ins join the mix on their strip: fader, pan, and they keep running when the engine would go idle
+    {
+        auto p = std::make_shared<SynthPatch> (); p->hasExt = true; p->extLevel[1] = 1; p->polish.on = false;
+        Synth sy; sy.prepare (SR); sy.setPatch (p);
+        std::vector<float> in (512), L (512), R (512);
+        for (int i = 0; i < 512; ++i) in[(size_t) i] = .02f * (float) std::sin (2 * M_PI * 468.75 * i / SR);   // a whole number of cycles
+        double el = 0, er = 0;
+        auto level = [&] (int blocks) { for (int k = 0; k < blocks; ++k) { el = er = 0; std::fill (L.begin(), L.end(), 0.f); std::fill (R.begin(), R.end(), 0.f); sy.setExternal (1, in.data(), in.data()); sy.process ({}, 512, L.data(), R.data()); for (int i = 0; i < 512; ++i) { el += L[(size_t) i] * L[(size_t) i]; er += R[(size_t) i] * R[(size_t) i]; } } return std::sqrt (el / 512); };
+        const double full = level (60);
+        CHECK (full > .004 && full < .02, "plug-in level through the mix %f", full);
+        p = std::make_shared<SynthPatch> (*p); p->extLevel[1] = .5f; sy.setPatch (p);
+        const double half = level (60);
+        CHECK (std::abs (half / full - .5) < .05, "fader halves it %f", half / full);
+        p = std::make_shared<SynthPatch> (*p); p->extLevel[1] = 1; p->extPan[1] = -1; sy.setPatch (p); level (60);
+        CHECK (el > er * 16, "pan moves it left %f %f", el, er);
+        CHECK (level (1500) > .004, "still sounding after the idle time");
+        printf ("ok: plug-ins on their mixer strip\n");
+    }
+
     printf (failures ? "%d synth tests FAILED\n" : "all synth tests passed\n", failures);
     return failures ? 1 : 0;
 }
