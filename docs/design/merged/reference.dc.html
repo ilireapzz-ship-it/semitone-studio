@@ -13,7 +13,7 @@
 <style>
 body{margin:0;background:#0A0B0D}
 button,input{font:inherit;letter-spacing:inherit}
-button{cursor:pointer}
+button{cursor:pointer;white-space:nowrap}
 .sm{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#6B7079;font-weight:500}
 .mono{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}
 .serif{font-family:'Instrument Serif',Georgia,serif;font-weight:400;letter-spacing:0}
@@ -26,8 +26,8 @@ button{cursor:pointer}
 
   <!-- 1 · header: song, recipe sentence, ⌘K, lens -->
   <header style="height: 54px; flex-shrink: 0; display: flex; align-items: center; gap: 16px; padding: 0 18px; border-bottom: 1px solid rgba(255,255,255,.06); background: linear-gradient(#121316, #0E0F12)">
-    <span aria-label="Semitone" style="width: 22px; height: 22px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #F1D6A6, #B8894A 55%, #5E4524); box-shadow: 0 0 0 1px rgba(255,255,255,.08), 0 2px 8px rgba(184,137,74,.25)"></span>
-    <span class="serif" style="font-size: 22px; line-height: 1">Untitled song</span>
+    <span aria-label="Semitone" style="flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #F1D6A6, #B8894A 55%, #5E4524); box-shadow: 0 0 0 1px rgba(255,255,255,.08), 0 2px 8px rgba(184,137,74,.25)"></span>
+    <span class="serif" style="font-size: 22px; line-height: 1; white-space: nowrap">{{songTitle}}</span><sc-if value="{{verChip}}" hint-placeholder-val="{{false}}"><button class="ghost xs" style="margin-left: -6px; border-color: {{verLine}}">v5 ▾</button></sc-if>
     <span style="width: 1px; height: 22px; background: rgba(255,255,255,.08)"></span>
     <div aria-label="Recipe" style="display: flex; align-items: baseline; gap: 6px; color: #7E838C; white-space: nowrap">
       <sc-for list="{{recipe}}" as="r" hint-placeholder-count="4">
@@ -157,6 +157,36 @@ button{cursor:pointer}
           <span style="margin-left: auto; align-self: center; color: #6B7079">{{drawerNote}}</span>
         </div>
         <div style="flex: 1; display: flex; gap: 14px; padding: 12px 16px; min-height: 0">
+          <sc-if value="{{lyr}}" hint-placeholder-val="{{false}}">
+            <div style="flex: 1.5; display: flex; border-radius: 8px; border: 1px solid rgba(255,255,255,.06); background: #0B0C0E; overflow: hidden; min-width: 0">
+              <div style="width: 96px; flex-shrink: 0; border-right: 1px solid rgba(255,255,255,.06); padding: 10px 0">
+                <sc-for list="{{lyr.secs}}" as="x" hint-placeholder-count="6"><div style="padding: 7px 14px; color: {{x.ink}}; background: {{x.bg}}; border-left: 2px solid {{x.line}}">{{x.name}}</div></sc-for>
+              </div>
+              <div style="flex: 1; min-width: 0; padding: 12px 16px; display: flex; flex-direction: column; gap: 4px">
+                <div style="display: grid; grid-template-columns: 1fr 78px 96px 22px; gap: 10px; padding-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,.05)"><span class="sm">Verse 1 · lyric</span><span class="sm">Syllables</span><span class="sm">Stress vs beat</span><span class="sm">Rh.</span></div>
+                <sc-for list="{{lyr.lines}}" as="l" hint-placeholder-count="4">
+                  <div style="display: grid; grid-template-columns: 1fr 78px 96px 22px; gap: 10px; align-items: center; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,.035)">
+                    <span class="serif" style="font-size: 16.5px; color: #EDEBE6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{l.pre}}<span style="background: {{l.hiBg}}; border-bottom: 1px solid {{l.hiLine}}; color: {{l.hiInk}}">{{l.hi}}</span>{{l.post}}</span>
+                    <span class="mono" style="font-size: 11px; color: {{l.sylInk}}">{{l.syl}} / {{l.notes}} notes</span>
+                    <span style="display: flex; gap: 4px; align-items: center"><sc-for list="{{l.stress}}" as="d" hint-placeholder-count="8"><span style="width: {{d.w}}px; height: {{d.w}}px; border-radius: 50%; background: {{d.c}}; box-shadow: {{d.ring}}"></span></sc-for></span>
+                    <span class="mono" style="width: 20px; height: 20px; border-radius: 5px; background: {{l.rhBg}}; color: {{l.rhInk}}; font-size: 10.5px; display: flex; align-items: center; justify-content: center">{{l.rh}}</span>
+                  </div>
+                </sc-for>
+                <div style="display: flex; gap: 8px; margin-top: 8px; align-items: center; flex-wrap: wrap"><span class="sm">Rhymes for “leaving”</span><sc-for list="{{lyr.rhymes}}" as="r" hint-placeholder-count="6"><span style="padding: 3px 9px; border-radius: 999px; border: 1px solid rgba(255,255,255,.09); color: {{r.ink}}; font-size: 11.5px">{{r.w}}</span></sc-for></div>
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ideas}}" hint-placeholder-val="{{false}}">
+            <div style="flex: 1.5; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; align-content: start; min-width: 0">
+              <sc-for list="{{ideas}}" as="d" hint-placeholder-count="6">
+                <div style="padding: 11px 12px; border-radius: 9px; background: linear-gradient(#121316, #0F1013); border: 1px solid rgba(255,255,255,.06); display: flex; flex-direction: column; gap: 7px; box-shadow: inset 0 1px 0 rgba(255,255,255,.03)">
+                  <span class="sm" style="display: flex; align-items: center; gap: 6px"><span style="width: 5px; height: 5px; border-radius: 50%; background: {{d.color}}"></span>{{d.kind}}</span>
+                  <svg viewBox="0 0 200 28" preserveAspectRatio="none" style="width: 100%; height: 28px" aria-hidden="true"><path d="{{d.wave}}" stroke="{{d.color}}" stroke-width="1.5" opacity=".8" fill="none"></path></svg>
+                  <span style="font-weight: 500">{{d.title}}</span><span style="color: #6B7079; font-size: 11px">{{d.meta}}</span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
           <sc-if value="{{showRoll}}" hint-placeholder-val="{{true}}">
             <div style="flex: 1.5; display: flex; flex-direction: column; border-radius: 8px; border: 1px solid rgba(255,255,255,.06); overflow: hidden; background: #0B0C0E">
               <div style="flex: 1; display: flex; min-height: 0">
@@ -227,6 +257,20 @@ button{cursor:pointer}
             <sc-for list="{{cmdk}}" as="a" hint-placeholder-count="5"><div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 9px; border-radius: 7px; background: {{a.bg}}"><span>{{a.name}}</span><span class="sm" style="font-size: 9px">{{a.tag}}</span></div></sc-for>
           </div>
           <div style="padding: 9px 14px; border-top: 1px solid rgba(255,255,255,.06); color: #6B7079; font-size: 11px; display: flex; justify-content: space-between"><span>Every command, plus your own chained actions</span><span style="color: #D9B37A">＋ Save as action</span></div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{versions}}" hint-placeholder-val="{{false}}">
+        <div role="dialog" aria-label="Versions" style="position: absolute; left: 30px; top: -50px; width: 470px; border-radius: 12px; background: rgba(20,21,24,.96); backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 30px 80px rgba(0,0,0,.65), 0 0 0 1px rgba(0,0,0,.5); z-index: 6; overflow: hidden">
+          <div style="padding: 13px 14px 8px; display: flex; justify-content: space-between; align-items: baseline"><span class="serif" style="font-size: 19px">Versions</span><span class="sm">Saved on every big change</span></div>
+          <sc-for list="{{versions}}" as="v" hint-placeholder-count="5">
+            <div style="display: flex; gap: 11px; align-items: center; padding: 9px 14px; background: {{v.bg}}; border-top: 1px solid rgba(255,255,255,.04)">
+              <span class="mono" style="width: 26px; color: {{v.ink}}">{{v.n}}</span>
+              <span style="flex: 1; display: flex; flex-direction: column; gap: 1px"><span style="font-weight: 500">{{v.name}} <span style="color: #D9B37A">{{v.star}}</span></span><span style="color: #6B7079; font-size: 11px">{{v.when}}</span></span>
+              <span class="sm" style="font-size: 9px; color: {{v.tagInk}}">{{v.tag}}</span>
+            </div>
+          </sc-for>
+          <div style="padding: 10px 14px; border-top: 1px solid rgba(255,255,255,.06); display: flex; gap: 6px"><button class="prim xs">Compare v3 with now</button><button class="ghost xs">Open v3 as a copy</button><button class="ghost xs">Save version ⌘S</button></div>
         </div>
       </sc-if>
 
@@ -331,7 +375,7 @@ button{cursor:pointer}
 <script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
 class Component extends DCLogic {
   renderVals() {
-    var LENS = '__LENS__'; var EXTRA = '__EXTRA__'; var L = EXTRA === 'loops'; var COLL = EXTRA === 'collapsed'; var ADD = EXTRA === 'add' || EXTRA === 'added'; var MENU = EXTRA === 'add';
+    var LENS = '__LENS__'; var EXTRA = '__EXTRA__'; var L = EXTRA === 'loops'; var COLL = EXTRA === 'collapsed'; var ADD = EXTRA === 'add' || EXTRA === 'added'; var MENU = EXTRA === 'add'; var WORDS = EXTRA === 'words'; var VER = EXTRA === 'versions';
     var P = LENS === 'produce', W = LENS === 'write', M = LENS === 'mix';
     var BRASS = '#D9B37A';
     var C = { prod: BRASS, doc: '#9DB4E8', snd: '#7FC9A2', emo: '#B9A3E3', mix: '#7FC9A2', loop: '#6CC3C3' };
@@ -383,8 +427,8 @@ class Component extends DCLogic {
     if (L) tracks[5].cells[3].border = 'rgba(108,195,195,.85)', tracks[5].cells[3].glow = '0 0 0 3px rgba(108,195,195,.12)', tracks[5].cells[3].label = 'dream-pop gtr', tracks[5].cells[5].label = 'dream-pop gtr';
     var meters = [72, 58, 64, 80, 40, 50];
     tracks.forEach(function (t, i) { if (t.indent == null) t.indent = 0; if (t.tag == null) t.tag = false; t.meter = M ? meters[i] : false; t.meter2 = meters[i] - 6; t.soundInk = P && !L && (i === 1 || i === 3) ? '#A9C9B4' : '#6B7079'; t.headBg = L && i === 5 ? 'rgba(108,195,195,.06)' : P && !L && i === 1 ? 'rgba(217,179,122,.06)' : 'transparent'; });
-    var drawerTabs = M ? 'Mix' : L ? 'Sound' : 'Notes';
-    var drawer = ['Notes', 'Words', 'Sound', 'Mix'].map(function (n) { var on = n === drawerTabs; return { name: n, line: on ? BRASS : 'transparent', ink: on ? '#EDEBE6' : '#7E838C' }; });
+    var drawerTabs = WORDS ? 'Words' : VER ? 'Ideas' : M ? 'Mix' : L ? 'Sound' : 'Notes';
+    var drawer = ['Notes', 'Words', 'Sound', 'Mix', 'Ideas'].map(function (n) { var on = n === drawerTabs; return { name: n, line: on ? BRASS : 'transparent', ink: on ? '#EDEBE6' : '#7E838C' }; });
     var names = ['B', 'A♯', 'A', 'G♯', 'G', 'F♯', 'F', 'E', 'D♯', 'D', 'C♯', 'C'];
     var inScale = { 'E': 1, 'F♯': 1, 'G': 1, 'A': 1, 'B': 1, 'C': 1, 'D': 1 };
     var keys = []; for (var r = 0; r < 24; r++) { var nm = names[r % 12], oct = r < 12 ? 5 : 4, blk = nm.indexOf('♯') > -1; keys.push({ top: r * 12, key: blk ? 'linear-gradient(90deg, #17181B 60%, #DAD6CD 60%)' : '#DAD6CD', label: nm === 'C' ? 'C' + oct : '', row: blk ? 'rgba(0,0,0,.28)' : (W && inScale[nm] ? 'rgba(217,179,122,.035)' : 'transparent') }); }
@@ -395,7 +439,7 @@ class Component extends DCLogic {
     var ghosts = W ? [0, 1, 2, 3].map(function (k) { return { l: 1 + k * 24.5, t: [19, 23, 16, 21][k] * 12, w: 23.5 }; }) : [];
     var wv = ''; for (var x = 0; x <= 600; x += 3) { var a = (Math.sin(x / 9) * .45 + .55) * (x % 150 < 18 ? 32 : 17); wv += 'M' + x + ' ' + (35 - a).toFixed(1) + ' L' + x + ' ' + (35 + a).toFixed(1) + ' '; }
     var loop = L ? { wave: wv, opts: [['Fit to song tempo', 1], ['Fit to song key', 1], ['Follow the chords', 0], ['Slice into Drums', 0]].map(function (o) { return { name: o[0], bg: o[1] ? '#4F9E9E' : '#24262B', k: o[1] ? 13 : 2 }; }) } : false;
-    var cmdk = W && !ADD ? [['Double the chorus vocal and pan it', 'your action · 3 steps', 1], ['Double the bass under Chorus 2', 'edit'], ['Capture what I just played', 'record'], ['Export every section as stems', 'share'], ['Audition loops in Splice Bridge', 'sound']].map(function (a) { return { name: a[0], tag: a[1], bg: a[2] ? 'rgba(255,255,255,.06)' : 'transparent' }; }) : false;
+    var cmdk = W && !ADD && !WORDS && !VER ? [['Double the chorus vocal and pan it', 'your action · 3 steps', 1], ['Double the bass under Chorus 2', 'edit'], ['Capture what I just played', 'record'], ['Export every section as stems', 'share'], ['Audition loops in Splice Bridge', 'sound']].map(function (a) { return { name: a[0], tag: a[1], bg: a[2] ? 'rgba(255,255,255,.06)' : 'transparent' }; }) : false;
     function fx(list) { var o = list.map(function (f) { return { name: f, ink: '#C9C5BC', bg: '#17191D', dot: '#7FC9A2', lineStyle: 'solid' }; }); while (o.length < 3) o.push({ name: 'empty', ink: '#4C5058', bg: 'transparent', dot: '#2A2D32', lineStyle: 'dashed' }); return o; }
     var strips = M ? [['Melody', TC.mel, ['UAD 1176 Rev A', 'VintageVerb'], 72, 68, '−6.2', 0], ['Chords', TC.ch, ['Tremolator', 'Brigade Chorus'], 58, 60, '−9.1', -.5], ['Bass', TC.bass, ['Decapitator'], 64, 62, '−8.0', 0], ['Drums', TC.dr, ['Sound City room'], 80, 78, '−5.4', .2], ['Vocal FX', TC.fx, ['EchoBoy'], 40, 38, '−14.0', .6]].map(function (s) { var ang = s[6] * 2.3 - Math.PI / 2; return { name: s[0], color: s[1], fx: fx(s[2]), lvl: s[3], lvl2: s[4], db: s[5], cap: 100 - s[3] - 4, panX: (15 + Math.cos(ang) * 8).toFixed(1), panY: (15 + Math.sin(ang) * 8).toFixed(1) }; }) : false;
     var side = ADD && !MENU ? [
@@ -427,13 +471,27 @@ class Component extends DCLogic {
     var addMenu = MENU ? { gen: [['♪', 'Counter melody', 'answers the melody in its gaps', '#E3A9C9', 1], ['▁', 'Second bass', 'sub, octave or synth bass under Bass', '#B98A4E'], ['♫', 'Harmony / backing vocal', 'a third or sixth with the melody, your lyrics', '#D9776F'], ['⋰', 'Arpeggio from the chords', 'picks the chord tones in a pattern', '#7C95D9'], ['≈', 'Pad or strings bed', 'long notes that hold the chords', '#B9A3E3'], ['◦', 'Extra percussion', 'shaker, tambourine, claps', '#74B88F']].map(function (g) { return { icon: g[0], name: g[1], how: g[2], color: g[3], tint: hexA(g[3], .14), bg: g[4] ? 'rgba(255,255,255,.06)' : 'transparent' }; }),
       from: [['Layer it (linked)', 'same notes, a new sound on top · great for doubling'], ['Duplicate it', 'a copy you can change freely'], ['Move it an octave', 'a copy up or down, linked']].map(function (g) { return { name: g[0], how: g[1] }; }),
       empty: [['Pick an instrument…', 'built-in sounds or your plug-ins'], ['Audio part', 'record a voice or guitar']].map(function (g) { return { name: g[0], how: g[1] }; }) } : false;
+    var lyr = WORDS ? {
+      secs: secs.map(function (x, i) { var on = i === 1; return { name: x[0], ink: on ? '#EDEBE6' : '#7E838C', bg: on ? 'rgba(217,179,122,.06)' : 'transparent', line: on ? BRASS : 'transparent' }; }),
+      lines: [['In the ', 'blue', ' of the evening', 7, 8, 'A', [0, 0, 2, 0, 0, 1, 0], 2], ['I can hear the engine humming', '', '', 8, 8, 'B', [0, 0, 1, 0, 0, 1, 0, 0], -1], ['Every light along the highway', '', '', 8, 8, 'C', [1, 0, 0, 1, 0, 0, 1, 0], -1], ['Says that you’re already ', 'leaving', '', 8, 8, 'A', [1, 0, 0, 0, 1, 0, 1, 0], -1]].map(function (l) {
+        var rc = { A: ['rgba(217,179,122,.16)', '#F1D6A6'], B: ['rgba(157,180,232,.14)', '#B9C9EE'], C: ['rgba(127,201,162,.14)', '#A9D9BE'] }[l[5]];
+        var bad = l[1] === 'blue';
+        return { pre: l[0], hi: l[1], post: l[2], hiBg: bad ? 'rgba(157,180,232,.12)' : 'transparent', hiLine: bad ? '#9DB4E8' : (l[1] ? BRASS : 'transparent'), hiInk: bad ? '#DCE4FF' : '#F1D6A6', syl: l[3], notes: l[4], sylInk: l[3] === l[4] ? '#7FC9A2' : '#D9B37A', rh: l[5], rhBg: rc[0], rhInk: rc[1],
+          stress: l[6].map(function (v) { return { w: v ? 8 : 5, c: v === 2 ? '#9DB4E8' : v ? '#EDEBE6' : '#3A3D44', ring: v === 2 ? '0 0 0 3px rgba(157,180,232,.25)' : 'none' }; }) }; }),
+      rhymes: [['evening', 1], ['grieving'], ['believing'], ['ceiling', 0, 'near'], ['breathing', 0, 'near'], ['dreaming', 0, 'near']].map(function (r) { return { w: r[0] + (r[2] ? ' ·' + r[2] : ''), ink: r[1] ? '#F1D6A6' : '#C9C5BC' }; }) } : false;
+    function iw(n, kind) { var d = ''; if (kind === 'notes') { for (var i = 0; i < 9; i++) { var y = 6 + ((i * 7 + n * 5) % 16); d += 'M' + (i * 22 + 4) + ' ' + y + ' L' + (i * 22 + 18) + ' ' + y + ' '; } return d; } for (var x = 0; x <= 200; x += 3) { var a = (Math.sin(x / 6 + n) * .45 + .55) * ((x + n * 30) % 60 < 9 ? 12 : 6); d += 'M' + x + ' ' + (14 - a).toFixed(1) + ' L' + x + ' ' + (14 + a).toFixed(1) + ' '; } return d; }
+    var ideas = VER ? [['Capture', '#D9776F', 'Hummed hook, chorus?', '0:12 · F♯ minor · yesterday', 'notes'], ['Voice memo', '#D9776F', '“Drive me home” in the car', '0:41 · from iPhone', 'wave'], ['Loop', '#6CC3C3', 'dreampop_gtr_shimmer', '4 bars · fitted to E minor', 'wave'], ['Chord idea', '#7C95D9', 'Em – C – G – B7', 'the B7 lifts into the chorus', 'notes'], ['Lyric line', '#B9A3E3', '“Radio low, your hand on mine”', 'written Tuesday', 'notes'], ['Beat', '#74B88F', 'Brush shuffle, 78', 'from Capture', 'notes']].map(function (d, i) { return { kind: d[0], color: d[1], title: d[2], meta: d[3], wave: iw(i, d[4]) }; }) : false;
+    var versions = VER ? [['v5', 'Counter melody + strings layer', 'now · autosaved', 'current', 1], ['v4', 'Antonoff-style pass kept', 'today 17:20', 'pass'], ['v3', 'Before the bridge rewrite', 'today 15:02 · you named it', 'named', 0, '★'], ['v2', 'Chorus lifted a semitone', 'yesterday', 'edit'], ['v1', 'First sketch', 'Tue 4 Nov', 'start']].map(function (v) { var cur = !!v[4]; return { n: v[0], name: v[1], when: v[2], tag: v[3], tagInk: cur ? BRASS : '#6B7079', star: v[5] || '', bg: v[0] === 'v3' ? 'rgba(255,255,255,.05)' : 'transparent', ink: cur ? BRASS : '#8A8F98' }; }) : false;
+    if (WORDS) { side = [{ kind: 'Song doctor · 1', dot: C.doc, title: '“blue” lands on a weak beat', text: 'The stressed syllable falls between beats (blue dot). Move the note to beat 1, or swap it for a two-syllable word like “indigo”.' }, { kind: 'Rhyme scheme', dot: BRASS, title: 'A B C A', text: 'Lines 1 and 4 rhyme (evening / leaving). Try making line 3 rhyme with line 2 for an A B B A verse.' }]; }
+    if (VER) { side = [{ kind: 'Ideas shelf', dot: '#D9776F', title: 'Everything not in a song yet', text: 'Captures, phone memos, loops, chord ideas and lines. Drag one onto a section to use it; it fits your key and tempo.' }, { kind: 'Versions · compare', dot: BRASS, title: 'v3 against now', text: 'Plays the same bar in both, switching instantly, so you hear what the bridge rewrite and new parts changed.' }]; }
     return {
+      songTitle: 'Untitled song', verChip: VER || COLL || W || P || M, verLine: VER ? 'rgba(217,179,122,.6)' : 'rgba(255,255,255,.09)', lyr: lyr, ideas: ideas, versions: versions,
       addRow: ADD, addInk: MENU ? '#EDEBE6' : '#9BA0A8', addLine: MENU ? 'rgba(217,179,122,.6)' : 'rgba(255,255,255,.09)', addMenu: addMenu,
       rail: rail, full: !COLL, asideW: COLL ? 58 : 340, themes: themes,
       recipe: recipe, lenses: lenses, sections: sections, tracks: tracks, drawer: drawer, roll: roll, keys: keys, strips: strips, side: side, filters: filters, feed: feed, levels: levels, pop: pop,
       ab: P && !L, snaps: M, splice: L, ghosts: ghosts, loop: loop, cmdk: cmdk, rollFoot: P ? 'Vel' : 'Words',
       transportNote: L ? '' : P ? '5 changes drawn on your song' : '',
-      selected: ADD ? (MENU ? 'Verse 1 · Melody' : 'Counter melody · new') : L ? 'Chorus 1 · Loops' : W ? 'Verse 1 · Melody' : P ? 'Change 1 · Chords' : 'All parts', showRoll: !M && !L, drawerNote: ADD ? (MENU ? 'Pick a part to add' : 'Ghost notes: Melody and Chords') : L ? 'Dropped loops fit your song automatically' : W ? 'Scale lock E minor · Ghosts: Chords' : P ? 'The editor follows what you click' : 'Your plug-ins on each part',
+      selected: WORDS ? 'Verse 1 · Words' : VER ? 'Ideas shelf' : ADD ? (MENU ? 'Verse 1 · Melody' : 'Counter melody · new') : L ? 'Chorus 1 · Loops' : W ? 'Verse 1 · Melody' : P ? 'Change 1 · Chords' : 'All parts', showRoll: !M && !L && !WORDS && !VER, drawerNote: WORDS ? 'Each line against the melody’s notes and beats' : VER ? 'Drag an idea onto a section' : ADD ? (MENU ? 'Pick a part to add' : 'Ghost notes: Melody and Chords') : L ? 'Dropped loops fit your song automatically' : W ? 'Scale lock E minor · Ghosts: Chords' : P ? 'The editor follows what you click' : 'Your plug-ins on each part',
       feedNote: L ? 'Loops & sounds' : P ? 'Producer' : W ? 'Writing help' : 'Mix help', passHead: P && !L, keepBar: P && !L,
       ask: L ? 'find a warmer loop for chorus 2' : W ? 'make verse 2 different but familiar' : P ? 'make chorus 2 bigger, keep the verse sparse' : L ? 'find a warmer loop for chorus 2' : 'make the vocal sit forward on phones'
     };

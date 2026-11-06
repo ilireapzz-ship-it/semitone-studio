@@ -139,6 +139,54 @@ Chords, Bass, Drums); extra sounds only exist as per-section chord layers (`S.se
   plug-in host must all handle any number of parts, each on its own MIDI channel. Old songs load unchanged.
 - Helpers can suggest parts too (Session: "Strings layer only in the choruses", "Bass 2 doubles the root: thin it in verses").
 
+## The songwriter's screens (agreed 6 Nov 2026)
+Pictures: `9-Start.png`, `10-Words.png`, `11-Versions-and-Ideas.png`, `12-Pitch-and-share.png`.
+
+**Start (new song).** "What are we writing?" followed by the recipe as one big editable sentence: *A song like [style · era]
+produced like [producer] that feels [emotion arc] like a [vibe] in [key] at [tempo] for [purpose]*. Each value is a
+dashed-underline word that opens the existing tag picker. "Or start from" chips: a hummed melody, a chord loop, a lyric, a
+reference song, a loop. Then **Start the song** and **Surprise me**. Below that: recent songs (with a mini arrangement bar and their
+recipe), the Ideas shelf, and Keep learning (a lesson built in the last song's key, plus a tip).
+
+**Words (drawer tab).** A section list on the left. Each lyric line is in the serif face with:
+- **Syllables vs the melody's notes** for that line (green when they match, brass when they don't).
+- **Stress vs beat** dots: big for stressed syllables. A blue ringed dot marks a stressed syllable on a weak beat, which is
+  the song doctor's "lands on a weak beat", shown in place and highlighted in the line.
+- **Rhyme letter** (A/B/C, coloured by group), plus a rhyme-scheme card ("A B C A … try A B B A").
+- **Rhymes** for the selected word: true rhymes first, then near rhymes marked "near". Use a local rhyme dictionary
+  (bundled, e.g. CMUdict-based), not a web service.
+
+**Versions.** A "v5 ▾" chip next to the song title. A version is saved automatically on every big change (a kept pass, an
+added part, a key change, a rewrite of a section), with a plain name ("Antonoff-style pass kept"). The user can name and star
+one too (⌘S). Actions: **Compare vN with now**, which A/Bs the same bar in both and switches instantly, and **Open as a copy**.
+Versions live in the song file (a list of `projectData()` snapshots, deduplicated). This is separate from undo.
+
+**Ideas shelf (drawer tab "Ideas", also on Start).** Everything not in a song yet: Captures, phone voice memos, loops,
+chord ideas, lyric lines, beats. Each card shows a mini waveform or notes, a title and where it came from. Drag a card onto a
+section to use it (it fits the key and tempo), or "Start from this" on the Start screen. Stored locally in Documents/Semitone
+Studio/Ideas. Phone capture needs hosting, so ask Jamie first. Until then, memos can be dropped in from Finder.
+
+**Pitch & share (from Share).**
+- **Pitching to [artist]** with a **range check**: a keyboard showing the artist's usual range (from data in
+  `style-library.json`: add `range` per artist/era with a source note; mark it as a guide), the melody's range, and the
+  highest and lowest notes that fall outside. Suggest the nearest key that fits ("D minor (−2)") with **Hear it in D minor** and
+  **Add D minor demo**. The check reads only the user's notes.
+- **The pack** (checklist): demo mix (WAV + MP3, loudness matched), alt-key demo, lyric sheet PDF with chords above the words,
+  chord chart PDF, stems (including plug-ins), MIDI, and song notes (key, tempo, structure, credits). **Make the pitch pack**
+  writes a folder. Share links need hosting, so ask Jamie first.
+- **Lyric sheet preview** on paper: title, key, tempo, length, "Words & music: …", "Demo: guide vocal", and sections with chords.
+- **Credits & splits** saved with the song (writer names and percentages), printed on the sheet and in the notes.
+- The demo uses the built-in neutral guide vocal or Jamie's own recording, never an imitation of the artist's voice.
+
+## Quality checks for every step
+- **Design check:** after each build step, screenshot the real app at 1440×900 in every theme and compare it with these boards.
+  Fix any drift before moving on (spacing, type, colours, one filled button per area, no bright saturated blocks).
+- **Contrast:** text on panels must be at least 4.5:1 in every theme. Track colours also get a small part icon, so they don't rely on colour
+  alone (colour-blind users).
+- **Big songs:** test with 24 parts and a 6-minute song. Scrolling, playback and the drawer must stay smooth (under 16 ms per frame
+  when idle, no dropped audio).
+- **Keyboard:** every action reachable by keyboard, with visible focus rings in the accent colour, and a ? overlay listing the shortcuts.
+
 ## Order to build
 1. Look tokens as CSS variables across the existing UI, Studio Black first, then the theme picker and the other
    four themes from `themes.json`. This is the cheapest and most visible step.
@@ -150,4 +198,6 @@ Chords, Bass, Drums); extra sounds only exist as per-section chord layers (`S.se
 5. Open-ended parts: Add a part, linked layers, duplicates, counter melody and second bass.
 6. Capture, the takes lane, ghost notes and scale lock, ⌘K actions, section drag, mix snapshots.
 7. Loops: drop, paste and fit, then Splice Bridge recognition, the hidden audition track and host sync.
+8. Start screen with the recipe sentence, then the Words tab, then Versions and the Ideas shelf.
+9. Pitch & share: range check (add artist ranges to the data), the pitch pack folder, the lyric sheet and credits.
 Each step needs tests in `tests/web/` and a plain-words note for Jamie, and must keep working as a plain web page.
