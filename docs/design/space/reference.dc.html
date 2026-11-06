@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Semitone Studio — Merged · Space · editing</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&amp;family=Instrument+Serif&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0A0B0D}
+button,input{font:inherit;letter-spacing:inherit}
+button{cursor:pointer;white-space:nowrap}
+.sm{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#6B7079;font-weight:500}
+.mono{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}
+.serif{font-family:'Instrument Serif',Georgia,serif;font-weight:400;letter-spacing:0}
+.ghost{height:28px;padding:0 11px;border-radius:7px;border:1px solid rgba(255,255,255,.09);background:linear-gradient(#1A1C20,#15171A);color:#D9D6CF;box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+.prim{height:28px;padding:0 13px;border-radius:7px;border:0;background:linear-gradient(#F3F0EA,#DCD8CF);color:#121212;font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.5),inset 0 1px 0 #fff}
+.xs{height:24px;padding:0 9px;font-size:11.5px}
+</style>
+</helmet>
+<div style="height: {{H}}px; width: {{W}}px; background: #0A0B0D; color: #EDEBE6; font-family: 'Inter Tight', system-ui, sans-serif; font-size: 12.5px; display: flex; flex-direction: column; overflow: hidden; position: relative">
+  <header style="height: 46px; flex-shrink: 0; display: flex; align-items: center; gap: 12px; padding: 0 14px; border-bottom: 1px solid rgba(255,255,255,.06); background: linear-gradient(#121316,#0E0F12); white-space: nowrap">
+    <span style="flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #F1D6A6, #B8894A 55%, #5E4524)"></span>
+    <span class="serif" style="font-size: 20px">Drive Me Home</span><button class="ghost xs">v5 ▾</button>
+    <sc-if value="{{wide}}" hint-placeholder-val="{{true}}"><span style="color: #7E838C; display: flex; gap: 6px; align-items: baseline; min-width: 0; overflow: hidden"><span style="color: #EDEBE6; border-bottom: 1px dashed rgba(255,255,255,.22)">Lana Del Rey · Ultraviolence</span>produced like<span style="color: #EDEBE6; border-bottom: 1px dashed rgba(255,255,255,.22)">Jack Antonoff</span>feels<span style="color: #EDEBE6; border-bottom: 1px dashed rgba(255,255,255,.22)">melancholy → euphoric</span><span style="color: #6B7079">⋯</span></span></sc-if>
+    <sc-if value="{{narrow}}" hint-placeholder-val="{{false}}"><button class="ghost xs">Lana · UV + Antonoff ▾</button></sc-if>
+    <span style="margin-left: auto; display: flex; gap: 8px; align-items: center">
+      <sc-if value="{{wide}}" hint-placeholder-val="{{true}}"><button style="height: 28px; width: 180px; padding: 0 8px 0 10px; border-radius: 7px; border: 1px solid rgba(255,255,255,.07); background: #0C0D10; color: #6B7079; display: flex; align-items: center; justify-content: space-between">Search or do anything<span class="mono" style="font-size: 10px">⌘K</span></button></sc-if>
+      <sc-if value="{{narrow}}" hint-placeholder-val="{{false}}"><button class="ghost xs" style="width: 28px; padding: 0">⌘K</button></sc-if>
+      <div style="display: flex; padding: 2px; gap: 2px; border-radius: 8px; background: #0C0D10; border: 1px solid rgba(255,255,255,.06)"><sc-for list="{{lenses}}" as="l" hint-placeholder-count="3"><button style="height: 22px; padding: 0 11px; border-radius: 6px; border: 0; background: {{l.bg}}; color: {{l.ink}}">{{l.n}}</button></sc-for></div>
+    </span>
+  </header>
+  <div style="height: 38px; flex-shrink: 0; display: flex; align-items: center; gap: 8px; padding: 0 14px; border-bottom: 1px solid rgba(255,255,255,.06); background: #0E0F12; white-space: nowrap">
+    <button class="ghost xs" style="width: 26px; padding: 0">⏮</button><button style="width: 30px; height: 26px; border-radius: 7px; border: 0; background: linear-gradient(#F3F0EA,#D6D2C8); color: #111; font-size: 10px">▶</button>
+    <span style="display: flex; align-items: center; gap: 12px; height: 26px; padding: 0 11px; border-radius: 7px; background: #08090A; border: 1px solid rgba(255,255,255,.05)"><span class="mono" style="color: #F1E7D4; font-size: 13.5px">00:41.2</span><span class="mono" style="color: #8A8F98">14.3.1</span><sc-if value="{{wide}}" hint-placeholder-val="{{true}}"><span class="mono" style="color: #C9C5BC">E min · 78 · 4/4</span></sc-if></span>
+    <span style="margin-left: auto; display: flex; gap: 6px"><button class="ghost xs">↶</button><button class="ghost xs">⟲ Capture</button><button class="ghost xs"><span style="color: #E0443A">●</span> Record</button><button class="prim xs">Share</button></span>
+  </div>
+  <div style="flex: 1; display: flex; min-height: 0">
+    <main style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+      <!-- timeline -->
+      <div style="flex-shrink: 0; display: flex; background: #0B0C0E">
+        <div style="width: {{headW}}px; flex-shrink: 0; background: #0E0F12; border-right: 1px solid rgba(255,255,255,.06)">
+          <div style="height: {{secH}}px; display: flex; align-items: center; padding: 0 12px" class="sm">{{secLabel}}</div>
+          <sc-for list="{{tracks}}" as="t" hint-placeholder-count="5">
+            <div style="height: {{t.h}}px; box-sizing: border-box; border-top: 1px solid rgba(255,255,255,.045); display: flex; align-items: center; gap: 8px; padding-right: 8px">
+              <span style="width: 3px; align-self: stretch; background: {{t.c}}"></span>
+              <span style="flex: 1; min-width: 0; display: flex; flex-direction: column"><span style="font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{t.n}}</span><sc-if value="{{t.tall}}" hint-placeholder-val="{{false}}"><span style="color: #6B7079; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{t.s}}</span></sc-if></span>
+              <sc-if value="{{t.tall}}" hint-placeholder-val="{{false}}"><span class="mono" style="font-size: 9px; color: #6B7079; display: flex; gap: 3px"><span style="width: 15px; height: 15px; border-radius: 4px; border: 1px solid rgba(255,255,255,.08); display: flex; align-items: center; justify-content: center">M</span><span style="width: 15px; height: 15px; border-radius: 4px; border: 1px solid rgba(255,255,255,.08); display: flex; align-items: center; justify-content: center">S</span></span></sc-if>
+            </div>
+          </sc-for>
+          <sc-if value="{{tallAdd}}" hint-placeholder-val="{{false}}"><div style="height: 34px; border-top: 1px solid rgba(255,255,255,.045); display: flex; align-items: center; padding: 0 10px"><button class="ghost xs">＋ Add a part</button></div></sc-if>
+        </div>
+        <div style="flex: 1; min-width: 0; position: relative; background-image: repeating-linear-gradient(90deg, rgba(255,255,255,.028) 0 1px, transparent 1px 100%); background-size: calc(100% / 39) 100%">
+          <div style="height: {{secH}}px; display: flex; padding: 4px 0; box-sizing: border-box">
+            <sc-for list="{{secs}}" as="s" hint-placeholder-count="6">
+              <div style="flex: {{s.b}} 1 0; min-width: 0; padding: 0 1px; box-sizing: border-box"><div style="height: 100%; border-radius: 5px; padding: 0 7px; box-sizing: border-box; display: flex; align-items: center; gap: 6px; background: {{s.bg}}; border: 1px solid {{s.line}}; overflow: hidden; white-space: nowrap; position: relative">
+                <span class="mono" style="font-size: 9px; color: #555A62">{{s.start}}</span><span style="font-weight: 500; color: {{s.ink}}">{{s.n}}</span><span style="font-size: 10.5px; color: {{s.emoInk}}">{{s.emo}}</span>
+                <span style="position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: {{s.emoInk}}; opacity: .55"></span>
+              </div></div>
+            </sc-for>
+          </div>
+          <sc-for list="{{tracks}}" as="t" hint-placeholder-count="5">
+            <div style="height: {{t.h}}px; display: flex; padding: 3px 0; box-sizing: border-box; border-top: 1px solid rgba(255,255,255,.045)">
+              <sc-for list="{{t.cells}}" as="c" hint-placeholder-count="6"><div style="flex: {{c.b}} 1 0; min-width: 0; padding: 0 1px; box-sizing: border-box"><div style="height: 100%; position: relative; border-radius: 4px; background: {{c.bg}}; border: 1px solid {{c.line}}; overflow: hidden; box-sizing: border-box">
+                <sc-for list="{{c.notes}}" as="n" hint-placeholder-count="5"><span style="position: absolute; left: {{n.l}}%; top: {{n.t}}%; width: {{n.w}}%; height: 2.5px; border-radius: 1px; background: {{t.c}}"></span></sc-for>
+                <sc-if value="{{c.words}}" hint-placeholder-val="{{false}}"><span style="position: absolute; left: 6px; bottom: 3px; right: 4px; font-size: 10.5px; font-style: italic; color: #B9A3E3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{c.words}}</span></sc-if>
+              </div></div></sc-for>
+            </div>
+          </sc-for>
+          <sc-if value="{{tallAdd}}" hint-placeholder-val="{{false}}"><div style="height: 34px; border-top: 1px solid rgba(255,255,255,.045)"></div></sc-if>
+          <div aria-hidden="true" style="position: absolute; top: 0; bottom: 0; left: 34%; width: 1px; background: #EDEBE6; box-shadow: 0 0 6px rgba(237,235,230,.4)"></div>
+          <sc-if value="{{editBox}}" hint-placeholder-val="{{false}}"><div aria-hidden="true" style="position: absolute; top: {{secH}}px; bottom: 0; left: 7.7%; width: 20.5%; border: 1.5px solid #D9B37A; border-radius: 4px; box-shadow: 0 0 0 9999px rgba(10,11,13,.35)"></div></sc-if>
+        </div>
+      </div>
+      <!-- splitter -->
+      <div aria-label="Drag to resize" style="height: 8px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: #0E0F12; border-top: 1px solid rgba(255,255,255,.06); border-bottom: 1px solid rgba(255,255,255,.06); cursor: row-resize"><span style="width: 36px; height: 3px; border-radius: 2px; background: rgba(255,255,255,.16)"></span></div>
+      <!-- drawer -->
+      <section style="flex: {{drawerFlex}}; display: flex; flex-direction: column; min-height: 0; background: #0E0F12">
+        <div style="height: 34px; flex-shrink: 0; display: flex; align-items: center; gap: 14px; padding: 0 12px; border-bottom: 1px solid rgba(255,255,255,.06); white-space: nowrap">
+          <button class="ghost xs">Verse 1 · Melody ▾</button>
+          <span style="display: flex; gap: 14px; align-self: stretch"><sc-for list="{{tabs}}" as="d" hint-placeholder-count="5"><button style="padding: 0 1px; border: 0; border-bottom: 1.5px solid {{d.line}}; background: transparent; color: {{d.ink}}">{{d.n}}</button></sc-for></span>
+          <sc-if value="{{open}}" hint-placeholder-val="{{true}}">
+            <span style="width: 1px; height: 16px; background: rgba(255,255,255,.08)"></span>
+            <span style="display: flex; gap: 2px; padding: 2px; border-radius: 7px; background: #08090A"><button style="height: 20px; padding: 0 9px; border-radius: 5px; border: 0; background: #24262B; color: #EDEBE6; font-size: 11.5px">Melody</button><button style="height: 20px; padding: 0 9px; border-radius: 5px; border: 0; background: transparent; color: #8A8F98; font-size: 11.5px">Chords</button></span>
+            <sc-for list="{{tools}}" as="x" hint-placeholder-count="6"><button style="height: 22px; padding: 0 7px; border-radius: 5px; border: 0; background: transparent; color: {{x.ink}}; font-size: 11.5px">{{x.n}}</button></sc-for>
+          </sc-if>
+          <span style="margin-left: auto; display: flex; gap: 4px"><sc-if value="{{open}}" hint-placeholder-val="{{true}}"><button class="ghost xs" title="Hide the editor (⌘J)" style="width: 26px; padding: 0">▾</button><button class="ghost xs" title="Make the editor big (double-click a clip)" style="width: 26px; padding: 0">⤢</button></sc-if><sc-if value="{{closed}}" hint-placeholder-val="{{false}}"><button class="ghost xs" style="width: 26px; padding: 0">▴</button></sc-if></span>
+        </div>
+        <sc-if value="{{open}}" hint-placeholder-val="{{true}}">
+          <div style="flex: 1; display: flex; flex-direction: column; min-height: 0">
+            <div style="height: 22px; flex-shrink: 0; display: flex; margin-left: 40px; border-bottom: 1px solid rgba(255,255,255,.05)">
+              <sc-for list="{{chords}}" as="c" hint-placeholder-count="8"><div style="flex: 1; display: flex; align-items: center; gap: 6px; padding: 0 7px; border-left: 2px solid #7C95D9; background: rgba(124,149,217,.07); font-weight: 500; font-size: 11.5px; white-space: nowrap; overflow: hidden">{{c.n}}<span class="mono" style="font-size: 9.5px; color: #6B7079">{{c.r}}</span></div></sc-for>
+            </div>
+            <div style="flex: 1; display: flex; min-height: 0">
+              <div aria-hidden="true" style="width: 40px; flex-shrink: 0; display: flex; flex-direction: column; overflow: hidden">
+                <sc-for list="{{keys}}" as="k" hint-placeholder-count="20"><div style="height: {{rowH}}px; flex-shrink: 0; box-sizing: border-box; background: {{k.key}}; border-bottom: 1px solid rgba(0,0,0,.2); font-size: 7.5px; color: #6B6760; text-align: right; padding-right: 3px; line-height: {{rowH}}px">{{k.label}}</div></sc-for>
+              </div>
+              <div style="flex: 1; position: relative; overflow: hidden; background-image: repeating-linear-gradient(90deg, rgba(255,255,255,.055) 0 1px, transparent 1px 100%), repeating-linear-gradient(90deg, rgba(255,255,255,.02) 0 1px, transparent 1px 100%); background-size: 12.5% 100%, 3.125% 100%">
+                <sc-for list="{{keys}}" as="k" hint-placeholder-count="20"><div style="position: absolute; left: 0; right: 0; top: {{k.top}}px; height: {{rowH}}px; background: {{k.row}}"></div></sc-for>
+                <sc-for list="{{ghosts}}" as="g" hint-placeholder-count="8"><div style="position: absolute; left: {{g.l}}%; top: {{g.t}}px; width: {{g.w}}%; height: {{rowH}}px; border-radius: 2px; background: rgba(124,149,217,.14); border: 1px solid rgba(124,149,217,.25); box-sizing: border-box"></div></sc-for>
+                <sc-for list="{{notes}}" as="n" hint-placeholder-count="16"><div style="position: absolute; left: {{n.l}}%; top: {{n.t}}px; width: {{n.w}}%; height: {{rowH}}px; box-sizing: border-box; border-radius: 2px; background: linear-gradient(#E8968E, #C9645C); box-shadow: inset 0 1px 0 rgba(255,255,255,.25); font-size: 9px; color: #2A0E0B; padding-left: 4px; line-height: {{rowH}}px; overflow: hidden">{{n.lab}}</div></sc-for>
+                <div aria-hidden="true" style="position: absolute; top: 0; bottom: 0; left: 30%; width: 1px; background: #EDEBE6"></div>
+              </div>
+            </div>
+            <div style="height: 46px; flex-shrink: 0; display: flex; border-top: 1px solid rgba(255,255,255,.06)">
+              <div class="sm" style="width: 40px; flex-shrink: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; font-size: 7.5px; gap: 8px"><span>Words</span><span>Vel</span></div>
+              <div style="flex: 1; position: relative">
+                <sc-for list="{{notes}}" as="n" hint-placeholder-count="16"><span style="position: absolute; left: calc({{n.l}}% + 4px); top: 4px; font-size: 11px; font-style: italic; color: #C9C5BC">{{n.syl}}</span><span style="position: absolute; left: {{n.l}}%; bottom: 3px; width: 2px; height: {{n.vel}}px; background: #C9645C; opacity: .7"></span></sc-for>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+      </section>
+    </main>
+    <sc-if value="{{side}}" hint-placeholder-val="{{true}}">
+    <aside style="width: 300px; flex-shrink: 0; border-left: 1px solid rgba(255,255,255,.06); background: #0E0F12; display: flex; flex-direction: column; min-height: 0">
+      <div style="padding: 11px 14px 0; display: flex; justify-content: space-between; align-items: baseline"><span class="serif" style="font-size: 20px">Session</span><span style="display: flex; gap: 8px; align-items: center"><span class="sm">Writing help</span><button class="ghost xs" style="width: 22px; padding: 0">⟩</button></span></div>
+      <div style="margin: 10px 12px 2px; padding: 11px 12px; border-radius: 8px; background: #121316; border: 1px solid rgba(255,255,255,.06); display: flex; flex-direction: column; gap: 4px">
+        <span class="sm" style="display: flex; justify-content: space-between"><span>Selected · Verse 1</span><span>Why it works</span></span>
+        <span class="serif" style="font-size: 17px">Em → D → Am → Bm → Em</span>
+        <span style="color: #9BA0A8; line-height: 1.45">i – VII – iv – v in E natural minor: no leading note, so it never fully resolves. That’s the melancholy.</span>
+      </div>
+      <div style="display: flex; gap: 14px; padding: 0 14px; border-bottom: 1px solid rgba(255,255,255,.06)"><sc-for list="{{filters}}" as="f" hint-placeholder-count="3"><button style="height: 28px; padding: 0 1px; border: 0; border-bottom: 1.5px solid {{f.line}}; background: transparent; color: {{f.ink}}">{{f.n}}</button></sc-for></div>
+      <div style="flex: 1; min-height: 0; overflow: hidden">
+        <sc-for list="{{feed}}" as="m" hint-placeholder-count="5"><div style="padding: 9px 14px; display: flex; gap: 10px; align-items: center; border-bottom: 1px solid rgba(255,255,255,.04)"><span class="mono" style="flex-shrink: 0; width: 17px; height: 17px; border-radius: 50%; border: 1px solid {{m.c}}; color: {{m.c}}; font-size: 9px; display: flex; align-items: center; justify-content: center">{{m.i}}</span><span style="flex: 1; min-width: 0; display: flex; flex-direction: column"><span style="font-weight: 500">{{m.w}}</span><span style="color: #6B7079; font-size: 11px">{{m.s}}</span></span><button class="ghost xs">{{m.b}}</button></div></sc-for>
+      </div>
+      <div style="margin: 8px 10px 10px; padding: 8px 8px 8px 11px; border-radius: 9px; background: #0A0B0D; border: 1px solid rgba(255,255,255,.08); display: flex; align-items: center; gap: 6px"><span style="flex: 1; color: #8A8F98">Describe a change…</span><button class="prim xs">↵</button></div>
+    </aside>
+    </sc-if>
+    <sc-if value="{{rail}}" hint-placeholder-val="{{false}}">
+      <aside style="width: 46px; flex-shrink: 0; border-left: 1px solid rgba(255,255,255,.06); background: #0E0F12; display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 10px 0">
+        <button class="ghost xs" style="width: 26px; padding: 0">⟨</button>
+        <sc-for list="{{railI}}" as="r" hint-placeholder-count="3"><button style="position: relative; width: 30px; height: 30px; border-radius: 8px; border: 1px solid rgba(255,255,255,.06); background: #121316; color: {{r.c}}">{{r.i}}<span class="mono" style="position: absolute; right: -4px; top: -4px; min-width: 14px; height: 14px; border-radius: 999px; background: {{r.c}}; color: #141210; font-size: 8.5px; display: flex; align-items: center; justify-content: center">{{r.n}}</span></button></sc-for>
+      </aside>
+    </sc-if>
+  </div>
+  <sc-if value="{{label}}" hint-placeholder-val="{{false}}"><div style="position: absolute; left: 50%; bottom: {{labelB}}px; transform: translateX(-50%); padding: 7px 14px; border-radius: 999px; background: rgba(217,179,122,.95); color: #1B1408; font-weight: 600; box-shadow: 0 8px 24px rgba(0,0,0,.5); white-space: nowrap">{{label}}</div></sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var MODE = 'edit'; var E = MODE === 'edit', A = MODE === 'arrange', SM = MODE === 'small';
+    var W = SM ? 1024 : 1440, H = SM ? 680 : 900, B = '#D9B37A';
+    var lenses = ['Write', 'Produce', 'Mix'].map(function (n, i) { var on = i === 0; return { n: n, bg: on ? 'linear-gradient(#24262B,#1B1D21)' : 'transparent', ink: on ? '#EDEBE6' : '#7E838C' }; });
+    var emoC = { intimate: '#8A8F98', melancholy: '#7C95D9', hopeful: B, euphoric: '#D98BA8' };
+    var S = [['Intro', 3, 'edge', 'intimate'], ['Verse 1', 8, 'verse', 'melancholy'], ['Pre', 4, 'verse', 'hopeful'], ['Chorus 1', 8, 'chorus', 'euphoric'], ['Verse 2', 8, 'verse', 'melancholy'], ['Chorus 2', 8, 'chorus', 'euphoric']];
+    var look = { edge: ['#141518', 'rgba(255,255,255,.06)', '#9BA0A8'], verse: ['#151821', 'rgba(124,149,217,.16)', '#C9CFDF'], chorus: ['#1B2031', 'rgba(124,149,217,.32)', '#E3E8F6'] };
+    var st = 1; var secs = S.map(function (s, i) { var o = { n: s[0], b: s[1], start: st, bg: look[s[2]][0], line: i === 1 && E ? 'rgba(217,179,122,.7)' : look[s[2]][1], ink: look[s[2]][2], emo: (A || !SM) && s[1] > 3 ? s[3] : '', emoInk: emoC[s[3]] }; st += s[1]; return o; });
+    var seed = 3; function rnd() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+    function hexA(h, a) { var n = parseInt(h.slice(1), 16); return 'rgba(' + (n >> 16) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')'; }
+    var lyr = ['', 'In the blue of the evening', 'and I hold my breath', 'Drive me home, drive me home', 'Radio low, your hand on mine', 'Drive me home, drive me home'];
+    var T = [['Melody', 'Your vocal · take 3', '#D9776F', 1.8], ['Chords', 'Juno pad', '#7C95D9', .6], ['Counter melody', 'Rhodes · answers', '#E3A9C9', .7], ['Bass', 'Juno bass', '#D5A35F', .8], ['Drums', 'Brush kit', '#74B88F', 2], ['Strings', 'layer of Melody · linked', '#C99AD6', 1], ['Harmony', 'backing vocal · 3rd above', '#E9A39C', 1.2], ['Shaker', 'extra percussion', '#9FCFA8', 2.4]];
+    if (!A) T = T.slice(0, 5);
+    var th = A ? 88 : 26;
+    var tracks = T.map(function (t, ti) { return { n: t[0], s: t[1], c: t[2], h: th, tall: A, cells: S.map(function (s, i) { var empty = s[2] === 'edge' && ti !== 1 && ti !== 4; if (ti === 2 && i < 2) empty = true; if (ti >= 5 && s[2] !== 'chorus') empty = true; var ns = []; if (!empty) { var n = Math.round(s[1] * t[3]); for (var k = 0; k < n; k++) ns.push({ l: k / n * 96 + 2, t: (A ? 18 : 22) + rnd() * (A ? 50 : 50), w: Math.max(1.5, 60 / n) }); } return { b: s[1], bg: empty ? 'rgba(255,255,255,.012)' : hexA(t[2], .085), line: empty ? 'rgba(255,255,255,.035)' : hexA(t[2], .26), notes: ns, words: A && ti === 0 && lyr[i] ? lyr[i] : false }; }) }; });
+    var tabs = ['Notes', 'Words', 'Sound', 'Mix', 'Ideas'].map(function (n, i) { var on = i === 0; return { n: n, line: on ? B : 'transparent', ink: on ? '#EDEBE6' : '#7E838C' }; });
+    var tools = (SM ? ['1/16 ▾', 'Loop', '⋯'] : ['Snap 1/16 ▾', 'Loop', '✓ In context', '✓ Scale lock', '✓ Ghosts', '− 8 bars +', '⋯ More']).map(function (n) { return { n: n, ink: n.indexOf('✓') === 0 ? '#C9C5BC' : '#8A8F98' }; });
+    var chords = [['Em', 'i'], ['D', 'VII'], ['Am', 'iv'], ['Bm', 'v'], ['Em', 'i'], ['D', 'VII'], ['Am', 'iv'], ['Bm', 'v']].map(function (c) { return { n: c[0], r: c[1] }; });
+    var rowH = SM ? 13 : 15;
+    var names = ['B', 'A♯', 'A', 'G♯', 'G', 'F♯', 'F', 'E', 'D♯', 'D', 'C♯', 'C'], inS = { E: 1, 'F♯': 1, G: 1, A: 1, B: 1, C: 1, D: 1 };
+    var nk = SM ? 26 : 37; var keys = []; for (var r = 0; r < nk; r++) { var nm = names[r % 12], blk = nm.indexOf('♯') > -1; keys.push({ top: r * rowH, key: blk ? 'linear-gradient(90deg, #17181B 60%, #DAD6CD 60%)' : '#DAD6CD', label: nm === 'C' ? 'C' + (r < 12 ? 5 : r < 24 ? 4 : 3) : '', row: blk ? 'rgba(0,0,0,.28)' : inS[nm] ? 'rgba(217,179,122,.03)' : 'transparent' }); }
+    var mel = [[0, 19, 4, 'In'], [4.5, 19, 4, 'the'], [9, 16, 7, 'blue'], [17, 14, 3.5, 'of'], [21, 16, 3.5, 'the'], [25, 12, 6, 'eve'], [31.5, 14, 6, 'ning'], [50, 19, 4, 'and'], [54.5, 16, 4, 'I'], [59, 14, 7, 'hold'], [67, 12, 3.5, 'my'], [71, 9, 10, 'breath'], [87, 12, 5, ''], [93, 14, 6, '']];
+    var notes = mel.map(function (m, k) { var nm2 = names[m[1] % 12] + (m[1] < 12 ? 5 : 4); return { l: m[0] + 0.3, t: m[1] * rowH, w: m[2] - .4, lab: SM ? '' : nm2, syl: m[3], vel: 8 + (k * 5) % 16 }; });
+    var ghosts = [[0, 19], [12.5, 21], [25, 14], [37.5, 17], [50, 19], [62.5, 21], [75, 14], [87.5, 17]].map(function (g) { return { l: g[0] + .2, t: g[1] * rowH, w: 12.1 }; });
+    var filters = ['All', 'Song doctor', 'Emotion'].map(function (n, i) { return { n: n, line: i === 0 ? B : 'transparent', ink: i === 0 ? '#EDEBE6' : '#7E838C' }; });
+    var feed = [[1, '#9DB4E8', '“blue” lands on a weak beat', 'Song doctor · Verse 1', 'Fix'], [2, '#9DB4E8', 'Write a pre-chorus', 'Theory · Verse 1 → Chorus', 'Try'], [3, B, 'Review the whole song', 'Coach · one priority', 'Review'], [4, '#B9A3E3', 'Brighten one chord in the Pre', 'Emotion · Pre', 'Try']].map(function (f) { return { i: f[0], c: f[1], w: f[2], s: f[3], b: f[4] }; });
+    var railI = [['✚', '#9DB4E8', 2], ['♡', '#B9A3E3', 1], ['✎', B, 1]].map(function (r) { return { i: r[0], c: r[1], n: r[2] }; });
+    return { W: W, H: H, wide: !SM, narrow: SM, lenses: lenses, secs: secs, tracks: tracks, secH: A ? 34 : 28, secLabel: A ? 'Arrangement' : 'Song', headW: SM ? 128 : 170, tallAdd: A, editBox: E || SM,
+      drawerFlex: A ? '0 0 34px' : '1', open: !A, closed: A, tabs: tabs, tools: tools, chords: chords, keys: keys, rowH: rowH, notes: notes, ghosts: ghosts,
+      side: !SM, rail: SM, filters: filters, feed: feed, railI: railI,
+      label: false, _l: E ? 'Editing: the timeline shrinks to an overview, the editor gets the room' : A ? 'Arranging: the editor folds to one line (⌘J), parts get taller' : 'Small window (plugin in FL): Session folds to a rail, nothing stacks or scrolls', labelB: A ? 50 : 14 };
+  }
+}
+</script>
+</body>
+</html>

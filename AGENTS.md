@@ -29,6 +29,9 @@ Exact look: `docs/design/merged/reference.dc.html` (a design-canvas file: copy i
 11. **The coach:** `data/coach.json` five-layer weighing behind every existing suggestion (the card names the layer that led), producer strictness,
     the golden-songs test, then the Review, the skeleton A/B, keep-the-demo, the minimal ←→ maximal dial, Play a game and aliases,
     mastery, and Your degree.
+12. **Using the space** (Jamie, after trying the build): `docs/design/space/README.md`. The editor and timeline trade room
+    (splitter, ⤢ overview, ⌘J), one toolbar row, a chord strip on the roll, a full-width roll, help moves to Session, no empty rows,
+    track heights that fill the space, and small windows that never stack (auto-rail, the 1024×680 plugin window). Do this one next.
 Rules that always hold: suggest and accept (never surprise changes), one undo step per change, learning about Jamie stays on his
 computer, no copied melodies, lyrics or recordings, no imitating or cloning a real singer's voice. Producers and artists are described
 as "X-style, based on how they're known to work". Ask Jamie before anything that needs hosting, accounts or money.
