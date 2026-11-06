@@ -3,12 +3,35 @@
 **Read `CLAUDE.md` first.** It is the project guide shared by every agent: layout, the web ⇄ native bridge,
 how to build and test, the sound engine rules, and FL Studio lessons learned the hard way. Everything there applies to you.
 
-## New: the merged design (6 Nov 2026), build this next
-Jamie approved a redesign that joins the app into one screen: one timeline, Write / Produce / Mix lenses,
-one drawer, one Session panel, popovers, a premium look, borrowed DAW ideas (Capture, takes, ghost notes,
-⌘K actions, section drag, mix snapshots), and loops plus Splice Bridge support that only appears when used, five switchable themes (`docs/design/merged/themes.json`) a collapsible Session panel, open-ended parts (Add a part, linked layers, counter melody, second bass), and the songwriter screens (Start with the recipe sentence, Words with syllables, stress and rhyme, Versions, the Ideas shelf, Pitch & share with a range check and pitch pack).
-**Read `docs/design/merged/README.md`.** It is the spec, with pictures and a build order. Where it disagrees with
-the older `docs/design/N-*.png` screens or the design notes below, the merged design wins.
+## BUILD QUEUE (6 Nov 2026): start here
+Jamie approved a full redesign plus new "brain" data. Build it in this order. Each step ships on its own: small commits,
+tests in `tests/web/`, the page still works as a plain web page, the Mac + Windows CI run passes, and a plain-words note for
+Jamie in `docs/design/merged/PROGRESS.md`. Tick the step there when it's done, then go to the next one without waiting.
+Spec and pictures: **`docs/design/merged/README.md`** (it wins over the older `docs/design/N-*.png` and the notes further down).
+Exact look: `docs/design/merged/reference.dc.html` (a design-canvas file: copy its values, not its markup) and `themes.json`.
+
+0. Fix the 3 ISSUES from `python3 tools/check_style_data.py` (empty `src` on `plug-sweep`, `plug-dark-verse`, `plug-climb`).
+1. **Look:** CSS variables for every token in `themes.json`. Studio Black first, then the ◐ theme picker and the other four themes,
+   including "follow the system". Saved locally, no reload needed.
+2. **One header and transport:** the recipe sentence (style, producer, emotion, vibe, key, tempo, **length**, purpose), the ⌘K box,
+   Write / Produce / Mix lenses, the inset time display, Capture / Record / Share. Remove the second toolbar.
+3. **One timeline with lenses:** move Producer pass, Emotion & vibe and Real sounds onto the timeline, into the Session panel, the drawer and
+   popovers. Delete their separate screens and duplicate timelines. Replace the 11-tab dock with the drawer (Notes, Words, Sound, Mix, Ideas).
+4. **Session panel:** the single feed for every helper. It collapses to a rail (⟩ / ⌥⌘S), with open/closed remembered per lens.
+5. **Open-ended parts:** Add a part, linked layers, duplicates. Write it for me: counter melody, harmony, second bass, arp, pad, perc.
+   All of it driven by `data/part-roles.json` (see below), with every feature picking parts by role.
+6. **Borrowed DAW ideas:** Capture, the takes lane and comping, ghost notes and scale lock, ⌘K actions (saved chains), section drag, mix snapshots.
+7. **Loops and Splice Bridge:** drop, paste and fit, the hidden audition track, host sync. Nothing appears until it's used.
+8. **Songwriter screens:** Start (the recipe sentence and the length cards), Words (syllables, stress, rhyme), Versions (v-chip, compare, open as a copy),
+   the Ideas shelf.
+9. **Pitch & share:** range check (add `range` per artist/era with sources), the pitch pack folder, the lyric sheet PDF, credits and splits.
+10. **Song length:** `data/song-shapes.json` wired into structure, passes, emotion arcs, lyric prompts and the radio-edit offer.
+11. **The coach:** `data/coach.json` five-layer weighing behind every existing suggestion (the card names the layer that led), producer strictness,
+    the golden-songs test, then the Review, the skeleton A/B, keep-the-demo, the minimal ←→ maximal dial, Play a game and aliases,
+    mastery, and Your degree.
+Rules that always hold: suggest and accept (never surprise changes), one undo step per change, learning about Jamie stays on his
+computer, no copied melodies, lyrics or recordings, no imitating or cloning a real singer's voice. Producers and artists are described
+as "X-style, based on how they're known to work". Ask Jamie before anything that needs hosting, accounts or money.
 
 ### The brain for open-ended parts: `data/part-roles.json` (6 Nov 2026)
 With any number of parts, every smart feature has to reason by **role**, not by the four fixed parts. The file
