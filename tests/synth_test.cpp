@@ -171,6 +171,12 @@ int main()
         for (const KitPatch* kit : { &k808, &ac, &lofi, &el })
             for (int key : { 36, 38, 39, 42, 46, 37, 49 })
             {
+                {   // a plug-in plays the drums: the built-in kit stays quiet
+                    auto q = std::make_shared<SynthPatch>(); q->drumCh = 9; q->kit = *kit; q->drumExt = true;
+                    Synth quiet; quiet.prepare (SR); quiet.setPatch (q);
+                    auto qr = run (quiet, { { 0, on (9, key, 100) } }, (int) (SR * .2));
+                    CHECK (peakOf (qr.l, 0, (int) (SR * .2)) == 0.f, "drum %d still plays under a plug-in", key);
+                }
                 auto s = std::make_shared<SynthPatch>(); s->drumCh = 9; s->kit = *kit;
                 Synth sy; sy.prepare (SR); sy.setPatch (s);
                 auto r = run (sy, { { 0, on (9, key, 100) } }, (int) (SR * 2.2));

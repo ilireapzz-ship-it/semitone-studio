@@ -118,6 +118,7 @@ struct SynthPatch
     std::shared_ptr<FxBank> fx;                    // built off the audio thread by the caller; running state lives here
     std::vector<NoteBuffers> buffers;   // one per part (the buffers are owned by the caller's cache)
     int drumCh = -1;
+    bool drumExt = false;    // a plug-in plays the drum notes, so the built-in kit stays quiet
     float drumLevel = 1, drumPan = 0;
     KitPatch kit;
     float bendRange = 12;
@@ -1077,6 +1078,7 @@ private:
     {
         if (ch == current->drumCh)
         {
+            if (current->drumExt) return;
             auto& v = freeVoice();
             v.order = ++counter;
             v.startDrum (current->kit, key, (float) vel / 100.0f, ch, current->drumLevel, current->drumPan, sr, rng);

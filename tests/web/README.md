@@ -24,6 +24,7 @@ node tests/web/regression.test.js
 | `length.test.js` | length suggests a shape, lands near its range at many tempos, hook timing, lyric target, pass moves, radio edit |
 | `coach.test.js` | five-layer weighing, Review, voices, skeleton, keep the demo, the dial, games, degree, mastery, golden songs |
 | `space.test.js` | 1440×900, 1280×800, 1024×680, 900×600: no page scroll, nothing outside the window, roll height; splitter, ⤢, ⌘J per lens, auto-rail (`SPACE_SHOTS=folder` saves pictures) |
+| `ruler-sound.test.js` | the ruler at four sizes, click moves the marker, Play starts there, a click while playing jumps, Stop comes back, double-click plays; the picker on every track, search, one undo, kits; plug-ins on Drums and added parts; FL Studio note |
 | `themes.test.js` | every token from themes.json, five themes with no reload, saved locally, follow the system, contrast, plug-in shares the setting (`THEME_SHOTS=folder` saves a picture per theme) |
 | `song-files.test.js` | .semitone save / open / recents / title |
 | `sounds-in-daw.test.js` | section layout, rendering and chunked clips sent to the plugin (slow: renders the whole song) |

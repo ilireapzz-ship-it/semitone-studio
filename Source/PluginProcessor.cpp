@@ -303,6 +303,7 @@ void SemitoneProcessor::setSynthSound (const juce::var& sound, const st::Timelin
         if (d.isObject())
         {
             t->drumCh = juce::jlimit (0, 15, (int) d.getProperty ("ch", 9));
+            t->drumExt = (bool) d.getProperty ("ext", false);
             t->drumLevel = num (d, "level", 1); t->drumPan = num (d, "pan", 0);
             const auto k = d.getProperty ("kit", juce::var());
             t->kit.lp = num (k, "lp", 16000); t->kit.clap = num (k, "clap", .22f);

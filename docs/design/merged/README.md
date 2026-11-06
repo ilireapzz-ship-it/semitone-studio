@@ -40,8 +40,10 @@ The app felt fragmented. Features lived on their own screens, each with its own 
 5. **Session panel (340px, right):** title, filter tabs (All / Producer / Sound / Emotion …), the pass header (Produce),
    numbered items with a switch (pass moves) or one small action (Fix, Lift, Try, Match…), Keep N changes /
    Another take, and the "Describe a change" box at the bottom.
-6. **Popovers:** clicking a part's name opens a small card with its sound, the closest match in your library and
-   Use it / Sketch sound / Other options. This replaces the separate Real sounds screen. ⌘K opens a floating actions list.
+6. **Popovers:** clicking a track's name opens one sound picker (agreed with Jamie 7 Nov 2026): search, suggestions for
+   this song, your plug-ins, built-in sounds and samples, on every track including Drums. A click changes the sound and
+   plays a test note; the picker stays open to try more. The Sound tab lists the same tracks with suggestions and plug-in
+   controls under them, so there is no separate Real sounds screen. ⌘K opens a floating actions list.
 
 ## Ideas borrowed from other DAWs (agreed 6 Nov 2026)
 - **Capture** (Ableton's Capture MIDI): always keep the last ~2 minutes of MIDI input, and one button turns it into a
