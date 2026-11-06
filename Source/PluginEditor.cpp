@@ -167,6 +167,19 @@ juce::WebBrowserComponent::Options SemitoneEditor::makeOptions()
             if (what == "load") proc.host->bridgeLoad(); else if (what == "open") proc.host->bridgeOpen(); else if (what == "close") proc.host->bridgeClear();
             else if (what == "loop") proc.host->setLoop ((double) v.getProperty ("a", 0.0), (double) v.getProperty ("b", 0.0));
         })
+        .withEventListener ("st_pack_file", [] (const juce::var& v) {
+            // the pitch pack folder, a file at a time, in chunks of base64
+            const auto root = juce::File::getSpecialLocation (juce::File::userDocumentsDirectory).getChildFile ("Semitone Studio").getChildFile ("Exports")
+                                  .getChildFile (juce::File::createLegalFileName (v.getProperty ("folder", "Pitch pack").toString()));
+            const auto f = root.getChildFile (v.getProperty ("name", "file").toString());
+            f.getParentDirectory().createDirectory();
+            if ((int) v.getProperty ("i", 0) == 0) f.deleteFile();
+            juce::MemoryBlock mb; if (mb.fromBase64Encoding (v.getProperty ("b64", "").toString())) f.appendData (mb.getData(), mb.getSize());
+        })
+        .withEventListener ("st_pack_show", [] (const juce::var& v) {
+            juce::File::getSpecialLocation (juce::File::userDocumentsDirectory).getChildFile ("Semitone Studio").getChildFile ("Exports")
+                .getChildFile (juce::File::createLegalFileName (v.getProperty ("folder", "").toString())).revealToUser();
+        })
         .withEventListener ("st_loop_put", [this] (const juce::var& v) { loopPut (v); })
         .withEventListener ("st_loop_get", [this] (const juce::var& v) { loopGet (v.getProperty ("id", "").toString()); })
         .withEventListener ("st_clip_file", [this] (const juce::var&) { clipFile(); })

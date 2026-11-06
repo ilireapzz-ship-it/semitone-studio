@@ -12348,7 +12348,7 @@
   },
   "artistEras": {
     "about": "Artists whose albums sound very different get one profile per era. Picking the artist tag shows the eras as chips; with none picked, Semitone uses the artist's default profile. Picking one era uses only that era's chords, tempo, sounds and mix. Picking two or more blends them by the normal blend rules (first is the core). Eras are never mixed silently. A song tag (\"piano\", \"cinematic\") can also narrow the songs used: the matrix is rebuilt from only the matching songs in data/catalog.json, if at least 4 match. \"matrixFrom\" on a profile means its chords come from another profile (or only that profile's songs from one album) until it has enough songs of its own.",
-    "Lana Del Rey": {
+    "Lana Del Rey": {"range": {"voice": "contralto", "lo": "F3", "hi": "F5", "src": ["https://en.wikipedia.org/wiki/List_of_contraltos_in_non-classical_music"], "note": "A guide from her usual voice type, not measured notes. Her range is disputed."}, 
       "default": "sadcore",
       "eras": [
         "lana-btd",
@@ -12358,7 +12358,7 @@
         "lana-bb"
       ]
     },
-    "Lady Gaga": {
+    "Lady Gaga": {"range": {"voice": "mezzo-soprano", "lo": "A3", "hi": "A5", "belt": ["A4", "F#5"], "src": ["https://megavocalcritic.blogspot.com/2014/05/vocal-profile-of-lady-gaga.html"], "note": "A guide from her voice type and one fan-written vocal profile, not measured notes."}, 
       "default": "gaga",
       "eras": [
         "gaga",
@@ -12366,7 +12366,7 @@
         "gaga-mayhem"
       ]
     },
-    "Fleetwood Mac": {
+    "Fleetwood Mac": {"range": {"voice": "mezzo-soprano (Stevie Nicks)", "lo": "A3", "hi": "A5", "src": ["https://faroutmagazine.co.uk/from-folk-dreamer-to-rock-n-roll-virtuoso-the-vocal-evolution-of-stevie-nicks/"], "note": "A guide from the usual mezzo range, for Stevie Nicks only. Other singers in the band differ."}, 
       "default": "fleetwood",
       "eras": [
         "fleetwood",
