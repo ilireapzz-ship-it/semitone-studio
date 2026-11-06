@@ -115,6 +115,21 @@ juce::WebBrowserComponent::Options SemitoneEditor::makeOptions()
             if ((bool) v.getProperty ("on", false)) proc.host->learnStart ((int) v.getProperty ("ch", 0)); else proc.host->learnStop();
         })
         .withEventListener ("st_host_cc", [this] (const juce::var& v) { if (proc.host) proc.host->sendCcSweep ((int) v.getProperty ("ch", 0), (int) v.getProperty ("cc", 20)); })
+        .withEventListener ("st_host_presets", [this] (const juce::var& v)
+        {
+            if (! proc.host) return;
+            const int ch = (int) v.getProperty ("ch", 0); const auto plugin = v.getProperty ("plugin", "").toString();
+            auto* o = new juce::DynamicObject();
+            o->setProperty ("ch", ch); o->setProperty ("plugin", plugin);
+            o->setProperty ("programs", proc.host->programsVar (ch)); o->setProperty ("sounds", proc.host->soundsVar (plugin));
+            browser.emitEventIfBrowserIsVisible ("st_host_presetlist", juce::var (o));
+        })
+        .withEventListener ("st_host_program", [this] (const juce::var& v) { if (proc.host) proc.host->setProgram ((int) v.getProperty ("ch", 0), (int) v.getProperty ("i", 0)); })
+        .withEventListener ("st_host_setstate", [this] (const juce::var& v) { if (proc.host) proc.host->setState ((int) v.getProperty ("ch", 0), v.getProperty ("b64", "").toString()); })
+        .withEventListener ("st_host_set", [this] (const juce::var& v) { if (proc.host) proc.host->setControl ((int) v.getProperty ("ch", 0), (int) v.getProperty ("i", 0), (float) (double) v.getProperty ("v", 0.0)); })
+        .withEventListener ("st_host_sound_save", [this] (const juce::var& v) { if (proc.host) proc.host->saveSound ((int) v.getProperty ("ch", 0), v.getProperty ("plugin", "").toString(), v.getProperty ("name", "").toString(), v.getProperty ("tags", juce::var())); })
+        .withEventListener ("st_host_sound_load", [this] (const juce::var& v) { if (proc.host) proc.host->loadSound ((int) v.getProperty ("ch", 0), v.getProperty ("plugin", "").toString(), v.getProperty ("name", "").toString()); })
+        .withEventListener ("st_host_sound_remove", [this] (const juce::var& v) { if (proc.host) proc.host->removeSound (v.getProperty ("plugin", "").toString(), v.getProperty ("name", "").toString()); })
         .withEventListener ("st_host_test", [this] (const juce::var& v) { if (proc.host) proc.host->testNote ((int) v.getProperty ("ch", 0)); })
         .withEventListener ("st_host_open", [this] (const juce::var& v) { if (proc.host) proc.host->openWindow ((int) v.getProperty ("ch", 0)); })
         .withEventListener ("st_host_state", [this] (const juce::var& v)

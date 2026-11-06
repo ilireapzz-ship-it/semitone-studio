@@ -114,6 +114,87 @@ public:
 
     void testNote (int ch) { testCh = ch; }
 
+    // Presets the plug-in lists itself. Many list nothing useful ("Prog 1", "<disabled>"), so those are left out.
+    juce::var programsVar (int ch) const
+    {
+        juce::Array<juce::var> a;
+        auto* p = (ch >= 0 && ch < 16) ? inst[(size_t) ch].get() : nullptr;
+        if (p == nullptr || p->getNumPrograms() < 2) return a;
+        juce::StringArray seen;
+        for (int i = 0; i < juce::jmin (p->getNumPrograms(), 1000); ++i)
+        {
+            const auto n = p->getProgramName (i).trim();
+            if (n.isEmpty() || n.startsWith ("<") || n.matchesWildcard ("Prog *", true) || n.equalsIgnoreCase ("Init") || seen.contains (n)) continue;
+            seen.add (n);
+            auto* o = new juce::DynamicObject();
+            o->setProperty ("i", i); o->setProperty ("name", n);
+            a.add (juce::var (o));
+        }
+        return a;
+    }
+
+    void setProgram (int ch, int i)
+    {
+        auto* p = (ch >= 0 && ch < 16) ? inst[(size_t) ch].get() : nullptr;
+        if (p == nullptr || i < 0 || i >= p->getNumPrograms()) return;
+        const juce::SpinLock::ScopedLockType sl (lock);
+        p->setCurrentProgram (i);
+    }
+
+    void setState (int ch, const juce::String& b64)
+    {
+        auto* p = (ch >= 0 && ch < 16) ? inst[(size_t) ch].get() : nullptr;
+        juce::MemoryBlock mb;
+        if (p == nullptr || b64.isEmpty() || ! mb.fromBase64Encoding (b64)) return;
+        const juce::SpinLock::ScopedLockType sl (lock);
+        p->setStateInformation (mb.getData(), (int) mb.getSize());
+    }
+
+    void setControl (int ch, int i, float v)
+    {
+        auto* p = (ch >= 0 && ch < 16) ? inst[(size_t) ch].get() : nullptr;
+        if (p != nullptr && i >= 0 && i < p->getParameters().size()) p->getParameters()[i]->setValue (juce::jlimit (0.0f, 1.0f, v));
+    }
+
+    // Your saved plug-in sounds: one folder per plug-in, kept on this computer, usable in any song.
+    static juce::File soundFolder (const juce::String& plugin) { return st::files::appData().getChildFile ("Plug-in sounds").getChildFile (juce::File::createLegalFileName (plugin)); }
+
+    juce::var soundsVar (const juce::String& plugin) const
+    {
+        juce::Array<juce::var> a;
+        for (const auto& f : soundFolder (plugin).findChildFiles (juce::File::findFiles, false, "*.json"))
+            if (auto v = juce::JSON::parse (f); v.isObject()) a.add (v);
+        return a;
+    }
+
+    bool saveSound (int ch, const juce::String& plugin, const juce::String& name, const juce::var& tags)
+    {
+        const auto state = stateB64 (ch);
+        if (state.isEmpty()) return false;
+        auto dir = soundFolder (plugin); dir.createDirectory();
+        const auto base = juce::File::createLegalFileName (name);
+        auto* o = new juce::DynamicObject();
+        o->setProperty ("name", name); o->setProperty ("tags", tags);
+        return st::files::writeSafely (dir.getChildFile (base + ".state"), state) && st::files::writeSafely (dir.getChildFile (base + ".json"), juce::JSON::toString (juce::var (o)));
+    }
+
+    void loadSound (int ch, const juce::String& plugin, const juce::String& name)
+    {
+        setState (ch, soundFolder (plugin).getChildFile (juce::File::createLegalFileName (name) + ".state").loadFileAsString());
+    }
+
+    // Removed sounds go to a _to_delete folder, never straight to nothing.
+    void removeSound (const juce::String& plugin, const juce::String& name)
+    {
+        auto dir = soundFolder (plugin), bin = dir.getChildFile ("_to_delete"); bin.createDirectory();
+        const auto base = juce::File::createLegalFileName (name);
+        for (const auto* ext : { ".json", ".state" })
+        {
+            auto f = dir.getChildFile (base + ext);
+            if (f.existsAsFile()) f.moveFileTo (bin.getNonexistentChildFile (base, ext));
+        }
+    }
+
     // The controls worth drawing: automatable, named, and not the long lists of MIDI CC stand-ins plug-ins add.
     juce::var paramsVar (int ch, const juce::var& also = {}) const
     {
