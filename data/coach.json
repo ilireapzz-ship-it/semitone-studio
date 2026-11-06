@@ -333,7 +333,7 @@
       "area": "harmony",
       "base": 0.7,
       "what": "Tension (dominant chords, suspensions, borrowed chords) is resolved or deliberately left open at the right moment.",
-      "why": "Expectation and its fulfilment, or denial, is what moves listeners."
+      "loose": {"rnb": 0.4}, "why": "Expectation and its fulfilment, or denial, is what moves listeners."
     },
     {
       "id": "borrowed-colour",

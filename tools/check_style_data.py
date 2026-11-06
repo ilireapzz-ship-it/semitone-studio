@@ -128,7 +128,7 @@ for k in prids:
     if k not in CO['producers']: W(f"coach: producer {k} has no weights")
 for r in CO['rules']:
     for s in list(r.get('loose',{}))+list(r.get('tight',{})):
-        if s not in pids: I(f"coach rule {r['id']}: {s} is not a profile")
+        if s not in pids and s not in L.get('existingStyles',{}): I(f"coach rule {r['id']}: {s} is not a profile")
 for j in CO['jury']['items']:
     for r in j['rules']:
         if r not in rid: I(f"coach jury {j['id']}: rule {r} unknown")
