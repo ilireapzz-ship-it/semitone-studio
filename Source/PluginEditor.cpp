@@ -114,6 +114,7 @@ juce::WebBrowserComponent::Options SemitoneEditor::makeOptions()
             if (! proc.host) return;
             if ((bool) v.getProperty ("on", false)) proc.host->learnStart ((int) v.getProperty ("ch", 0)); else proc.host->learnStop();
         })
+        .withEventListener ("st_host_cc", [this] (const juce::var& v) { if (proc.host) proc.host->sendCcSweep ((int) v.getProperty ("ch", 0), (int) v.getProperty ("cc", 20)); })
         .withEventListener ("st_host_test", [this] (const juce::var& v) { if (proc.host) proc.host->testNote ((int) v.getProperty ("ch", 0)); })
         .withEventListener ("st_host_open", [this] (const juce::var& v) { if (proc.host) proc.host->openWindow ((int) v.getProperty ("ch", 0)); })
         .withEventListener ("st_host_state", [this] (const juce::var& v)

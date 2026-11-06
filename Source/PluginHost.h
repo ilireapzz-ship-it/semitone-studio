@@ -94,7 +94,7 @@ public:
     {
         windows[(size_t) ch].reset();
         std::unique_ptr<juce::AudioPluginInstance> old;
-        { const juce::SpinLock::ScopedLockType sl (lock); old = std::move (inst[(size_t) ch]); }
+        { const juce::SpinLock::ScopedLockType sl (lock); old = std::move (inst[(size_t) ch]); ccLast[(size_t) ch].fill (-1); }
     }
 
     void openWindow (int ch)
@@ -209,14 +209,26 @@ public:
                     if (k.ch >= 0 && k.ch < 16 && inst[(size_t) k.ch] && ! k.pts.empty())
                     {
                         const auto& ps = inst[(size_t) k.ch]->getParameters();
-                        if (k.fxParam >= 0 && k.fxParam < ps.size()) ps[k.fxParam]->setValue (juce::jlimit (0.0f, 1.0f, stopped ? k.pts.front().second : k.at (beat)));
+                        const float v = juce::jlimit (0.0f, 1.0f, stopped ? k.pts.front().second : k.at (beat));
+                        if (k.fxParam >= ccBase) queueCc (k.ch, k.fxParam - ccBase, juce::roundToInt (v * 127.0f));
+                        else if (k.fxParam >= 0 && k.fxParam < ps.size()) ps[k.fxParam]->setValue (v);
                     }
         lanesMoving = beat >= 0;
+        // Link by MIDI: a slow sweep up and down, for the plug-in's own MIDI Learn to catch
+        if (wiggleLeft > 0)
+        {
+            const int total = (int) (sr * 1.5), done = total - wiggleLeft, half = total / 2;
+            const int v = juce::jlimit (0, 127, done < half ? done * 127 / juce::jmax (1, half) : (total - done) * 127 / juce::jmax (1, half));
+            queueCc (wiggleCh.load(), wiggleCc.load(), v);
+            wiggleLeft -= n;
+        }
         for (int ch = 0; ch < 16; ++ch)
         {
             auto* p = inst[(size_t) ch].get();
             if (p == nullptr) continue;
             midi.clear();
+            for (int q = 0; q < ccCount; ++q)
+                if (ccOut[(size_t) q].ch == ch) midi.addEvent (juce::MidiMessage::controllerEvent (1, ccOut[(size_t) q].cc, ccOut[(size_t) q].v), 0);
             for (const auto& e : events)
                 if ((e.status & 15) == ch) midi.addEvent (juce::MidiMessage (e.status & 0xF0, e.d1, e.d2), e.offset);
             if (testCh.load() == ch) { testCh = -1; heldCh = ch; heldLeft = (int) (sr * .7); midi.addEvent (juce::MidiMessage (0x90, 60, 100), 0); }
@@ -229,7 +241,11 @@ public:
             juce::FloatVectorOperations::add (L, view.getReadPointer (0), n);
             if (R != nullptr && R != L) juce::FloatVectorOperations::add (R, view.getReadPointer (1), n);
         }
+        ccCount = 0;
     }
+
+    static constexpr int ccBase = 100000;   // a lane with an index from here sends MIDI controller (index - ccBase)
+    void sendCcSweep (int ch, int cc) { wiggleCh = ch; wiggleCc = juce::jlimit (0, 127, cc); wiggleLeft = (int) (sr * 1.5); }
 
 private:
     static juce::File listFile() { return st::files::appData().getChildFile ("my-plugins.xml"); }
@@ -270,6 +286,17 @@ private:
     std::atomic<int> testCh { -1 };
     std::shared_ptr<const std::vector<Lane>> lanes;
     bool lanesMoving = false;
+    struct CcOut { int ch, cc, v; };
+    std::array<CcOut, 64> ccOut {};
+    int ccCount = 0;
+    std::array<std::array<int, 128>, 16> ccLast = [] { std::array<std::array<int, 128>, 16> a {}; for (auto& c : a) c.fill (-1); return a; }();
+    std::atomic<int> wiggleCh { 0 }, wiggleCc { 0 }, wiggleLeft { 0 };
+    void queueCc (int ch, int cc, int v)
+    {
+        if (ch < 0 || ch > 15 || cc < 0 || cc > 127 || ccLast[(size_t) ch][(size_t) cc] == v || ccCount >= (int) ccOut.size()) return;
+        ccLast[(size_t) ch][(size_t) cc] = v;
+        ccOut[(size_t) ccCount++] = { ch, cc, v };
+    }
     int learnCh = -1, learnPolls = 0, learnSettle = 0;
     std::vector<float> learnBase;
     std::vector<bool> learnNoisy;
