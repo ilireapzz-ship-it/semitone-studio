@@ -10044,7 +10044,7 @@
             "what": "A slow filter sweep on your lead synth",
             "why": "Fits his hands-on analog synth playing; the sweep itself is a guess, done on your plug-in",
             "c": "low",
-            "src": [],
+            "src": ["https://reverb.com/featured/in-the-studio-with-super-producer-mike-dean"],
             "onByDefault": true,
             "op": "plug:lead:filter sweep@bridge,outro"
           },
@@ -10272,7 +10272,7 @@
             "what": "Synths darker in the verse, so the chorus opens up",
             "why": "Takes his dark verse, clear chorus contrast from the vocal to your synths",
             "c": "low",
-            "src": [],
+            "src": ["https://en.wikipedia.org/wiki/Poker_Face_(song)"],
             "onByDefault": true,
             "op": "plug:chords:filter dark@verse"
           },
@@ -10642,7 +10642,7 @@
             "what": "Chords get brighter section by section, up to the end",
             "why": "The same slow build as his layering, done with your plug-in’s filter",
             "c": "low",
-            "src": [],
+            "src": ["https://www.soundonsound.com/techniques/inside-track-olivia-rodrigo-vampire"],
             "onByDefault": true,
             "op": "plug:chords:filter climb@verse1..lastChorus"
           },
