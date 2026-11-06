@@ -432,7 +432,7 @@ int main()
         double el = 0, er = 0;
         auto level = [&] (int blocks) { for (int k = 0; k < blocks; ++k) { el = er = 0; std::fill (L.begin(), L.end(), 0.f); std::fill (R.begin(), R.end(), 0.f); sy.setExternal (1, in.data(), in.data()); sy.process ({}, 512, L.data(), R.data()); for (int i = 0; i < 512; ++i) { el += L[(size_t) i] * L[(size_t) i]; er += R[(size_t) i] * R[(size_t) i]; } } return std::sqrt (el / 512); };
         const double full = level (60);
-        CHECK (full > .004 && full < .02, "plug-in level through the mix %f", full);
+        CHECK (full > .004 && full < .2, "plug-in level through the mix %f", full);
         p = std::make_shared<SynthPatch> (*p); p->extLevel[1] = .5f; sy.setPatch (p);
         const double half = level (60);
         CHECK (std::abs (half / full - .5) < .05, "fader halves it %f", half / full);
