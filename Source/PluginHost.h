@@ -37,14 +37,16 @@ public:
         fm.addDefaultFormats();
         if (auto xml = juce::XmlDocument::parse (listFile())) known.recreateFromXml (*xml);
     }
-    ~PartHost() override { stopTimer(); const juce::SpinLock::ScopedLockType sl (lock); for (auto& w : windows) w.reset(); for (auto& i : inst) i.reset(); }
+    ~PartHost() override { stopTimer(); const juce::SpinLock::ScopedLockType sl (lock); for (auto& t : fxWin) for (auto& w : t) w.reset(); for (auto& t : fx) for (auto& p : t) p.reset(); for (auto& w : windows) w.reset(); for (auto& i : inst) i.reset(); }
 
     void prepare (double rate, int blockSize)
     {
         sr = rate; bs = juce::jmax (32, blockSize);
         const juce::SpinLock::ScopedLockType sl (lock);
         for (auto& i : inst) if (i) { i->releaseResources(); i->setRateAndBufferSizeDetails (sr, bs); i->prepareToPlay (sr, bs); }
+        for (auto& t : fx) for (auto& p : t) if (p) { p->releaseResources(); p->setRateAndBufferSizeDetails (sr, bs); p->prepareToPlay (sr, bs); }
         temp.setSize (maxChannels, bs * 2, false, false, true);
+        fxTemp.setSize (maxChannels, bs * 2, false, false, true);
     }
 
     void startScan()
@@ -113,6 +115,76 @@ public:
     }
 
     void testNote (int ch) { testCh = ch; }
+
+    // Your effects. Each part (by channel) and the whole song (target 16) has up to four, in order.
+    static constexpr int masterFx = 16, fxSlots = 4;
+
+    juce::var effectsVar() const
+    {
+        juce::Array<juce::var> a;
+        juce::StringArray seen;
+        for (const auto& d : known.getTypes())
+        {
+            const auto n = d.name;
+            if (d.isInstrument || n == "Semitone Studio" || seen.contains (n)) continue;
+            // Apple's plumbing, and the mono versions of plug-ins that also come in stereo
+            if (d.manufacturerName == "Apple" && ! juce::StringArray { "AUBandpass", "AUDelay", "AUDistortion", "AUDynamicsProcessor", "AUFilter", "AUGraphicEQ", "AUHighShelfFilter", "AUHipass", "AULowShelfFilter", "AULowpass", "AUMatrixReverb", "AUMultibandCompressor", "AUNBandEQ", "AUParametricEQ", "AUPeakLimiter", "AUPitch", "AUReverb2", "AUSampleDelay" }.contains (n)) continue;
+            if (n.endsWith (" MIDIFX") || n.endsWith (" MFX") || n.endsWith (" Control") || n.endsWith (" Listener") || n.endsWith ("(m)") || n.endsWith ("(m->s)") || n.endsWithIgnoreCase (" Mono") || n.containsIgnoreCase ("Mono/Stereo")) continue;
+            seen.add (n);
+            auto* o = new juce::DynamicObject();
+            o->setProperty ("id", d.createIdentifierString()); o->setProperty ("name", n); o->setProperty ("maker", d.manufacturerName);
+            a.add (juce::var (o));
+        }
+        return a;
+    }
+
+    std::function<void (int, int, bool, juce::String)> onFxLoaded;   // target, slot, ok, name or why not
+
+    void fxLoad (int t, int slot, const juce::String& id, const juce::String& stateB64)
+    {
+        if (t < 0 || t > masterFx || slot < 0 || slot >= fxSlots) return;
+        fxWin[(size_t) t][(size_t) slot].reset();
+        std::unique_ptr<juce::AudioPluginInstance> old;
+        { const juce::SpinLock::ScopedLockType sl (lock); old = std::move (fx[(size_t) t][(size_t) slot]); }
+        old.reset();
+        if (id.isEmpty()) return;
+        auto d = known.getTypeForIdentifierString (id);
+        if (d == nullptr) { if (onFxLoaded) onFxLoaded (t, slot, false, "That effect isn't on this computer"); return; }
+        fm.createPluginInstanceAsync (*d, sr, bs, [this, t, slot, stateB64] (std::unique_ptr<juce::AudioPluginInstance> p, const juce::String& err)
+        {
+            if (p == nullptr) { if (onFxLoaded) onFxLoaded (t, slot, false, err); return; }
+            p->setRateAndBufferSizeDetails (sr, bs);
+            if (stateB64.isNotEmpty()) { juce::MemoryBlock mb; if (mb.fromBase64Encoding (stateB64)) p->setStateInformation (mb.getData(), (int) mb.getSize()); }
+            p->prepareToPlay (sr, bs);
+            const auto name = p->getName();
+            { const juce::SpinLock::ScopedLockType sl (lock); fx[(size_t) t][(size_t) slot] = std::move (p); }
+            if (onFxLoaded) onFxLoaded (t, slot, true, name);
+        });
+    }
+
+    void fxOpen (int t, int slot)
+    {
+        if (t < 0 || t > masterFx || slot < 0 || slot >= fxSlots) return;
+        auto* p = fx[(size_t) t][(size_t) slot].get();
+        auto& w = fxWin[(size_t) t][(size_t) slot];
+        if (p == nullptr || ! p->hasEditor() || w) return;
+        w = std::make_unique<HostWindow> (*p, [this, t, slot] { juce::MessageManager::callAsync ([this, t, slot] { fxWin[(size_t) t][(size_t) slot].reset(); }); });
+    }
+
+    juce::String fxState (int t, int slot) const
+    {
+        auto* p = (t >= 0 && t <= masterFx && slot >= 0 && slot < fxSlots) ? fx[(size_t) t][(size_t) slot].get() : nullptr;
+        if (p == nullptr) return {};
+        juce::MemoryBlock mb; p->getStateInformation (mb);
+        return mb.toBase64Encoding();
+    }
+
+    // Audio thread: the whole-song effects, after everything is mixed.
+    void processMaster (float* L, float* R, int n)
+    {
+        const juce::SpinLock::ScopedTryLockType sl (lock);
+        if (sl.isLocked() && n <= fxTemp.getNumSamples()) runFx (masterFx, L, R, n);
+    }
 
     // Presets the plug-in lists itself. Many list nothing useful ("Prog 1", "<disabled>"), so those are left out.
     juce::var programsVar (int ch) const
@@ -319,6 +391,7 @@ public:
             juce::AudioBuffer<float> view (temp.getArrayOfWritePointers(), outs, n);
             view.clear();
             p->processBlock (view, midi);
+            runFx (ch, view.getWritePointer (0), view.getWritePointer (1), n);
             juce::FloatVectorOperations::add (L, view.getReadPointer (0), n);
             if (R != nullptr && R != L) juce::FloatVectorOperations::add (R, view.getReadPointer (1), n);
         }
@@ -366,6 +439,27 @@ private:
     juce::SpinLock lock;
     std::atomic<int> testCh { -1 };
     std::shared_ptr<const std::vector<Lane>> lanes;
+    void runFx (int t, float* L, float* R, int n)
+    {
+        for (auto& p : fx[(size_t) t])
+        {
+            if (p == nullptr) continue;
+            const int chans = juce::jmax (2, p->getTotalNumOutputChannels(), p->getTotalNumInputChannels());
+            if (chans > maxChannels) continue;
+            juce::AudioBuffer<float> view (fxTemp.getArrayOfWritePointers(), chans, n);
+            view.clear();
+            view.copyFrom (0, 0, L, n);
+            view.copyFrom (1, 0, R != nullptr ? R : L, n);
+            juce::MidiBuffer none;
+            p->processBlock (view, none);
+            juce::FloatVectorOperations::copy (L, view.getReadPointer (0), n);
+            if (R != nullptr && R != L) juce::FloatVectorOperations::copy (R, view.getReadPointer (p->getTotalNumOutputChannels() > 1 ? 1 : 0), n);
+        }
+    }
+
+    std::array<std::array<std::unique_ptr<juce::AudioPluginInstance>, 4>, 17> fx;
+    std::array<std::array<std::unique_ptr<HostWindow>, 4>, 17> fxWin;
+    juce::AudioBuffer<float> fxTemp { maxChannels, 8192 };
     bool lanesMoving = false;
     struct CcOut { int ch, cc, v; };
     std::array<CcOut, 64> ccOut {};

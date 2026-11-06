@@ -127,6 +127,7 @@ void SemitoneProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
         double songBeat = -1;
         if (playing && loop > 0) { songBeat = std::fmod (ppq, loop); if (songBeat < 0) songBeat += loop; songBeat += tlOffset.load(); }
         host->process (events, n, buffer.getWritePointer (0), buffer.getNumChannels() > 1 ? buffer.getWritePointer (1) : nullptr, songBeat);
+        host->processMaster (buffer.getWritePointer (0), buffer.getNumChannels() > 1 ? buffer.getWritePointer (1) : nullptr, n);
     }
 
     uiPlaying = playing; uiPpq = ppq; uiBpm = bpm; uiHostHasTransport = hostTransport;
