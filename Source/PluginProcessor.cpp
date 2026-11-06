@@ -671,4 +671,14 @@ int SemitoneProcessor::popIncomingMidi (std::vector<juce::uint32>& dest)
 
 juce::AudioProcessorEditor* SemitoneProcessor::createEditor() { return new SemitoneEditor (*this); }
 
-juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter() { return new SemitoneProcessor(); }
+juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
+{
+    // the short-lived copy that opens one plug-in file during a scan: it does that and leaves, with no window
+    const auto args = juce::JUCEApplicationBase::getCommandLineParameterArray();
+    if (juce::JUCEApplicationBase::isStandaloneApp() && args.contains ("--scan-one"))
+    {
+        juce::Process::setDockIconVisible (false);
+        std::_Exit (st::PartHost::scanOne (args));
+    }
+    return new SemitoneProcessor();
+}

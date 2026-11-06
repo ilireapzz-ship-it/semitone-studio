@@ -4,6 +4,7 @@
 #include "Sequencer.h"
 #include "Synth.h"
 #include "SongFiles.h"
+#include <thread>
 
 // Phase 3, desktop app only: your own instrument plug-ins on Semitone's parts. Each MIDI channel can hold one.
 // Finding plug-ins opens each one, so it runs a file at a time on request, and a plug-in that crashes is skipped next time.
@@ -37,7 +38,7 @@ public:
         fm.addDefaultFormats();
         if (auto xml = juce::XmlDocument::parse (listFile())) known.recreateFromXml (*xml);
     }
-    ~PartHost() override { stopTimer(); const juce::SpinLock::ScopedLockType sl (lock); for (auto& t : fxWin) for (auto& w : t) w.reset(); for (auto& t : fx) for (auto& p : t) p.reset(); for (auto& w : windows) w.reset(); for (auto& i : inst) i.reset(); }
+    ~PartHost() override { aliveFlag->store (false); stopTimer(); scanThread.reset(); const juce::SpinLock::ScopedLockType sl (lock); for (auto& t : fxWin) for (auto& w : t) w.reset(); for (auto& t : fx) for (auto& p : t) p.reset(); for (auto& w : windows) w.reset(); for (auto& i : inst) i.reset(); }
 
     void prepare (double rate, int blockSize)
     {
@@ -53,7 +54,11 @@ public:
     void startScan()
     {
         if (scanning) return;
-        scanning = true; fmtIndex = 0; progress = 0; nextFormat(); startTimer (5);
+        scanning = true; progress = 0; scanShare = 0; scanningName = {};
+        // Each plug-in file is opened by a short-lived copy of this app, so one that crashes takes only that copy down.
+        scanThread.reset (new ScanThread (*this));
+        scanThread->startThread();
+        startTimer (400);
     }
 
     juce::var listVar() const
@@ -442,34 +447,83 @@ private:
     static juce::File listFile() { return st::files::appData().getChildFile ("my-plugins.xml"); }
     static juce::File deadFile() { return st::files::appData().getChildFile ("plugins-being-checked.txt"); }
 
-    void nextFormat()
-    {
-        scanner.reset();
-        while (fmtIndex < fm.getNumFormats())
-        {
-            auto* f = fm.getFormat (fmtIndex++);
-            scanner = std::make_unique<juce::PluginDirectoryScanner> (known, *f, f->getDefaultLocationsToSearch(), true, deadFile(), false);
-            return;
-        }
-        scanning = false; stopTimer();
-        if (auto xml = known.createXml()) xml->writeTo (listFile());
-        if (onList) onList();
-    }
+    void timerCallback() override { progress = scanShare.load(); scanningName = "your plug-ins"; if (onList) onList(); }
 
-    void timerCallback() override
+    // Runs in the short-lived copy: `app --scan-one <format> <file> <out.xml>`.
+public:
+    static int scanOne (const juce::StringArray& args)
     {
-        if (! scanner) { nextFormat(); return; }
-        juce::String name;
-        const bool more = scanner->scanNextFile (true, name);
-        scanningName = name; progress = scanner->getProgress();
-        if (onList && ++ticks % 8 == 0) onList();
-        if (! more) nextFormat();
+        const int at = args.indexOf ("--scan-one");
+        if (at < 0 || args.size() < at + 4) return -1;
+        juce::AudioPluginFormatManager fm;
+        fm.addDefaultFormats();
+        juce::OwnedArray<juce::PluginDescription> found;
+        for (auto* f : fm.getFormats())
+            if (f->getName() == args[at + 1]) f->findAllTypesForFile (found, args[at + 2]);
+        juce::XmlElement root ("TYPES");
+        for (auto* d : found) root.addChildElement (d->createXml().release());
+        return root.writeTo (juce::File (args[at + 3])) ? 0 : 1;
     }
+private:
+    struct ScanThread : juce::Thread
+    {
+        explicit ScanThread (PartHost& h) : juce::Thread ("Semitone plug-in scan"), host (h) {}
+        ~ScanThread() override { stopThread (70000); }
+        void run() override
+        {
+            struct Job { juce::String format, file; };
+            std::vector<Job> jobs;
+            for (auto* f : host.fm.getFormats())
+                for (const auto& file : f->searchPathsForPlugins (f->getDefaultLocationsToSearch(), true, false))
+                    if (! host.known.isListingUpToDate (file, *f)) jobs.push_back ({ f->getName(), file });
+            const auto exe = juce::File::getSpecialLocation (juce::File::currentExecutableFile).getFullPathName();
+            auto dir = st::files::appData().getChildFile ("scan-temp");
+            dir.createDirectory();
+            std::atomic<size_t> next { 0 }; std::atomic<int> done { 0 };
+            auto worker = [&] (int id)
+            {
+                for (size_t i = next++; i < jobs.size() && ! threadShouldExit(); i = next++)
+                {
+                    const auto out = dir.getChildFile ("s" + juce::String (id) + ".xml");
+                    out.deleteFile();
+                    juce::ChildProcess p;
+                    if (p.start (juce::StringArray { exe, "--scan-one", jobs[i].format, jobs[i].file, out.getFullPathName() }, 0))
+                    {
+                        if (! p.waitForProcessToFinish (60000)) p.kill();
+                        else if (p.getExitCode() == 0)
+                            if (auto x = juce::parseXML (out))
+                                for (auto* e : x->getChildIterator())
+                                {
+                                    juce::PluginDescription d;
+                                    if (d.loadFromXml (*e)) host.known.addType (d);
+                                }
+                    }
+                    host.scanShare = (float) (++done) / (float) juce::jmax ((size_t) 1, jobs.size());
+                }
+            };
+            {
+                std::vector<std::thread> crew;
+                for (int i = 0; i < 4; ++i) crew.emplace_back (worker, i);
+                for (auto& t : crew) t.join();
+            }
+            dir.deleteRecursively();
+            if (auto xml = host.known.createXml()) xml->writeTo (host.listFile());
+            juce::MessageManager::callAsync ([h = &host, alive = host.aliveFlag]
+            {
+                if (! alive->load()) return;
+                h->stopTimer(); h->scanning = false;
+                if (h->onList) h->onList();
+            });
+        }
+        PartHost& host;
+    };
+    std::unique_ptr<ScanThread> scanThread;
+    std::atomic<float> scanShare { 0 };
+    std::shared_ptr<std::atomic<bool>> aliveFlag = std::make_shared<std::atomic<bool>> (true);
 
     juce::AudioPluginFormatManager fm;
     juce::KnownPluginList known;
-    std::unique_ptr<juce::PluginDirectoryScanner> scanner;
-    int fmtIndex = 0, ticks = 0, bs = 512;
+    int bs = 512;
     double sr = 48000;
     std::array<std::unique_ptr<juce::AudioPluginInstance>, 16> inst;
     std::array<std::unique_ptr<HostWindow>, 16> windows;
