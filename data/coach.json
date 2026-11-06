@@ -139,7 +139,8 @@
       "tightens": [
         "space",
         "crowd",
-        "lyric-specific"
+        "lyric-specific",
+        "song-survives"
       ]
     },
     "nigro": {
@@ -166,11 +167,13 @@
       "density": 0.7,
       "risk": 0.9,
       "priorities": [
+        "contrast",
         "surprise",
-        "texture",
-        "hook"
+        "the song surviving its skeleton",
+        "sound identity",
+        "concision"
       ],
-      "tone": "experimental; pushes pop to its edges",
+      "tone": "experimental and playful; pushes pop to its edges, resists fixed rules",
       "loosens": [
         "voice-leading",
         "parallel-motion",
@@ -178,7 +181,21 @@
         "leap-recovery"
       ],
       "tightens": [
-        "surprise"
+        "surprise",
+        "section-contrast",
+        "song-survives",
+        "element-role",
+        "avoid-middle",
+        "paradox",
+        "sound-hook",
+        "concise",
+        "keep-the-demo"
+      ],
+      "workflow": "skeleton first (main chords and melody), production in dialogue with it, lyrics often last",
+      "src": [
+        "https://schoolofsong.org/products/songwriting-workshop-with-a-g-cook",
+        "https://www.thelineofbestfit.com/news/a-g-cook-announces-songwriting-workshop-with-school-of-song",
+        "https://americansongwriter.com/a-g-cook-is-changing-popular-music-as-we-know-it/"
       ]
     }
   },
@@ -397,6 +414,74 @@
       "base": 0.3,
       "what": "At least one unexpected moment: a chord, a drop-out, a key change, a production twist.",
       "why": "Surprise keeps attention once the pattern is learned."
+    },
+    {
+      "id": "song-survives",
+      "area": "form",
+      "base": 0.7,
+      "what": "The song still works stripped to its skeleton: melody and chords on a plain piano or guitar.",
+      "why": "Songwriting and production are two crafts in dialogue; production can't rescue a song that doesn't survive without it.",
+      "test": "Skeleton A/B: play only melody + chords on a neutral sound."
+    },
+    {
+      "id": "element-role",
+      "area": "arrangement",
+      "base": 0.6,
+      "what": "Every element has one clear job; fewer tools doing more beats many doing the same thing.",
+      "why": "High-contrast music comes from distinct roles, not from layers that blur together."
+    },
+    {
+      "id": "avoid-middle",
+      "area": "production",
+      "base": 0.3,
+      "what": "Commit to an extreme somewhere: very sparse or very dense, very natural or very synthetic, very sweet or very harsh.",
+      "why": "Music that sits in the middle on every axis is forgettable.",
+      "tight": {
+        "charli": 1.4,
+        "charli-pop2": 1.5,
+        "charli-pop": 1.3,
+        "charli-mff": 1.3,
+        "edm": 1.2,
+        "psych": 1.2
+      }
+    },
+    {
+      "id": "paradox",
+      "area": "production",
+      "base": 0.25,
+      "what": "Pair opposites on purpose: acoustic with electronic, real with fake, bedroom with studio, mainstream with underground.",
+      "why": "Paradox gives a sound its own identity.",
+      "tight": {
+        "charli-pop2": 1.4,
+        "psych": 1.2
+      }
+    },
+    {
+      "id": "sound-hook",
+      "area": "form",
+      "base": 0.4,
+      "what": "A hook can be a sound (a noise, a texture, a vocal chop), not only a melody or lyric.",
+      "why": "A memorable sound can carry a song's identity as strongly as a tune."
+    },
+    {
+      "id": "concise",
+      "area": "form",
+      "base": 0.4,
+      "what": "Say it and stop: no section longer than it needs to be; for singles, aim under the length's range.",
+      "why": "Concision keeps the energy and the contrast sharp.",
+      "tight": {
+        "charli": 1.3,
+        "charli-pop2": 1.3,
+        "chappell": 1.1
+      }
+    },
+    {
+      "id": "keep-the-demo",
+      "area": "process",
+      "base": 0.5,
+      "what": "Keep what made the rough demo exciting when polishing: a weird sound, a wrong-but-right chord, an odd structure.",
+      "why": "Polishing can sand off the thing that made the song special.",
+      "test": "Versions: compare the first demo with now and flag lost features (a sound, a chord, a moment)."
     }
   ],
   "jury": {
@@ -613,5 +698,64 @@
   "golden": {
     "about": "Regression test for the coach (tests/web): run the rules over every catalog song with chords in progressions.json in its own style. A rule that flags more than 25% of a style's songs as errors is too strict for that style: lower its strictness there (loose) or mark it as a style habit. Catalog songs are the style's norm, not mistakes.",
     "threshold": 0.25
+  },
+  "games": {
+    "about": "Ways to treat yourself as a collaborator: rules imposed from outside so you make choices you wouldn't make alone. Offered on Start ('Play a game'), in ⌘K and by the coach when a song is stuck. Each game is a set of constraints the app enforces and the Review respects. Inspired by the self-as-collaborator ideas (structured randomness, extreme limitations, aliases, gamified songwriting) A. G. Cook has taught about; Semitone's versions are its own.",
+    "list": [
+      {
+        "id": "seven-sounds",
+        "name": "Seven sounds",
+        "rule": "The whole song may use only seven sounds; every part must reuse them.",
+        "why": "Fewer tools doing more."
+      },
+      {
+        "id": "one-synth",
+        "name": "One synth",
+        "rule": "Every part comes from one instrument (built-in or your plug-in), only its settings change.",
+        "why": "A strong sound world and inventive sound design."
+      },
+      {
+        "id": "dice",
+        "name": "Roll the dice",
+        "rule": "Structured randomness: the app rolls key, tempo, a structure and one odd instruction (e.g. 'the chorus has no drums'); you may re-roll one.",
+        "why": "Breaks habits while keeping a frame."
+      },
+      {
+        "id": "three-chords",
+        "name": "Three chords",
+        "rule": "Only three chords in the whole song; contrast must come from melody, rhythm and arrangement.",
+        "why": "Forces contrast without harmony."
+      },
+      {
+        "id": "timer",
+        "name": "Twenty minutes",
+        "rule": "A complete song skeleton in 20 minutes; the clock is on screen; no going back to fix.",
+        "why": "Speed bypasses the inner critic."
+      },
+      {
+        "id": "opposites",
+        "name": "Opposites",
+        "rule": "The app picks a pair (acoustic vs electronic, sweet vs harsh, bedroom vs stadium); verse is one, chorus the other.",
+        "why": "Paradox and high contrast."
+      },
+      {
+        "id": "alias",
+        "name": "Write as your alias",
+        "rule": "Pick or create an alias: a saved persona with its own recipe, sound world and rules (e.g. 'only minor keys, always under 2:30'). Songs remember which alias wrote them.",
+        "why": "An alias gives permission to write what 'you' wouldn't."
+      },
+      {
+        "id": "remix-yourself",
+        "name": "Remix yourself",
+        "rule": "Take one of your finished songs, keep only the vocal hook and rebuild everything else in another style.",
+        "why": "Treats your own work as material from a third party."
+      }
+    ]
+  },
+  "dials": {
+    "minimalMaximal": {
+      "about": "A dial on the recipe (Start and header): minimal ←→ maximal. It sets arrangement density, how many extra parts Add a part suggests, the strength of 'space' vs 'build', and how far 'avoid-middle' pushes. Producers set its default (rubin 0.1, finneas 0.25, antonoff 0.6, agcook 'either end, never 0.5').",
+      "default": 0.5
+    }
   }
 }

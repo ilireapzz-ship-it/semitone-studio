@@ -205,6 +205,16 @@ Every card names the layer that led ("Theory", "Lana · Ultraviolence", "Antonof
 - `golden`: a test in `tests/web/`. Run the rules over every catalog song in its own style. A rule that flags more than 25% of a style's songs
   is too strict there, so fix its `loose` value. Catalog songs are the style's norm, not mistakes.
 
+**Contrast, constraint games and the skeleton test (from A. G. Cook's published workshop outline and interviews, 6 Nov 2026).**
+New rules in coach.json: `song-survives`, `element-role`, `avoid-middle`, `paradox`, `sound-hook`, `concise`, `keep-the-demo`. All seven are tightened by the A. G. Cook-style producer, and Rubin-style also checks `song-survives`.
+- **Skeleton A/B:** a transport toggle that plays only the melody and chords on a plain piano, so you can hear whether the song survives
+  without production.
+- **Keep the demo:** the Review compares the first version with now and flags anything exciting that was lost (a sound, a chord, a moment).
+- **Minimal ←→ maximal dial** on the recipe (`coach.dials`). It sets density, how many parts get suggested, and space vs build. Each producer sets the default.
+- **Play a game** (`coach.games`, on Start, in ⌘K, and offered when a song is stuck): seven sounds, one synth, roll the dice, three chords,
+  twenty minutes, opposites, write as your alias (a saved persona with its own recipe and rules), remix yourself. The app enforces
+  the constraints and the Review respects them.
+
 ## Quality checks for every step
 - **Design check:** after each build step, screenshot the real app at 1440×900 in every theme and compare it with these boards.
   Fix any drift before moving on (spacing, type, colours, one filled button per area, no bright saturated blocks).
