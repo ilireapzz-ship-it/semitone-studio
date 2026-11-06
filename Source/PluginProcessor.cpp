@@ -111,14 +111,15 @@ void SemitoneProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
         // rendered sections and takes are audio: played at another tempo they change pitch, so then the engine takes over
         const double songTempo = songBpm.load();
         const bool tempoMatches = isStandalone() || songTempo <= 0 || std::abs (bpm - songTempo) < .5;
-        if (mode != 3 && tempoMatches) clipPlayer.process (playing, ppq, bpm, sr, n, len, off, L, R);
+        // in the app, clips hold only your samples, so they play alongside the engine and wait for slow plug-ins with it
+        if (mode != 3 && tempoMatches) clipPlayer.process (playing, ppq - engineWait * (bpm / 60.0) / sr, bpm, sr, n, len, off, L, R);
         // the native engine fills in wherever no rendered section covers the playhead
         bool covered = false;
         if (mode != 3 && len > 0 && tempoMatches)
         {
             double pos = std::fmod (ppq, len);
             if (pos < 0) pos += len;
-            covered = clipPlayer.covers (pos + off);
+            covered = ! isStandalone() && clipPlayer.covers (pos + off);
         }
         double beat = -1;
         if (playing && len > 0)

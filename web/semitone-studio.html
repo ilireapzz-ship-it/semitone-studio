@@ -2155,7 +2155,7 @@ function playSample(buf,t,dur,vol,rate,rateFrom=null,rtime=0){
   else { s.connect(g); g.connect(OUT||master); s.start(t); s.stop(t+natural+.02); }
 }
 function playPart(p,m,t,dur,mul=1,extra={}){
-  const P=S.parts[p]; if(!P.on||(P.sound&&P.sound.startsWith('h:'))) return; if(RENDER_ONLY&&RENDER_ONLY!==p) return; if(typeof moutSong==='function'&&moutSong(p,m,t,dur,mul)) return; return withBus('song',p,()=>playPart0(p,m,t,dur,mul,extra)); }
+  const P=S.parts[p]; if(!P.on||(P.sound&&P.sound.startsWith('h:'))) return; if(RENDER_ONLY&&RENDER_ONLY!==p&&!(RENDER_ONLY==='samples'&&nIsSample(p))) return; if(typeof moutSong==='function'&&moutSong(p,m,t,dur,mul)) return; return withBus('song',p,()=>playPart0(p,m,t,dur,mul,extra)); }
 function playPart0(p,m,t,dur,mul,extra){ const P=S.parts[p];
   const rate=x=>Math.pow(2,(x-60)/12);
   const snd=P.sound; if(snd&&(snd.startsWith('i:')||snd.startsWith('x:'))){ const v=(ROLEVOL[PARTS[p].role]||.15)*mul; return snd[0]==='i'?playInstr(snd.slice(2),m,t,dur,v,extra):playLib(snd.slice(2),m,t,dur,v*1.6,extra); }
@@ -7174,7 +7174,7 @@ function nativeTakes(){ const out=[], B=METERS[S.meter].B, spb=60/S.bpm; S.song.
 function nativeOrchInfo(){ const parts=[], seen=new Set(); oInstIds().forEach(id=>{ const I=OI[id], r=orchRoute(id); if(I.perc||(r&&!r.on)||seen.has(r.ch)) return; seen.add(r.ch); const base={ch:r.ch,velRef:89,level:stripVol('orch',id),pan:strip('orch',id).pan||0}, os=oSoundOf(id); let o; if(os!=='synth'&&os[0]==='i'){ const q=nativeLayerPatch(os.slice(2),r.ch,89); if(q) parts.push({...q,...base,vol:q.kind==='voice'?q.vol:.2}); return; } const p=OPATCH[I.patch]; o={...p,kind:'voice',stereo:(p.unison||0)>.02}; parts.push({...o,...base}); }); const R=ROOMS[S.room]||ROOMS.off, pol=POLISH[polishOf('orch')]; return {parts,drums:{ch:9,level:1,pan:0,kit:KITS.acoustic},room:R.mix?{len:R.len,decay:R.decay,mix:S.roomMix}:null,polish:pol&&pol.hp?{...pol}:null}; }
 function nativeSoundInfo(){ const boost=S.comp==='sustain'?1:1.3, parts=[];
   [['lead',92,0],['chords',74/(.95*boost),1],['bass',92,2]].forEach(([p,velRef,defCh])=>{ const P=S.parts[p], r=MOUT.map.song[p]; if(!P||!P.on||(r&&!r.on)) return;
-    if(!NATIVE.plugin&&/^h:/.test(P.sound||'')) return; /* your plug-in plays this part */
+    if(!NATIVE.plugin&&(/^h:/.test(P.sound||'')||nIsSample(p))) return; /* your plug-in or a rendered clip plays this part */
     const role=PARTS[p].role, RV=ROLEVOL[role]||.15, snd=P.sound, base={ch:r?r.ch:defCh,velRef,level:stripVol('song',p),pan:strip('song',p).pan||0}, id=snd&&snd.startsWith('i:')?snd.slice(2):null, I=id?INSTR[id]:null; let o;
     if(I&&I.kind==='fm') o={kind:'fm',vol:RV};
     else if(I&&I.kind==='ana') o={...ANA[id],kind:ANA[id].fam,vol:RV,chorus:ANA[id].ch||'',stereo:!!ANA[id].ch};
@@ -7388,6 +7388,9 @@ const NSND={mode:0,seq:0,lastLayout:'',stableAt:0,queue:[],busy:false,need:new S
 function nHash(str){ let h1=0x811c9dc5, h2=0x01000193^str.length; for(let i=0;i<str.length;i++){ const c=str.charCodeAt(i); h1=Math.imul(h1^c,16777619); h2=Math.imul(h2^c,0x5bd1e995); h2^=h2>>>13; } return (h1>>>0).toString(16).padStart(8,'0')+(h2>>>0).toString(16).padStart(8,'0'); }
 function nSecKey(si,g){ const sec=S.song.sections[si], v=sectionView(si); const nb=k=>S.song.sections[k]?{t:S.song.sections[k].type,b:S.song.sections[k].bars}:null;
   return JSON.stringify([g,si,(S.secLayer||{})[si]||0,(S.takeComp||{})[secKey(si)]||0,Object.keys(S.secMute||{}).filter(p=>S.secMute[p][si]),sec.type,sec.bars,energyOf(si),v.chords.map(c=>[codeOf(c),c.custom||null]),v.melody.map(n=>[n.m,+n.start.toFixed(4),+n.dur.toFixed(4),n.art||0]),transOf(si),transOf(si+1),nb(si-1),nb(si+1),typeof TAKES!=='undefined'?TAKES.length:0,NSND.sr]); }
+/* Your samples and SoundFonts live in the page, so on a song the engine plays they're rendered to clips and sent over. */
+function nIsSample(p){ const s=(S.parts[p]||{}).sound||''; return s==='sample'||s.startsWith('x:'); }
+function nSampleParts(){ return ['lead','chords','bass'].filter(p=>S.parts[p].on&&nIsSample(p)); }
 function nAudioLayout(){ const d=projectData(), g={...d}; ['mats','sections','sel','versions','showLyrics','energy'].forEach(k=>delete g[k]); const gs=JSON.stringify(g); const B=METERS[S.meter].B; let at=0; const items=[];
   S.song.sections.forEach((s,si)=>{ const id=nHash(nSecKey(si,gs)); items.push({id,at}); NSND.map[id]={scope:'song',si}; at+=s.bars*B; }); return items; }
 function nOrchLayout(){ const d=orchData(), g={...d}; ['sections','parts','themes','var','name','id','autoNotes'].forEach(k=>delete g[k]); const gs=JSON.stringify(g); let at=0; const items=[];
@@ -7401,8 +7404,8 @@ async function nRenderOrchSection(si,sr){ ensureAudio(); const bars=oBars('cue')
 function nSndMode(m){ NSND.mode=m; nEmit('st_soundmode',{mode:m}); NSND.lastLayout=''; nAudioTick(); nSndStatus(); }
 function nSndStatus(){ const el=$('#nbSnd'); if(!el) return; const n=NSND.queue.length+(NSND.busy?1:0);
   el.textContent=NSND.mode===2?'':NSND.mode===3?'built-in engine':n?`preparing sounds… ${n} section${n>1?'s':''} left`:'sounds ready'; }
-function nAudioTick(){ if(!NATIVE.on||!NATIVE.plugin||!NATIVE.inited||!S.song) return; let items=[];
-  if(NSND.mode<2){ try{ items=nativeScope()==='song'?nAudioLayout():nOrchLayout(); }catch(e){ console.warn('audio layout',e); return; } }
+function nAudioTick(){ if(!NATIVE.on||!NATIVE.inited||!S.song) return; if(!NATIVE.plugin&&!NSND.app) return; let items=[];
+  if(NSND.mode<2&&(NATIVE.plugin||(engineOwns()&&nSampleParts().length))){ try{ items=nativeScope()==='song'?nAudioLayout():nOrchLayout(); }catch(e){ console.warn('audio layout',e); return; } }
   const k=JSON.stringify(items); if(k!==NSND.lastLayout){ NSND.lastLayout=k; NSND.stableAt=performance.now(); NSND.seq++; NSND.queue=[]; nEmit('st_audio_layout',{items,seq:NSND.seq}); }
   nSndStatus(); nAudioPump(); }
 function nAudioPump(){ if(NSND.busy||!NSND.queue.length) return; if(S.playing||O.playing||performance.now()-NSND.stableAt<1200){ setTimeout(nAudioPump,400); return; }
@@ -7411,15 +7414,15 @@ function nAudioPump(){ if(NSND.busy||!NSND.queue.length) return; if(S.playing||O
     if(!r||NSND.lastLayout.indexOf(id)<0) return; nSendClip(id,r); }).catch(e=>console.warn('render',e)).finally(()=>{ NSND.busy=false; nSndStatus(); setTimeout(nAudioPump,30); }); }
 async function nRenderSection(si,sr){ ensureAudio(); const B=METERS[S.meter].B, bars=barList('song').filter(b=>b.si===si); if(!bars.length) return null;
   const TM=bars.map(barTiming), body=TM.reduce((a,x)=>a+x.dur,0), off=new OfflineAudioContext(2,Math.ceil((body+2.6)*sr),sr), marks=[];
-  const realAc=ac, realMaster=master; RENDER_ONLY=null;
+  const realAc=ac, realMaster=master; RENDER_ONLY=!NATIVE.plugin?'samples':null;
   try{ ac=off; master=newMaster('song'); PLAY_T0=.1; let tc=.1; bars.forEach((bar,i)=>{ marks.push(bar.b*B,+tc.toFixed(6)); S.firstBar=false; scheduleBar(bar,tc,TM[i].spb,0); tc+=TM[i].dur; }); marks.push(bars.length*B,+tc.toFixed(6));
     const buf=await off.startRendering(); return {buf,marks}; }
-  finally{ ac=realAc; master=realMaster; PLAY_T0=null; } }
+  finally{ ac=realAc; master=realMaster; PLAY_T0=null; RENDER_ONLY=null; } }
 function nSendClip(id,r){ const b=r.buf, L=b.getChannelData(0), R=b.numberOfChannels>1?b.getChannelData(1):L, n=b.length, CH=65536, parts=Math.max(1,Math.ceil(n/CH));
   for(let p=0;p<parts;p++){ const a=p*CH, e=Math.min(n,a+CH), pcm=new Int16Array((e-a)*2);
     for(let i=a,j=0;i<e;i++,j+=2){ const l=Math.max(-1,Math.min(1,L[i])), rr=Math.max(-1,Math.min(1,R[i])); pcm[j]=l<0?l*32768:l*32767; pcm[j+1]=rr<0?rr*32768:rr*32767; }
     nEmit('st_audio_clip',{id,sr:b.sampleRate,frames:n,marks:p===0?r.marks:[],part:p,parts,b64:u8b64(new Uint8Array(pcm.buffer))}); } }
-function initNativeSound(d){ if(!NATIVE.plugin) return; NSND.mode=d&&d.soundMode!=null?+d.soundMode:0; if(d&&d.sr) NSND.sr=d.sr;
+function initNativeSound(d){ if(d&&d.sr) NSND.sr=d.sr; if(!NATIVE.plugin){ NSND.app=true; nOn('st_audio_need',x=>{ if(!x||x.seq!==NSND.seq) return; if(x.sr) NSND.sr=x.sr; NSND.queue=(x.ids||[]).slice(); nAudioPump(); }); setInterval(nAudioTick,1500); return; } NSND.mode=d&&d.soundMode!=null?+d.soundMode:0;
   const bar=$('#nativeBar'); if(bar&&!$('#nbSound')){ const st=$('#nbState'); st.insertAdjacentHTML('afterend',`<label class="en-opt">Sound <select id="nbSound"><option value="0">Semitone’s instruments + MIDI out</option><option value="1">Semitone’s instruments only</option><option value="2">MIDI only (your DAW’s instruments)</option><option value="3">Built-in engine only (preview)</option></select></label><span id="nbSnd" class="muted mono" style="font-size:.78rem"></span>`);
     const s=$('#nbSound'); s.value=String(NSND.mode); s.onchange=e=>{ nSndMode(+e.target.value); toast(['You’ll hear Semitone’s instruments in '+NATIVE.host+', and the MIDI still goes out','You’ll hear Semitone’s instruments in '+NATIVE.host+'; no MIDI goes out','Only MIDI goes out: route it to your own instruments','You’ll hear the plugin’s built-in engine on its own. No effects yet, and no MIDI goes out'][+e.target.value]); }; }
   nOn('st_audio_need',x=>{ if(!x||x.seq!==NSND.seq) return; if(x.sr) NSND.sr=x.sr; NSND.queue=(x.ids||[]).slice(); nSndStatus(); nAudioPump(); });
