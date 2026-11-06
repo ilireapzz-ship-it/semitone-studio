@@ -7,9 +7,9 @@ const {chromium}=require('playwright');
  console.log('after init:',await p.evaluate(()=>{ const ev=__nlog.map(x=>x[0]); const tl=__nlog.filter(x=>x[0]==='st_timeline').pop(); return ev.join(',')+' | bar: '+$('#nativeBar').textContent.replace(/\s+/g,' ').slice(0,120)+' | timeline len '+tl[1].length+' notes '+tl[1].notes.length/5+' channels '+[...new Set(tl[1].notes.filter((_,i)=>i%5===2))].join(','); }));
  // host playing
  await p.evaluate(()=>{ for(let i=0;i<5;i++) __fire('st_host',{playing:true,ppq:20+i,bpm:100,hostTransport:true}); }); console.log('host bar:',await p.evaluate(()=>$('#nbState').textContent+' | tempo btn hidden '+$('#nbTempo').hidden+' '+$('#nbTempo').textContent+' | sel '+S.sel));
- await p.click('#nbTempo'); console.log('bpm matched',await p.evaluate(()=>S.bpm));
+ await p.evaluate(()=>$('#nbTempo').click()); console.log('bpm matched',await p.evaluate(()=>S.bpm));
  // section scope
- await p.selectOption('#nbScope','sec'); await p.waitForTimeout(900); console.log('sec timeline:',await p.evaluate(()=>{ const tl=__nlog.filter(x=>x[0]==='st_timeline').pop()[1]; return 'len '+tl.length+' offset '+tl.offset; }));
+ await p.evaluate(()=>{ const e=$('#nbScope'); e.value='sec'; e.dispatchEvent(new Event('change',{bubbles:true})); }); await p.waitForTimeout(900); console.log('sec timeline:',await p.evaluate(()=>{ const tl=__nlog.filter(x=>x[0]==='st_timeline').pop()[1]; return 'len '+tl.length+' offset '+tl.offset; }));
  // state + restore
  const st=await p.evaluate(()=>{ const s=__nlog.filter(x=>x[0]==='st_state').pop(); return s?s[1].json:null; }); console.log('state bytes',st&&st.length);
  // save + drag

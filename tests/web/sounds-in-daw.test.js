@@ -21,6 +21,6 @@ const {chromium}=require('playwright');
  const after=await p.evaluate(()=>__nlog.filter(x=>x[0]==='st_audio_layout').pop()[1].items.map(x=>x.id));
  console.log('changed ids after section-0 energy edit:',after.map((x,i)=>x!==before[i]?'*':'.').join(''));
  // mode select
- await p.selectOption('#nbSound','2'); await p.waitForTimeout(300); console.log('midi-only:',await p.evaluate(()=>JSON.stringify(__nlog.filter(x=>x[0]==='st_soundmode').pop()[1])+' layout items '+__nlog.filter(x=>x[0]==='st_audio_layout').pop()[1].items.length));
+ await p.evaluate(()=>{ const e=$('#nbSound'); e.value='2'; e.dispatchEvent(new Event('change',{bubbles:true})); }); await p.waitForTimeout(300); console.log('midi-only:',await p.evaluate(()=>JSON.stringify(__nlog.filter(x=>x[0]==='st_soundmode').pop()[1])+' layout items '+__nlog.filter(x=>x[0]==='st_audio_layout').pop()[1].items.length));
  await p.screenshot({path:require('path').join(require('os').tmpdir(),'nsnd.png'),clip:{x:0,y:0,width:1300,height:120}});
  console.log(errs.slice(0,8)); await b.close(); })();
