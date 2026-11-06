@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Semitone Studio — Merged · __TITLE__</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&amp;family=Instrument+Serif&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0A0B0D}
+button,input{font:inherit;letter-spacing:inherit}
+button{cursor:pointer}
+.sm{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#6B7079;font-weight:500}
+.mono{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}
+.serif{font-family:'Instrument Serif',Georgia,serif;font-weight:400;letter-spacing:0}
+.ghost{height:28px;padding:0 11px;border-radius:7px;border:1px solid rgba(255,255,255,.09);background:linear-gradient(#1A1C20,#15171A);color:#D9D6CF;box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+.prim{height:28px;padding:0 13px;border-radius:7px;border:0;background:linear-gradient(#F3F0EA,#DCD8CF);color:#121212;font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.5),inset 0 1px 0 #fff}
+.xs{height:24px;padding:0 9px;font-size:11.5px}
+</style>
+</helmet>
+<div style="height: 900px; background: #0A0B0D; color: #EDEBE6; font-family: 'Inter Tight', system-ui, sans-serif; font-size: 12.5px; letter-spacing: .005em; display: flex; flex-direction: column; position: relative; overflow: hidden">
+
+  <!-- 1 · header: song, recipe sentence, ⌘K, lens -->
+  <header style="height: 54px; flex-shrink: 0; display: flex; align-items: center; gap: 16px; padding: 0 18px; border-bottom: 1px solid rgba(255,255,255,.06); background: linear-gradient(#121316, #0E0F12)">
+    <span aria-label="Semitone" style="width: 22px; height: 22px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #F1D6A6, #B8894A 55%, #5E4524); box-shadow: 0 0 0 1px rgba(255,255,255,.08), 0 2px 8px rgba(184,137,74,.25)"></span>
+    <span class="serif" style="font-size: 22px; line-height: 1">Untitled song</span>
+    <span style="width: 1px; height: 22px; background: rgba(255,255,255,.08)"></span>
+    <div aria-label="Recipe" style="display: flex; align-items: baseline; gap: 6px; color: #7E838C; white-space: nowrap">
+      <sc-for list="{{recipe}}" as="r" hint-placeholder-count="4">
+        <span>{{r.pre}}</span>
+        <button style="padding: 0 0 1px; border: 0; border-bottom: 1px dashed {{r.line}}; background: transparent; color: #EDEBE6; display: inline-flex; align-items: center; gap: 5px"><span style="width: 5px; height: 5px; border-radius: 50%; background: {{r.dot}}"></span>{{r.text}}</button>
+      </sc-for>
+    </div>
+    <div style="margin-left: auto; display: flex; align-items: center; gap: 10px">
+      <button style="height: 30px; width: 210px; padding: 0 8px 0 11px; border-radius: 8px; border: 1px solid rgba(255,255,255,.07); background: #0C0D10; color: #6B7079; display: flex; align-items: center; justify-content: space-between; box-shadow: inset 0 1px 2px rgba(0,0,0,.5)">Search or do anything<span class="mono" style="font-size: 10.5px; padding: 1px 5px; border-radius: 4px; border: 1px solid rgba(255,255,255,.08); color: #8A8F98">⌘K</span></button>
+      <div role="tablist" aria-label="Lens" style="display: flex; padding: 3px; gap: 2px; border-radius: 9px; background: #0C0D10; border: 1px solid rgba(255,255,255,.06)">
+        <sc-for list="{{lenses}}" as="l" hint-placeholder-count="3">
+          <button role="tab" aria-selected="{{l.on}}" style="height: 24px; padding: 0 14px; border-radius: 6px; border: 0; background: {{l.bg}}; color: {{l.ink}}; font-weight: 500; box-shadow: {{l.sh}}">{{l.name}}</button>
+        </sc-for>
+      </div>
+    </div>
+  </header>
+
+  <!-- 2 · transport -->
+  <div style="height: 48px; flex-shrink: 0; display: flex; align-items: center; gap: 10px; padding: 0 18px; border-bottom: 1px solid rgba(255,255,255,.06); background: #0E0F12; white-space: nowrap">
+    <button aria-label="Back to start" class="ghost" style="width: 32px; padding: 0">⏮</button>
+    <button aria-label="Pause" style="width: 34px; height: 30px; border-radius: 8px; border: 0; background: linear-gradient(#F3F0EA,#D6D2C8); color: #111; font-size: 11px; box-shadow: inset 0 1px 0 #fff, 0 1px 3px rgba(0,0,0,.6)">❚❚</button>
+    <div style="display: flex; align-items: center; gap: 14px; height: 32px; padding: 0 14px; border-radius: 8px; background: #08090A; border: 1px solid rgba(255,255,255,.05); box-shadow: inset 0 1px 3px rgba(0,0,0,.7)">
+      <span class="mono" style="font-size: 15px; color: #F1E7D4">00:41<span style="color: #8A7E68">.2</span></span>
+      <span class="mono" style="color: #8A8F98">14 . 3 . 1</span>
+      <span style="width: 1px; height: 16px; background: rgba(255,255,255,.07)"></span>
+      <span class="mono" style="color: #C9C5BC">E min</span><span class="mono" style="color: #C9C5BC">78.00</span><span class="mono" style="color: #8A8F98">4/4</span>
+    </div>
+    <sc-if value="{{ab}}" hint-placeholder-val="{{true}}">
+      <div role="group" aria-label="Compare" style="display: flex; padding: 2px; border-radius: 8px; background: #08090A; border: 1px solid rgba(255,255,255,.06)">
+        <button style="height: 24px; padding: 0 10px; border-radius: 6px; border: 0; background: transparent; color: #8A8F98">A  Yours</button>
+        <button aria-pressed="true" style="height: 24px; padding: 0 10px; border-radius: 6px; border: 0; background: linear-gradient(#3A2F1E,#2A2216); color: #F1D6A6; box-shadow: inset 0 0 0 1px rgba(217,179,122,.35)">B  With the pass</button>
+      </div>
+    </sc-if>
+    <sc-if value="{{snaps}}" hint-placeholder-val="{{false}}">
+      <div role="group" aria-label="Mix snapshots" style="display: flex; align-items: center; padding: 2px; border-radius: 8px; background: #08090A; border: 1px solid rgba(255,255,255,.06)">
+        <span class="sm" style="padding: 0 8px">Snapshot</span>
+        <button style="height: 24px; padding: 0 10px; border-radius: 6px; border: 0; background: transparent; color: #8A8F98">1 Rough</button>
+        <button aria-pressed="true" style="height: 24px; padding: 0 10px; border-radius: 6px; border: 0; background: #1C1E22; color: #EDEBE6; box-shadow: inset 0 0 0 1px rgba(255,255,255,.08)">2 Warmer</button>
+        <button style="height: 24px; padding: 0 8px; border-radius: 6px; border: 0; background: transparent; color: #6B7079">＋</button>
+      </div>
+    </sc-if>
+    <sc-if value="{{splice}}" hint-placeholder-val="{{false}}">
+      <span style="display: flex; align-items: center; gap: 8px; height: 28px; padding: 0 11px; border-radius: 8px; background: rgba(108,195,195,.07); border: 1px solid rgba(108,195,195,.22); color: #A9DADA"><span style="width: 6px; height: 6px; border-radius: 50%; background: #6CC3C3; box-shadow: 0 0 8px #6CC3C3"></span>Splice Bridge<span style="color: #5F8F8F">·</span><span style="color: #7FAFAF">following E min, 78, looping Chorus 1</span><span class="mono" style="font-size: 10.5px; padding: 1px 5px; border-radius: 4px; border: 1px solid rgba(108,195,195,.25)">⌘V</span></span>
+    </sc-if>
+    <span style="color: #6B7079">{{transportNote}}</span>
+    <span style="margin-left: auto; display: flex; gap: 8px; align-items: center">
+      <button class="ghost" aria-label="Undo" style="width: 30px; padding: 0">↶</button>
+      <button class="ghost" title="Keeps what you just played, even if you weren't recording">⟲  Capture</button>
+      <button class="ghost" style="display: flex; align-items: center; gap: 7px"><span style="width: 9px; height: 9px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #FF8A80, #E0443A); box-shadow: 0 0 8px rgba(224,68,58,.6)"></span>Record</button>
+      <button class="prim">Share</button>
+    </span>
+  </div>
+
+  <div style="flex: 1; display: flex; min-height: 0">
+    <main style="flex: 1; min-width: 0; display: flex; flex-direction: column; position: relative">
+      <!-- 3 · one timeline -->
+      <div style="display: flex; border-bottom: 1px solid rgba(255,255,255,.06); background: #0B0C0E">
+        <div style="width: 210px; flex-shrink: 0; background: #0E0F12; border-right: 1px solid rgba(255,255,255,.06)">
+          <div style="height: 20px"></div>
+          <div class="sm" style="height: 34px; padding: 0 16px; display: flex; align-items: center">Arrangement</div>
+          <div class="sm" style="height: 22px; padding: 0 16px; display: flex; align-items: center">Feels</div>
+          <sc-for list="{{tracks}}" as="t" hint-placeholder-count="5">
+            <div style="height: 42px; padding: 0 12px 0 0; box-sizing: border-box; border-top: 1px solid rgba(255,255,255,.045); display: flex; align-items: center; gap: 10px; background: {{t.headBg}}">
+              <span style="width: 3px; align-self: stretch; background: {{t.color}}; opacity: .9"></span>
+              <span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px"><span style="font-weight: 500">{{t.name}}</span><span style="color: {{t.soundInk}}; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{t.sound}}</span></span>
+              <sc-if value="{{t.meter}}" hint-placeholder-val="{{false}}"><span style="display: flex; gap: 2px; height: 24px; align-items: flex-end"><span style="width: 3px; height: {{t.meter}}%; border-radius: 1px; background: linear-gradient(to top, #5FA37E, #C9B36A)"></span><span style="width: 3px; height: {{t.meter2}}%; border-radius: 1px; background: linear-gradient(to top, #5FA37E, #C9B36A)"></span></span></sc-if>
+              <span style="display: flex; gap: 3px"><span class="mono" style="width: 16px; height: 16px; border-radius: 4px; border: 1px solid rgba(255,255,255,.08); color: #6B7079; font-size: 9px; display: flex; align-items: center; justify-content: center">M</span><span class="mono" style="width: 16px; height: 16px; border-radius: 4px; border: 1px solid rgba(255,255,255,.08); color: #6B7079; font-size: 9px; display: flex; align-items: center; justify-content: center">S</span></span>
+            </div>
+            <sc-for list="{{t.lanes}}" as="ln" hint-placeholder-count="1">
+              <div style="height: 22px; padding: 0 16px 0 22px; display: flex; align-items: center; gap: 6px; color: #6B7079; font-size: 11px"><span style="width: 8px; height: 1px; background: {{ln.color}}"></span>{{ln.name}}</div>
+            </sc-for>
+          </sc-for>
+        </div>
+        <div style="flex: 1; min-width: 0; position: relative; background-image: repeating-linear-gradient(90deg, rgba(255,255,255,.028) 0 1px, transparent 1px 100%); background-size: calc(100% / 39) 100%">
+          <div style="height: 20px; display: flex; border-bottom: 1px solid rgba(255,255,255,.05)">
+            <sc-for list="{{sections}}" as="s" hint-placeholder-count="6"><div class="mono" style="flex: {{s.bars}} 1 0; min-width: 0; padding: 4px 5px 0; box-sizing: border-box; color: #555A62; font-size: 9.5px; border-left: 1px solid rgba(255,255,255,.08)">{{s.start}}</div></sc-for>
+          </div>
+          <div style="height: 34px; display: flex; padding: 5px 0; box-sizing: border-box">
+            <sc-for list="{{sections}}" as="s" hint-placeholder-count="6">
+              <div style="flex: {{s.bars}} 1 0; min-width: 0; padding: 0 1px; box-sizing: border-box">
+                <div style="height: 100%; border-radius: 5px; padding: 0 8px; box-sizing: border-box; display: flex; align-items: center; gap: 7px; background: {{s.bg}}; border: 1px solid {{s.line}}; box-shadow: {{s.glow}}; overflow: hidden">
+                  <span style="color: #4C5058; font-size: 10px">⠿</span><span style="font-weight: 500; white-space: nowrap; color: {{s.ink}}">{{s.name}}</span><span class="mono" style="font-size: 10px; color: #6B7079; white-space: nowrap; overflow: hidden">{{s.sub}}</span>
+                  <span style="margin-left: auto; display: flex; gap: 3px"><sc-for list="{{s.pins}}" as="p" hint-placeholder-count="1"><span class="mono" style="width: 15px; height: 15px; border-radius: 50%; border: 1px solid {{p.color}}; color: {{p.color}}; font-size: 9px; display: flex; align-items: center; justify-content: center">{{p.n}}</span></sc-for></span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="height: 22px; display: flex; align-items: center">
+            <sc-for list="{{sections}}" as="s" hint-placeholder-count="6"><div style="flex: {{s.bars}} 1 0; min-width: 0; padding: 0 9px; box-sizing: border-box; display: flex; align-items: center; gap: 5px; font-size: 11px; color: #8A8F98; white-space: nowrap"><span style="width: 5px; height: 5px; border-radius: 50%; background: {{s.emoDot}}"></span>{{s.emo}}</div></sc-for>
+          </div>
+          <sc-for list="{{tracks}}" as="t" hint-placeholder-count="5">
+            <div style="height: 42px; display: flex; padding: 4px 0; box-sizing: border-box; border-top: 1px solid rgba(255,255,255,.045)">
+              <sc-for list="{{t.cells}}" as="c" hint-placeholder-count="6">
+                <div style="flex: {{c.bars}} 1 0; min-width: 0; padding: 0 1px; box-sizing: border-box">
+                  <div style="height: 100%; position: relative; border-radius: 4px; background: {{c.bg}}; border: 1px solid {{c.border}}; box-shadow: {{c.glow}}; overflow: hidden; box-sizing: border-box">
+                    <sc-if value="{{c.label}}" hint-placeholder-val="{{true}}"><span style="position: absolute; left: 5px; top: 1px; font-size: 9px; color: {{c.labelInk}}; white-space: nowrap">{{c.label}}</span></sc-if>
+                    <sc-for list="{{c.notes}}" as="n" hint-placeholder-count="6"><span style="position: absolute; left: {{n.l}}%; top: {{n.t}}%; width: {{n.w}}%; height: 3px; border-radius: 1px; background: {{t.color}}; opacity: {{c.op}}"></span></sc-for>
+                    <sc-if value="{{c.text}}" hint-placeholder-val="{{false}}"><span class="mono" style="position: absolute; left: 6px; bottom: 5px; font-size: 10.5px; color: {{c.textInk}}; white-space: nowrap; word-spacing: 6px">{{c.text}}</span></sc-if>
+                    <sc-if value="{{c.wave}}" hint-placeholder-val="{{false}}"><svg viewBox="0 0 300 30" preserveAspectRatio="none" style="position: absolute; left: 0; right: 0; bottom: 2px; width: 100%; height: 22px" aria-hidden="true"><path d="{{c.wave}}" stroke="{{t.color}}" stroke-width="1.4" opacity=".75"></path></svg></sc-if>
+                    <sc-if value="{{c.mark}}" hint-placeholder-val="{{false}}"><span class="mono" style="position: absolute; right: 4px; top: 3px; width: 14px; height: 14px; border-radius: 50%; background: {{c.markBg}}; color: #141210; font-size: 9px; font-weight: 500; display: flex; align-items: center; justify-content: center">{{c.mark}}</span></sc-if>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+            <sc-for list="{{t.lanes}}" as="ln" hint-placeholder-count="1">
+              <sc-if value="{{ln.path}}" hint-placeholder-val="{{true}}">
+                <svg viewBox="0 0 400 22" preserveAspectRatio="none" style="display: block; width: 100%; height: 22px" aria-label="{{ln.name}}"><path d="{{ln.area}}" fill="{{ln.color}}" opacity=".08"></path><path d="{{ln.path}}" fill="none" stroke="{{ln.color}}" stroke-width="1.2" vector-effect="non-scaling-stroke"></path></svg>
+              </sc-if>
+              <sc-if value="{{ln.words}}" hint-placeholder-val="{{false}}">
+                <div style="height: 22px; display: flex; align-items: center">
+                  <sc-for list="{{ln.words}}" as="w" hint-placeholder-count="6"><div style="flex: {{w.bars}} 1 0; min-width: 0; color: {{w.ink}}; font-style: {{w.style}}; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 8px; box-sizing: border-box">{{w.text}}</div></sc-for>
+                </div>
+              </sc-if>
+            </sc-for>
+          </sc-for>
+          <div aria-hidden="true" style="position: absolute; top: 0; bottom: 0; left: 34%; width: 1px; background: #EDEBE6; box-shadow: 0 0 6px rgba(237,235,230,.4)"><span style="position: absolute; top: 0; left: -5px; border-left: 5.5px solid transparent; border-right: 5.5px solid transparent; border-top: 7px solid #EDEBE6"></span></div>
+        </div>
+      </div>
+
+      <!-- 4 · drawer -->
+      <section aria-label="Editor" style="flex: 1; display: flex; flex-direction: column; background: #0E0F12; min-height: 0">
+        <div style="height: 38px; flex-shrink: 0; display: flex; align-items: stretch; gap: 18px; padding: 0 16px; border-bottom: 1px solid rgba(255,255,255,.06)">
+          <span style="align-self: center; font-weight: 500; margin-right: 6px">{{selected}}</span>
+          <sc-for list="{{drawer}}" as="d" hint-placeholder-count="4"><button style="padding: 0 2px; border: 0; border-bottom: 1.5px solid {{d.line}}; background: transparent; color: {{d.ink}}">{{d.name}}</button></sc-for>
+          <span style="margin-left: auto; align-self: center; color: #6B7079">{{drawerNote}}</span>
+        </div>
+        <div style="flex: 1; display: flex; gap: 14px; padding: 12px 16px; min-height: 0">
+          <sc-if value="{{showRoll}}" hint-placeholder-val="{{true}}">
+            <div style="flex: 1.5; display: flex; flex-direction: column; border-radius: 8px; border: 1px solid rgba(255,255,255,.06); overflow: hidden; background: #0B0C0E">
+              <div style="flex: 1; display: flex; min-height: 0">
+                <div aria-hidden="true" style="width: 38px; flex-shrink: 0; display: flex; flex-direction: column; border-right: 1px solid rgba(0,0,0,.6)">
+                  <sc-for list="{{keys}}" as="k" hint-placeholder-count="24"><div style="height: 12px; flex-shrink: 0; box-sizing: border-box; background: {{k.key}}; border-bottom: 1px solid rgba(0,0,0,.18); font-size: 7.5px; color: #6B6760; text-align: right; padding-right: 3px; line-height: 11px">{{k.label}}</div></sc-for>
+                </div>
+                <div style="flex: 1; position: relative; background-image: repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0 1px, transparent 1px 100%); background-size: 25% 100%">
+                  <sc-for list="{{keys}}" as="k" hint-placeholder-count="24"><div style="position: absolute; left: 0; right: 0; top: {{k.top}}px; height: 12px; background: {{k.row}}; border-bottom: 1px solid rgba(255,255,255,.025)"></div></sc-for>
+                  <sc-for list="{{ghosts}}" as="g" hint-placeholder-count="0"><div style="position: absolute; left: {{g.l}}%; top: {{g.t}}px; width: {{g.w}}%; height: 11px; border-radius: 2px; background: rgba(124,149,217,.16); border: 1px solid rgba(124,149,217,.28); box-sizing: border-box"></div></sc-for>
+                  <sc-for list="{{roll}}" as="n" hint-placeholder-count="10">
+                    <div style="position: absolute; left: {{n.l}}%; top: {{n.t}}px; width: {{n.w}}%; height: 11px; border-radius: 2px; background: linear-gradient({{n.c1}}, {{n.c2}}); box-shadow: inset 0 1px 0 rgba(255,255,255,.25), {{n.ring}}"></div>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="height: 40px; flex-shrink: 0; display: flex; border-top: 1px solid rgba(255,255,255,.06)">
+                <div class="sm" style="width: 38px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 8px; letter-spacing: .08em">{{rollFoot}}</div>
+                <div style="flex: 1; position: relative">
+                  <sc-for list="{{roll}}" as="n" hint-placeholder-count="10">
+                    <span style="position: absolute; left: {{n.l}}%; bottom: 6px; width: 2px; height: {{n.vel}}px; background: {{n.c2}}; opacity: .7"></span>
+                    <span style="position: absolute; left: calc({{n.l}}% + 6px); top: 12px; font-size: 11px; font-style: italic; color: {{n.sylInk}}">{{n.syl}}</span>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{strips}}" hint-placeholder-val="{{false}}">
+            <div style="flex: 1.5; display: flex; gap: 6px">
+              <sc-for list="{{strips}}" as="s" hint-placeholder-count="5">
+                <div style="flex: 1; min-width: 0; border-radius: 8px; background: linear-gradient(#131418, #0D0E11); border: 1px solid rgba(255,255,255,.06); padding: 9px 8px; display: flex; flex-direction: column; gap: 5px; box-shadow: inset 0 1px 0 rgba(255,255,255,.03)">
+                  <div style="display: flex; align-items: center; gap: 6px"><span style="width: 3px; height: 12px; background: {{s.color}}"></span><span style="font-weight: 500">{{s.name}}</span></div>
+                  <span class="sm" style="font-size: 8.5px; margin-top: 3px">Inserts</span>
+                  <sc-for list="{{s.fx}}" as="f" hint-placeholder-count="3"><span style="height: 20px; display: flex; align-items: center; gap: 5px; padding: 0 6px; border-radius: 4px; background: {{f.bg}}; border: 1px {{f.lineStyle}} rgba(255,255,255,.08); color: {{f.ink}}; font-size: 10.5px; white-space: nowrap; overflow: hidden"><span style="width: 4px; height: 4px; border-radius: 50%; background: {{f.dot}}; flex-shrink: 0"></span>{{f.name}}</span></sc-for>
+                  <svg viewBox="0 0 30 30" style="width: 26px; height: 26px; align-self: center; margin-top: 4px" aria-label="Pan"><circle cx="15" cy="15" r="11" fill="#1A1C20" stroke="rgba(255,255,255,.1)"></circle><path d="M15 15 L{{s.panX}} {{s.panY}}" stroke="#EDEBE6" stroke-width="1.6" stroke-linecap="round"></path></svg>
+                  <div style="flex: 1; display: flex; justify-content: center; gap: 8px; min-height: 60px; padding-top: 4px">
+                    <div style="width: 4px; border-radius: 2px; background: #060708; position: relative"><span style="position: absolute; left: -7px; top: {{s.cap}}%; width: 18px; height: 9px; border-radius: 2px; background: linear-gradient(#E9E5DC, #A9A59C); box-shadow: 0 2px 4px rgba(0,0,0,.6)"></span></div>
+                    <div style="display: flex; gap: 2px; align-items: flex-end"><span style="width: 4px; height: {{s.lvl}}%; background: linear-gradient(to top, #4F9A73 0%, #9DB866 70%, #D6A95C 100%); border-radius: 1px"></span><span style="width: 4px; height: {{s.lvl2}}%; background: linear-gradient(to top, #4F9A73 0%, #9DB866 70%, #D6A95C 100%); border-radius: 1px"></span></div>
+                  </div>
+                  <span class="mono" style="text-align: center; font-size: 10.5px; color: #8A8F98; padding: 3px 0; border-radius: 4px; background: #08090A">{{s.db}}</span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{loop}}" hint-placeholder-val="{{false}}">
+            <div style="flex: 1.5; border-radius: 8px; background: linear-gradient(#0F1416, #0B0E10); border: 1px solid rgba(108,195,195,.18); padding: 14px; display: flex; flex-direction: column; gap: 12px">
+              <div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-weight: 500">dreampop_gtr_shimmer_90_F#m.wav</span><span class="sm">Splice · 4 bars</span></div>
+              <svg viewBox="0 0 600 70" preserveAspectRatio="none" style="width: 100%; height: 74px" aria-label="Loop waveform"><defs><linearGradient id="wg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#9FE0E0"></stop><stop offset="1" stop-color="#3E8A8A"></stop></linearGradient></defs><path d="{{loop.wave}}" stroke="url(#wg)" stroke-width="2"></path></svg>
+              <div style="display: flex; gap: 10px; align-items: center"><span class="mono" style="padding: 4px 9px; border-radius: 6px; background: #08090A; color: #8A8F98">90 BPM · F♯ min</span><span style="color: #4C5058">→</span><span class="mono" style="padding: 4px 9px; border-radius: 6px; background: rgba(108,195,195,.08); border: 1px solid rgba(108,195,195,.2); color: #A9DADA">78 BPM · E min</span><span style="color: #6B7079">fitted to your song</span></div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1px; border-radius: 7px; overflow: hidden; background: rgba(255,255,255,.05)">
+                <sc-for list="{{loop.opts}}" as="o" hint-placeholder-count="4"><span style="display: flex; justify-content: space-between; align-items: center; padding: 9px 11px; background: #0D0F12"><span style="color: #C9C5BC">{{o.name}}</span><span style="width: 24px; height: 13px; border-radius: 999px; background: {{o.bg}}; position: relative; box-shadow: inset 0 1px 2px rgba(0,0,0,.5)"><span style="position: absolute; top: 2px; left: {{o.k}}px; width: 9px; height: 9px; border-radius: 50%; background: #EDEBE6"></span></span></span></sc-for>
+              </div>
+            </div>
+          </sc-if>
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 10px; min-width: 0">
+            <sc-for list="{{side}}" as="c" hint-placeholder-count="2">
+              <div style="padding: 13px 14px; border-radius: 8px; background: linear-gradient(#121316, #0F1013); border: 1px solid rgba(255,255,255,.06); display: flex; flex-direction: column; gap: 5px; box-shadow: inset 0 1px 0 rgba(255,255,255,.03)">
+                <span class="sm" style="display: flex; align-items: center; gap: 6px"><span style="width: 5px; height: 5px; border-radius: 50%; background: {{c.dot}}"></span>{{c.kind}}</span>
+                <span class="serif" style="font-size: 18px; line-height: 1.2">{{c.title}}</span><span style="color: #9BA0A8; line-height: 1.5">{{c.text}}</span>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </section>
+
+      <sc-if value="{{cmdk}}" hint-placeholder-val="{{false}}">
+        <div role="listbox" aria-label="Actions" style="position: absolute; right: -150px; top: -48px; width: 420px; border-radius: 12px; background: rgba(20,21,24,.94); backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 30px 80px rgba(0,0,0,.65), 0 0 0 1px rgba(0,0,0,.5); z-index: 3; overflow: hidden">
+          <div style="padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,.06); display: flex; gap: 8px; align-items: center"><span style="color: #6B7079">⌘K</span><span>double the</span><span style="width: 1px; height: 14px; background: #D9B37A"></span></div>
+          <div style="padding: 6px">
+            <sc-for list="{{cmdk}}" as="a" hint-placeholder-count="5"><div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 9px; border-radius: 7px; background: {{a.bg}}"><span>{{a.name}}</span><span class="sm" style="font-size: 9px">{{a.tag}}</span></div></sc-for>
+          </div>
+          <div style="padding: 9px 14px; border-top: 1px solid rgba(255,255,255,.06); color: #6B7079; font-size: 11px; display: flex; justify-content: space-between"><span>Every command, plus your own chained actions</span><span style="color: #D9B37A">＋ Save as action</span></div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{pop}}" hint-placeholder-val="{{false}}">
+        <div role="dialog" aria-label="{{pop.title}}" style="position: absolute; left: 196px; top: {{pop.top}}px; width: 330px; border-radius: 12px; background: rgba(20,21,24,.94); backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 30px 80px rgba(0,0,0,.65), 0 0 0 1px rgba(0,0,0,.5); z-index: 2; overflow: hidden">
+          <div style="padding: 13px 14px 10px; display: flex; justify-content: space-between; align-items: baseline"><span class="serif" style="font-size: 19px">{{pop.title}}</span><span class="sm">{{pop.sub}}</span></div>
+          <div style="margin: 0 10px; padding: 11px; border-radius: 8px; background: #0C0D10; border: 1px solid rgba(255,255,255,.06); display: flex; gap: 11px; align-items: center">
+            <span style="width: 34px; height: 34px; border-radius: 7px; background: linear-gradient(135deg, #3A4A78, #1A2034); box-shadow: inset 0 1px 0 rgba(255,255,255,.12)"></span>
+            <span style="display: flex; flex-direction: column; gap: 2px; min-width: 0"><span class="sm" style="font-size: 8.5px; color: #8FB59C">In your library</span><span style="font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{pop.lib}}</span><span style="color: #6B7079; font-size: 11px">{{pop.recipe}}</span></span>
+          </div>
+          <div style="padding: 10px 14px; color: #9BA0A8; line-height: 1.5">{{pop.why}}</div>
+          <div style="padding: 10px 14px; border-top: 1px solid rgba(255,255,255,.06); display: flex; gap: 6px"><button class="prim xs">Use it</button><button class="ghost xs">Sketch sound</button><button class="ghost xs">Other options</button></div>
+        </div>
+      </sc-if>
+    </main>
+
+    <!-- 6 · session panel -->
+    <aside aria-label="Session" style="width: 340px; flex-shrink: 0; border-left: 1px solid rgba(255,255,255,.06); background: #0E0F12; display: flex; flex-direction: column">
+      <div style="padding: 14px 16px 0; display: flex; justify-content: space-between; align-items: baseline"><span class="serif" style="font-size: 22px">Session</span><span class="sm">{{feedNote}}</span></div>
+      <div style="display: flex; gap: 16px; padding: 0 16px; margin-top: 8px; border-bottom: 1px solid rgba(255,255,255,.06)">
+        <sc-for list="{{filters}}" as="f" hint-placeholder-count="4"><button style="height: 30px; padding: 0 1px; border: 0; border-bottom: 1.5px solid {{f.line}}; background: transparent; color: {{f.ink}}">{{f.name}}</button></sc-for>
+      </div>
+      <sc-if value="{{passHead}}" hint-placeholder-val="{{false}}">
+        <div style="margin: 12px 12px 4px; padding: 12px; border-radius: 9px; background: linear-gradient(160deg, rgba(217,179,122,.13), rgba(217,179,122,.03)); border: 1px solid rgba(217,179,122,.22); display: flex; flex-direction: column; gap: 9px">
+          <div style="display: flex; justify-content: space-between; align-items: baseline"><span class="serif" style="font-size: 18px; color: #F1D6A6">Jack Antonoff-style pass</span><span class="sm" style="color: #A88F68">Take 1</span></div>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); padding: 2px; border-radius: 7px; background: rgba(0,0,0,.35)">
+            <sc-for list="{{levels}}" as="l" hint-placeholder-count="3"><button style="height: 22px; border-radius: 5px; border: 0; background: {{l.bg}}; color: {{l.ink}}; font-size: 11px">{{l.name}}</button></sc-for>
+          </div>
+        </div>
+      </sc-if>
+      <div style="display: flex; flex-direction: column; padding: 4px 0">
+        <sc-for list="{{feed}}" as="m" hint-placeholder-count="5">
+          <div style="padding: 11px 16px; display: flex; gap: 11px; align-items: center; border-bottom: 1px solid rgba(255,255,255,.04); opacity: {{m.op}}">
+            <span class="mono" style="flex-shrink: 0; width: 18px; height: 18px; border-radius: 50%; border: 1px solid {{m.color}}; color: {{m.color}}; font-size: 9.5px; display: flex; align-items: center; justify-content: center">{{m.n}}</span>
+            <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px"><span style="font-weight: 500">{{m.what}}</span><span style="color: #6B7079; font-size: 11px">{{m.who}} · {{m.where}}</span></div>
+            <sc-if value="{{m.sw}}" hint-placeholder-val="{{true}}"><span role="switch" aria-checked="{{m.on}}" style="flex-shrink: 0; width: 26px; height: 14px; border-radius: 999px; background: {{m.sw}}; position: relative; box-shadow: inset 0 1px 2px rgba(0,0,0,.5)"><span style="position: absolute; top: 2px; left: {{m.knob}}px; width: 10px; height: 10px; border-radius: 50%; background: #EDEBE6; box-shadow: 0 1px 2px rgba(0,0,0,.5)"></span></span></sc-if>
+            <sc-if value="{{m.btn}}" hint-placeholder-val="{{false}}"><button class="ghost xs" style="flex-shrink: 0">{{m.btn}}</button></sc-if>
+          </div>
+        </sc-for>
+      </div>
+      <sc-if value="{{keepBar}}" hint-placeholder-val="{{false}}">
+        <div style="display: flex; gap: 8px; padding: 10px 16px"><button class="prim" style="flex: 1">Keep 4 changes</button><button class="ghost">↻ Another take</button></div>
+      </sc-if>
+      <div style="margin: auto 12px 12px; padding: 10px 10px 10px 12px; border-radius: 10px; background: #0A0B0D; border: 1px solid rgba(255,255,255,.08); display: flex; flex-direction: column; gap: 8px; box-shadow: inset 0 1px 2px rgba(0,0,0,.4)">
+        <input aria-label="Describe a change" value="{{ask}}" style="background: transparent; border: 0; color: #C9C5BC; outline: none">
+        <div style="display: flex; justify-content: space-between; align-items: center"><span class="sm" style="font-size: 9px">Describe a change</span><button class="prim xs">Suggest ↵</button></div>
+      </div>
+    </aside>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var LENS = '__LENS__'; var EXTRA = '__EXTRA__'; var L = EXTRA === 'loops';
+    var P = LENS === 'produce', W = LENS === 'write', M = LENS === 'mix';
+    var BRASS = '#D9B37A';
+    var C = { prod: BRASS, doc: '#9DB4E8', snd: '#7FC9A2', emo: '#B9A3E3', mix: '#7FC9A2', loop: '#6CC3C3' };
+    var recipe = [['', 'Lana Del Rey · Ultraviolence', '#9DB4E8'], ['produced like', 'Jack Antonoff', BRASS], ['feels', 'melancholy → euphoric', '#B9A3E3'], ['like a', 'late-night drive', '#7FC9A2']].map(function (r) { return { pre: r[0], text: r[1], dot: r[2], line: 'rgba(255,255,255,.22)' }; });
+    var lenses = ['Write', 'Produce', 'Mix'].map(function (n) { var on = n.toLowerCase() === LENS; return { name: n, on: on ? 'true' : 'false', bg: on ? 'linear-gradient(#24262B,#1B1D21)' : 'transparent', ink: on ? '#EDEBE6' : '#7E838C', sh: on ? 'inset 0 1px 0 rgba(255,255,255,.07), 0 1px 2px rgba(0,0,0,.5)' : 'none' }; });
+    var emoDot = { intimate: '#8A8F98', melancholy: '#7C95D9', hopeful: BRASS, euphoric: '#D98BA8' };
+    var secs = [['Intro', 3, 'edge', 'intimate', 'Em', ''], ['Verse 1', 8, 'verse', 'melancholy', 'Em C G D', 'In the blue of the evening'], ['Pre', 4, 'verse', 'hopeful', 'Am C D', 'and I hold my breath'], ['Chorus 1', 8, 'chorus', 'euphoric', 'C G D Em', 'Drive me home, drive me home'], ['Verse 2', 8, 'verse', 'melancholy', 'Em C G D', 'Radio low, your hand on mine'], ['Chorus 2', 8, 'chorus', 'euphoric', 'C G D Em', 'Drive me home, drive me home']];
+    var look = { edge: ['#141518', 'rgba(255,255,255,.06)', '#9BA0A8'], verse: ['#151821', 'rgba(124,149,217,.16)', '#C9CFDF'], chorus: ['#1B2031', 'rgba(124,149,217,.32)', '#E3E8F6'] };
+    var secPins = L ? { 3: [[1, 'loop']] } : P ? { 1: [[2, 'prod']], 2: [[4, 'prod']], 3: [[3, 'prod']] } : W ? { 1: [[1, 'doc']], 3: [[2, 'doc']] } : { 3: [[1, 'mix']], 5: [[2, 'mix']] };
+    var start = 1;
+    var sections = secs.map(function (s, i) { var sel = i === 3; var o = { name: s[0], bars: s[1], start: start, sub: M ? ['−18', '−14', '−12', '−9', '−13', '−8'][i] + ' LUFS' : s[4], bg: look[s[2]][0], line: sel ? 'rgba(217,179,122,.7)' : look[s[2]][1], ink: look[s[2]][2], glow: sel ? '0 0 0 3px rgba(217,179,122,.10)' : 'none', emo: s[3], emoDot: emoDot[s[3]], pins: (secPins[i] || []).map(function (p) { return { n: p[0], color: C[p[1]] }; }) }; start += s[1]; return o; });
+    var seed = 5; function rnd() { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; }
+    function notes(b, d) { var o = [], n = Math.round(b * d); for (var i = 0; i < n; i++) o.push({ l: i / n * 96 + 2, t: 34 + rnd() * 48, w: Math.max(1.4, 60 / n) }); return o; }
+    function hexA(h, a) { var n = parseInt(h.slice(1), 16); return 'rgba(' + (n >> 16) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')'; }
+    var HATCH = 'repeating-linear-gradient(135deg, rgba(255,255,255,.035) 0 3px, transparent 3px 8px)';
+    function wave(n) { var d = ''; for (var x = 0; x <= 300; x += 3) { var a = (Math.sin(x / 7 + n) * .45 + .55) * ((x + n * 20) % 75 < 10 ? 13 : 7); d += 'M' + x + ' ' + (15 - a).toFixed(1) + ' L' + x + ' ' + (15 + a).toFixed(1) + ' '; } return d; }
+    function mk(color) { return function (s, o) { o = o || {}; var empty = o.empty; return {
+      bars: s[1], label: empty ? '' : (o.muted ? 'muted by the pass' : s[0]), labelInk: o.muted ? '#8A7A5E' : hexA(color, .75),
+      bg: o.muted ? HATCH : empty ? 'rgba(255,255,255,.012)' : hexA(color, o.chordBg ? .10 : .085),
+      border: o.changed ? 'rgba(217,179,122,.85)' : o.flag ? 'rgba(157,180,232,.85)' : o.muted ? 'rgba(217,179,122,.25)' : empty ? 'rgba(255,255,255,.035)' : hexA(color, .26),
+      glow: o.changed ? '0 0 0 3px rgba(217,179,122,.10)' : o.flag ? '0 0 0 3px rgba(157,180,232,.10)' : 'none',
+      notes: empty || o.text || o.wave ? [] : notes(s[1], o.d || 1.4), op: o.muted ? .22 : .95,
+      text: o.text || false, textInk: hexA(color, .95), wave: o.wave || false, mark: o.mark || false, markBg: o.markBg || BRASS }; }; }
+    function lane(pts, color, name) { var d = 'M' + pts.map(function (p) { return (p[0] * 10.5) + ' ' + (21 - p[1] * 18); }).join(' L'); return { name: name, color: color, path: d, area: d + ' L400 22 L0 22 Z', words: false }; }
+    var takes = { name: 'takes · comp', color: '#D9776F', path: false, words: secs.map(function (s, i) { return { bars: s[1], text: ['', 'take 3 ▸ take 1 ▸ take 3', 'take 2', 'take 3', 'take 1', 'take 3'][i], ink: i === 1 ? '#E9A39C' : '#6B7079', style: 'normal' }; }) };
+    var words = { name: 'lyrics', color: '#B9A3E3', path: false, words: secs.map(function (s, i) { return { bars: s[1], text: s[5], ink: i === 1 ? '#F1D6A6' : '#9BA0A8', style: 'italic' }; }) };
+    var TC = { mel: '#D9776F', ch: '#7C95D9', bass: '#D5A35F', dr: '#74B88F', fx: '#9A9A9A', loop: '#6CC3C3' };
+    var cm = mk(TC.mel), cc = mk(TC.ch), cb = mk(TC.bass), cd = mk(TC.dr), cf = mk(TC.fx), cl = mk(TC.loop);
+    var tracks = [
+      { name: 'Melody', sound: W ? 'Guide vocal' : 'Your vocal · take 3', color: TC.mel, lanes: W ? [words, takes] : [], cells: secs.map(function (s, i) { return cm(s, { empty: s[2] === 'edge', d: 1.8, flag: W && i === 1, mark: W && i === 1 ? 1 : false, markBg: C.doc }); }) },
+      { name: 'Chords', sound: P && !L ? 'Juno-6 style → Serum 2 (yours)' : 'Juno pad', color: TC.ch, lanes: P && !L ? [lane([[0, .1], [14, .1], [14, .8], [22, .8], [22, .15], [30, .15], [30, .9], [38, .9]], '#B98BD0', 'tremolo depth')] : [],
+        cells: secs.map(function (s, i) { return W ? cc(s, { text: s[4], chordBg: true }) : cc(s, { changed: P && !L && s[2] === 'chorus', mark: P && !L && i === 3 ? 1 : false }); }) },
+      { name: 'Bass', sound: 'Juno bass', color: TC.bass, lanes: [], cells: secs.map(function (s, i) { return cb(s, { muted: P && !L && i === 1, mark: P && !L && i === 1 ? 2 : false, d: .8 }); }) },
+      { name: 'Drums', sound: P && !L ? 'LinnDrum style · room on' : 'Brush kit', color: TC.dr, lanes: M ? [lane([[0, .5], [14, .55], [16, .9], [24, .9], [24, .6], [32, .6], [32, 1], [38, 1]], '#7FC9A2', 'volume')] : [], cells: secs.map(function (s, i) { return cd(s, { muted: P && !L && i <= 1, changed: P && !L && i === 3, mark: P && !L && i === 3 ? 3 : false, d: 2 }); }) },
+      { name: 'Vocal FX', sound: 'slapback + tape echo', color: TC.fx, lanes: P && !L ? [lane([[0, .1], [11, .1], [14, .8], [14, .1], [26, .1], [30, .85], [30, .1], [38, .1]], BRASS, 'delay riser')] : [], cells: secs.map(function (s, i) { return P && !L && i === 2 ? cf(s, { changed: true, mark: 4, wave: wave(2) }) : cf(s, { empty: true }); }) }
+    ];
+    if (L) tracks.push({ name: 'Loops', sound: 'from Splice · fitted', color: TC.loop, lanes: [], cells: secs.map(function (s, i) { return s[2] === 'chorus' ? cl(s, { wave: wave(i), changed: false, flag: false }) : cl(s, { empty: true }); }) });
+    if (L) tracks[5].cells[3].border = 'rgba(108,195,195,.85)', tracks[5].cells[3].glow = '0 0 0 3px rgba(108,195,195,.12)', tracks[5].cells[3].label = 'dream-pop gtr', tracks[5].cells[5].label = 'dream-pop gtr';
+    var meters = [72, 58, 64, 80, 40, 50];
+    tracks.forEach(function (t, i) { t.meter = M ? meters[i] : false; t.meter2 = meters[i] - 6; t.soundInk = P && !L && (i === 1 || i === 3) ? '#A9C9B4' : '#6B7079'; t.headBg = L && i === 5 ? 'rgba(108,195,195,.06)' : P && !L && i === 1 ? 'rgba(217,179,122,.06)' : 'transparent'; });
+    var drawerTabs = M ? 'Mix' : L ? 'Sound' : 'Notes';
+    var drawer = ['Notes', 'Words', 'Sound', 'Mix'].map(function (n) { var on = n === drawerTabs; return { name: n, line: on ? BRASS : 'transparent', ink: on ? '#EDEBE6' : '#7E838C' }; });
+    var names = ['B', 'A♯', 'A', 'G♯', 'G', 'F♯', 'F', 'E', 'D♯', 'D', 'C♯', 'C'];
+    var inScale = { 'E': 1, 'F♯': 1, 'G': 1, 'A': 1, 'B': 1, 'C': 1, 'D': 1 };
+    var keys = []; for (var r = 0; r < 24; r++) { var nm = names[r % 12], oct = r < 12 ? 5 : 4, blk = nm.indexOf('♯') > -1; keys.push({ top: r * 12, key: blk ? 'linear-gradient(90deg, #17181B 60%, #DAD6CD 60%)' : '#DAD6CD', label: nm === 'C' ? 'C' + oct : '', row: blk ? 'rgba(0,0,0,.28)' : (W && inScale[nm] ? 'rgba(217,179,122,.035)' : 'transparent') }); }
+    var mrows = [16, 14, 12, 14, 16, 19, 16, 12, 14, 16];
+    var syl = ['In', 'the', 'blue', 'of', 'the', 'eve', 'ning', '', 'and', 'I'];
+    var c1 = P ? '#9DB0E6' : '#E8968E', c2 = P ? '#6680C8' : '#C9645C';
+    var roll = mrows.map(function (row, k) { return { l: 1 + k * 9.7, t: (P ? row + 3 : row) * 12, w: k === 2 ? 9 : 7.4, c1: c1, c2: c2, ring: W && k === 2 ? '0 0 0 1.5px #9DB4E8, 0 0 10px rgba(157,180,232,.5)' : '0 0 0 0 transparent', syl: P ? '' : syl[k], sylInk: k === 2 ? '#F1D6A6' : '#8A8F98', vel: P ? 10 + ((k * 7) % 18) : 0 }; });
+    var ghosts = W ? [0, 1, 2, 3].map(function (k) { return { l: 1 + k * 24.5, t: [19, 23, 16, 21][k] * 12, w: 23.5 }; }) : [];
+    var wv = ''; for (var x = 0; x <= 600; x += 3) { var a = (Math.sin(x / 9) * .45 + .55) * (x % 150 < 18 ? 32 : 17); wv += 'M' + x + ' ' + (35 - a).toFixed(1) + ' L' + x + ' ' + (35 + a).toFixed(1) + ' '; }
+    var loop = L ? { wave: wv, opts: [['Fit to song tempo', 1], ['Fit to song key', 1], ['Follow the chords', 0], ['Slice into Drums', 0]].map(function (o) { return { name: o[0], bg: o[1] ? '#4F9E9E' : '#24262B', k: o[1] ? 13 : 2 }; }) } : false;
+    var cmdk = W ? [['Double the chorus vocal and pan it', 'your action · 3 steps', 1], ['Double the bass under Chorus 2', 'edit'], ['Capture what I just played', 'record'], ['Export every section as stems', 'share'], ['Audition loops in Splice Bridge', 'sound']].map(function (a) { return { name: a[0], tag: a[1], bg: a[2] ? 'rgba(255,255,255,.06)' : 'transparent' }; }) : false;
+    function fx(list) { var o = list.map(function (f) { return { name: f, ink: '#C9C5BC', bg: '#17191D', dot: '#7FC9A2', lineStyle: 'solid' }; }); while (o.length < 3) o.push({ name: 'empty', ink: '#4C5058', bg: 'transparent', dot: '#2A2D32', lineStyle: 'dashed' }); return o; }
+    var strips = M ? [['Melody', TC.mel, ['UAD 1176 Rev A', 'VintageVerb'], 72, 68, '−6.2', 0], ['Chords', TC.ch, ['Tremolator', 'Brigade Chorus'], 58, 60, '−9.1', -.5], ['Bass', TC.bass, ['Decapitator'], 64, 62, '−8.0', 0], ['Drums', TC.dr, ['Sound City room'], 80, 78, '−5.4', .2], ['Vocal FX', TC.fx, ['EchoBoy'], 40, 38, '−14.0', .6]].map(function (s) { var ang = s[6] * 2.3 - Math.PI / 2; return { name: s[0], color: s[1], fx: fx(s[2]), lvl: s[3], lvl2: s[4], db: s[5], cap: 100 - s[3] - 4, panX: (15 + Math.cos(ang) * 8).toFixed(1), panY: (15 + Math.sin(ang) * 8).toFixed(1) }; }) : false;
+    var side = L ? [
+      { kind: 'Splice Bridge · connected', dot: C.loop, title: 'It follows your song', text: 'Bridge plays in your key and tempo and loops the section you selected. Copy a loop in Splice and press ⌘V, or drag it onto a section.' },
+      { kind: 'Only when you want it', dot: '#6B7079', title: 'Nothing loaded, nothing shown', text: 'The Loops track, the Bridge status and this editor appear when you drop a loop or load Bridge, and fold away when you remove them.' }
+    ] : W ? [
+      { kind: 'Song doctor · 1', dot: C.doc, title: '“blue” lands on a weak beat', text: 'It’s the stressed word in the line. Move the note to beat 1, or swap the words.' },
+      { kind: 'Why it works', dot: '#6B7079', title: 'Em → C → G → D', text: 'i – VI – III – VII, the classic minor loop under a melancholy verse.  Lesson ›' }
+    ] : P ? [
+      { kind: 'Selected change · 1', dot: BRASS, title: 'One sound world for the chords', text: 'Antonoff-style records lean on one synth family. The Chords card shows the sound and your closest library match.' },
+      { kind: 'Emotion · Pre → Chorus', dot: C.emo, title: 'hopeful → euphoric', text: 'Narrow in the pre, open wide on the chorus downbeat. Drawn on the timeline as the delay riser.' }
+    ] : [
+      { kind: 'Mix check · 1', dot: C.mix, title: 'Chorus 1 on a phone', text: 'The bass disappears below 120 Hz. A little Decapitator on the bass helps it read on small speakers.' },
+      { kind: 'Reference · 2', dot: C.mix, title: 'Last chorus vs your reference', text: '2 dB quieter and less bright than your reference track. Match loudness?' }
+    ];
+    var filters = (L ? [['All', 0], ['Producer', 0], ['Sound', 1], ['Emotion', 0]] : P ? [['All', 0], ['Producer', 1], ['Sound', 0], ['Emotion', 0]] : W ? [['All', 1], ['Song doctor', 0], ['Chord ideas', 0], ['Lyrics', 0]] : [['All', 1], ['Mix check', 0], ['Reference', 0]]).map(function (f) { var on = !!f[1]; return { name: f[0], line: on ? BRASS : 'transparent', ink: on ? '#EDEBE6' : '#7E838C' }; });
+    function F(n, k, what, who, where, on, btn) { var hasSw = on !== null; return { n: n, color: C[k], what: what, who: who, where: where, on: on ? 'true' : 'false', sw: hasSw ? (on ? '#B8925A' : '#24262B') : false, knob: on ? 14 : 2, btn: btn || false, op: hasSw && !on ? .55 : 1 }; }
+    var feed = L ? [F(1, 'loop', 'Loop ideas for Chorus 1', 'Sound finder', '“dream pop guitar E minor 78”', null, 'Copy'), F(2, 'loop', 'Loop drifts sharp in bar 3', 'Sound finder', 'Chorus 1', null, 'Fix'), F(3, 'prod', 'Keep the loop to the choruses', 'Antonoff-style', 'Chorus 1–2', null, 'Apply'), F(4, 'emo', 'Shimmer adds euphoric lift', 'Emotion', 'Chorus 1', null, 'Keep')]
+      : P ? [F(1, 'prod', 'One sound world for the chords', 'Antonoff-style', 'Chords', true), F(2, 'prod', 'Verse 1 bare: bass out', 'Antonoff-style', 'Verse 1', true), F(3, 'prod', 'Room drums, huge chorus', 'Antonoff-style', 'Chorus 1', true), F(4, 'prod', 'Delay rises into the chorus', 'Antonoff-style', 'Pre', true), F(5, 'prod', 'Pull the bridge right back', 'Antonoff-style', 'no bridge yet', false)]
+      : W ? [F(1, 'doc', '“blue” lands on a weak beat', 'Song doctor', 'Verse 1', null, 'Fix'), F(2, 'doc', 'Hook shares the verse’s top note', 'Song doctor', 'Chorus 1', null, 'Lift'), F(3, 'doc', 'Write a bridge from its neighbours', 'Fill this gap', 'after Chorus 2', null, 'Write'), F(4, 'emo', 'Brighten one chord in the Pre', 'Emotion', 'Pre', null, 'Try')]
+      : [F(1, 'mix', 'Bass vanishes on phones', 'Mix check', 'Chorus 1', null, 'Fix'), F(2, 'mix', 'Last chorus 2 dB under reference', 'Reference', 'Chorus 2', null, 'Match'), F(3, 'prod', 'Room on drums and backing vocals', 'Antonoff-style', 'whole song', null, 'Add'), F(4, 'emo', 'Gain lift on the euphoric downbeat', 'Emotion', 'Chorus 1', null, 'Draw')];
+    var levels = [['Sounds & mix'], ['+ Arrangement', 1], ['+ Writing']].map(function (l) { var on = !!l[1]; return { name: l[0], bg: on ? 'rgba(217,179,122,.22)' : 'transparent', ink: on ? '#F1D6A6' : '#8A7E68' }; });
+    var pop = P && !L ? { title: 'Chords', sub: 'Juno-6 style', top: 486, lib: 'Serum 2 · SFM_VS_pad_warm_sky_juno106', recipe: 'saw + sub · chorus I · slow attack', why: 'Antonoff-style: one sound world for the song, stacked wide in the chorus.' } : false;
+    return {
+      recipe: recipe, lenses: lenses, sections: sections, tracks: tracks, drawer: drawer, roll: roll, keys: keys, strips: strips, side: side, filters: filters, feed: feed, levels: levels, pop: pop,
+      ab: P && !L, snaps: M, splice: L, ghosts: ghosts, loop: loop, cmdk: cmdk, rollFoot: P ? 'Vel' : 'Words',
+      transportNote: L ? '' : P ? '5 changes drawn on your song' : '',
+      selected: L ? 'Chorus 1 · Loops' : W ? 'Verse 1 · Melody' : P ? 'Change 1 · Chords' : 'All parts', showRoll: !M && !L, drawerNote: L ? 'Dropped loops fit your song automatically' : W ? 'Scale lock E minor · Ghosts: Chords' : P ? 'The editor follows what you click' : 'Your plug-ins on each part',
+      feedNote: L ? 'Loops & sounds' : P ? 'Producer' : W ? 'Writing help' : 'Mix help', passHead: P && !L, keepBar: P && !L,
+      ask: L ? 'find a warmer loop for chorus 2' : W ? 'make verse 2 different but familiar' : P ? 'make chorus 2 bigger, keep the verse sparse' : L ? 'find a warmer loop for chorus 2' : 'make the vocal sit forward on phones'
+    };
+  }
+}
+</script>
+</body>
+</html>

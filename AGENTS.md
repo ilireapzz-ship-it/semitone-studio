@@ -3,6 +3,13 @@
 **Read `CLAUDE.md` first.** It is the project guide shared by every agent: layout, the web ⇄ native bridge,
 how to build and test, the sound engine rules, and FL Studio lessons learned the hard way. Everything there applies to you.
 
+## New: the merged design (6 Nov 2026), build this next
+Jamie approved a redesign that joins the app into one screen: one timeline, Write / Produce / Mix lenses,
+one drawer, one Session panel, popovers, a premium look, borrowed DAW ideas (Capture, takes, ghost notes,
+⌘K actions, section drag, mix snapshots), and loops plus Splice Bridge support that only appears when used.
+**Read `docs/design/merged/README.md`.** It is the spec, with pictures and a build order. Where it disagrees with
+the older `docs/design/N-*.png` screens or the design notes below, the merged design wins.
+
 ## Start here (handover, 5 Nov 2026)
 You can't open Jamie's claude.ai design canvas or plan doc, so copies are in the repo:
 - **Design:** `docs/design/1-Start.png` … `7-Sounds.png` are the target screens (Start, Song view, Record, Mix,
