@@ -98,6 +98,7 @@ button,select,input{font:inherit;color:inherit}
 .sug-grid{display:flex;min-width:100%;margin-top:6px;border:1px solid var(--line);border-radius:8px;background:var(--paper)}
 .sug-col{min-width:96px;display:flex;flex-direction:column;gap:4px;padding:6px;border-right:1px solid var(--line)}
 .sug-col:last-child{border-right:0}
+.sug-col.now{background:var(--soft);box-shadow:inset 0 3px 0 var(--ratio)}.sug-col.now .sug-cur{color:var(--ratio)}.sug-chip.playing{border-color:var(--ratio);box-shadow:0 0 0 2px var(--ratio)}
 .sug-rep{background:repeating-linear-gradient(135deg,transparent 0 6px,var(--soft) 6px 8px)}
 .sug-cur{font:600 .68rem var(--f-mono);color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 2px}
 .sug-chip{display:flex;flex-direction:column;align-items:flex-start;text-align:left;font:inherit;padding:4px 7px;border-radius:6px;border:1px solid var(--line);border-left-width:3px;background:var(--surface);color:var(--ink);cursor:grab;touch-action:none;min-width:0;user-select:none;-webkit-user-select:none}
@@ -2084,7 +2085,7 @@ function engineOwns(){ return typeof NATIVE!=='undefined'&&NATIVE.on&&!NATIVE.pl
 function playPos(){ if(!S.playing||!S.PT) return null; const {TT,barAt,B,lead}=S.PT, now=ac.currentTime+lead; let k=0; while(k+1<TT.starts.length&&TT.starts[k+1]<=now) k++; if(TT.starts[k]==null) return null; const bar=barAt(k); return {si:bar.si,beat:(bar.b+Math.max(0,Math.min(1,(now-TT.starts[k])/(TT.durs[k]||1))))*B}; }
 function playAt(mode,pos){ const keep=S.playFrom; if(pos){ S.sel=pos.si; S.playFrom=pos.beat; } play(mode); S.playFrom=keep; }
 function play(mode='section'){
-  ensureAudio(); stopAll(); master=newMaster('song'); prewarmSong(); const engine=engineOwns(), lead=engine?.04:.12; if(engine&&master.polishOut) try{ master.polishOut.disconnect(ac.destination); }catch(e){}
+  sugStop(); ensureAudio(); stopAll(); master=newMaster('song'); prewarmSong(); const engine=engineOwns(), lead=engine?.04:.12; if(engine&&master.polishOut) try{ master.polishOut.disconnect(ac.destination); }catch(e){}
   const B=METERS[S.meter].B, full=barList(mode);
   const secStart=mode==='song'?Math.max(0,full.findIndex(x=>x.si===S.sel))*B:0, secLen=mode==='song'?full.filter(x=>x.si===S.sel).length*B:full.length*B;
   const from=secStart+Math.max(0,Math.min(S.playFrom||0,secLen-.25)), sb=Math.floor(from/B+1e-9), off=from-sb*B;
@@ -2104,7 +2105,7 @@ function play(mode='section'){
     const bar=barAt(k);
     if(bar.si!==lastSi){ lastSi=bar.si; if(bar.si!==S.sel){ S.sel=bar.si; S.piece=sectionView(bar.si); renderCards(); renderShapes(); renderMatrix(); renderStats(); renderQuirkInfo(); fromLabel(); } renderTimeline(true); }
     renderRoll(Math.max(0,(Math.max(0,el)-k)*B+bar.b*B));
-    const ci=bar.b%Math.min(4,S.piece.chords.length); document.querySelectorAll('.cl-reg').forEach(r=>{ const s0=+r.dataset.s, L=matOfSel().blockBars, bb=bar.b%L; r.classList.toggle('now',el>=0&&bb>=s0&&bb<s0+ +r.dataset.len); });
+    const ci=bar.b%Math.min(4,S.piece.chords.length); document.querySelectorAll('.cl-reg,.sug-col[data-s]').forEach(r=>{ const s0=+r.dataset.s, L=matOfSel().blockBars, bb=bar.b%L; r.classList.toggle('now',el>=0&&bb>=s0&&bb<s0+ +r.dataset.len); });
     document.querySelectorAll('.chord-card,.shape').forEach(c=>c.classList.toggle('now',+c.dataset.i===ci&&el>=0));
     const tb=$('#tempoNow'); if(tb) tb.textContent=anyTempo()?`♩ ${Math.round(tempoAt(bar.si,(Math.max(0,el)-k)*B+bar.b*B))}`:'';
     if(engine&&anyTempo()){ const q=tempoAt(bar.si,(Math.max(0,el)-k)*B+bar.b*B); if(Math.abs(q-(S.lastEngineBpm||0))>.05){ S.lastEngineBpm=q; nEmit('st_tempo',{bpm:q}); } }
@@ -2117,7 +2118,7 @@ function stopPlay(){
   cancelAnimationFrame(S.raf); clearInterval(S.timer);
   const was=S.playing; if(was) stopAll(); S.playing=false;
   $('#playBtn').textContent='▶ Play section'; $('#songBtn').textContent='▶ Play song';
-  document.querySelectorAll('.chord-card,.shape').forEach(c=>c.classList.remove('now'));
+  document.querySelectorAll('.chord-card,.shape,.cl-reg,.sug-col').forEach(c=>c.classList.remove('now'));
   if(was&&S.song) renderTimeline();
   renderRoll();
 }
@@ -5626,9 +5627,13 @@ function renderSug(){ const el=$('#cSug'); if(!el||!S.piece) return; const {R,L,
   el.innerHTML=R.map(r=>{ const ctx=ctxOf(r.s,r.len), list=suggestFor(r.s,r.len,ctx);
     return `<div class="sug-col" style="flex:${r.len} 1 0" data-s="${r.s}" data-len="${r.len}"><div class="sug-cur" title="Suggestions to replace ${esc(ctx.cur.rest?'this empty space':ctx.cur.sym)}">${ctx.cur.rest?'empty':'for '+esc(ctx.cur.sym)}</div>${list.map((x,i)=>`<button class="sug-chip t-${x.tag}${SUGSEL&&SUGSEL.s===r.s&&SUGSEL.i===i?' sel':''}" data-code="${esc(String(x.code))}" data-i="${i}" title="${esc(x.why)}"><b>${esc(x.c.sym)}</b><span>${esc(x.c.num)} · ${TAGS[x.tag]}</span></button>`).join('')}</div>`; }).join('')
     +(bars>L?`<div class="sug-col sug-rep" style="flex:${bars-L} 1 0"><div class="sug-cur">repeat</div><p class="qhint">Edit the first pass; the repeat follows.</p></div>`:''); }
-function previewChord(code,s,len){ if(S.playing) return; const {prev,next}=ctxOf(s,len), c=chordOf(code), seq=[prev,c,next].filter(Boolean), spb=60/S.bpm, dur=Math.max(.55,Math.min(1.2,METERS[S.meter].B*spb*.5));
-  ensureAudio(); stopAll(); master=newMaster('song'); const t=ac.currentTime+.05;
-  seq.forEach((x,k)=>{ if(x.rest) return; const at=t+k*dur, v=x===c?1.15:.75; x.pad.forEach(m=>playPart('chords',m,at,dur*.95,v,{attack:.02})); playPart('bass',x.bass,at,dur*.95,v); }); }
+/* Clicking an idea plays the chord before, the idea, and the chord after: each lights up as it sounds, so you hear it in place. */
+let SUGT=[];
+function sugMark(s,chip){ document.querySelectorAll('.sug-col.now,.cl-reg.now').forEach(n=>n.classList.remove('now')); document.querySelectorAll('.sug-chip.playing').forEach(n=>n.classList.remove('playing')); if(s==null) return; document.querySelectorAll(`.sug-col[data-s="${s}"],.cl-reg[data-s="${s}"]`).forEach(n=>n.classList.add('now')); if(chip) chip.classList.add('playing'); }
+function sugStop(){ SUGT.forEach(clearTimeout); SUGT=[]; sugMark(null); }
+function previewChord(code,s,len,chip){ if(S.playing) return; sugStop(); const {prev,next}=ctxOf(s,len), c=chordOf(code), R=laneRegions().R, i=R.findIndex(r=>r.s===s), near=k=>(R[i+k]||R[k<0?R.length-1:0]||{}).s, seq=[prev&&{x:prev,s:near(-1)},{x:c,s,chip},next&&{x:next,s:near(1)}].filter(Boolean), spb=60/S.bpm, dur=Math.max(.55,Math.min(1.2,METERS[S.meter].B*spb*.5));
+  ensureAudio(); stopAll(); master=newMaster('song'); const t=ac.currentTime+.05, own=/^h:/.test(S.parts.chords.sound||'');
+  seq.forEach((q,k)=>{ const x=q.x, at=t+k*dur, v=x===c?1.15:.75; SUGT.push(setTimeout(()=>sugMark(q.s,q.chip),(at-ac.currentTime)*1000)); if(x.rest) return; x.pad.forEach(m=>{ if(own) withBus('song','chords',()=>playInstr('epiano',m,at,dur*.95,(ROLEVOL.pad||.15)*v)); else playPart('chords',m,at,dur*.95,v,{attack:.02}); }); playPart('bass',x.bass,at,dur*.95,v); }); SUGT.push(setTimeout(()=>sugMark(null),(t+seq.length*dur-ac.currentTime)*1000)); }
 function applyChordCode(s,len,code,label){ const {D}=laneRegions(), N=D.slice(); for(let k=s;k<s+len;k++) N[k]=code; setBlockChords(N,label); }
 function initSug(){
   const grid=$('#cSug'), G={};
@@ -5641,7 +5646,7 @@ function initSug(){
   document.addEventListener('pointerup',()=>{ if(!G.b) return; const code=/^\d+$/.test(G.code)?+G.code:G.code;
     if(G.drag){ hi(null); G.gh.remove(); document.body.classList.remove('sug-dragging'); if(G.t&&!G.t.rep){ const c=chordOf(code), old=chordOf(laneRegions().D[G.t.s]); applyChordCode(G.t.s,G.t.len,code,`${old.rest?'Filled with':'Swapped '+old.sym+' for'} ${c.sym}`); if(!S.playing){ ensureAudio(); stopAll(); master=newMaster('song'); c.pad.forEach(m=>playPart('chords',m,ac.currentTime+.04,.9,1.1,{attack:.02})); playPart('bass',c.bass,ac.currentTime+.04,.9,1); } } else if(G.t&&G.t.rep) toast('That bar repeats the first pass. Drop the chord on the first pass instead'); }
     else { const now=performance.now(); if(G.lastT&&now-G.lastT<380&&G.lastKey===G.s+'|'+G.i){ applyChordCode(G.s,G.len,code,`Swapped in ${chordOf(code).sym}`); G.lastT=0; }
-      else { SUGSEL={s:G.s,i:G.i}; previewChord(code,G.s,G.len); grid.querySelectorAll('.sug-chip.sel').forEach(n=>n.classList.remove('sel')); G.b.classList.add('sel'); $('#cSugWhy').textContent=G.b.title+' Drag it onto the piano roll or double-click to use it.'; G.lastT=now; G.lastKey=G.s+'|'+G.i; } }
+      else { SUGSEL={s:G.s,i:G.i}; previewChord(code,G.s,G.len,G.b); grid.querySelectorAll('.sug-chip.sel').forEach(n=>n.classList.remove('sel')); G.b.classList.add('sel'); $('#cSugWhy').textContent=G.b.title+' Drag it onto the piano roll or double-click to use it.'; G.lastT=now; G.lastKey=G.s+'|'+G.i; } }
     const keep={lastT:G.lastT,lastKey:G.lastKey}; for(const k in G) delete G[k]; Object.assign(G,keep); });
 }
 
