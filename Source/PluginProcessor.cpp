@@ -153,6 +153,17 @@ void SemitoneProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
         host->processMaster (buffer.getWritePointer (0), buffer.getNumChannels() > 1 ? buffer.getWritePointer (1) : nullptr, n);
     }
 
+    if (listenHi.load() > 0 && ! bouncingNow.load() && buffer.getNumChannels() > 1)
+    {
+        if (listenLo.load() != listenWasLo || listenHi.load() != listenWasHi)
+        {
+            listenWasLo = listenLo; listenWasHi = listenHi;
+            listenHp.highpass (listenWasLo, .7, sr); listenLp.lowpass (listenWasHi, .7, sr);
+        }
+        auto* L = buffer.getWritePointer (0); auto* R = buffer.getWritePointer (1);
+        for (int i = 0; i < n; ++i) { L[i] = listenLp.run (listenHp.run (L[i], 0), 0); R[i] = listenLp.run (listenHp.run (R[i], 1), 1); }
+    }
+
     uiPlaying = playing; uiPpq = ppq; uiBpm = bpm; uiHostHasTransport = hostTransport;
 }
 
@@ -482,6 +493,7 @@ bool SemitoneProcessor::bounce (const juce::File& file, double beats, double bpm
 
     const int bs = juce::jmax (64, juce::jmin (512, blockNow));
     suspendProcessing (true);
+    bouncingNow = true;
     host->setOffline (true);
     juce::AudioBuffer<float> buf (2, bs);
     juce::MidiBuffer midi;
@@ -512,6 +524,7 @@ bool SemitoneProcessor::bounce (const juce::File& file, double beats, double bpm
     w.reset();
     stBpm = bpm;
     host->setOffline (false);
+    bouncingNow = false;
     suspendProcessing (false);
     return ok;
 }

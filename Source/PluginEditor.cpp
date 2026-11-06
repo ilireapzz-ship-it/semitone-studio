@@ -100,6 +100,7 @@ juce::WebBrowserComponent::Options SemitoneEditor::makeOptions()
         .withEventListener ("st_transport", [this] (const juce::var& v) {
             proc.setStandaloneTransport ((bool) v.getProperty ("play", false), (double) v.getProperty ("beat", 0.0), (double) v.getProperty ("bpm", 120.0));
         })
+        .withEventListener ("st_listen", [this] (const juce::var& v) { proc.setListen ((float) (double) v.getProperty ("lo", 0.0), (float) (double) v.getProperty ("hi", 0.0)); })
         .withEventListener ("st_tempo", [this] (const juce::var& v) { proc.setStandaloneTempo ((double) v.getProperty ("bpm", 0.0)); })
         .withEventListener ("st_save", [this] (const juce::var& v) { saveFile (v.getProperty ("name", "Semitone export").toString(), v.getProperty ("b64", "").toString()); })
         // song structure -> FL Studio Playlist markers, through Semitone's controller script

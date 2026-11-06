@@ -421,6 +421,7 @@ table.nv td.mono{font-family:var(--f-mono);font-size:.84rem}
 .fxchip.add{color:var(--muted);border-style:dashed}
 .fxchip.off{opacity:.5;text-decoration:line-through}
 .fxchip.open{outline:2px solid var(--accent);outline-offset:-1px}
+.st-top{flex-wrap:wrap}.st-top b{flex:1 0 100%}.st-ms{display:flex;gap:4px}.st-ms button{flex:1;font:600 .72rem var(--f-mono);border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;padding:3px 0;cursor:pointer}.st-ms button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
 .strip select{font-size:.76rem;border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:4px 6px;width:100%;min-width:0;color:var(--ink)}
 .fxed{margin-top:10px;border:1px solid var(--accent);border-radius:10px;background:var(--surface);padding:12px 14px}
 .fxed-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
@@ -1103,7 +1104,7 @@ main.wrap{max-width:none;width:100%;padding:0}#view-learn,#view-time,#view-read,
 </section>
 
 <!-- =============== LEARN =============== -->
-<section id="view-mix" hidden><div class="mix-off"><span class="muted">Hand it off:</span><button class="btn mini-btn" data-mixgo="dxOpen">Export to DAW</button><button class="btn mini-btn" data-mixgo="midiBtn">Song MIDI</button><button class="btn mini-btn" data-mixgo="ppOpen">Pitch pack</button></div></section>
+<section id="view-mix" hidden><div class="mix-off" id="mixListen"></div><div class="mix-off"><span class="muted">Hand it off:</span><button class="btn mini-btn" data-mixgo="dxOpen">Export to DAW</button><button class="btn mini-btn" data-mixgo="midiBtn">Song MIDI</button><button class="btn mini-btn" data-mixgo="ppOpen">Pitch pack</button></div></section>
 <section id="view-learn" hidden>
   <div class="learn-grid">
     <div class="panel span2">
@@ -1486,6 +1487,7 @@ main.wrap{max-width:none;width:100%;padding:0}#view-learn,#view-time,#view-read,
 <div class="modal" id="ppModal" hidden role="dialog" aria-modal="true" aria-labelledby="ppHead"><div class="modal-box pp-box"><h2 id="ppHead">Pitch pack</h2><p class="muted" style="font-size:.88rem">One zip with everything an artist, manager or producer asks for: the full mix, an instrumental, MIDI, lyrics, a chord chart, files for AI vocals and a one-page pitch sheet you can print or send.</p>
   <div class="pp-grid"><label class="field"><span class="label">Song title</span><input type="text" id="ppTitle" maxlength="60" placeholder="e.g. Summertime Tears"></label><label class="field"><span class="label">Written by</span><input type="text" id="ppWriter" maxlength="80" placeholder="Your name (and co-writers)"></label><label class="field"><span class="label">Pitched for (optional)</span><input type="text" id="ppFor" maxlength="80" placeholder="Artist or project"></label></div>
   <label class="field"><span class="label">A line about the song (optional)</span><textarea id="ppNote" rows="2" maxlength="400" placeholder="What it’s about, the mood, why it suits the artist"></textarea></label>
+  <label class="field"><span class="label">Alternative key for the artist (optional)</span><select id="ppAlt"><option value="0">None</option><option value="-3">3 semitones down</option><option value="-2">2 semitones down</option><option value="2">2 semitones up</option><option value="3">3 semitones up</option></select></label>
   <label class="check"><input type="checkbox" id="ppStems"> Include stems (each part as its own WAV, for producers)</label><p class="qhint" id="ppSize"></p>
   <div class="actions"><button class="btn primary" id="ppGo">Build pitch pack</button><button class="btn" id="ppCancel">Close</button></div><p class="pp-prog" id="ppProg" aria-live="polite"></p></div></div>
 <div class="modal" id="helpModal" hidden role="dialog" aria-modal="true" aria-labelledby="helpTitle">
@@ -1618,13 +1620,19 @@ const ROOMS={off:{name:'Dry (no reverb)',mix:0},studio:{name:'Studio',len:1.1,de
 const IRC={};
 function roomIR(ctx,type){ const k=type+':'+ctx.sampleRate; if(IRC[k]) return IRC[k]; const R=ROOMS[type], len=Math.floor(R.len*ctx.sampleRate), b=ctx.createBuffer(2,len,ctx.sampleRate), fade=ctx.sampleRate*.008;
   for(let c=0;c<2;c++){ const d=b.getChannelData(c); for(let i=0;i<len;i++){ d[i]=(Math.random()*2-1)*Math.pow(1-i/len,R.decay)*(i<fade?i/fade:1); } } IRC[k]=b; return b; }
+/* Listen on: hear the mix the way small speakers would. Only what you hear changes, never the song or an export. */
+const LISTEN={mode:'studio',modes:{studio:['Studio',0,0],phone:['Phone',350,7000],earbuds:['Earbuds',120,14000],car:['Car',60,11000]}};
+function listenInto(out){ if(LISTEN.mode==='studio'||!(ac instanceof AudioContext)){ out.connect(ac.destination); return; } const [,lo,hi]=LISTEN.modes[LISTEN.mode], h=ac.createBiquadFilter(), l=ac.createBiquadFilter(); h.type='highpass'; h.frequency.value=lo; l.type='lowpass'; l.frequency.value=hi; out.connect(h); h.connect(l); l.connect(ac.destination); }
+function renderListen(){ const box=$('#mixListen'); if(!box) return; box.innerHTML='<span class="muted">Listen on:</span>'+Object.entries(LISTEN.modes).map(([k,v])=>`<button class="btn mini-btn" data-listen="${k}" aria-pressed="${LISTEN.mode===k}">${v[0]}</button>`).join(''); }
+function setListen(m){ LISTEN.mode=m; if(typeof NATIVE!=='undefined'&&NATIVE.on&&!NATIVE.plugin) nEmit('st_listen',{lo:LISTEN.modes[m][1],hi:LISTEN.modes[m][2]}); renderListen(); if(S.playing&&!engineOwns()) playAt(S.playMode,playPos()); }
+function stripMS(ch,kind){ const parts=Object.keys(S.parts); if(kind==='m'){ S.parts[ch].on=!S.parts[ch].on; } else if(S.solo===ch){ parts.forEach(p=>S.parts[p].on=S.soloWas[p]); S.solo=null; } else { if(!S.solo) S.soloWas=Object.fromEntries(parts.map(p=>[p,S.parts[p].on])); parts.forEach(p=>S.parts[p].on=p===ch); S.solo=ch; } renderStrips('song'); renderMixer(); if(S.playing) playAt(S.playMode,playPos()); }
 function newMaster(scope){ const g=ac.createGain(); g.gain.value=.6; g.scope=scope||null; g.cleanup=[]; g.buses={}; PLAY_T0=null;
   const c=ac.createDynamicsCompressor(), sum=ac.createGain(); g.connect(sum);
   const room=(typeof S!=='undefined'&&S.room)||'off';
   if(room!=='off'&&ac.createConvolver){ try{ const cv=ac.createConvolver(), pre=ac.createBiquadFilter(), wet=ac.createGain(); pre.type='highpass'; pre.frequency.value=180; cv.buffer=roomIR(ac,room); wet.gain.value=S.roomMix; g.connect(pre); pre.connect(cv); cv.connect(wet); wet.connect(sum); }catch(e){} }
   let node=sum, fxs=[]; if(scope){ const r=fxChain(strip(scope,'master').fx,scope,g.cleanup,sum); node=r.node; fxs=r.fxs; }
   const mv=ac.createGain(); mv.gain.value=scope?strip(scope,'master').vol:1; const sw=ac.createBiquadFilter(); sw.type='lowpass'; sw.frequency.value=20000; sw.Q.value=.9; node.connect(sw); sw.connect(mv); g.sweep=sw;
-  if(typeof buildPolish==='function'){ const PL=buildPolish(polishOf(scope),scope==='song'?S.polishTrim:0); mv.connect(PL.input); PL.output.connect(ac.destination); g.polishOut=PL.output; try{ attachMeter(g,PL.output); }catch(e){} }
+  if(typeof buildPolish==='function'){ const PL=buildPolish(polishOf(scope),scope==='song'?S.polishTrim:0); mv.connect(PL.input); listenInto(PL.output); g.polishOut=PL.output; try{ attachMeter(g,PL.output); }catch(e){} }
   else { mv.connect(c); c.connect(ac.destination); }
   g.mbus={vol:mv,pan:null,fxs,last:mv}; return g; }
 function voice(m,t,dur,o={}){
@@ -5062,7 +5070,7 @@ const SEATING={v1:-.6,v2:-.3,va:.2,vc:.4,cb:.6,fl:-.15,ob:.1,cl:-.1,bn:.15,hn:-.
 function stripChannels(scope){ if(scope==='song') return [['lead',PARTS.lead.name],['chords',PARTS.chords.name],['bass',PARTS.bass.name],['drums','Drums'],...(TAKES&&TAKES.length?[['vox','Vocal take']]:[]),...(S.transOn!==false?[['fx','Transitions']]:[]),['master','Master']]; const ids=oInstIds(); return [...ids.map(id=>[id,OI[id].name]),...OFAMS.filter(f=>ids.some(id=>OI[id].fam===f)).map(f=>[famId(f),f+' bus']),['master','Master']]; }
 function autoCount(scope,ch){ let n=0; for(let si=0;si<nSections(scope);si++){ const A=autoSec(scope,si); if(A&&A[ch]) Object.values(A[ch]).forEach(p=>{ if(p&&p.length) n++; }); } return n; }
 function stripHTML(scope,ch,name){ const st=strip(scope,ch), v=stripVol(scope,ch), ed=FXED[scope], ac_=autoCount(scope,ch);
-  const pc=chColor(scope,ch); return `<div class="strip${ch==='master'?' mstrip':''}${pc?' pc-strip':''}" data-ch="${ch}"${pc?` style="--c:${pc}"`:''}><div class="st-top"><b title="${esc(name)}">${esc(name)}</b>${(scope==='song'?S.mixGen:O.mixGen||{})[ch]?'<span class="sbadge" title="Effect chain chosen by smart mix for this style">✦ smart</span>':''}${ac_?`<span class="abadge" title="Automation lanes in use">A ${ac_}</span>`:''}</div>
+  const pc=chColor(scope,ch); return `<div class="strip${ch==='master'?' mstrip':''}${pc?' pc-strip':''}" data-ch="${ch}"${pc?` style="--c:${pc}"`:''}><div class="st-top"><b title="${esc(name)}">${esc(name)}</b>${(scope==='song'?S.mixGen:O.mixGen||{})[ch]?'<span class="sbadge" title="Effect chain chosen by smart mix for this style">✦ smart</span>':''}${ac_?`<span class="abadge" title="Automation lanes in use">A ${ac_}</span>`:''}</div>${scope==='song'&&S.parts[ch]?`<div class="st-ms"><button data-ms="m" aria-pressed="${!S.parts[ch].on}" aria-label="Mute ${esc(name)}">M</button><button data-ms="s" aria-pressed="${S.solo===ch}" aria-label="Solo ${esc(name)}">S</button></div>`:''}
     <label class="st-ctl"><span>Vol</span><input type="range" data-mx="vol" min="0" max="1.5" step="0.01" value="${v}" aria-label="${esc(name)} volume"><output>${F.pct(v)}</output></label>
     ${ch==='master'?'<div class="st-ctl st-gap"></div>':`<label class="st-ctl"><span>Pan</span><input type="range" data-mx="pan" min="-1" max="1" step="0.02" value="${st.pan}" aria-label="${esc(name)} pan"><output>${F.pan(st.pan)}</output></label>`}
     <div class="st-fx">${[0,1,2].map(i=>{ const f=st.fx[i], open=ed&&ed.ch===ch&&ed.i===i; return f&&FX[f.type]?`<button class="fxchip${f.on?'':' off'}${open?' open':''}" data-fxslot="${i}" title="${esc(FX[f.type].info)}">${esc(FX[f.type].name)}</button>`:`<button class="fxchip add${open?' open':''}" data-fxslot="${i}">+ effect</button>`; }).join('')}</div>
@@ -6302,12 +6310,15 @@ function refAdvice(a,b){ const out=[], d=a.lufs-b.lufs;
   if(a.lra&&b.lra&&a.lra-b.lra>4) out.push(`Your song moves around in level much more than the reference (${a.lra} vs ${b.lra} LU). Raise the quieter sections’ energy or use Radio polish.`);
   if(a.peak>-.5) out.push('Your peaks are close to 0 dB. Leave about 1 dB of headroom for streaming encoders.');
   if(!out.length) out.push('Close match on loudness and tonal balance. Trust your ears for the rest.'); return out; }
+/* Mix check: plain-word notes from measuring your song. A suggestion only changes the mix when you press Try it. */
+function mixChecks(a){ const out=[]; if(!a) return out; if(a.low-a.mid>5) out.push({id:'bass',t:'The bass may vanish on small speakers',d:'Phones barely play below 150 Hz. A little saturation lets the bass line come through.',go:'Try saturation on the bass'}); if(a.high-a.mid<-14) out.push({id:'dull',t:'The top end is quiet',d:'Small speakers lean on the mids and highs, so a dark mix can sound muffled there. Try Listen on: Phone.'}); if(Math.abs(a.lufs+14)<=1.5&&a.peak<-.5) out.push({id:'ok',t:'Loud enough for streaming',d:'Within reach of −14 LUFS, with no clipping. Nothing to do.'}); else if(a.lufs<-17) out.push({id:'quiet',t:'Quieter than most streaming music',d:'Try a stronger Master polish, then measure again.'}); return out; }
+function mixTry(id){ if(id==='bass'){ histCheck(true); if(feelSlot({ch:'bass',type:'sat',p:{drive:.3,mix:.6}})<0){ toast('The bass strip has no free effect slot'); return; } H.quietUntil=0; H.nextLabel='Saturation on the bass'; histCheck(true); renderStrips('song'); toast('Added. Undo takes it back.'); } }
 function refEnergyPlan(buf,n){ const d=buf.getChannelData(0), W=Math.floor(d.length/n), out=[]; for(let k=0;k<n;k++){ let e=0; for(let i=0;i<W;i+=64){ const x=d[k*W+i]||0; e+=x*x; } out.push(Math.sqrt(e/(W/64))); } const lo=Math.min(...out), hi=Math.max(...out), r=hi-lo||1; return out.map(x=>+(.3+.65*(x-lo)/r).toFixed(2)); }
 function refCopyEnergy(){ if(!REF.buf) return; const secs=S.song.sections, B=secs.reduce((a,x)=>a+x.bars,0), curve=refEnergyPlan(REF.buf,B); histCheck(true); let at=0; secs.forEach(sc=>{ const part=curve.slice(at,at+sc.bars); sc.energy=+(part.reduce((a,b)=>a+b,0)/part.length).toFixed(2); at+=sc.bars; }); S.energyOn=true; renderAll(); H.quietUntil=0; H.nextLabel=`Copied the energy of ${REF.name.slice(0,30)}`; histCheck(true); toast('Your sections now follow the reference’s loud and quiet moments'); }
 function renderRef(){ const box=$('#refOut'); if(!box) return; const a=REF.mine, b=REF.an;
   const row=(lab,k,unit)=>`<tr><th scope="row">${lab}</th><td class="mono">${a?a[k]+unit:'–'}</td><td class="mono">${b?b[k]+unit:'–'}</td><td class="mono">${a&&b?((a[k]-b[k]>0?'+':'')+(a[k]-b[k]).toFixed(1)):''}</td></tr>`;
   box.innerHTML=`<table class="ref-tab"><thead><tr><th></th><th scope="col">Your song</th><th scope="col">${b?esc(REF.name.slice(0,28)):'Reference'}</th><th scope="col">Diff</th></tr></thead><tbody>${row('Loudness','lufs',' LUFS')}${row('Peak','peak',' dB')}${row('Loudness range','lra',' LU')}${row('Lows (<250 Hz)','low',' dB')}${row('Mids','mid',' dB')}${row('Highs (>4 kHz)','high',' dB')}</tbody></table>
-    ${a&&b?`<ul class="ref-adv">${refAdvice(a,b).map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:`<p class="qhint">${!b?'Load a reference: a finished song you want yours to stand next to.':'Now measure your song to compare.'}</p>`}`;
+    ${a?`<div id="mixCheck">${mixChecks(a).map(c=>`<div class="tv-note"><b>${esc(c.t)}</b>${esc(c.d)}${c.go?` <button class="btn mini-btn" data-mixtry="${c.id}">${esc(c.go)}</button>`:''}</div>`).join('')}</div>`:''}${a&&b?`<ul class="ref-adv">${refAdvice(a,b).map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:`<p class="qhint">${!b?'Load a reference: a finished song you want yours to stand next to.':'Now measure your song to compare.'}</p>`}`;
   $('#refMatch').disabled=!(a&&b); $('#refB').disabled=!b; $('#refA').setAttribute('aria-pressed',REF.ab==='A'); $('#refB').setAttribute('aria-pressed',REF.ab==='B');
   $('#polishTrim').textContent=S.polishTrim?((S.polishTrim>0?'+':'')+S.polishTrim.toFixed(1)+' dB trim'):''; }
 function matchedRefGain(){ const mine=REF.mine?REF.mine.lufs:(METER.last&&METER.last.integ!=null?METER.last.integ:-14); return Math.pow(10,(mine-REF.an.lufs)/20)/ .6; }
@@ -6325,7 +6336,7 @@ function finishUI(){ const box=$('#finishBox'); if(!box) return;
    <span class="ab"><button class="btn" id="refA" aria-pressed="true">A: my song</button><button class="btn" id="refB" disabled aria-pressed="false">B: reference</button></span></div>
    <div id="refOut"></div></div>`;
   $('#polishSel').onchange=e=>{ S.polish=e.target.value; S.polishTrim=0; $('#polishDesc').textContent=POLISH[S.polish].desc; REF.mine=null; renderRef(); if(S.playing) toast('Polish applies from the next play'); };
-  $('#refEnergy').onclick=()=>{ if(REF.buf) refCopyEnergy(); else toast('Load a reference first'); }; $('#refLoad').onclick=()=>$('#refFile').click(); $('#refFile').onchange=e=>{ const f=e.target.files[0]; if(f) loadReference(f); e.target.value=''; };
+  renderListen(); $('#view-mix').addEventListener('click',e=>{ const l=e.target.closest('[data-listen]'); if(l) setListen(l.dataset.listen); }); document.addEventListener('click',e=>{ const q=e.target.closest&&e.target.closest('[data-mixtry]'); if(q) mixTry(q.dataset.mixtry); const m=e.target.closest&&e.target.closest('[data-ms]'); if(m){ const c=m.closest('[data-ch]'); if(c) stripMS(c.dataset.ch,m.dataset.ms); } }); $('#refEnergy').onclick=()=>{ if(REF.buf) refCopyEnergy(); else toast('Load a reference first'); }; $('#refLoad').onclick=()=>$('#refFile').click(); $('#refFile').onchange=e=>{ const f=e.target.files[0]; if(f) loadReference(f); e.target.value=''; };
   $('#refMeasure').onclick=measureMine;
   $('#refMatch').onclick=async()=>{ if(!REF.mine||!REF.an) return; const d=REF.an.lufs-REF.mine.lufs; S.polishTrim=Math.max(-10,Math.min(10,+(S.polishTrim+d).toFixed(1))); if(S.polish==='off'){ S.polish='gentle'; $('#polishSel').value='gentle'; $('#polishDesc').textContent=POLISH.gentle.desc; } toast(`Trim ${S.polishTrim>0?'+':''}${S.polishTrim} dB; re-measuring…`); await measureMine(); };
   $('#refA').onclick=()=>setAB('A'); $('#refB').onclick=()=>setAB('B');
@@ -6908,7 +6919,7 @@ function openPitchPack(){ if(!downloadsCap){ toast('Saving files isn’t availab
   $('#ppTitle').value=S.project&&S.project.name&&S.project.name!=='Untitled song'?S.project.name:''; $('#ppWriter').value=D.writer; $('#ppFor').value=D.forArtist; $('#ppStems').checked=D.stems; $('#ppNote').value=''; $('#ppProg').textContent=''; ppEstimate(); $('#ppTitle').focus(); }
 function ppEstimate(){ const {total}=sectionTimes(), mb=Math.round(total*44100*4/1e6), n=2+($('#ppStems').checked?4+(TAKES.length?1:0)+(S.transOn!==false?1:0):0); $('#ppSize').textContent=`About ${fmtTime(total)} of audio · ${n} WAV file${n>1?'s':''} · roughly ${n*mb} MB`; }
 async function buildPitchPack(){ if(PP.busy) return; PP.busy=true; const btn=$('#ppGo'), prog=$('#ppProg'); btn.disabled=true; stopPlay();
-  const title=($('#ppTitle').value.trim()||fileBase()).slice(0,60), writer=$('#ppWriter').value.trim(), forArtist=$('#ppFor').value.trim(), note=$('#ppNote').value.trim(), stems=$('#ppStems').checked; try{ localStorage.setItem('ss_pp',JSON.stringify({writer,forArtist,stems})); }catch(e){}
+  const title=($('#ppTitle').value.trim()||fileBase()).slice(0,60), writer=$('#ppWriter').value.trim(), forArtist=$('#ppFor').value.trim(), altN=+$('#ppAlt').value, note=$('#ppNote').value.trim()+(altN?` Also works in ${PC[(((+S.key||0)+altN)%12+12)%12]}.`:''), stems=$('#ppStems').checked; try{ localStorage.setItem('ss_pp',JSON.stringify({writer,forArtist,stems})); }catch(e){}
   const base=title.replace(/[\\/:*?"<>|]/g,''), files=[], sr=44100, step=async(t)=>{ prog.textContent=t; await new Promise(r=>setTimeout(r,30)); };
   try{ await step('Rendering the full mix…'); files.push({name:`${base} - full mix.wav`,data:wavFromBuffer(await renderSongAt(sr))});
     await step('Rendering the instrumental…'); const lo=S.parts.lead.on, tk=TAKES.map(t=>t.on); S.parts.lead.on=false; TAKES.forEach(t=>t.on=false); try{ files.push({name:`${base} - instrumental.wav`,data:wavFromBuffer(await renderSongAt(sr))}); } finally{ S.parts.lead.on=lo; TAKES.forEach((t,i)=>t.on=tk[i]); }
@@ -7335,7 +7346,7 @@ function initTidy(){
     {id:'doctor',name:'Song doctor',els:()=>[elDoc,elAr]},
     {id:'theory',name:'Theory',els:()=>[ri,ri&&ri.nextElementSibling&&ri.nextElementSibling.matches('p.muted')?ri.nextElementSibling:null,$('#cards'),$('#shapes')&&$('#shapes').closest('.panel'),$('#matrix')&&$('#matrix').closest('.panel')]},
   ],'ss_dock','roll');
-  { const vm=$('#view-mix'), bits=[stripsH,after(stripsH),$('#cMix'),$('#finishBox')].filter(Boolean); bits.reverse().forEach(el=>vm.prepend(el)); }
+  { const vm=$('#view-mix'), bits=[$('#mixListen'),stripsH,after(stripsH),$('#cMix'),$('#finishBox')].filter(Boolean); bits.reverse().forEach(el=>vm.prepend(el)); }
   if(sp&&!sp.querySelector(':scope > :not(.panel-head)')) sp.remove();
   // intro paragraphs in the workspace: two lines, click to read more
   vc.addEventListener('click',e=>{ const p=e.target.closest('.dock .intro'); if(p) p.classList.toggle('open'); });

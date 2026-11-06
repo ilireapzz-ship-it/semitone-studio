@@ -52,6 +52,7 @@ public:
     void setSoundMode (int m) { soundMode = juce::jlimit (0, 3, m); }
     int getSoundMode() const { return soundMode.load(); }
     void setStandaloneTempo (double bpm) { if (bpm > 0) stBpm = bpm; }
+    void setListen (float lo, float hi) { listenLo = lo; listenHi = hi; }
     bool bounce (const juce::File& file, double beats, double bpm, const std::vector<std::pair<double, double>>& tempo, std::function<void (float)> progress);
     // layout: [{id, at}] — returns the clip ids this plugin still needs rendered
     juce::StringArray setAudioLayout (const juce::var& items);
@@ -96,6 +97,10 @@ private:
     std::vector<st::Event> soon;
     juce::int64 sampleClock = 0;
     int blockNow = 512;
+    std::atomic<float> listenLo { 0 }, listenHi { 0 };   // Listen on: what you hear, never what's exported
+    float listenWasLo = 0, listenWasHi = 0;
+    st::Biquad listenHp, listenLp;
+    std::atomic<bool> bouncingNow { false };
     std::atomic<bool> engineAll { false };   // app only: the engine plays the whole song (a plug-in is on a part)
     std::atomic<double> tlLength { 0.0 }, tlOffset { 0.0 };
     std::map<juce::String, std::shared_ptr<st::Clip>> clips;   // message thread
