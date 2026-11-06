@@ -120,7 +120,7 @@ public:
         juce::Array<juce::var> first, rest;
         auto* p = inst[(size_t) ch].get();
         if (p == nullptr) return first;
-        static const char* useful[] { "macro", "cutoff", "reson", "volume", "drive", "reverb", "delay", "chorus", "attack", "release", "filter", "mix", "pan" };
+        static const char* useful[] { "macro", "cutoff", "reson", "volume", "drive", "reverb", "delay", "chorus", "attack", "release", "filter", "mix", "pan", "easy edit", "swell", "crescendo", "pedal", "gain", "output", "distortion", "wt pos" };
         const auto& ps = p->getParameters();
         for (int i = 0; i < ps.size(); ++i)
         {

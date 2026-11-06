@@ -1,0 +1,51 @@
+{
+  "about": "What Semitone knows about specific plug-ins: which controls matter, in plain words, and what they need to be heard. Every control here was measured on the installed plug-in with its default patch on 2026-11-06. role is what a producer move asks for (volume, filter, reverb, delay, drive) or an extra shown in Automation (attack, release, resonance, timbre, sustain). on: a switch that must be on, which a move turns on for its own sections. idle: the value that sounds like the effect being off, used as the start when the switch was off. set: other controls to hold while switched on. max: the highest value a move may use. faint: little or no change on the default patch, so a real patch may be needed. Names can change with a plug-in's version: a control that isn't found falls back to matching by name.",
+  "maps": [
+    {"names": ["Serum 2"], "controls": [
+      {"role": "filter", "ctl": "Filter 1 Freq", "label": "Brightness (Filter 1)", "on": "Filter 1 On", "idle": 0.95},
+      {"role": "drive", "ctl": "Filter 1 Drive", "label": "Drive (Filter 1)", "on": "Filter 1 On", "idle": 0, "set": [{"ctl": "Filter 1 Freq", "v": 0.95}], "max": 0.15},
+      {"role": "volume", "ctl": "Main Vol", "label": "Main volume"},
+      {"role": "resonance", "ctl": "Filter 1 Res", "label": "Resonance (Filter 1)"},
+      {"role": "timbre", "ctl": "A WT Pos", "label": "Wavetable position (Osc A)"},
+      {"role": "attack", "ctl": "Env 1 Attack", "label": "Attack"},
+      {"role": "release", "ctl": "Env 1 Release", "label": "Release"}
+    ], "lacks": "Serum 2's reverb and delay have generic names that depend on the patch's effects, so moves can't reach them yet."},
+    {"names": ["Pianoteq 9", "Pianoteq"], "controls": [
+      {"role": "volume", "ctl": "Volume", "label": "Volume"},
+      {"role": "reverb", "ctl": "Reverb Mix", "label": "Reverb amount", "on": "Reverb Switch", "idle": 0},
+      {"role": "sustain", "ctl": "Sustain Pedal", "label": "Sustain pedal"},
+      {"role": "room", "ctl": "Room Dimensions", "label": "Room size"}
+    ], "lacks": "Pianoteq has no filter, so brightness moves leave it alone."},
+    {"names": ["FM8"], "controls": [
+      {"role": "volume", "ctl": "Master Volume", "label": "Master volume"},
+      {"role": "filter", "ctl": "Easy Edit Timbre Brightness", "label": "Brightness (Easy page)", "faint": true},
+      {"role": "drive", "ctl": "Overdrive: Drive", "label": "Overdrive", "on": "Overdrive: On/Off", "idle": 0.3},
+      {"role": "reverb", "ctl": "Reverb: Dry/Wet", "label": "Reverb amount", "on": "Reverb: On/Off", "idle": 0},
+      {"role": "delay", "ctl": "Delay: Dry/Wet", "label": "Delay amount", "on": "Delay: On/Off", "idle": 0}
+    ]},
+    {"names": ["Initial 808 Studio II"], "controls": [
+      {"role": "volume", "ctl": "Master Gain", "label": "Master gain"},
+      {"role": "filter", "ctl": "Lowpass Cutoff", "label": "Brightness (lowpass)", "faint": true},
+      {"role": "drive", "ctl": "Distortion", "label": "Distortion", "max": 0.25},
+      {"role": "resonance", "ctl": "Lowpass Resonance", "label": "Resonance"}
+    ]},
+    {"names": ["Nexus"], "controls": [
+      {"role": "volume", "ctl": "output", "label": "Output"},
+      {"role": "filter", "ctl": "flt-mod cutoff", "label": "Brightness (filter module)"},
+      {"role": "resonance", "ctl": "flt-mod resonance", "label": "Resonance"},
+      {"role": "reverb", "ctl": "reverb mix", "label": "Reverb amount", "faint": true},
+      {"role": "delay", "ctl": "delay mix", "label": "Delay amount", "faint": true},
+      {"role": "release", "ctl": "amp-mod release", "label": "Release"}
+    ]},
+    {"names": ["UADx Waterfall B3 Organ"], "controls": [
+      {"role": "volume", "ctl": "Swell Pedal", "label": "Swell pedal"},
+      {"role": "drive", "ctl": "Rotary Drive", "label": "Rotary drive", "faint": true},
+      {"role": "reverb", "ctl": "Reverb", "label": "Reverb", "faint": true}
+    ], "lacks": "An organ has no filter, so brightness moves leave it alone."},
+    {"names": ["Organteq 2"], "controls": [
+      {"role": "volume", "ctl": "Volume", "label": "Volume"},
+      {"role": "reverb", "ctl": "Reverb Mix", "label": "Reverb amount", "on": "Reverb Switch", "idle": 0},
+      {"role": "crescendo", "ctl": "Crescendo Pedal", "label": "Crescendo pedal"}
+    ]}
+  ]
+}

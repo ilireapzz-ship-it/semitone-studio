@@ -51,6 +51,18 @@ const plain=[{i:0,name:'Lowpass Cutoff',v:1},{i:1,name:'Highpass Cutoff',v:0},{i
  console.log(JSON.stringify(k)); ok(k.kept&&k.steps===1&&!k.after,'keeping a plug-in move is one undo step');
  const len=await p.evaluate(()=>{ passOpen('maxmartin'); PASS.level=1; PASS.q.pass.moves.forEach(m=>{ PASS.on[m.id]=true; }); passSwitch('B',true); const B0=METERS[S.meter].B, bad=S.song.sections.filter((sc,si)=>Object.values((S.auto[si]||{}).chords||{}).some(L=>L[L.length-1].t>sc.bars*B0+.01)).length; passDiscard(); return bad; }); ok(len===0,'lanes fit sections a pass has shortened');
 
+  // plug-ins Semitone knows
+ const sm=[{i:1,name:'Filter 1 On',v:0},{i:2,name:'Filter 1 Freq',v:.5},{i:3,name:'Filter 1 Drive',v:0},{i:4,name:'Main Vol',v:.5},{i:6,name:'Filter 1 Res',v:.1}];
+ await put('chords',sm,'Serum 2'); await put('bass',plain,'Bass Synth');
+ const kn=await p.evaluate(()=>{ passOpen('redone'); PASS.level=1; const mv=passMoves(), dark=mv.find(m=>m.id==='plug-dark-verse'), gtr=mv.find(m=>m.id==='synth-as-guitar'), ok=[dark.plug[0].text,gtr.plug[0].text], si=projectData().sections.findIndex(x=>x[0]==='verse'), ci=projectData().sections.findIndex(x=>x[0]==='chorus'); const v=S.auto[si].chords, c=S.auto[ci].chords; const opts=targetOpts('song','chords',''); passDiscard(); return {ok,on:v['plug.1'][0].v,freq:v['plug.2'][0].v,drive:c['plug.3'][0].v,dfreq:c['plug.2'][0].v,opts:/Serum 2: main controls/.test(opts)&&/Brightness \(Filter 1\)/.test(opts),other:/Serum 2: everything else/.test(opts)}; });
+ console.log(JSON.stringify(kn));
+ ok(kn.on===1&&Math.abs(kn.freq-.57)<.01,'a known filter that is off gets turned on for its sections, from an open start');
+ ok(kn.drive===.12&&kn.dfreq===.95,'drive on a known plug-in holds the filter open and stays small');
+ ok(kn.opts&&kn.other,'Automation lists the main controls first, in plain words');
+ const up=await p.evaluate(()=>{ S.parts.chords.sound='h:Test-1'; HOSTS.names[hostCh('chords')]='FM8'; HOSTS.params[hostCh('chords')]=[{i:1,name:'Reverb: On/Off',v:0},{i:2,name:'Reverb: Dry/Wet',v:.5},{i:3,name:'Delay: On/Off',v:0},{i:4,name:'Delay: Dry/Wet',v:.5},{i:5,name:'Master Volume',v:.8}]; passOpen('rubin'); const dry=passMoves().find(m=>m.id==='dry-mix').plug.filter(x=>x.p==='chords').map(x=>x.text); passDiscard(); passOpen('antonoff'); const si=projectData().sections.findIndex((x,i,a)=>a[i+1]&&a[i+1][0]==='chorus'&&x[0]!=='chorus'), L=(S.auto[si].chords||{})['plug.4']; const r={dry,rise:L&&[L[0].v,L[L.length-1].v],on:(S.auto[si].chords||{})['plug.3']}; passDiscard(); return r; });
+ console.log(JSON.stringify(up)); ok(up.dry.every(x=>/already off/.test(x)),'turning down an effect that is already off does nothing'); ok(up.rise&&up.rise[0]===0&&up.rise[1]>.4&&up.on,'a rising delay on a known plug-in turns the delay on and starts from nothing');
+ await put('chords',synth(1));
+
  // values are read fresh when a pass opens
  const fresh=await p.evaluate(()=>{ __nlog.length=0; const ch=hostCh('chords'); passOpen('redone'); const asked=__nlog.some(x=>x[0]==='st_host_params'&&x[1].ch===ch); __fire('st_host_paramlist',{ch,list:[{i:1,name:'Filter 1 On',v:0},{i:2,name:'Filter 1 Freq',v:.7},{i:4,name:'Main Vol',v:.5}]}); const line=passMoves().find(m=>m.id==='plug-dark-verse').plug[0].text; passDiscard(); return {asked,line}; });
  ok(fresh.asked&&/switched off in this patch/.test(fresh.line),'the pass reads the patch as it is now and warns about a switched-off filter');

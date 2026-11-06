@@ -7,7 +7,7 @@ import json, os, re, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HTML = os.path.join(ROOT, "web", "semitone-studio.html")
-FILES = {"styleLibrary": "style-library.json", "styleCatalog": "catalog.json", "styleProgressions": "progressions.json", "soundLibrary": "sound-library.json"}
+FILES = {"styleLibrary": "style-library.json", "styleCatalog": "catalog.json", "styleProgressions": "progressions.json", "soundLibrary": "sound-library.json", "pluginMaps": "plugin-maps.json"}
 
 def block(el, name):
     with open(os.path.join(ROOT, "data", name), encoding="utf-8") as f:
