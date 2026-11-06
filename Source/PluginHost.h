@@ -55,9 +55,13 @@ public:
     juce::var listVar() const
     {
         juce::Array<juce::var> a;
+        juce::StringArray seen;
         for (const auto& d : known.getTypes())
         {
-            if (! d.isInstrument) continue;
+            // not instruments to run in here: Semitone itself, a DAW, and a helper that crashes when opened this way
+            if (! d.isInstrument || d.name == "Semitone Studio" || d.name == "FL Studio" || d.name == "Splice Bridge") continue;
+            if (seen.contains (d.name)) continue;      // the same instrument as AU and VST3: show it once
+            seen.add (d.name);
             auto* o = new juce::DynamicObject();
             o->setProperty ("id", d.createIdentifierString()); o->setProperty ("name", d.name); o->setProperty ("maker", d.manufacturerName); o->setProperty ("format", d.pluginFormatName);
             a.add (juce::var (o));
@@ -75,10 +79,7 @@ public:
         fm.createPluginInstanceAsync (*d, sr, bs, [this, ch, stateB64] (std::unique_ptr<juce::AudioPluginInstance> p, const juce::String& err)
         {
             if (p == nullptr) { if (onLoaded) onLoaded (ch, false, err); return; }
-            // just the main stereo output: big instruments offer dozens of extra outputs and side inputs
-            for (int i = p->getBusCount (true) - 1; i >= 0; --i) p->getBus (true, i)->enable (false);
-            for (int i = p->getBusCount (false) - 1; i >= 1; --i) p->getBus (false, i)->enable (false);
-            if (auto* main = p->getBus (false, 0)) main->enable (true);
+            // leave its buses alone: some instruments crash if outputs are switched off. process() gives room for them all and uses the first two.
             p->setRateAndBufferSizeDetails (sr, bs);
             if (stateB64.isNotEmpty()) { juce::MemoryBlock mb; if (mb.fromBase64Encoding (stateB64)) p->setStateInformation (mb.getData(), (int) mb.getSize()); }
             p->prepareToPlay (sr, bs);
@@ -128,7 +129,8 @@ public:
                 if ((e.status & 15) == ch) midi.addEvent (juce::MidiMessage (e.status & 0xF0, e.d1, e.d2), e.offset);
             if (testCh.load() == ch) { testCh = -1; heldCh = ch; heldLeft = (int) (sr * .7); midi.addEvent (juce::MidiMessage (0x90, 60, 100), 0); }
             if (heldCh == ch && (heldLeft -= n) <= 0) { heldCh = -1; midi.addEvent (juce::MidiMessage (0x80, 60, 0), 0); }
-            const int outs = juce::jlimit (2, maxChannels, juce::jmax (p->getTotalNumOutputChannels(), p->getTotalNumInputChannels()));
+            const int outs = juce::jmax (2, p->getTotalNumOutputChannels(), p->getTotalNumInputChannels());
+            if (outs > maxChannels) continue;
             juce::AudioBuffer<float> view (temp.getArrayOfWritePointers(), outs, n);
             view.clear();
             p->processBlock (view, midi);
