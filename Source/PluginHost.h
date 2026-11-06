@@ -148,7 +148,8 @@ public:
     }
     void bridgeOpen()
     {
-        if (audition == nullptr || ! audition->hasEditor() || bridgeWin) return;
+        if (bridgeWin) { bridgeWin->toFront (true); return; }
+        if (audition == nullptr || ! audition->hasEditor()) return;
         bridgeWin = std::make_unique<HostWindow> (*audition, [this] { juce::MessageManager::callAsync ([this] { bridgeWin.reset(); }); });
     }
     void bridgeClear()
