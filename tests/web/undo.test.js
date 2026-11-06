@@ -39,7 +39,7 @@ const url='file://'+require('path').resolve(__dirname,'../../web/semitone-studio
  // a new change clears redo
  await p.evaluate(()=>histUndo()); await settle(); await p.evaluate(()=>{ S.parts.lead.vol=.2; }); await p.waitForTimeout(1800); ok((await steps())[1]===0,'a new change clears redo');
  // lyrics typed in one go are one step; the keyboard works, and leaves text boxes alone
- await settle(); const [l0]=await steps(); await p.evaluate(()=>shellDock('lyrics')); await p.waitForTimeout(100); await p.click('#lyrIn'); await p.keyboard.type('hello there',{delay:30}); await p.waitForTimeout(600); await p.keyboard.type(' again',{delay:30}); await p.waitForTimeout(500); ok((await steps())[0]===l0+1,'typing lyrics is one step');
+ await settle(); const [l0]=await steps(); await p.evaluate(()=>{ shellDock('lyrics'); $('#cLyrics').classList.remove('tucked-lyr'); }); await p.waitForTimeout(100); await p.click('#lyrIn'); await p.keyboard.type('hello there',{delay:30}); await p.waitForTimeout(600); await p.keyboard.type(' again',{delay:30}); await p.waitForTimeout(500); ok((await steps())[0]===l0+1,'typing lyrics is one step');
  const v0=await p.$eval('#lyrIn',e=>e.value); await p.keyboard.press('Meta+z'); ok((await p.$eval('#lyrIn',e=>e.value))!==v0&&(await steps())[1]===0,'⌘Z in a text box undoes typing only'); await p.keyboard.type('x'); await p.evaluate(()=>document.activeElement.blur()); await p.waitForTimeout(500);
  let s1=await p.evaluate(()=>H.past.length); await p.keyboard.press('Meta+z'); ok(await p.evaluate(()=>H.past.length)===s1-1,'⌘Z undoes the song'); await p.keyboard.press('Meta+Shift+z'); ok(await p.evaluate(()=>H.past.length)===s1,'⇧⌘Z redoes it');
  // note undo keeps a playing song playing
