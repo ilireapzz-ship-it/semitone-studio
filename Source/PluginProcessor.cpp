@@ -120,7 +120,12 @@ void SemitoneProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
 
     // your own plug-ins on Semitone's parts (desktop app)
     if (host && buffer.getNumChannels() > 0)
-        host->process (events, n, buffer.getWritePointer (0), buffer.getNumChannels() > 1 ? buffer.getWritePointer (1) : nullptr);
+    {
+        const double loop = tlLength.load();
+        double songBeat = -1;
+        if (playing && loop > 0) { songBeat = std::fmod (ppq, loop); if (songBeat < 0) songBeat += loop; songBeat += tlOffset.load(); }
+        host->process (events, n, buffer.getWritePointer (0), buffer.getNumChannels() > 1 ? buffer.getWritePointer (1) : nullptr, songBeat);
+    }
 
     uiPlaying = playing; uiPpq = ppq; uiBpm = bpm; uiHostHasTransport = hostTransport;
 }
@@ -325,6 +330,20 @@ void SemitoneProcessor::setSynthSound (const juce::var& sound, const st::Timelin
                     for (int i = 0; i + 1 < p->size(); i += 2) k.pts.push_back ({ (double) (*p)[i], (float) (double) (*p)[i + 1] });
                 t->lanes.push_back (std::move (k));
             }
+        if (host)
+        {
+            auto list = std::make_shared<std::vector<st::Lane>>();
+            if (auto* pl = sound.getProperty ("plugLanes", juce::var()).getArray())
+                for (const auto& o : *pl)
+                {
+                    st::Lane k;
+                    k.ch = (int) o.getProperty ("ch", 0); k.fxParam = (int) o.getProperty ("i", -1);
+                    if (auto* p = o.getProperty ("pts", juce::var()).getArray())
+                        for (int i = 0; i + 1 < p->size(); i += 2) k.pts.push_back ({ (double) (*p)[i], (float) (double) (*p)[i + 1] });
+                    list->push_back (std::move (k));
+                }
+            host->setLanes (list);
+        }
         uint32_t mute = 0;
         if (auto* m = sound.getProperty ("midiMute", juce::var()).getArray())
             for (const auto& c : *m) mute |= 1u << juce::jlimit (0, 15, (int) c);

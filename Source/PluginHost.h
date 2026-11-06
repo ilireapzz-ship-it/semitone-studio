@@ -2,6 +2,7 @@
 #include <juce_audio_processors/juce_audio_processors.h>
 #include <juce_gui_basics/juce_gui_basics.h>
 #include "Sequencer.h"
+#include "Synth.h"
 #include "SongFiles.h"
 
 // Phase 3, desktop app only: your own instrument plug-ins on Semitone's parts. Each MIDI channel can hold one.
@@ -113,13 +114,49 @@ public:
 
     void testNote (int ch) { testCh = ch; }
 
+    // The controls worth drawing: automatable, named, and not the long lists of MIDI CC stand-ins plug-ins add.
+    juce::var paramsVar (int ch) const
+    {
+        juce::Array<juce::var> first, rest;
+        auto* p = inst[(size_t) ch].get();
+        if (p == nullptr) return first;
+        static const char* useful[] { "macro", "cutoff", "reson", "volume", "drive", "reverb", "delay", "chorus", "attack", "release", "filter", "mix", "pan" };
+        const auto& ps = p->getParameters();
+        for (int i = 0; i < ps.size(); ++i)
+        {
+            auto* q = ps[i];
+            const auto n = q->getName (64);
+            if (! q->isAutomatable() || n.isEmpty() || n.startsWithIgnoreCase ("MIDI CC") || n.startsWithIgnoreCase ("CC") || n.startsWithChar ('#') || n.containsOnly ("0123456789")) continue;
+            auto* o = new juce::DynamicObject();
+            o->setProperty ("i", i); o->setProperty ("name", n); o->setProperty ("v", q->getValue());
+            bool top = false;
+            for (auto* k : useful) top = top || n.containsIgnoreCase (k);
+            (top ? first : rest).add (juce::var (o));
+        }
+        // the controls people reach for first, then the rest, up to what a menu can hold
+        for (const auto& v : rest) { if (first.size() >= 400) break; first.add (v); }
+        first.removeLast (juce::jmax (0, first.size() - 400));
+        return first;
+    }
+
+    // Audio thread, inside process(): lanes are applied before each block.
+    void setLanes (std::shared_ptr<const std::vector<Lane>> l) { std::atomic_store (&lanes, std::move (l)); }
+
     bool hasAny() const { for (const auto& i : inst) if (i) return true; return false; }
 
     // Audio thread: skips the block if a plug-in is being swapped.
-    void process (const std::vector<Event>& events, int n, float* L, float* R)
+    void process (const std::vector<Event>& events, int n, float* L, float* R, double beat = -1)
     {
         const juce::SpinLock::ScopedTryLockType sl (lock);
         if (! sl.isLocked() || n > temp.getNumSamples()) return;
+        if (beat >= 0)
+            if (auto list = std::atomic_load (&lanes))
+                for (const auto& k : *list)
+                    if (k.ch >= 0 && k.ch < 16 && inst[(size_t) k.ch])
+                    {
+                        const auto& ps = inst[(size_t) k.ch]->getParameters();
+                        if (k.fxParam >= 0 && k.fxParam < ps.size()) ps[k.fxParam]->setValue (juce::jlimit (0.0f, 1.0f, k.at (beat)));
+                    }
         for (int ch = 0; ch < 16; ++ch)
         {
             auto* p = inst[(size_t) ch].get();
@@ -176,6 +213,7 @@ private:
     std::array<std::unique_ptr<HostWindow>, 16> windows;
     juce::SpinLock lock;
     std::atomic<int> testCh { -1 };
+    std::shared_ptr<const std::vector<Lane>> lanes;
     int heldCh = -1, heldLeft = 0;
     static constexpr int maxChannels = 128;
     juce::AudioBuffer<float> temp { maxChannels, 8192 };

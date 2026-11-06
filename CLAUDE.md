@@ -41,6 +41,7 @@ In the HTML, the bridge is the `NATIVE` / `nativeInit()` / `NSND` code (only act
 - New JS modules go before `/* ---------- routing + boot ---------- */`; CSS before `</style>`.
 - The page must keep working as a plain web page (no `window.__JUCE__`).
 - Layout: `initTidy` moves the Compose tools into the tabbed dock (`ss_dock`), then `initShell` builds the song view: `#arr` arrangement, dock, `#songSide`. New screens are overlays: `#startView`, `#recView`. The HTML order is not the page order.
+- Plug-in automation: lanes use the target `plug.<parameter index>` on a part (`hostPlugLanes`), values 0–1, sent as `plugLanes`. Indexes are per plug-in version. Desktop app only.
 - `data/*.json` are copied into the HTML by `tools/embed_data.py` (run it after any data change; the build fails if you forget). Style tags are `TL` / `tagResolve`: a picked mix becomes one generated style saved as `tags` + `tagChoices` in the song.
 - Undo is one song history (`H`, `histCheck`): it compares `projectData()` + `orchData()` after each settled change, so anything those save is undoable automatically. `pushUndo` / `oPushUndo` only mark a fine note edit as its own step. Give a new setting a label in `histLabel`.
 
