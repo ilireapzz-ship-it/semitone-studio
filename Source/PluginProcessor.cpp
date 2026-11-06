@@ -89,14 +89,16 @@ void SemitoneProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
 
     // Semitone's own instruments, rendered by the interface, played on the DAW's timeline
     // (the standalone app plays its sound in the interface itself)
-    if (mode != 2 && ! isStandalone() && buffer.getNumChannels() > 0)
+    // In the app the page plays too, on its own clock. With a plug-in on a part the engine plays everything instead,
+    // so drums and plug-ins share this one clock and land on the same sample.
+    if (mode != 2 && (! isStandalone() || engineAll.load()) && buffer.getNumChannels() > 0)
     {
         float* L = buffer.getWritePointer (0);
         float* R = buffer.getNumChannels() > 1 ? buffer.getWritePointer (1) : L;
         const double len = tlLength.load(), off = tlOffset.load();
         // rendered sections and takes are audio: played at another tempo they change pitch, so then the engine takes over
         const double songTempo = songBpm.load();
-        const bool tempoMatches = songTempo <= 0 || std::abs (bpm - songTempo) < .5;
+        const bool tempoMatches = isStandalone() || songTempo <= 0 || std::abs (bpm - songTempo) < .5;
         if (mode != 3 && tempoMatches) clipPlayer.process (playing, ppq, bpm, sr, n, len, off, L, R);
         // the native engine fills in wherever no rendered section covers the playhead
         bool covered = false;
@@ -136,6 +138,7 @@ void SemitoneProcessor::setTimelineFromVar (const juce::var& v)
     auto tl = std::make_shared<st::Timeline>();
     tl->length = (double) v.getProperty ("length", 0.0);
     songBpm = (double) v.getProperty ("bpm", 0.0);
+    engineAll = (bool) v.getProperty ("engineAll", false);
     if (auto* arr = v.getProperty ("notes", juce::var()).getArray())
     {
         const int count = arr->size() / 5;
@@ -439,7 +442,7 @@ void SemitoneProcessor::buildSynthPatch()
 void SemitoneProcessor::setStandaloneTransport (bool play, double startBeat, double bpm)
 {
     if (bpm > 0) stBpm = bpm;
-    if (play) stStartRequest = juce::jmax (0.0, startBeat);
+    if (play) { stStartRequest = juce::jmax (0.0, startBeat); sequencer.chaseOnNextBlock(); }
     stPlaying = play;
 }
 

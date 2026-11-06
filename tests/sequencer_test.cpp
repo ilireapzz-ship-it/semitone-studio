@@ -57,6 +57,18 @@ int main()
         if (! reset) { std::printf ("FAIL bend reset\n"); return 1; }
         std::printf ("ok: pitch bends\n");
     }
+    // started mid-song: a held note sounds straight away and ends on time; short notes and finished ones don't
+    {
+        auto t = std::make_shared<st::Timeline>(); t->length = 16;
+        t->notes.push_back ({ 0, 8, 1, 60, 90 }); t->notes.push_back ({ 3, 3.1, 9, 36, 100 }); t->notes.push_back ({ 0, 1, 2, 40, 90 }); t->sort();
+        st::Sequencer s; s.setTimeline (t); s.chaseOnNextBlock();
+        std::vector<st::Event> e; s.process (true, 3.0 + .001, 120.0, 48000.0, 512, e);
+        int ons = 0; bool chord = false; for (auto& x : e) if ((x.status & 0xF0) == 0x90) { ++ons; chord = chord || (x.d1 == 60 && x.offset == 0 && x.d2 == 90); }
+        if (ons != 1 || ! chord || s.activeCount() != 1) { std::printf ("FAIL chase ons=%d active=%d\n", ons, (int) s.activeCount()); return 1; }
+        e.clear(); s.process (true, 7.9995, 120.0, 48000.0, 512, e); bool off = false; for (auto& x : e) off = off || (x.status & 0xF0) == 0x80;
+        if (! off) { std::printf ("FAIL chase end\n"); return 1; }
+        std::printf ("ok: held notes sound when starting mid-song\n");
+    }
     // clips play locked to PPQ: section at beat 4, clip has a click at beat 0 of the section (0.1 s pre-roll)
     {
         auto c = std::make_shared<st::Clip>();

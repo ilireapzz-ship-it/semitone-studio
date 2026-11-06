@@ -72,6 +72,21 @@ public:
         wasPlaying = true;
         lastEnd = ppqEnd;
 
+        // Started mid-song by the app: sound the notes already held at this point, so a chord isn't missing until the next one.
+        if (chaseNext.exchange (false) && current->length > 0)
+        {
+            const double base = std::floor (ppqStart / current->length) * current->length, pos = ppqStart - base;
+            for (const auto& n : current->notes)
+            {
+                if (n.start >= pos) break;
+                if (n.end - pos >= 0.25 && active.size() < active.capacity())
+                {
+                    out.push_back ({ 0, (unsigned char) (0x90 | (n.ch & 15)), (unsigned char) (n.key & 127), (unsigned char) std::clamp (n.vel, 1, 127) });
+                    active.push_back ({ base + n.end, n.ch & 15, n.key & 127 });
+                }
+            }
+        }
+
         auto offsetFor = [&] (double beat) {
             const int o = (int) std::floor ((beat - ppqStart) / beatsPerSample);
             return std::clamp (o, 0, numSamples - 1);
@@ -129,6 +144,7 @@ public:
     }
 
     size_t activeCount() const { return active.size(); }
+    void chaseOnNextBlock() { chaseNext = true; }
 
     // centre the pitch bend on every channel that was bent
     void resetBends (std::vector<Event>& out, int offset)
@@ -162,6 +178,7 @@ private:
     std::shared_ptr<const Timeline> pending, current;
     std::vector<Active> active;
     bool wasPlaying = false, needSetup = true;
+    std::atomic<bool> chaseNext { false };
     unsigned bentChannels = 0;
     double lastEnd = 0;
 };

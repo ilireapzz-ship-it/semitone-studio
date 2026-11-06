@@ -2079,18 +2079,22 @@ function scheduleBar(bar,t,spb,skip=0){
   if(typeof scheduleTakes==='function'&&TAKES.length&&(!RENDER_ONLY||RENDER_ONLY==='vox')) scheduleTakes(bar,t,spb,skip);
   if(typeof scheduleTransitions==='function') scheduleTransitions(bar,t,spb);
 }
+/* Desktop app with a plug-in on a part: the engine plays the whole song, so drums and plug-ins share one clock. The page goes quiet and keeps the playhead. */
+function engineOwns(){ return typeof NATIVE!=='undefined'&&NATIVE.on&&!NATIVE.plugin&&nativeScope()==='song'&&['lead','chords','bass'].some(p=>/^h:/.test((S.parts[p]||{}).sound||'')); }
+function playPos(){ if(!S.playing||!S.PT) return null; const {TT,barAt,B,lead}=S.PT, now=ac.currentTime+lead; let k=0; while(k+1<TT.starts.length&&TT.starts[k+1]<=now) k++; if(TT.starts[k]==null) return null; const bar=barAt(k); return {si:bar.si,beat:(bar.b+Math.max(0,Math.min(1,(now-TT.starts[k])/(TT.durs[k]||1))))*B}; }
+function playAt(mode,pos){ const keep=S.playFrom; if(pos){ S.sel=pos.si; S.playFrom=pos.beat; } play(mode); S.playFrom=keep; }
 function play(mode='section'){
-  ensureAudio(); stopAll(); master=newMaster('song'); prewarmSong();
+  ensureAudio(); stopAll(); master=newMaster('song'); prewarmSong(); const engine=engineOwns(), lead=engine?.04:.12; if(engine&&master.polishOut) try{ master.polishOut.disconnect(ac.destination); }catch(e){}
   const B=METERS[S.meter].B, full=barList(mode);
   const secStart=mode==='song'?Math.max(0,full.findIndex(x=>x.si===S.sel))*B:0, secLen=mode==='song'?full.filter(x=>x.si===S.sel).length*B:full.length*B;
   const from=secStart+Math.max(0,Math.min(S.playFrom||0,secLen-.25)), sb=Math.floor(from/B+1e-9), off=from-sb*B;
   const first=full.slice(sb), loop=!!S.loopOn;
   const barAt=k=>k<first.length?first[k]:full[(k-first.length)%full.length];
-  const TT={starts:[],durs:[]}, sp0=barTiming(barAt(0)).spb, t0=ac.currentTime+.12-off*sp0; PLAY_T0=t0;
+  const TT={starts:[],durs:[]}, sp0=barTiming(barAt(0)).spb, t0=ac.currentTime+lead-off*sp0; PLAY_T0=t0;
   let next=0, tNext=t0;
   const sched=()=>{ while((loop||next<first.length)&&tNext<ac.currentTime+.7){ const bar=barAt(next), tm=barTiming(bar); S.firstBar=next===0; scheduleBar(bar,tNext,tm.spb,next===0?off:0); S.firstBar=false; TT.starts[next]=tNext; TT.durs[next]=tm.dur; tNext+=tm.dur; next++; } };
   sched(); S.timer=setInterval(sched,60);
-  S.playMode=mode; S.playing=true; S.t0=t0; S.PT={TT,barAt,B}; if(typeof moutStart==='function') moutStart((mode==='song'?0:S.song.sections.slice(0,S.sel).reduce((a,x)=>a+x.bars,0)*B)+sb*B,S.bpm); if(NATIVE.on&&!NATIVE.plugin){ NATIVE.secOnly=false; nativeSync(); nEmit('st_transport',{play:true,beat:(mode==='song'?0:S.song.sections.slice(0,S.sel).reduce((a,x)=>a+x.bars,0)*B)+from,bpm:S.bpm}); }
+  S.playMode=mode; S.playing=true; S.t0=t0; S.PT={TT,barAt,B,lead}; if(typeof moutStart==='function') moutStart((mode==='song'?0:S.song.sections.slice(0,S.sel).reduce((a,x)=>a+x.bars,0)*B)+sb*B,S.bpm); if(NATIVE.on&&!NATIVE.plugin){ NATIVE.secOnly=engine&&mode!=='song'; nativeSync(); nEmit('st_transport',{play:true,beat:(mode==='song'||NATIVE.secOnly?0:S.song.sections.slice(0,S.sel).reduce((a,x)=>a+x.bars,0)*B)+from,bpm:S.bpm}); }
   $('#playBtn').textContent=mode==='section'?'■ Stop':'▶ Play section'; $('#songBtn').textContent=mode==='song'?'■ Stop':'▶ Play song';
   let lastSi=-1;
   const tick=()=>{
@@ -2103,6 +2107,7 @@ function play(mode='section'){
     const ci=bar.b%Math.min(4,S.piece.chords.length); document.querySelectorAll('.cl-reg').forEach(r=>{ const s0=+r.dataset.s, L=matOfSel().blockBars, bb=bar.b%L; r.classList.toggle('now',el>=0&&bb>=s0&&bb<s0+ +r.dataset.len); });
     document.querySelectorAll('.chord-card,.shape').forEach(c=>c.classList.toggle('now',+c.dataset.i===ci&&el>=0));
     const tb=$('#tempoNow'); if(tb) tb.textContent=anyTempo()?`♩ ${Math.round(tempoAt(bar.si,(Math.max(0,el)-k)*B+bar.b*B))}`:'';
+    if(engine&&anyTempo()){ const q=tempoAt(bar.si,(Math.max(0,el)-k)*B+bar.b*B); if(Math.abs(q-(S.lastEngineBpm||0))>.05){ S.lastEngineBpm=q; nEmit('st_tempo',{bpm:q}); } }
     S.raf=requestAnimationFrame(tick);
   };
   S.raf=requestAnimationFrame(tick);
@@ -7146,7 +7151,7 @@ function nativeTimeline(){ const scope=nativeScope(), D=dawTracks(scope), [s0,s1
   // melody articulations (glides, scoops, falls, vibrato) as pitch bend: [beat, status, d1, d2, ...]
   const ev=[]; if(scope==='song'){ const r=MOUT.map.song.lead; if(!r||r.on){ const ch=r?r.ch:0; songLeadBends().forEach(x=>{ if(x.beat<s0-1e-6||x.beat>=s1-1e-6) return; ev.push(+(x.beat-s0).toFixed(4),0xE0|ch,x.v&127,(x.v>>7)&127); }); } }
   let sound=null; try{ sound=scope==='song'?nativeSoundInfo():nativeOrchInfo(); }catch(e){ console.warn('sound info',e); }
-  return {length:s1-s0,notes,ev,bendRange:BEND_RANGE,scope,offset:s0,sound,bpm:scope==='song'?S.bpm:O.bpm}; }
+  return {length:s1-s0,notes,ev,bendRange:BEND_RANGE,scope,offset:s0,sound,bpm:scope==='song'?S.bpm:O.bpm,engineAll:engineOwns()}; }
 /* the settings of every part, so the plugin's own engine (Source/Synth.h) can play the song without this page */
 function nativeLayers(){ const ids=[...new Set(Object.values(S.secLayer||{}).flat())].slice(0,5), B=METERS[S.meter].B, ch=id=>10+ids.indexOf(id), edges=S.song.sections.map(x=>[x.startBar*B,(x.startBar+x.bars)*B]); return {ids,ch,at:t=>{ const i=edges.findIndex(([a,b])=>t>=a-1e-6&&t<b-1e-6); return ((S.secLayer||{})[i]||[]).filter(x=>ids.includes(x)).map(ch); }}; }
 function nativeLanes(){ const B=METERS[S.meter].B, out=[]; ['lead','chords','bass','drums','master'].forEach(p=>['vol','pan'].forEach(tg=>{ if(p==='master'&&tg==='pan') return; const d=tdef('song',p,tg); if(!d) return; const stat=tg==='vol'?1:(strip('song',p).pan||0), base=tg==='vol'?(staticVal('song',p,'vol')||1):1, pts=[]; S.song.sections.forEach((sc,si)=>{ const A=(S.auto[si]||{})[p], L=A&&A[tg]; if(!L||!L.length) return; const a=sc.startBar*B, b=(sc.startBar+sc.bars)*B, v=x=>{ const r=tV(d,x); return +(tg==='vol'?r/base:r).toFixed(4); }; pts.push(a-.001,stat); L.forEach(q=>pts.push(+(a+q.t).toFixed(4),v(q.v))); pts.push(b-.002,v(L[L.length-1].v),b,stat); }); if(pts.length){ const r=MOUT.map.song[p]; out.push({ch:p==='master'?-1:p==='drums'?(MOUT.map.song.drums?MOUT.map.song.drums.ch:9):(r?r.ch:{lead:0,chords:1,bass:2}[p]),pan:tg==='pan',pts}); } })); return out; }
@@ -7159,6 +7164,7 @@ function nativeTakes(){ const out=[], B=METERS[S.meter].B, spb=60/S.bpm; S.song.
 function nativeOrchInfo(){ const parts=[], seen=new Set(); oInstIds().forEach(id=>{ const I=OI[id], r=orchRoute(id); if(I.perc||(r&&!r.on)||seen.has(r.ch)) return; seen.add(r.ch); const base={ch:r.ch,velRef:89,level:stripVol('orch',id),pan:strip('orch',id).pan||0}, os=oSoundOf(id); let o; if(os!=='synth'&&os[0]==='i'){ const q=nativeLayerPatch(os.slice(2),r.ch,89); if(q) parts.push({...q,...base,vol:q.kind==='voice'?q.vol:.2}); return; } const p=OPATCH[I.patch]; o={...p,kind:'voice',stereo:(p.unison||0)>.02}; parts.push({...o,...base}); }); const R=ROOMS[S.room]||ROOMS.off, pol=POLISH[polishOf('orch')]; return {parts,drums:{ch:9,level:1,pan:0,kit:KITS.acoustic},room:R.mix?{len:R.len,decay:R.decay,mix:S.roomMix}:null,polish:pol&&pol.hp?{...pol}:null}; }
 function nativeSoundInfo(){ const boost=S.comp==='sustain'?1:1.3, parts=[];
   [['lead',92,0],['chords',74/(.95*boost),1],['bass',92,2]].forEach(([p,velRef,defCh])=>{ const P=S.parts[p], r=MOUT.map.song[p]; if(!P||!P.on||(r&&!r.on)) return;
+    if(!NATIVE.plugin&&/^h:/.test(P.sound||'')) return; /* your plug-in plays this part */
     const role=PARTS[p].role, RV=ROLEVOL[role]||.15, snd=P.sound, base={ch:r?r.ch:defCh,velRef,level:stripVol('song',p),pan:strip('song',p).pan||0}, id=snd&&snd.startsWith('i:')?snd.slice(2):null, I=id?INSTR[id]:null; let o;
     if(I&&I.kind==='fm') o={kind:'fm',vol:RV};
     else if(I&&I.kind==='ana') o={...ANA[id],kind:ANA[id].fam,vol:RV,chorus:ANA[id].ch||'',stereo:!!ANA[id].ch};
@@ -7598,7 +7604,7 @@ function passMoves(){ const lv=PASS_LV[PASS.level][1]; let num=0; return PASS.q.
 function passBuild(list){ const d=JSON.parse(PASS.A), marks=[]; [false,true].forEach(late=>list.forEach(m=>m.fn.forEach(f=>{ if(!!f.late!==late) return; const r=f(d); if(r) marks.push({...r,num:m.num}); }))); return {d,marks}; } /* plug-in lanes go last: they need each section's final length */
 function passActive(){ return passMoves().filter(m=>!m.soon&&!m.quiet&&!m.out&&PASS.on[m.id]); }
 function passGo(d){ const g=d._groove, keep={...d}; delete keep._groove; H.restoring=true; try{ applyProject({...keep,sel:S.sel}); if(g){ S.groove=g; buildBeats(g); renderAll(); } }finally{ H.restoring=false; H.reset=false; } }
-function passSwitch(side,hold){ const was=S.playing&&S.playMode; PASS.side=side; passGo(side==='A'?JSON.parse(PASS.A):passBuild(passActive()).d); if(was&&!hold) play(was); passRender(); }
+function passSwitch(side,hold){ const was=S.playing&&S.playMode, pos=was&&!hold?playPos():null; PASS.side=side; passGo(side==='A'?JSON.parse(PASS.A):passBuild(passActive()).d); if(was&&!hold) playAt(was,pos); passRender(); }
 function passOpen(pid){ histCheck(true); H.restoring=true; const qs=TL.d.producers, tag=(S.tags||[]).find(t=>t.startsWith('producer:')); PASS.q=qs.find(q=>q.id===pid)||qs.find(q=>tag&&q.tags[0]===tag.slice(9))||qs[0]; PASS.A=JSON.stringify({...projectData(),sel:S.sel}); PASS.side='B'; PASS.take=0; passDefaults(); $('#passView').hidden=false; H.restoring=false; hostRefresh(); passSwitch('B',true); }
 function passDefaults(){ PASS.on={}; PASS.q.pass.moves.forEach(m=>{ PASS.on[m.id]=m.onByDefault!==false&&m.level!=='writing'; }); }
 function passPick(q){ if(PASS.A===null) return; PASS.q=q; PASS.take=0; passDefaults(); passSwitch('B'); }

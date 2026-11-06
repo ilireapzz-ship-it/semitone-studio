@@ -63,6 +63,14 @@ const plain=[{i:0,name:'Lowpass Cutoff',v:1},{i:1,name:'Highpass Cutoff',v:0},{i
  console.log(JSON.stringify(up)); ok(up.dry.every(x=>/already off/.test(x)),'turning down an effect that is already off does nothing'); ok(up.rise&&up.rise[0]===0&&up.rise[1]>.4&&up.on,'a rising delay on a known plug-in turns the delay on and starts from nothing');
  await put('chords',synth(1));
 
+ // one clock in the app, and A/B stays in place
+ const eng=await p.evaluate(async()=>{ S.parts.bass.sound='style'; S.parts.lead.sound='style'; __nlog.length=0; nativeSync(); const tl=__nlog.filter(x=>x[0]==='st_timeline').pop()[1], chords=hostCh('chords'), parts=tl.sound.parts.map(x=>x.ch); const on=engineOwns(), ok=tl.engineAll===true&&!parts.includes(chords)&&parts.includes(hostCh('bass')); passOpen('redone'); S.sel=1; S.playFrom=2; play('song'); S.playFrom=0; const tr=__nlog.filter(x=>x[0]==='st_transport').pop()[1]; const B=METERS[S.meter].B, first=S.song.sections[0].bars*B; let silent=true; try{ master.polishOut.connect(ac.destination); master.polishOut.disconnect(ac.destination); }catch(e){ silent=false; } await new Promise(r=>setTimeout(r,1500)); const a=playPos(); passSwitch('A'); const b=playPos(), play2=__nlog.filter(x=>x[0]==='st_transport' && x[1].play).pop()[1]; const res={on,ok,beat:tr.beat,first,a,b,restart:play2.beat,sec:S.sel,playing:S.playing}; stopPlay(); passDiscard(); S.parts.bass.sound='h:Test-1'; S.parts.lead.sound='h:Test-1'; return res; });
+ console.log(JSON.stringify(eng));
+ ok(eng.on&&eng.ok,'with a plug-in on, the engine plays the rest and the plug-in part isn’t doubled');
+ ok(Math.abs(eng.beat-(eng.first+2))<.01,'the engine starts at the same beat as the page');
+ ok(eng.playing&&eng.a.si===eng.b.si&&Math.abs(eng.a.beat-eng.b.beat)<.6,'A/B carries on from the same place');
+ ok(Math.abs(eng.restart-(eng.first+eng.a.beat))<.6,'the engine picks up at that place too');
+
  // values are read fresh when a pass opens
  const fresh=await p.evaluate(()=>{ __nlog.length=0; const ch=hostCh('chords'); passOpen('redone'); const asked=__nlog.some(x=>x[0]==='st_host_params'&&x[1].ch===ch); __fire('st_host_paramlist',{ch,list:[{i:1,name:'Filter 1 On',v:0},{i:2,name:'Filter 1 Freq',v:.7},{i:4,name:'Main Vol',v:.5}]}); const line=passMoves().find(m=>m.id==='plug-dark-verse').plug[0].text; passDiscard(); return {asked,line}; });
  ok(fresh.asked&&/switched off in this patch/.test(fresh.line),'the pass reads the patch as it is now and warns about a switched-off filter');
