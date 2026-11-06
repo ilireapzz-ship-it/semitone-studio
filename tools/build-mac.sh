@@ -39,6 +39,12 @@ fi
 GEN=()
 command -v ninja >/dev/null && GEN=(-G Ninja)
 
+# Spotlight skips folders ending in .noindex, so the build's own copy of the app never shows up in a search
+mkdir -p build-local
+if [ -d build-local/SemitoneStudio_artefacts ] && [ ! -L build-local/SemitoneStudio_artefacts ]; then mv build-local/SemitoneStudio_artefacts build-local/artefacts.noindex; fi
+mkdir -p build-local/artefacts.noindex
+[ -L build-local/SemitoneStudio_artefacts ] || ln -s artefacts.noindex build-local/SemitoneStudio_artefacts
+
 # 3. Tests (sequencer, clip player and sound engine, no JUCE needed)
 say "Tests"
 python3 tools/embed_data.py
@@ -72,7 +78,12 @@ if [ "$INSTALL" = 1 ]; then
   install_bundle "$A/AU/Semitone Studio.component" "$P/Components/Semitone Studio.component"
   install_bundle "$A/Standalone/Semitone Studio.app" "$HOME/Applications/Semitone Studio.app"
   # tell macOS about the fresh app (and forget stale copies elsewhere)
-  /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f "$HOME/Applications/Semitone Studio.app" 2>/dev/null || true
+  # Spotlight and macOS should only ever know the installed app, so a search always opens the newest build
+  LSREG=/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister
+  "$LSREG" -u "$PWD/build-local/artefacts.noindex/Release/Standalone/Semitone Studio.app" 2>/dev/null || true
+  "$LSREG" -f "$HOME/Applications/Semitone Studio.app"
+  touch "$HOME/Applications/Semitone Studio.app"
+  mdimport "$HOME/Applications/Semitone Studio.app" 2>/dev/null || true
   killall -9 AudioComponentRegistrar 2>/dev/null || true   # so FL and Logic see the new AU straight away
   echo "Done. Restart FL Studio to load the new plugin."
 fi
