@@ -149,14 +149,18 @@ public:
     {
         const juce::SpinLock::ScopedTryLockType sl (lock);
         if (! sl.isLocked() || n > temp.getNumSamples()) return;
-        if (beat >= 0)
+        // While playing, lanes set the controls. On stop each goes back to its resting value (a lane's first
+        // point), so stopping in the gap of a tremolo doesn't leave the plug-in silent.
+        const bool stopped = beat < 0 && lanesMoving;
+        if (beat >= 0 || stopped)
             if (auto list = std::atomic_load (&lanes))
                 for (const auto& k : *list)
-                    if (k.ch >= 0 && k.ch < 16 && inst[(size_t) k.ch])
+                    if (k.ch >= 0 && k.ch < 16 && inst[(size_t) k.ch] && ! k.pts.empty())
                     {
                         const auto& ps = inst[(size_t) k.ch]->getParameters();
-                        if (k.fxParam >= 0 && k.fxParam < ps.size()) ps[k.fxParam]->setValue (juce::jlimit (0.0f, 1.0f, k.at (beat)));
+                        if (k.fxParam >= 0 && k.fxParam < ps.size()) ps[k.fxParam]->setValue (juce::jlimit (0.0f, 1.0f, stopped ? k.pts.front().second : k.at (beat)));
                     }
+        lanesMoving = beat >= 0;
         for (int ch = 0; ch < 16; ++ch)
         {
             auto* p = inst[(size_t) ch].get();
@@ -214,6 +218,7 @@ private:
     juce::SpinLock lock;
     std::atomic<int> testCh { -1 };
     std::shared_ptr<const std::vector<Lane>> lanes;
+    bool lanesMoving = false;
     int heldCh = -1, heldLeft = 0;
     static constexpr int maxChannels = 128;
     juce::AudioBuffer<float> temp { maxChannels, 8192 };

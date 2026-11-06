@@ -32,3 +32,4 @@ node tests/web/regression.test.js
 | `plugin-host.test.js` | find plug-ins, put one on a part, state saves, not offered inside a DAW |
 | `undo.test.js` | every kind of change undoes and redoes exactly, labels, no ghost steps, playing song keeps playing, 100-step cap, plugin |
 | `fl-markers.test.js` | Send structure to FL: marker list, setup panel |
+- `plugin-pass.test.js`: producer moves on plug-ins find controls by name, never swap a plug-in out, and every control returns afterwards.

@@ -9478,7 +9478,7 @@
             "level": "mix",
             "what": "16th-note tremolo on held pads; delay pumping and rising into the chorus",
             "why": "Tremolator on pads; delay mix automated like a riser",
-            "op": "fx:pad=tremolo16; automate:delayMix rise@pre",
+            "op": "fx:pad=tremolo16; automate:delayMix rise@pre; plug:chords:volume pulse@chorus; plug:chords:delay rise@beforeChorus",
             "c": "high",
             "src": [
               "https://mixdownmag.com.au/features/gear-rundown-jack-antonoff/",
@@ -9655,7 +9655,7 @@
             "level": "arrangement",
             "what": "Make the chorus contrast hard with the verse: different density, rhythm and register",
             "why": "Strong section contrast; verse and chorus can even share a melody with different energy",
-            "op": "contrast:chorus vs verse (density+, register+3, rhythm change)",
+            "op": "contrast:chorus vs verse (density+, register+3, rhythm change); plug:chords|bass:filter dip@verse",
             "c": "high",
             "src": [
               "https://americansongwriter.com/all-those-pop-songs-you-love-thats-not-magic-thats-melodic-math-and-this-is-how-it-works",
@@ -9830,7 +9830,7 @@
             "level": "mix",
             "what": "Almost no reverb and little top end; bass prominent",
             "why": "The album is nearly devoid of reverb, with prominent low end",
-            "op": "fx:reverb*0.2@all; eq:air-2dB; bass+2dB",
+            "op": "fx:reverb*0.2@all; eq:air-2dB; bass+2dB; plug:all:reverb down*.2@all",
             "c": "high",
             "src": [
               "https://www.soundonsound.com/people/billie-eilish"
@@ -9854,12 +9854,12 @@
             "level": "mix",
             "what": "Hard tremolo (no smoothing) synced to 8ths or 16ths on a synth or vocal",
             "why": "His chopped-tremolo trick",
-            "op": "fx:lead|vocal=tremoloChop(1/16,smooth0)",
+            "op": "fx:lead|vocal=tremoloChop(1/16,smooth0); plug:lead:volume chop@chorus",
             "c": "high",
             "src": [
               "https://www.mixonline.com/recording/finneas-on-producing-billie-eilishs-number-one-album-in-his-bedroom"
             ],
-            "onByDefault": true
+            "onByDefault": false
           },
           {
             "id": "found-sounds",
@@ -10039,6 +10039,16 @@
             "onByDefault": true
           },
           {
+            "id": "plug-sweep",
+            "level": "sound",
+            "what": "A slow filter sweep on your lead synth",
+            "why": "Fits his hands-on analog synth playing; the sweep itself is a guess, done on your plug-in",
+            "c": "low",
+            "src": [],
+            "onByDefault": true,
+            "op": "plug:lead:filter sweep@bridge,outro"
+          },
+          {
             "id": "major-lift",
             "level": "writing",
             "what": "A brief move to the relative major for lift, then back to minor",
@@ -10079,7 +10089,7 @@
             "level": "sound",
             "what": "Throbbing synth bass or 808 under the verse",
             "why": "Low-end movement",
-            "op": "swapSound:bass->i:probass",
+            "op": "swapSound:bass->i:probass; plug:bass:filter throb@verse",
             "c": "med",
             "src": [
               "https://reverb.com/featured/in-the-studio-with-super-producer-mike-dean"
@@ -10198,7 +10208,7 @@
             "level": "sound",
             "what": "Synth chords that hit like a rock guitar chord",
             "why": "Just Dance: rock-style, big drums, synths in place of guitars",
-            "op": "swapSound:chords->i:junobrass,stabs; distortion:light",
+            "op": "swapSound:chords->i:junobrass,stabs; distortion:light; plug:chords:drive up@chorus",
             "c": "high",
             "src": [
               "https://ladygaganow.net/news/redone-and-akon-interviewed-by-ew-about-lady-gagas-just-dance-for-its-10th-anniversary-r99"
@@ -10255,6 +10265,16 @@
               "https://en.wikipedia.org/wiki/Poker_Face_(song)"
             ],
             "onByDefault": true
+          },
+          {
+            "id": "plug-dark-verse",
+            "level": "sound",
+            "what": "Synths darker in the verse, so the chorus opens up",
+            "why": "Takes his dark verse, clear chorus contrast from the vocal to your synths",
+            "c": "low",
+            "src": [],
+            "onByDefault": true,
+            "op": "plug:chords:filter dark@verse"
           },
           {
             "id": "melody-first",
@@ -10457,7 +10477,7 @@
             "level": "mix",
             "what": "Dry and upfront: much less reverb and effects; no samples or electronic layers unless essential",
             "why": "His Adele sessions avoided samples and electronic instruments",
-            "op": "fx:reverb*0.4,delay*0.5@all; mute:samples,synthLayers",
+            "op": "fx:reverb*0.4,delay*0.5@all; mute:samples,synthLayers; plug:all:reverb down*.4@all; plug:all:delay down*.5@all",
             "c": "med",
             "src": [
               "https://en.wikipedia.org/wiki/21_(Adele_album)"
@@ -10615,6 +10635,16 @@
               "https://www.soundonsound.com/techniques/inside-track-olivia-rodrigo-vampire"
             ],
             "onByDefault": true
+          },
+          {
+            "id": "plug-climb",
+            "level": "arrangement",
+            "what": "Chords get brighter section by section, up to the end",
+            "why": "The same slow build as his layering, done with your plug-in’s filter",
+            "c": "low",
+            "src": [],
+            "onByDefault": true,
+            "op": "plug:chords:filter climb@verse1..lastChorus"
           },
           {
             "id": "double-time",
@@ -10827,7 +10857,7 @@
             "level": "sound",
             "what": "Push each sound's character: pitch-enveloped kick, detuned bright pads, gritty FM bass",
             "why": "On Brat the producers obsess over each sound's timbre",
-            "op": "kit:electro kick=pitchEnv; swapSound:chords->i:propolymod; bass=fm-grit",
+            "op": "kit:electro kick=pitchEnv; swapSound:chords->i:propolymod; bass=fm-grit; plug:bass:drive up@all",
             "c": "high",
             "src": [
               "https://www.musicradar.com/news/charli-xcx-brat-theory",
@@ -10904,7 +10934,7 @@
             "level": "sound",
             "what": "Take a 90s/2000s pop move (Eurodance stab, donk bass) and make it shinier and bigger",
             "why": "He exaggerates pop clichés: glossy and over the top",
-            "op": "layer:eurodanceStab@chorus; fx:master=ott",
+            "op": "layer:eurodanceStab@chorus; fx:master=ott; plug:chords:drive hard@chorus",
             "c": "high",
             "src": [
               "https://en.wikipedia.org/wiki/A._G._Cook"
@@ -12369,7 +12399,7 @@
     }
   },
   "producerPass": {
-    "about": "A producer pass runs on a finished song: Semitone proposes what that producer would likely do, as session notes. Each move is one line with a reason and its own on/off switch; A/B compares your version and the pass while it plays; the pass is one undo step and so is each move. \"How far\" picks the levels: sounds & mix (sound, mix) / + arrangement (arrangement, structure) / + writing (writing: only these touch melody or chords, and say so). \"Try another take\" draws a different subset and variant of the moves. Wording is always \"<name>-style pass, based on how they are known to work\": never quotes or first-person lines in the producer's voice. op strings are a small action language for the engine (mute, muteDoubles, cutBars, dropDrums, drumFeel, tempoCurve, layer, layerRamp, thin, swapSound, kit, groove, fx, vocalTake, addSection, melodyRepeat, melodyMatch, chordColor); moves the engine cannot do yet stay listed but greyed with \"coming soon\". Each pass also has firstListen (what the pass looks at first, said about the producer, never in their voice) and asks (questions the card puts to the user). Moves carry c (confidence) and src; onByDefault=false moves are offered but start switched off. The pass also reads the song's emotion and vibe: data/sound-library.json emotionRules give the baseline, the producer's fxStyle.byEmotion says how that producer handles it, and sound moves suggest real instruments (sound-library instruments) with software options and the user's own presets when found.",
+    "about": "A producer pass runs on a finished song: Semitone proposes what that producer would likely do, as session notes. Each move is one line with a reason and its own on/off switch; A/B compares your version and the pass while it plays; the pass is one undo step and so is each move. \"How far\" picks the levels: sounds & mix (sound, mix) / + arrangement (arrangement, structure) / + writing (writing: only these touch melody or chords, and say so). \"Try another take\" draws a different subset and variant of the moves. Wording is always \"<name>-style pass, based on how they are known to work\": never quotes or first-person lines in the producer's voice. op strings are a small action language for the engine (mute, muteDoubles, cutBars, dropDrums, drumFeel, tempoCurve, layer, layerRamp, thin, swapSound, kit, groove, fx, vocalTake, addSection, melodyRepeat, melodyMatch, chordColor); moves the engine cannot do yet stay listed but greyed with \"coming soon\". Each pass also has firstListen (what the pass looks at first, said about the producer, never in their voice) and asks (questions the card puts to the user). Moves carry c (confidence) and src; onByDefault=false moves are offered but start switched off. The pass also reads the song's emotion and vibe: data/sound-library.json emotionRules give the baseline, the producer's fxStyle.byEmotion says how that producer handles it, and sound moves suggest real instruments (sound-library instruments) with software options and the user's own presets when found. plug:parts:intent shape@where is a move for the user's own plug-ins: it names an intent (volume, filter, reverb, delay, drive), passPlug finds the matching control by name, and it does nothing unless a plug-in is on that part.",
     "levels": {
       "sounds & mix": [
         "sound",
