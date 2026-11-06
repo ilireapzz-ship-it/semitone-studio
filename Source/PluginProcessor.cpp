@@ -690,7 +690,9 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
     const auto args = juce::JUCEApplicationBase::getCommandLineParameterArray();
     if (juce::JUCEApplicationBase::isStandaloneApp() && args.contains ("--scan-one"))
     {
+       #if JUCE_MAC
         juce::Process::setDockIconVisible (false);
+       #endif
         std::_Exit (st::PartHost::scanOne (args));
     }
     return new SemitoneProcessor();
