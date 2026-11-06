@@ -178,6 +178,33 @@ Studio/Ideas. Phone capture needs hosting, so ask Jamie first. Until then, memos
 - **Credits & splits** saved with the song (writer names and percentages), printed on the sheet and in the notes.
 - The demo uses the built-in neutral guide vocal or Jamie's own recording, never an imitation of the artist's voice.
 
+## Song length, the coach, the Review and the degree (agreed 6 Nov 2026)
+Pictures: `13-Start-length.png`, `14-Review.png`, `15-Degree.png`.
+
+**Song length** is part of the recipe ("… about [3 minutes] for …"). Clicking it opens five cards (~1, ~3, ~5, ~8 and
+10+ minutes), each with what it's for, its shape and a mini structure. It's a guide, not a limit. Data: **`data/song-shapes.json`**
+(embedded as `songShapes`). Each length has structures, `hookBy` (seconds), intro length, chorus repeats, bridge, how fast new parts
+arrive, lyric line targets, energy shape, outro, and what the pitch pack does. It steers "Open with a song ready",
+Surprise me, producer moves on intros, outros and repeats, emotion arcs, lyric prompts, the Review and the radio-edit offer. Saved in the song.
+
+**The coach: `data/coach.json`** (embedded as `coach`). Every suggestion is weighed in five layers: theory, style, producer, you
+and this song. Strength = base × style strictness × producer strictness, nudged by what Jamie keeps or dismisses (stored locally), shown at ≥ 0.35.
+Every card names the layer that led ("Theory", "Lana · Ultraviolence", "Antonoff-style", "You usually…", "For a 3-minute single").
+- `producers`: strictness, density, risk, priorities, tone, and which rules each loosens or tightens. This is the chameleon: the
+  producer chosen in the recipe changes how strict and what kind the advice is.
+- `rules`: 23 rules across lyric, form, melody, harmony, rhythm, arrangement, production and mix. Each has a reason, per-style `loose`/`tight`
+  overrides, and `breakIt` notes for when a style breaks it on purpose (e.g. parallel 5ths in rock).
+- `jury`: the **Review**. One button scores eight items (hook, prosody, contrast & form, harmony, melody, lyric, arrangement, mix)
+  1–5 against the style and length, with **one top priority** (Try it, Show me, Lesson) and the layer behind each item.
+  Voices: Teacher, Co-writer, Critic, or the selected producer. The Review also shows "How this review was weighed" (layer weights) and
+  "Change the producer, change the advice" (the same song read by three producers).
+- `adapt`: mastery per concept (local). The coach explains below 0.3 and only names the concept above 0.8. It's honest, with no inflated praise.
+- `curriculum`: **Your degree**, ten subjects (harmony, counterpoint, melody, lyric craft, form, arranging, rhythm, production,
+  ear training, music psychology), each with lessons built from Jamie's songs and in their keys, plus ear training on his own bars and the next lesson
+  picked from the Review's top priority.
+- `golden`: a test in `tests/web/`. Run the rules over every catalog song in its own style. A rule that flags more than 25% of a style's songs
+  is too strict there, so fix its `loose` value. Catalog songs are the style's norm, not mistakes.
+
 ## Quality checks for every step
 - **Design check:** after each build step, screenshot the real app at 1440×900 in every theme and compare it with these boards.
   Fix any drift before moving on (spacing, type, colours, one filled button per area, no bright saturated blocks).
@@ -200,4 +227,6 @@ Studio/Ideas. Phone capture needs hosting, so ask Jamie first. Until then, memos
 7. Loops: drop, paste and fit, then Splice Bridge recognition, the hidden audition track and host sync.
 8. Start screen with the recipe sentence, then the Words tab, then Versions and the Ideas shelf.
 9. Pitch & share: range check (add artist ranges to the data), the pitch pack folder, the lyric sheet and credits.
+10. Song length in the recipe (song-shapes.json) wired into structure, passes and prompts.
+11. The coach: layered weighing (coach.json) behind every existing suggestion, then the Review, the golden-songs test, mastery, and Your degree.
 Each step needs tests in `tests/web/` and a plain-words note for Jamie, and must keep working as a plain web page.

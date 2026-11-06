@@ -28,6 +28,12 @@ What to change in code when open-ended parts land (design step 5):
   `PartHost` work over every part and pick parts by role.
 - `passOp` understands `add:` / `layer:` / `drop:` / `thin:`. Each added part is a suggested move with its own switch and its own undo step.
 - Profiles' free-text `arrangement.extras` stay for the cards; `styleParts` is what code reads.
+### Song length and the coach (6 Nov 2026)
+- `data/song-shapes.json` (`songShapes`): the recipe asks "about how long?" (~1/3/5/8/10+ min). Each length sets structure, hook timing,
+  build rate, lyric amount, energy, outro and pitch-pack behaviour.
+- `data/coach.json` (`coach`): five-layer weighing (theory, style, producer, you, song) for every suggestion, per-producer strictness,
+  23 rules with per-style overrides, the jury Review, mastery and the ten-subject curriculum, plus the golden-songs test.
+  See `docs/design/merged/README.md` (steps 10–11).
 Also fix: `check_style_data.py` reports 3 ISSUES from the plug-in producer moves (`plug-sweep`, `plug-dark-verse`,
 `plug-climb` have empty `src`). Give each a source from that producer's existing sources, or mark it as a stand-in the
 way other guesses are.

@@ -1,0 +1,55 @@
+{
+  "version": 1,
+  "about": "Song length is part of the recipe: the user picks roughly how long the song should be, and the length tells Semitone what kind of piece it is. It steers structure, section lengths, how soon the hook arrives, how fast the arrangement builds, lyric amount, the energy curve, the mix target and the pitch pack. A guide, not a limit: the song can end up longer or shorter. Agreed with Jamie 6 Nov 2026.",
+  "ask": "About how long should it be?",
+  "default": "3min",
+  "lengths": {
+    "1min": {
+      "label": "Around 1 minute", "range": [40, 90],
+      "for": ["a hook or idea sketch", "a social clip (Reels, Shorts, TikTok)", "a jingle or ad", "an intro, interlude or skit"],
+      "shape": "Hook first: the strongest moment by 0:10. One verse into one chorus, or a chorus loop with a tag.",
+      "structures": [["intro:2", "chorus:8", "verse:8", "chorus:8"], ["hook:4", "verse:8", "chorus:8", "tag:2"]],
+      "rules": {"hookBy": 10, "introMaxBars": 2, "chorusRepeats": [1, 2], "bridge": "no", "newPartEvery": "4 bars", "lyricLines": [6, 12], "energy": "high from the start, one lift", "outro": "cut or button ending, no fade"},
+      "pitchPack": false,
+      "export": "loop-safe ending option; loudest master (social)"
+    },
+    "3min": {
+      "label": "Around 3 minutes", "range": [150, 225],
+      "for": ["a single for streaming or radio", "a pitch demo for an artist", "most pop, country, indie and dance songs"],
+      "shape": "The classic single: chorus by about 0:45, verse–pre–chorus twice, a bridge or middle 8, a last chorus that lifts.",
+      "structures": [["intro:4", "verse:8", "pre:4", "chorus:8", "verse:8", "pre:4", "chorus:8", "bridge:8", "chorus:8", "outro:2"], ["intro:4", "verse:8", "chorus:8", "verse:8", "chorus:8", "bridge:8", "chorus:8"]],
+      "rules": {"hookBy": 45, "introMaxBars": 8, "chorusRepeats": [3, 4], "bridge": "yes", "newPartEvery": "each section", "lyricLines": [24, 40], "energy": "rises section by section, peak in the last chorus", "outro": "short; end on the hook"},
+      "pitchPack": true,
+      "export": "streaming master; pitch demos ideally under 3:30 with the chorus inside the first minute"
+    },
+    "5min": {
+      "label": "Around 5 minutes", "range": [240, 360],
+      "for": ["an album track", "a ballad that takes its time", "a slow build with room to breathe", "a live or extended version"],
+      "shape": "Space to breathe: a longer intro, three verses or a second bridge, an instrumental break, and an extended outro or fade.",
+      "structures": [["intro:8", "verse:8", "chorus:8", "verse:8", "chorus:8", "break:8", "bridge:8", "chorus:8", "chorus:8", "outro:8"], ["intro:8", "verse:16", "chorus:8", "verse:16", "chorus:8", "solo:8", "verse:8", "chorus:16", "outro:8"]],
+      "rules": {"hookBy": 75, "introMaxBars": 16, "chorusRepeats": [3, 5], "bridge": "yes, maybe two", "newPartEvery": "every second section", "lyricLines": [30, 56], "energy": "slower rise, one quiet dip before the end", "outro": "long outro, fade or instrumental"},
+      "pitchPack": true,
+      "export": "album master; for pitching, offer a radio edit around 3:30"
+    },
+    "8min": {
+      "label": "Around 8 minutes", "range": [420, 570],
+      "for": ["an epic or journey song", "a suite in movements", "a song with long instrumental sections", "post-rock and psychedelic builds"],
+      "shape": "A journey in movements: the song changes character once or twice (feel, key or tempo), with long instrumental passages and a big return.",
+      "structures": [["intro:16", "verse:8", "chorus:8", "verse:8", "chorus:8", "movement2:32", "build:16", "chorus:16", "outro:16"]],
+      "rules": {"hookBy": 120, "introMaxBars": 32, "chorusRepeats": [2, 4], "bridge": "becomes a second movement", "newPartEvery": "slow; layers build over 16–32 bars", "lyricLines": [24, 60], "energy": "two or three waves, the biggest last", "outro": "long; may end somewhere new", "changes": "allow one key, tempo or feel change"},
+      "pitchPack": "edit",
+      "export": "album master; suggest a radio edit"
+    },
+    "10min+": {
+      "label": "Around 10 minutes or more", "range": [570, 3600],
+      "for": ["a score or soundtrack cue", "ambient or meditation", "an extended DJ mix", "a through-composed piece"],
+      "shape": "Through-composed or slowly evolving: themes return and transform instead of verse and chorus; changes are gradual.",
+      "structures": [["intro:32", "themeA:32", "themeB:32", "themeA2:32", "climax:32", "coda:32"], ["intro:32", "groove:64", "break:32", "drop:64", "outro:32"]],
+      "rules": {"hookBy": "none", "introMaxBars": 64, "chorusRepeats": [0, 2], "bridge": "no; themes and variations", "newPartEvery": "every 16–64 bars, gradually", "lyricLines": [0, 40], "energy": "long arcs; DJ mixes keep the energy steady with breaks", "outro": "long fade or a mix-out section for DJs"},
+      "pitchPack": false,
+      "export": "score or DJ master; stems by section"
+    }
+  },
+  "styleHint": "Until the catalog has song lengths, pick the default from the profile: dance and EDM lean to 3min or 10min+ (extended mix), cinematic and Tiersen to 5min or 10min+, ballad-heavy eras (e.g. lana-honeymoon, lana-nfr) to 5min. The user's choice always wins.",
+  "affects": ["structure picked by Open with a song ready and Surprise me", "producer pass moves on intros, outros and repeats (e.g. 'cut bars until the chorus' only for 1min and 3min)", "the jury review's 'time to hook' and 'length' items", "how fast emotion arcs and new parts arrive", "Pitch & share (radio edit offer)", "lyric prompts (how many lines to aim for)"]
+}

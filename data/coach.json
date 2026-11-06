@@ -1,0 +1,617 @@
+{
+  "version": 1,
+  "about": "Semitone's coach: how it judges and teaches. Every suggestion comes from five layers (theory, style, producer, you, this song), and each rule knows how strict to be in each style and under each producer, so the same song gets different, reasoned advice depending on the recipe. It covers the subjects taught in leading conservatoire and contemporary-music programmes (harmony, counterpoint, melody, lyric craft, form, arranging, rhythm, production, ear training, music psychology). Producer notes describe how they're known to work; nothing is copied. Agreed with Jamie 6 Nov 2026.",
+  "layers": {
+    "theory": "What holds almost everywhere: voice leading, tension and release, stress on the beat, contrast between sections.",
+    "style": "What the chosen artist or era tends to do, measured from catalog.json and progressions.json (the matrices).",
+    "producer": "The selected producer's priorities and how strictly they apply the rules (see producers below).",
+    "you": "What Jamie keeps, rejects and rewrites, learned on his computer only. Never sent anywhere.",
+    "song": "This song's recipe: emotion arc, vibe, length (song-shapes.json) and purpose (e.g. pitching)."
+  },
+  "weighing": "A rule's strength = its base strength × the style's strictness × the producer's strictness, then nudged by 'you' (rules Jamie keeps dismissing drop by 20% each time, never below 0.2; rules he accepts rise). A suggestion shows only when strength ≥ 0.35. Every card says which layer led ('Theory', 'In Lana's UV era…', 'Antonoff-style', 'You usually…', 'For a 3-minute single…').",
+  "producers": {
+    "none": {
+      "strict": 1.0,
+      "density": 0.5,
+      "risk": 0.4,
+      "priorities": [
+        "hook",
+        "prosody",
+        "contrast",
+        "arrangement",
+        "mix"
+      ],
+      "tone": "balanced"
+    },
+    "antonoff": {
+      "strict": 0.8,
+      "density": 0.6,
+      "risk": 0.6,
+      "priorities": [
+        "emotion",
+        "sound world",
+        "hook",
+        "arrangement"
+      ],
+      "tone": "warm and encouraging, emotion first",
+      "loosens": [
+        "imperfect-timing",
+        "parallel-motion"
+      ],
+      "tightens": [
+        "one-sound-world",
+        "build"
+      ]
+    },
+    "maxmartin": {
+      "strict": 1.3,
+      "density": 0.6,
+      "risk": 0.3,
+      "priorities": [
+        "hook",
+        "prosody",
+        "melodic symmetry",
+        "contrast"
+      ],
+      "tone": "precise; every syllable counts",
+      "loosens": [],
+      "tightens": [
+        "stress-on-beat",
+        "syllable-symmetry",
+        "hook-early",
+        "section-contrast"
+      ]
+    },
+    "finneas": {
+      "strict": 0.8,
+      "density": 0.3,
+      "risk": 0.6,
+      "priorities": [
+        "intimacy",
+        "lyric",
+        "space",
+        "sub"
+      ],
+      "tone": "quiet, minimal, honest",
+      "loosens": [
+        "hook-early",
+        "range-arc"
+      ],
+      "tightens": [
+        "space",
+        "lyric-specific"
+      ]
+    },
+    "mikedean": {
+      "strict": 0.9,
+      "density": 0.7,
+      "risk": 0.6,
+      "priorities": [
+        "texture",
+        "synths",
+        "low end",
+        "mix"
+      ],
+      "tone": "sound-first",
+      "loosens": [
+        "section-contrast"
+      ],
+      "tightens": [
+        "mix-translation",
+        "low-end"
+      ]
+    },
+    "redone": {
+      "strict": 1.1,
+      "density": 0.8,
+      "risk": 0.5,
+      "priorities": [
+        "hook",
+        "chant",
+        "energy",
+        "contrast"
+      ],
+      "tone": "big and direct",
+      "loosens": [
+        "lyric-specific"
+      ],
+      "tightens": [
+        "hook-early",
+        "hook-repeat",
+        "section-contrast"
+      ]
+    },
+    "rubin": {
+      "strict": 0.6,
+      "density": 0.15,
+      "risk": 0.5,
+      "priorities": [
+        "the song itself",
+        "performance",
+        "less"
+      ],
+      "tone": "asks what can be removed",
+      "loosens": [
+        "build",
+        "hook-early",
+        "range-arc"
+      ],
+      "tightens": [
+        "space",
+        "crowd",
+        "lyric-specific"
+      ]
+    },
+    "nigro": {
+      "strict": 0.9,
+      "density": 0.7,
+      "risk": 0.7,
+      "priorities": [
+        "performance",
+        "theatre",
+        "build",
+        "hook"
+      ],
+      "tone": "big, playful, theatrical",
+      "loosens": [
+        "imperfect-timing"
+      ],
+      "tightens": [
+        "build",
+        "section-contrast"
+      ]
+    },
+    "agcook": {
+      "strict": 0.6,
+      "density": 0.7,
+      "risk": 0.9,
+      "priorities": [
+        "surprise",
+        "texture",
+        "hook"
+      ],
+      "tone": "experimental; pushes pop to its edges",
+      "loosens": [
+        "voice-leading",
+        "parallel-motion",
+        "range-arc",
+        "leap-recovery"
+      ],
+      "tightens": [
+        "surprise"
+      ]
+    }
+  },
+  "rules": [
+    {
+      "id": "stress-on-beat",
+      "area": "lyric",
+      "base": 0.9,
+      "what": "Stressed syllables land on strong beats.",
+      "why": "Words and music agree, so the line is easy to sing and understand (prosody).",
+      "loose": {
+        "lana-uv": 0.6,
+        "lana-nfr": 0.5,
+        "lana-bb": 0.5,
+        "jazz": 0.6,
+        "psych": 0.7
+      },
+      "breakIt": "Conversational, drifting phrasing is part of some writers' character: then the rule is a hint, not an error."
+    },
+    {
+      "id": "syllable-symmetry",
+      "area": "lyric",
+      "base": 0.6,
+      "what": "Matching lines in a section have similar syllable counts and rhythm.",
+      "why": "Repetition of shape makes a section feel intentional and memorable.",
+      "loose": {
+        "lana-bb": 0.5,
+        "tiersen": 0.3
+      }
+    },
+    {
+      "id": "lyric-specific",
+      "area": "lyric",
+      "base": 0.7,
+      "what": "Use concrete images (objects, places, times) over abstract statements.",
+      "why": "Specific details let the listener see the scene and believe it."
+    },
+    {
+      "id": "rhyme-scheme",
+      "area": "lyric",
+      "base": 0.5,
+      "what": "Rhymes support the structure; stable schemes for resolution, unstable for tension.",
+      "why": "Where rhymes fall changes how settled a section feels.",
+      "loose": {
+        "rhcp-funk": 0.6,
+        "psych": 0.6
+      }
+    },
+    {
+      "id": "hook-early",
+      "area": "form",
+      "base": 0.7,
+      "what": "The hook arrives within the time the song length expects (song-shapes hookBy).",
+      "why": "Listeners decide quickly, especially on singles and pitches.",
+      "loose": {
+        "tiersen": 0.2,
+        "tiersen-postrock": 0.2,
+        "cinematic": 0.2,
+        "lana-honeymoon": 0.5
+      }
+    },
+    {
+      "id": "hook-repeat",
+      "area": "form",
+      "base": 0.6,
+      "what": "The hook returns enough to be remembered, with small changes.",
+      "why": "Repetition builds familiarity; variation keeps it alive."
+    },
+    {
+      "id": "section-contrast",
+      "area": "form",
+      "base": 0.8,
+      "what": "Each section differs from its neighbour in at least two of: range, rhythm, chord rhythm, density, lyric angle.",
+      "why": "Contrast is what makes the chorus feel like an arrival."
+    },
+    {
+      "id": "range-arc",
+      "area": "melody",
+      "base": 0.7,
+      "what": "The melody's highest notes are saved for the chorus or the climax.",
+      "why": "Range is a tool for emotional peaks; using it early spends it.",
+      "loose": {
+        "lana-uv": 0.6,
+        "edm": 0.7
+      }
+    },
+    {
+      "id": "motif",
+      "area": "melody",
+      "base": 0.6,
+      "what": "A short melodic or rhythmic idea is stated, repeated and developed.",
+      "why": "Development gives a melody logic and makes it memorable."
+    },
+    {
+      "id": "leap-recovery",
+      "area": "melody",
+      "base": 0.5,
+      "what": "After a big leap, the melody steps back in the opposite direction.",
+      "why": "Balances tension; leaps feel intentional.",
+      "loose": {
+        "charli-pop2": 0.5
+      }
+    },
+    {
+      "id": "voice-leading",
+      "area": "harmony",
+      "base": 0.7,
+      "what": "Chord changes move each voice the smallest distance; common tones are held.",
+      "why": "Smooth voice leading makes changes feel inevitable.",
+      "loose": {
+        "rhcp": 0.4,
+        "psych": 0.5,
+        "edm": 0.5,
+        "country": 0.6
+      }
+    },
+    {
+      "id": "parallel-motion",
+      "area": "harmony",
+      "base": 0.4,
+      "what": "Avoid parallel 5ths and octaves between melodic parts.",
+      "why": "In classical writing they weaken independence of lines.",
+      "loose": {
+        "rhcp": 0.05,
+        "rhcp-funk": 0.05,
+        "psych": 0.1,
+        "edm": 0.1,
+        "fleetwood": 0.3,
+        "country": 0.2
+      },
+      "breakIt": "In rock, power chords are parallel 5ths by design: the coach only mentions this when lines should feel independent (counter melody, choir)."
+    },
+    {
+      "id": "tension-release",
+      "area": "harmony",
+      "base": 0.7,
+      "what": "Tension (dominant chords, suspensions, borrowed chords) is resolved or deliberately left open at the right moment.",
+      "why": "Expectation and its fulfilment, or denial, is what moves listeners."
+    },
+    {
+      "id": "borrowed-colour",
+      "area": "harmony",
+      "base": 0.4,
+      "what": "A borrowed chord (e.g. iv in major, bVII, bIII) at an emotional turn.",
+      "why": "Mode mixture adds bittersweet colour exactly where the lyric turns.",
+      "tight": {
+        "lana-btd": 1.2,
+        "lana-uv": 1.2,
+        "chappell": 1.1
+      }
+    },
+    {
+      "id": "groove-pocket",
+      "area": "rhythm",
+      "base": 0.5,
+      "what": "Parts agree on the feel: straight or swung, ahead of or behind the beat.",
+      "why": "A shared pocket makes the groove feel human and intentional."
+    },
+    {
+      "id": "imperfect-timing",
+      "area": "rhythm",
+      "base": 0.3,
+      "what": "Quantise less: keep small timing feel in performances.",
+      "why": "Perfect grid timing can sound lifeless in organic styles.",
+      "tight": {
+        "lana-uv": 1.4,
+        "fleetwood": 1.4,
+        "jazz": 1.5
+      }
+    },
+    {
+      "id": "build",
+      "area": "arrangement",
+      "base": 0.7,
+      "what": "The arrangement grows across the song: parts enter gradually and the last chorus is fullest.",
+      "why": "A build gives the song a journey and makes the end feel earned."
+    },
+    {
+      "id": "space",
+      "area": "arrangement",
+      "base": 0.5,
+      "what": "Leave room: fewer parts while the lead sings, fills in the gaps.",
+      "why": "The vocal is the song; space keeps it clear."
+    },
+    {
+      "id": "crowd",
+      "area": "arrangement",
+      "base": 0.6,
+      "what": "No more than three melodic ideas at once (part-roles doctor 'crowd').",
+      "why": "Listeners can follow about three things at a time."
+    },
+    {
+      "id": "one-sound-world",
+      "area": "production",
+      "base": 0.4,
+      "what": "Sounds come from one family or era so the record feels like a world.",
+      "why": "A consistent palette makes a song or album feel coherent."
+    },
+    {
+      "id": "low-end",
+      "area": "mix",
+      "base": 0.6,
+      "what": "Kick and bass have clear, separate space; nothing else lives below 120 Hz.",
+      "why": "A clean low end translates to every speaker."
+    },
+    {
+      "id": "mix-translation",
+      "area": "mix",
+      "base": 0.6,
+      "what": "The song works on phones, earbuds and car speakers (Listen on).",
+      "why": "Most listeners will never hear it on studio monitors."
+    },
+    {
+      "id": "surprise",
+      "area": "form",
+      "base": 0.3,
+      "what": "At least one unexpected moment: a chord, a drop-out, a key change, a production twist.",
+      "why": "Surprise keeps attention once the pattern is learned."
+    }
+  ],
+  "jury": {
+    "about": "One button reviews the whole song like a conservatoire jury. Each item is scored 1–5 against the chosen style's norms and the length's expectations; the review ends with ONE top priority and up to two smaller notes. Scores are explained, never just numbers.",
+    "items": [
+      {
+        "id": "hook",
+        "name": "Hook",
+        "asks": "Is there one unmistakable idea, and does it arrive and return at the right times?",
+        "rules": [
+          "hook-early",
+          "hook-repeat",
+          "motif"
+        ]
+      },
+      {
+        "id": "prosody",
+        "name": "Prosody",
+        "asks": "Do the words and music say the same thing, rhythmically and emotionally?",
+        "rules": [
+          "stress-on-beat",
+          "syllable-symmetry"
+        ]
+      },
+      {
+        "id": "contrast",
+        "name": "Contrast & form",
+        "asks": "Does each section earn its place, and does the chorus feel like an arrival?",
+        "rules": [
+          "section-contrast",
+          "surprise"
+        ]
+      },
+      {
+        "id": "harmony",
+        "name": "Harmony",
+        "asks": "Do the chords support the emotion arc and turn where the lyric turns?",
+        "rules": [
+          "tension-release",
+          "borrowed-colour",
+          "voice-leading"
+        ]
+      },
+      {
+        "id": "melody",
+        "name": "Melody",
+        "asks": "Does the melody have shape, a peak in the right place and a logic of its own?",
+        "rules": [
+          "range-arc",
+          "leap-recovery",
+          "motif"
+        ]
+      },
+      {
+        "id": "lyric",
+        "name": "Lyric",
+        "asks": "Is it specific, fresh and true to the song's world?",
+        "rules": [
+          "lyric-specific",
+          "rhyme-scheme"
+        ]
+      },
+      {
+        "id": "arrangement",
+        "name": "Arrangement",
+        "asks": "Does it build, leave space for the voice and keep a clear palette?",
+        "rules": [
+          "build",
+          "space",
+          "crowd",
+          "one-sound-world"
+        ]
+      },
+      {
+        "id": "mix",
+        "name": "Mix",
+        "asks": "Is it balanced, clear in the low end and does it translate?",
+        "rules": [
+          "low-end",
+          "mix-translation"
+        ]
+      }
+    ],
+    "tones": {
+      "teacher": "Explains why, asks a question back ('What do you want the listener to feel in bar 9?'), links a lesson.",
+      "cowriter": "Suggests a concrete change with Try it.",
+      "critic": "Blunt and short: what's weakest and why. Never cruel, never vague.",
+      "producer": "Speaks through the selected producer's priorities ('An Antonoff-style read: …')."
+    }
+  },
+  "adapt": {
+    "levels": [
+      "new",
+      "learning",
+      "confident",
+      "pro"
+    ],
+    "how": "Each concept has a mastery score, kept locally. It rises when Jamie applies the concept without a prompt, fixes a flagged issue himself, or answers an ear-training question right; it falls slightly when he repeats a flagged issue. Above 0.8 the coach stops explaining that concept and just names it; below 0.3 it explains with an example in his song's key.",
+    "honesty": "The coach never inflates. Praise is specific ('the borrowed iv under “leaving” lands exactly on the turn') and every review includes the top priority even when the song is strong."
+  },
+  "curriculum": {
+    "about": "The 'degree': ten subjects, each a set of short lessons built from Jamie's own songs and in their keys, with ear-training and a small practical ('rewrite the pre so the stress lands on the beat'). Progress is mastery from 'adapt'. Lessons link from coach cards ('Why it works › Lesson').",
+    "subjects": [
+      {
+        "id": "harmony",
+        "name": "Harmony",
+        "lessons": [
+          "Functions: home, away, tension",
+          "Minor loops and why they ache",
+          "Borrowed chords and the bittersweet turn",
+          "Secondary dominants",
+          "Reharmonising a chorus",
+          "Voice leading by smallest steps"
+        ]
+      },
+      {
+        "id": "counterpoint",
+        "name": "Counterpoint",
+        "lessons": [
+          "Two lines, one song: contrary and oblique motion",
+          "Writing in the gaps: the counter melody",
+          "Consonance on strong beats",
+          "Descants and inner lines"
+        ]
+      },
+      {
+        "id": "melody",
+        "name": "Melody",
+        "lessons": [
+          "Contour and the peak note",
+          "Motif: state, repeat, develop",
+          "Leaps and recovery",
+          "Range arc across a song",
+          "Writing a hook"
+        ]
+      },
+      {
+        "id": "lyric",
+        "name": "Lyric craft",
+        "lessons": [
+          "Prosody: stress on the beat",
+          "Rhyme types: perfect, family, assonance, consonance",
+          "Stable and unstable rhyme schemes",
+          "Show, don't tell: specific images",
+          "Point of view and the turn in the bridge"
+        ]
+      },
+      {
+        "id": "form",
+        "name": "Form",
+        "lessons": [
+          "Verse, pre, chorus: three jobs",
+          "AABA and the middle 8",
+          "Contrast between sections",
+          "Length as a choice: 1, 3, 5, 8, 10+ minutes",
+          "Endings"
+        ]
+      },
+      {
+        "id": "arranging",
+        "name": "Arranging & orchestration",
+        "lessons": [
+          "Ranges and registers",
+          "Building over a song",
+          "Doubling and layers",
+          "Strings, brass and woodwind colours",
+          "Space around the voice"
+        ]
+      },
+      {
+        "id": "rhythm",
+        "name": "Rhythm & groove",
+        "lessons": [
+          "Syncopation",
+          "Swing and shuffle",
+          "Pocket: ahead and behind the beat",
+          "Drum patterns by genre"
+        ]
+      },
+      {
+        "id": "production",
+        "name": "Production & mix",
+        "lessons": [
+          "One sound world",
+          "Frequency space and masking",
+          "Compression in plain words",
+          "Reverb and depth",
+          "Mixing for phones and cars",
+          "Loudness"
+        ]
+      },
+      {
+        "id": "ear",
+        "name": "Ear training",
+        "lessons": [
+          "Hear the bass note",
+          "Major, minor and borrowed chords",
+          "Intervals in melodies you know (yours)",
+          "Spot the section change"
+        ]
+      },
+      {
+        "id": "psychology",
+        "name": "Music psychology",
+        "lessons": [
+          "Expectation and surprise",
+          "Why repetition works",
+          "Tension and release in the body",
+          "Emotion and tempo, mode and register"
+        ]
+      }
+    ]
+  },
+  "golden": {
+    "about": "Regression test for the coach (tests/web): run the rules over every catalog song with chords in progressions.json in its own style. A rule that flags more than 25% of a style's songs as errors is too strict for that style: lower its strictness there (loose) or mark it as a style habit. Catalog songs are the style's norm, not mistakes.",
+    "threshold": 0.25
+  }
+}

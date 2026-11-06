@@ -109,6 +109,29 @@ for k,v in list(R['styleParts'].items())+list(R['producerParts'].items()):
         if not _re.match(r'(add|drop|thin):\w+(:[\w-]+)?@[\w,-]+$|layer:\w+:[\w:-]+@[\w,-]+$',m): I(f"part-roles {k}: move {m} doesn't match the grammar")
 for e in R['emotion']:
     if e not in S['emotionRules']['emotions']: W(f"part-roles emotion {e} has no emotion rule")
+# song lengths (data/song-shapes.json)
+SH=json.load(open('data/song-shapes.json'))
+for k,v in SH['lengths'].items():
+    for st in v['structures']:
+        for x in st:
+            n,b=x.split(':')
+            if not b.isdigit(): I(f"song-shapes {k}: bad section {x}")
+    if SH['default'] not in SH['lengths']: I("song-shapes default missing")
+# coach (data/coach.json)
+CO=json.load(open('data/coach.json'))
+rid={r['id'] for r in CO['rules']}
+for k,v in CO['producers'].items():
+    if k!='none' and k not in prids: I(f"coach producers: {k} is not a producer")
+    for r in v.get('loosens',[])+v.get('tightens',[]):
+        if r not in rid: I(f"coach producer {k}: rule {r} unknown")
+for k in prids:
+    if k not in CO['producers']: W(f"coach: producer {k} has no weights")
+for r in CO['rules']:
+    for s in list(r.get('loose',{}))+list(r.get('tight',{})):
+        if s not in pids: I(f"coach rule {r['id']}: {s} is not a profile")
+for j in CO['jury']['items']:
+    for r in j['rules']:
+        if r not in rid: I(f"coach jury {j['id']}: rule {r} unknown")
 print('ISSUES',len(issues)); [print(' -',x) for x in issues]
 print('WARNINGS',len(warn)); [print(' -',x) for x in warn]
 sys.exit(1 if issues else 0)
