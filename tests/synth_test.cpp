@@ -448,6 +448,28 @@ int main()
         printf ("ok: plug-ins on their mixer strip\n");
     }
 
+    // sidechain: the part dips at each hit, comes back, and the meter sees it
+    {
+        Duck d; d.ch = 1; d.depth = .8f; d.release = .3f; d.beats = { 4, 8 };
+        const double spb = .5;
+        CHECK (d.gainAt (3.9, spb) == 1, "no dip before the first hit");
+        CHECK (std::abs (d.gainAt (4.02, spb) - .2f) < .05, "full dip just after a hit %f", d.gainAt (4.02, spb));
+        CHECK (d.gainAt (4.4, spb) > .6f && d.gainAt (7.9, spb) > .99f, "recovers %f %f", d.gainAt (4.4, spb), d.gainAt (7.9, spb));
+        Duck q = d; q.beats = { 4, 4.1 };   // a second hit while still down: no jump back up
+        CHECK (q.gainAt (4.1001, spb) < .5f, "no pop between close hits %f", q.gainAt (4.1001, spb));
+
+        auto p = std::make_shared<SynthPatch> (); p->hasExt = true; p->extLevel[1] = 1; p->polish.on = false;
+        p->ducks.push_back (d);
+        Synth sy; sy.prepare (SR); sy.setPatch (p);
+        std::vector<float> in (512, .1f), L (512), R (512);
+        sy.setExternal (1, in.data(), in.data());
+        auto at = [&] (double beat) { std::fill (L.begin(), L.end(), 0.f); std::fill (R.begin(), R.end(), 0.f); sy.process ({}, 512, L.data(), R.data(), 1, beat, 2.0 / SR); return std::abs (L[500]); };
+        at (3); const double up = at (3.5); const double down = at (4.01);
+        CHECK (down < up * .4, "engine ducks the strip %f %f", down, up);
+        CHECK (sy.takeChannelPeak (1) > .01f && sy.takeChannelPeak (1) == 0, "channel meter reads then clears");
+        printf ("ok: sidechain and channel meters\n");
+    }
+
     printf (failures ? "%d synth tests FAILED\n" : "all synth tests passed\n", failures);
     return failures ? 1 : 0;
 }

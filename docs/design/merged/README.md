@@ -35,6 +35,9 @@ The app felt fragmented. Features lived on their own screens, each with its own 
    - Notes: piano roll with a keyboard, scale lock (scale rows shaded from the recipe key), ghost notes from Chords,
      and syllables under the notes (Write) or velocity (Produce).
    - Mix: channel strips with Jamie's plug-ins as inserts (empty slots dashed), pan, fader, meters and a dB readout.
+     Each strip has an upright fader and a left/right meter: average inside peak, a held peak mark, a clip light that stays on
+     and the loudest peak in dB, all click to reset (agreed with Jamie 7 Nov 2026; ideas from Pro Tools and Cubase, not their look).
+     Master bus is pinned on the right, and the same master volume sits in the transport.
    - Sound (loops): the loop editor (see below).
    - On the right, up to two explanation cards: the selected item, plus "why it works", emotion or reference.
 5. **Session panel (340px, right):** title, filter tabs (All / Producer / Sound / Emotion …), the pass header (Produce),

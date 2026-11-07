@@ -46,6 +46,10 @@ public:
     juce::String getProjectState() const { const juce::ScopedLock sl (stateLock); return projectJson; }
     void setStandaloneTransport (bool play, double startBeat, double bpm);
     bool isStandalone() const { return wrapperType == wrapperType_Standalone; }
+    void setMasterOut (float v) { masterOut = juce::jlimit (0.0f, 2.0f, v); }
+    float takePeakL() { return peakL.exchange (0); }
+    float takePeakR() { return peakR.exchange (0); }
+    float takeChannelPeak (int ch) { return synth.takeChannelPeak (ch); }
     // ---- Semitone's own sounds inside the DAW (message thread) ----
     // soundMode: 0 = Semitone's sounds + MIDI, 1 = Semitone's sounds only, 2 = MIDI only,
     // 3 = the built-in engine alone (ignores rendered sections, no MIDI out)
@@ -96,6 +100,8 @@ private:
     std::vector<Waiting> waiting;
     std::vector<st::Event> soon;
     juce::int64 sampleClock = 0;
+    std::atomic<float> masterOut { 1 }, peakL { 0 }, peakR { 0 };
+    float masterWas = 1;
     int blockNow = 512;
     std::atomic<float> listenLo { 0 }, listenHi { 0 };   // Listen on: what you hear, never what's exported
     float listenWasLo = 0, listenWasHi = 0;

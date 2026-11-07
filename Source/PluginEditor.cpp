@@ -150,6 +150,8 @@ juce::WebBrowserComponent::Options SemitoneEditor::makeOptions()
             browser.emitEventIfBrowserIsVisible ("st_audio_need", juce::var (o));
         })
         .withEventListener ("st_audio_clip", [this] (const juce::var& v) { clipChunk (v); })
+        .withEventListener ("st_master", [this] (const juce::var& v) { proc.setMasterOut ((float) (double) v.getProperty ("v", 1.0)); })
+        .withEventListener ("st_fullscreen", [this] (const juce::var&) { toggleFullScreen(); })
         .withEventListener ("st_title", [this] (const juce::var& v) { setTitle (v.getProperty ("title", "Semitone Studio").toString()); })
         .withEventListener ("st_timeline", [this] (const juce::var& v) { proc.setTimelineFromVar (v); })
         .withEventListener ("st_state", [this] (const juce::var& v) { proc.setProjectState (v.getProperty ("json", "").toString()); })
@@ -300,8 +302,36 @@ void SemitoneEditor::clipChunk (const juce::var& v)
     }
 }
 
+// The app goes properly full screen. A plug-in lives in the host's window, so it grows to fill the screen and back.
+void SemitoneEditor::toggleFullScreen()
+{
+    if (proc.isStandalone())
+    {
+        if (auto* w = dynamic_cast<juce::ResizableWindow*> (getTopLevelComponent())) w->setFullScreen (! w->isFullScreen());
+        return;
+    }
+    if (! sizeBeforeFull.isEmpty()) { setSize (sizeBeforeFull.getWidth(), sizeBeforeFull.getHeight()); sizeBeforeFull = {}; return; }
+    if (auto* d = juce::Desktop::getInstance().getDisplays().getDisplayForRect (getScreenBounds()))
+    {
+        sizeBeforeFull = getLocalBounds();
+        setSize (d->userArea.getWidth(), d->userArea.getHeight() - 40);
+    }
+}
+
 void SemitoneEditor::timerCallback()
 {
+    if ((ticks % 4) == 0)
+    {
+        const float l = proc.takePeakL(), r = proc.takePeakR();
+        juce::Array<juce::var> chs; float most = juce::jmax (l, r);
+        for (int c = 0; c < 16; ++c) { const float p = proc.takeChannelPeak (c); most = juce::jmax (most, p); chs.add ((double) p); }
+        if (most > 0 || meterWas > 0)
+        {
+            auto* o = new juce::DynamicObject(); o->setProperty ("l", (double) l); o->setProperty ("r", (double) r); o->setProperty ("ch", chs);
+            browser.emitEventIfBrowserIsVisible ("st_peak", juce::var (o));
+        }
+        meterWas = most;
+    }
     if ((ticks % 60) == 0) proc.releaseRetired();
     if (proc.host && (ticks % 30) == 0 && proc.host->latencySamples() != lastHostLatency)
     {

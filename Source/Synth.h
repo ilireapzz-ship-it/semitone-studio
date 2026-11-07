@@ -100,6 +100,38 @@ struct Lane
     }
 };
 
+// Sidechain: a channel dips at each hit of a drum row, then comes back. Worked out from the song position alone,
+// so seeking and looping need no state. Same shape as duckSchedule() in the page.
+struct Duck
+{
+    int ch = 0;
+    float depth = .6f, release = .2f;
+    std::vector<double> beats;         // sorted
+
+    static constexpr double attack = .005;
+
+    float gainAt (double beat, double secPerBeat) const
+    {
+        auto it = std::upper_bound (beats.begin(), beats.end(), beat);
+        if (it == beats.begin() || secPerBeat <= 0) return 1;
+        const double hit = *(it - 1), tau = std::max (.005, (double) release / 3), dt = (beat - hit) * secPerBeat;
+        double env;
+        if (dt >= attack) env = std::exp (-(dt - attack) / tau);
+        else
+        {
+            // still falling from an earlier hit: start from where that one had got to
+            double was = 0;
+            if (it - 1 != beats.begin())
+            {
+                const double gap = (hit - *(it - 2)) * secPerBeat;
+                was = gap < attack ? 1 : std::exp (-(gap - attack) / tau);
+            }
+            env = was + (1 - was) * dt / attack;
+        }
+        return (float) (1 - depth * env);
+    }
+};
+
 struct FxDesc;
 class FxBank;
 struct TransEv;
@@ -114,6 +146,7 @@ struct SynthPatch
     bool hasExt = false;
     std::vector<PartPatch> parts;
     std::vector<Lane> lanes;
+    std::vector<Duck> ducks;
     std::shared_ptr<std::vector<FxDesc>> fxList;   // what the page asked for
     std::shared_ptr<FxBank> fx;                    // built off the audio thread by the caller; running state lives here
     std::vector<NoteBuffers> buffers;   // one per part (the buffers are owned by the caller's cache)
@@ -889,6 +922,7 @@ public:
         std::stable_sort (sorted.begin(), sorted.end(), [] (const Event& a, const Event& b) { return a.offset < b.offset; });
 
         const float dg = (audible - gate) / (float) n;
+        secPerBeat = beatInc > 0 ? 1 / (beatInc * sr) : 0;
         size_t e = 0;
         for (int i = 0; i < n; ++i)
         {
@@ -916,7 +950,7 @@ public:
                     tk += seg.audio->data[a] * (1 - fr) + seg.audio->data[a + 1] * fr;
                 }
                 if (fxBus && fxBus->any[15]) { busL[15] += tk; busR[15] += tk; busLevel[15] = takeLevel; }
-                else { float pl, pr; panGains (0, false, pl, pr); l += tk * takeLevel * pl; r += tk * takeLevel * pr; }
+                else { float pl, pr; panGains (0, false, pl, pr); l += tk * takeLevel * chGain[15] * pl; r += tk * takeLevel * chGain[15] * pr; chSum[15] += tk * takeLevel * chGain[15]; }
             }
             // your plug-ins join here, so they get the part's fader, pan, effects, the room and the master chain
             if (current->hasExt)
@@ -927,7 +961,7 @@ public:
                     if (fxBus && fxBus->any[c]) { busL[c] += xl; busR[c] += xr; busLevel[c] = current->extLevel[c]; busPan[c] = current->extPan[c]; busStereo[c] = true; continue; }
                     float pl, pr;
                     panGains (hasPan[c] ? chPan[c] : current->extPan[c], true, pl, pr);
-                    l += xl * current->extLevel[c] * chGain[c] * pl;
+                    l += xl * current->extLevel[c] * chGain[c] * pl; chSum[c] += xl * current->extLevel[c] * chGain[c];
                     r += xr * current->extLevel[c] * chGain[c] * pr;
                 }
             float chorusIn[3] { 0, 0, 0 };
@@ -941,7 +975,7 @@ public:
                 if (fxBus && fxBus->any[(size_t) ci]) { busL[(size_t) ci] += v.outL; busR[(size_t) ci] += v.outR; busLevel[(size_t) ci] = v.p.level; busPan[(size_t) ci] = v.p.pan; busStereo[(size_t) ci] = v.p.stereo; continue; }
                 float pl, pr;
                 panGains (hasPan[(size_t) ci] ? chPan[(size_t) ci] : v.p.pan, v.p.stereo, pl, pr);
-                l += v.outL * v.p.level * chGain[(size_t) ci] * pl;
+                l += v.outL * v.p.level * chGain[(size_t) ci] * pl; chSum[(size_t) ci] += v.outL * v.p.level * chGain[(size_t) ci];
                 r += v.outR * v.p.level * chGain[(size_t) ci] * pr;
             }
             for (size_t c = 0; c < 3; ++c)
@@ -965,9 +999,11 @@ public:
                     fxBus->run ((int) c, bl, br);
                     float pl, pr;
                     panGains (hasPan[c] ? chPan[c] : busPan[c], busStereo[c], pl, pr);
-                    l += bl * busLevel[c] * chGain[c] * pl;
+                    l += bl * busLevel[c] * chGain[c] * pl; chSum[c] += bl * busLevel[c] * chGain[c];
                     r += br * busLevel[c] * chGain[c] * pr;
                 }
+            for (size_t c = 0; c < 16; ++c)
+                if (chSum[c] != 0) { chMax[c] = std::max (chMax[c], std::abs (chSum[c])); chSum[c] = 0; }
             // same order as the page: master gain, room, master effects, filter sweep, master fader, polish
             l *= .6f; r *= .6f;
             if (current->roomMix > 0)
@@ -990,7 +1026,12 @@ public:
             else { L[i] += l; R[i] += r; }
         }
         gate = audible;
+        for (size_t c = 0; c < 16; ++c)
+            if (chMax[c] > 0) { chPeak[c].store (std::max (chPeak[c].load(), chMax[c])); chMax[c] = 0; }
     }
+
+    // Any thread: the loudest this channel has been since the last call, for its meter.
+    float takeChannelPeak (int ch) { return chPeak[(size_t) (ch & 15)].exchange (0); }
 
     // Audio thread: cut everything off (the sound was switched to MIDI only).
     void silence()
@@ -1045,6 +1086,7 @@ private:
             else if (k.pan) { chPan[(size_t) (k.ch & 15)] = v; hasPan[(size_t) (k.ch & 15)] = true; }
             else chGain[(size_t) (k.ch & 15)] = v;
         }
+        for (const auto& d : current->ducks) chGain[(size_t) (d.ch & 15)] *= d.gainAt (beat, secPerBeat);
     }
 
     void handle (const Event& e)
@@ -1117,6 +1159,9 @@ private:
     int sweepLeft = 0, sweepTotal = 1;
     Biquad sweep;
     float masterGain = 1;
+    double secPerBeat = 0;
+    std::array<float, 16> chSum {}, chMax {};
+    std::array<std::atomic<float>, 16> chPeak {};
     std::array<double, 16> bends { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
     std::vector<Event> sorted;
     Room room;

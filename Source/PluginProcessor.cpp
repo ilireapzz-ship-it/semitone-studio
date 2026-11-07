@@ -155,6 +155,19 @@ void SemitoneProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
         if (! bouncingNow.load()) host->processAudition (buffer.getWritePointer (0), buffer.getNumChannels() > 1 ? buffer.getWritePointer (1) : nullptr, n);
     }
 
+    // the master fader, on everything that leaves Semitone, and the master meter
+    if (mode != 2)
+    {
+        const float to = masterOut.load();
+        for (int c = 0; c < buffer.getNumChannels(); ++c) buffer.applyGainRamp (c, 0, n, masterWas, to);
+        masterWas = to;
+        if (buffer.getNumChannels() > 0)
+        {
+            const float pl = buffer.getMagnitude (0, 0, n), pr = buffer.getNumChannels() > 1 ? buffer.getMagnitude (1, 0, n) : pl;
+            peakL.store (juce::jmax (peakL.load(), pl)); peakR.store (juce::jmax (peakR.load(), pr));
+        }
+    }
+
     if (listenHi.load() > 0 && ! bouncingNow.load() && buffer.getNumChannels() > 1)
     {
         if (listenLo.load() != listenWasLo || listenHi.load() != listenWasHi)
@@ -311,6 +324,16 @@ void SemitoneProcessor::setSynthSound (const juce::var& sound, const st::Timelin
             numsInto (k, "open", t->kit.open); numsInto (k, "rim", t->kit.rim); numsInto (k, "crash", t->kit.crash);
         }
         t->bendRange = (float) juce::jlimit (1, 48, tl.bendRange > 0 ? tl.bendRange : 12);
+        if (auto* ducks = sound.getProperty ("duck", juce::var()).getArray())
+            for (const auto& o : *ducks)
+            {
+                st::Duck k;
+                k.ch = juce::jlimit (0, 15, (int) o.getProperty ("ch", 0));
+                k.depth = num (o, "depth", .6f); k.release = num (o, "rel", .2f);
+                if (auto* b = o.getProperty ("beats", juce::var()).getArray())
+                    for (const auto& x : *b) k.beats.push_back ((double) x);
+                t->ducks.push_back (std::move (k));
+            }
         if (auto* lanes = sound.getProperty ("lanes", juce::var()).getArray())
             for (const auto& o : *lanes)
             {
