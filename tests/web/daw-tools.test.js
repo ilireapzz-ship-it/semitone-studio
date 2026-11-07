@@ -60,4 +60,7 @@ let fails=0; const ok=(c,m,x)=>{ if(!c){ fails++; console.log('FAIL',m,x===undef
  const ms=await p.evaluate(()=>{ const g=c=>document.querySelector(`#cMix .strip[data-ch="${c}"] .st-top`).getBoundingClientRect(); const m=g('master'), l=g('lead'); return {x:m.left+m.width/2,y:m.top+6,tx:l.left+4}; });
  await p.mouse.move(ms.x,ms.y); await p.mouse.down(); await p.mouse.move(ms.tx+40,ms.y,{steps:5}); await p.mouse.move(ms.tx,ms.y,{steps:3}); await p.mouse.up(); await p.waitForTimeout(200);
  ok(await p.evaluate(()=>$('#cMix .mix-row').firstElementChild.dataset.ch==='master'),'drag the master bus to the left');
+ // less repetition: the Sound tab has no second track list, Room is in Mix, Performance in Style & settings, the picker loads samples
+ const td=await p.evaluate(()=>{ shellDock('sound'); const sv=!$('#mixer').getClientRects().length, room=!!document.querySelector('.dock-pane[data-pane="mix"] .room-row'), perf=!!document.querySelector('.dock-pane[data-pane="style"] #perfBox'), hand=[...document.querySelectorAll('.mix-off')].filter(x=>/Hand it off/.test(x.textContent)).every(x=>x.hidden); document.querySelector('[data-partpop="bass"]').click(); const pop=$('#recipePop'), smp=!!pop.querySelector('[data-sa="sample"]'), sf=!!pop.querySelector('[data-sa="sf2"]'); pop.hidden=true; return {sv,room,perf,hand,smp,sf}; });
+ ok(Object.values(td).every(Boolean),'Sound tab, Mix and the picker are tidied',td);
  ok(!errs.length,'no page errors',errs); await b.close(); console.log(fails?fails+' failed':'daw-tools ok'); process.exit(fails?1:0); })();
