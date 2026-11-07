@@ -492,6 +492,50 @@ int main()
         printf ("ok: plug-in effects on built-in parts\n");
     }
 
+    // audio tracks: each on its own channel with its own level and pan; stereo takes keep their sides; Mono sums a channel
+    {
+        auto run = [&] (std::shared_ptr<SynthPatch> pt, double& outL, double& outR, int ch)
+        {
+            Synth sy; sy.prepare (SR); sy.setPatch (pt);
+            const int blk = 256; std::vector<float> L ((size_t) blk), R ((size_t) blk); const std::vector<Event> none;
+            outL = outR = 0; double beat = 0, bps = 2.0 / SR;
+            for (int k = 0; k < 200; ++k)
+            {
+                std::fill (L.begin(), L.end(), 0.f); std::fill (R.begin(), R.end(), 0.f);
+                sy.process (none, blk, L.data(), R.data(), 1, beat, bps);
+                for (int i = 0; i < blk; ++i) { outL += std::abs (L[(size_t) i]); outR += std::abs (R[(size_t) i]); }
+                beat += blk * bps;
+            }
+            return sy.takeChannelPeak (ch);
+        };
+        auto st = std::make_shared<TakeAudio>(); st->rate = SR; st->chans = 2; st->data.assign ((size_t) SR * 4 * 2, 0.f);
+        for (size_t i = 0; i < (size_t) SR * 4; ++i) st->data[i * 2] = .4f;              // left only
+        auto mk = [&] (int ch, float pan, uint32_t mono)
+        {
+            auto pt = std::make_shared<SynthPatch>();
+            pt->takes = std::make_shared<std::vector<TakeSeg>>();
+            TakeSeg g; g.audio = st; g.beat = 0; g.end = 64; g.start = 0; g.ch = ch; pt->takes->push_back (g);
+            pt->takeChPan[(size_t) ch] = pan; pt->monoMask = mono;
+            return pt;
+        };
+        double l0, r0, l1, r1, l2, r2;
+        const float pk = run (mk (4, 0, 0), l0, r0, 4);
+        run (mk (4, 0, 1u << 4), l1, r1, 4);
+        run (mk (6, -1, 1u << 6), l2, r2, 6);
+        bool ok = l0 > 1 && r0 < l0 * .01 && pk > 0;           // stereo take: left stays left, and channel 4's meter moves
+        ok = ok && l1 > 1 && std::abs (l1 - r1) < l1 * .01;   // Mono: both sides alike
+        ok = ok && l2 > 1 && r2 < l2 * .01;                    // mono and panned hard left
+        auto mo = std::make_shared<TakeAudio>(); mo->rate = SR; mo->data.assign ((size_t) SR * 4, .3f);
+        auto pt = std::make_shared<SynthPatch>(); pt->takes = std::make_shared<std::vector<TakeSeg>>();
+        TakeSeg g; g.audio = mo; g.beat = 0; g.end = 64; g.start = -.5; g.ch = 15; pt->takes->push_back (g);   // starts half a second in
+        double l3, r3; run (pt, l3, r3, 15);
+        ok = ok && l3 > 1 && std::abs (l3 - r3) < l3 * .01;
+        pt->takeChLevel[15] = 0; double l4, r4; run (pt, l4, r4, 15);
+        ok = ok && l4 < 1e-6;
+        if (! ok) { printf ("FAIL audio tracks: st %.2f/%.2f pk %.3f mono %.2f/%.2f left %.2f/%.2f vox %.2f/%.2f off %.4f\n", l0, r0, pk, l1, r1, l2, r2, l3, r3, l4); ++failures; }
+        else printf ("ok: audio tracks: own channel, level, pan, stereo sides and Mono\n");
+    }
+
     printf (failures ? "%d synth tests FAILED\n" : "all synth tests passed\n", failures);
     return failures ? 1 : 0;
 }

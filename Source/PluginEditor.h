@@ -56,6 +56,7 @@ private:
     std::atomic<bool> bouncing { false };
     void startBounce (const juce::var&);
     juce::File takeFile;
+    int takeInput = 0;   // which input the next take records: st::TakeRecorder::Input
     bool lastPlaying = false;
     int ticks = 0;
     float meterWas = 0;

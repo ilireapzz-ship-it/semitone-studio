@@ -142,6 +142,8 @@ struct SynthPatch
     std::shared_ptr<std::vector<TransEv>> trans;   // sorted by beat
     std::shared_ptr<std::vector<TakeSeg>> takes;
     std::vector<std::string> takeFiles;
+    std::array<float, 16> takeChLevel = [] { std::array<float, 16> v; v.fill (1); return v; }(), takeChPan {};   // each audio track's fader and pan, by channel
+    uint32_t monoMask = 0;                                 // channels summed to mono before their pan (one bit each); bit 16: the whole mix
     float transLevel = 1;
     std::array<float, 16> extLevel {}, extPan {};    // your plug-ins' strips, by channel
     bool hasExt = false;
@@ -920,9 +922,14 @@ public:
         if (! current || n <= 0) return;
         const uint32_t pmask = plugFx ? plugFxMask.load() : 0u;
         const bool pfx = pmask != 0 && n <= pfxCap && (int) preL.size() >= n;
-        const bool busMode = fxBus != nullptr || pfx;
+        // audio tracks and mono channels always mix through their channel bus, like a part with effects
+        uint32_t takeMask = 0;
+        if (current->takes) for (const auto& seg : *current->takes) takeMask |= 1u << (seg.ch & 15);
+        const uint32_t forced = takeMask | (current->monoMask & 0xffffu);
+        const bool busMode = fxBus != nullptr || pfx || forced != 0;
         auto plug = [&] (size_t c) { return pfx && ((pmask >> c) & 1u); };
-        auto via = [&] (size_t c) { return (fxBus && fxBus->any[c]) || plug (c); };
+        auto mono = [&] (size_t c) { return ((current->monoMask >> c) & 1u) != 0; };
+        auto via = [&] (size_t c) { return (fxBus && fxBus->any[c]) || plug (c) || ((forced >> c) & 1u); };
 
         // nothing sounding for a while (the room has rung out): use no CPU at all
         if (events.empty() && activeVoices() == 0 && ! current->trans && ! current->takes && ! current->hasExt && ! pfx)
@@ -938,9 +945,11 @@ public:
         const float dg = (audible - gate) / (float) n;
         secPerBeat = beatInc > 0 ? 1 / (beatInc * sr) : 0;
         // same order as the page: master gain, room, master effects, filter sweep, master fader, polish
+        const bool monoOut = ((current->monoMask >> 16) & 1u) != 0;   // "Mono check" on the master: hear the mix as a mono speaker plays it
         auto finish = [&] (int i, float l, float r)
         {
                 l *= .6f; r *= .6f;
+                if (monoOut) l = r = .5f * (l + r);
                 if (current->roomMix > 0)
                 {
                     float wl, wr;
@@ -976,18 +985,20 @@ public:
             if (beat >= 0 && current->takes)
             {
                 const double now = beat + i * beatInc, secPerBeat = beatInc > 0 ? 1 / (beatInc * sr) : 0;
-                float tk = 0;
                 for (const auto& seg : *current->takes)
                 {
                     if (now < seg.beat || now >= seg.end || ! seg.audio) continue;
                     const double pos = (seg.start + (now - seg.beat) * secPerBeat) * seg.audio->rate;
-                    const size_t a = (size_t) std::max (0.0, pos);
-                    if (a + 1 >= seg.audio->data.size()) continue;
+                    if (pos < 0) continue;
+                    const size_t a = (size_t) pos, k = (size_t) std::max (1, seg.audio->chans), at = a * k;
+                    if (at + 2 * k > seg.audio->data.size()) continue;
                     const float fr = (float) (pos - std::floor (pos));
-                    tk += seg.audio->data[a] * (1 - fr) + seg.audio->data[a + 1] * fr;
+                    const auto& d = seg.audio->data;
+                    const float tkl = d[at] * (1 - fr) + d[at + k] * fr, tkr = k == 2 ? d[at + 1] * (1 - fr) + d[at + 3] * fr : tkl;
+                    const size_t c = (size_t) (seg.ch & 15);
+                    busL[c] += tkl; busR[c] += tkr;
+                    busLevel[c] = takeLevel * current->takeChLevel[c]; busPan[c] = current->takeChPan[c]; busStereo[c] = k == 2;
                 }
-                if (via (15)) { busL[15] += tk; busR[15] += tk; busLevel[15] = takeLevel; }
-                else { float pl, pr; panGains (0, false, pl, pr); l += tk * takeLevel * chGain[15] * pl; r += tk * takeLevel * chGain[15] * pr; chSum[15] += tk * takeLevel * chGain[15]; }
             }
             // your plug-ins join here, so they get the part's fader, pan, effects, the room and the master chain
             if (current->hasExt)
@@ -1034,10 +1045,11 @@ public:
                     float bl = busL[c], br = busR[c];
                     busL[c] = busR[c] = 0;
                     if (fxBus && fxBus->any[c]) fxBus->run ((int) c, bl, br);
+                    if (mono (c)) { bl = br = .5f * (bl + br); }
                     // to your plug-ins: they need the whole block, so this part is mixed in by the second pass below
                     if (plug (c)) { pfxL[c * pfxCap + (size_t) i] = bl * busLevel[c]; pfxR[c * pfxCap + (size_t) i] = br * busLevel[c]; continue; }
                     float pl, pr;
-                    panGains (hasPan[c] ? chPan[c] : busPan[c], busStereo[c], pl, pr);
+                    panGains (hasPan[c] ? chPan[c] : busPan[c], busStereo[c] && ! mono (c), pl, pr);
                     l += bl * busLevel[c] * chGain[c] * pl; chSum[c] += bl * busLevel[c] * chGain[c];
                     r += br * busLevel[c] * chGain[c] * pr;
                 }
@@ -1057,9 +1069,10 @@ public:
                 for (size_t c = 0; c < 16; ++c)
                 {
                     if (! plug (c)) continue;
-                    const float bl = pfxL[c * pfxCap + (size_t) i], br = pfxR[c * pfxCap + (size_t) i];
+                    float bl = pfxL[c * pfxCap + (size_t) i], br = pfxR[c * pfxCap + (size_t) i];
+                    if (mono (c)) bl = br = .5f * (bl + br);
                     float pl, pr;
-                    panGains (hasPan[c] ? chPan[c] : busPan[c], busStereo[c], pl, pr);
+                    panGains (hasPan[c] ? chPan[c] : busPan[c], busStereo[c] && ! mono (c), pl, pr);
                     l += bl * chGain[c] * pl; r += br * chGain[c] * pr;
                     chMax[c] = std::max (chMax[c], std::abs (bl * chGain[c]));
                 }

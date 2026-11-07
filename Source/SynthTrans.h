@@ -13,23 +13,25 @@ struct TransEv
     int filter = 0;                 // noise: 0 band-pass, 1 high-pass, 2 low-pass
 };
 
-struct TakeAudio { std::vector<float> data; double rate = 48000; };
+struct TakeAudio { std::vector<float> data; double rate = 48000; int chans = 1; };   // data: interleaved when chans is 2
 
 struct TakeSeg
 {
     std::shared_ptr<const TakeAudio> audio;
-    double beat = 0, end = 0, start = 0;   // song beats it covers, seconds into the file at `beat`
+    double beat = 0, end = 0, start = 0;   // song beats it covers, seconds into the file at `beat` (may be below 0: silence first)
+    int ch = 15;                           // the mixer channel of its audio track
 };
 
-// A mono 24-bit WAV as written by TakeRecorder. Returns null for anything else.
+// A mono or stereo 24-bit WAV as written by TakeRecorder. Returns null for anything else.
 inline std::shared_ptr<TakeAudio> readTake (const std::string& path)
 {
     std::FILE* f = std::fopen (path.c_str(), "rb");
     if (f == nullptr) return nullptr;
     unsigned char h[44];
     auto out = std::make_shared<TakeAudio>();
-    if (std::fread (h, 1, 44, f) != 44 || std::memcmp (h, "RIFF", 4) != 0 || std::memcmp (h + 36, "data", 4) != 0 || h[22] != 1 || h[34] != 24) { std::fclose (f); return nullptr; }
+    if (std::fread (h, 1, 44, f) != 44 || std::memcmp (h, "RIFF", 4) != 0 || std::memcmp (h + 36, "data", 4) != 0 || (h[22] != 1 && h[22] != 2) || h[34] != 24) { std::fclose (f); return nullptr; }
     out->rate = h[24] | h[25] << 8 | h[26] << 16 | (unsigned) h[27] << 24;
+    out->chans = h[22];
     const uint32_t bytes = h[40] | h[41] << 8 | h[42] << 16 | (uint32_t) h[43] << 24;
     std::vector<unsigned char> raw ((size_t) bytes);
     const size_t got = std::fread (raw.data(), 1, raw.size(), f);

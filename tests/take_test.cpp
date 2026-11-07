@@ -43,6 +43,31 @@ int main()
     res = r.stop();
     assert (res.dropped > 0 && res.frames + res.dropped == 100000 - 1 + 1);
     std::printf ("ok: a stalled disk loses audio and says so, without blocking the audio thread\n");
+
+    // stereo: input 1 left, input 2 right, interleaved; header says 2 channels
+    assert (r.start (path, 44100, st::TakeRecorder::stereo) && r.channels() == 2);
+    for (int i = 0; i < 480; ++i) { L[(size_t) i] = .5f; R[(size_t) i] = -.25f; }
+    r.push (L.data(), R.data(), 480);
+    assert (std::abs (r.takePeak() - .5f) < 1e-6 && r.takePeak() == 0);
+    res = r.stop();
+    d = read (path);
+    assert (res.frames == 480 && d[22] == 2 && u32 (d, 40) == 480 * 6 && d[32] == 6 && u32 (d, 28) == 44100 * 6);
+    assert (std::abs (s24 (d, 44) / 8388607.0 - .5) < 1e-3 && std::abs (s24 (d, 47) / 8388607.0 + .25) < 1e-3);
+    std::printf ("ok: stereo takes keep left and right apart\n");
+
+    // one input of two: a guitar on input 2 records alone, in mono
+    assert (r.start (path, 48000, st::TakeRecorder::in2) && r.channels() == 1);
+    r.push (L.data(), R.data(), 480);
+    res = r.stop();
+    d = read (path);
+    assert (res.frames == 480 && d[22] == 1 && std::abs (s24 (d, 44) / 8388607.0 + .25) < 1e-3);
+    // stereo from a one-input device: both sides get that input
+    assert (r.start (path, 48000, st::TakeRecorder::stereo));
+    r.push (L.data(), nullptr, 480);
+    r.stop();
+    d = read (path);
+    assert (std::abs (s24 (d, 47) / 8388607.0 - .5) < 1e-3);
+    std::printf ("ok: input 1, input 2 or both, as the track asks\n");
     std::remove (path);
     std::printf ("all take tests passed\n");
 }

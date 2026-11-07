@@ -292,7 +292,7 @@ juce::WebBrowserComponent::Options SemitoneEditor::makeOptions()
             o->setProperty ("ch", ch); o->setProperty ("b64", proc.host->stateB64 (ch));
             browser.emitEventIfBrowserIsVisible ("st_host_stateis", juce::var (o));
         })
-        .withEventListener ("st_take_start", [this] (const juce::var&) { takeStart(); })
+        .withEventListener ("st_take_start", [this] (const juce::var& v) { const auto in = v.getProperty ("input", "mix").toString(); takeInput = in == "in1" ? 1 : in == "in2" ? 2 : in == "stereo" ? 3 : 0; takeStart(); })
         .withEventListener ("st_take_stop", [this] (const juce::var&) { takeStop(); })
         .withEventListener ("st_scan", [this] (const juce::var&) { scanLibrary(); })
         .withEventListener ("st_scan_load", [this] (const juce::var&) { loadLibraryScan(); })
@@ -398,12 +398,13 @@ void SemitoneEditor::timerCallback()
     }
     if ((ticks % 4) == 0)
     {
-        const float l = proc.takePeakL(), r = proc.takePeakR();
-        juce::Array<juce::var> chs; float most = juce::jmax (l, r);
+        const float l = proc.takePeakL(), r = proc.takePeakR(), inPeak = proc.takeRecorder.active() ? proc.takeRecorder.takePeak() : 0.0f;
+        juce::Array<juce::var> chs; float most = juce::jmax (l, r, proc.takeRecorder.active() ? 1.0e-4f : 0.0f);
         for (int c = 0; c < 16; ++c) { const float p = proc.takeChannelPeak (c); most = juce::jmax (most, p); chs.add ((double) p); }
         if (most > 0 || meterWas > 0)
         {
             auto* o = new juce::DynamicObject(); o->setProperty ("l", (double) l); o->setProperty ("r", (double) r); o->setProperty ("ch", chs);
+            if (proc.takeRecorder.active()) o->setProperty ("in", (double) inPeak);
             browser.emitEventIfBrowserIsVisible ("st_peak", juce::var (o));
         }
         meterWas = most;
@@ -683,8 +684,10 @@ void SemitoneEditor::takeOpenInput (bool granted)
     if (ok)
     {
         takeFile = st::files::takesFolder().getNonexistentChildFile ("Take " + juce::Time::getCurrentTime().formatted ("%Y-%m-%d %H%M%S"), ".wav", false);
-        ok = proc.takeRecorder.start (takeFile.getFullPathName().toStdString(), proc.getSampleRateNow());
+        ok = proc.takeRecorder.start (takeFile.getFullPathName().toStdString(), proc.getSampleRateNow(), takeInput);
     }
+    o->setProperty ("inputs", proc.getTotalNumInputChannels());
+    o->setProperty ("chans", proc.takeRecorder.channels());
     o->setProperty ("ok", ok);
     browser.emitEventIfBrowserIsVisible ("st_take_started", juce::var (o));
 }

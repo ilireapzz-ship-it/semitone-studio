@@ -383,11 +383,23 @@ void SemitoneProcessor::setSynthSound (const juce::var& sound, const st::Timelin
             for (const auto& o : *list)
             {
                 st::TakeSeg g; g.beat = (double) o.getProperty ("beat", 0.0); g.end = g.beat + (double) o.getProperty ("beats", 0.0); g.start = (double) o.getProperty ("start", 0.0);
+                g.ch = juce::jlimit (0, 15, (int) o.getProperty ("ch", 15));
                 t->takes->push_back (g); t->takeFiles.push_back (o.getProperty ("file", "").toString().toStdString());
             }
             if (t->takes->empty()) t->takes.reset();
         }
         takeGain = num (sound, "takeLevel", 1);
+        // audio tracks: [{ch, level, pan}]; mono: channels summed to mono
+        if (auto* list = sound.getProperty ("takeCh", juce::var()).getArray())
+            for (const auto& o : *list)
+            {
+                const int c = (int) o.getProperty ("ch", -1);
+                if (c < 0 || c > 15) continue;
+                t->takeChLevel[(size_t) c] = num (o, "level", 1); t->takeChPan[(size_t) c] = num (o, "pan", 0);
+            }
+        t->monoMask = 0;
+        if (auto* list = sound.getProperty ("mono", juce::var()).getArray())
+            for (const auto& o : *list) { const int c = (int) o; if (c >= 0 && c <= 16) t->monoMask |= 1u << c; }
         if (auto* lanes = sound.getProperty ("fxLanes", juce::var()).getArray())
             for (const auto& o : *lanes)
             {
