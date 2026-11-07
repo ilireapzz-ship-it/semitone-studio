@@ -10,7 +10,7 @@ public:
     explicit SemitoneEditor (SemitoneProcessor&);
     ~SemitoneEditor() override;
     void resized() override;
-    void paint (juce::Graphics& g) override { g.fillAll (juce::Colour (0xffE8ECE5)); }
+    void paint (juce::Graphics& g) override;
 
 private:
     void timerCallback() override;
@@ -42,6 +42,7 @@ private:
     void setTitle (const juce::String& t);
     void clipChunk (const juce::var& v);
     void toggleFullScreen();
+    void reveal();
     static juce::MemoryBlock decode (const juce::String& base64);
 
     SemitoneProcessor& proc;
@@ -56,6 +57,7 @@ private:
     bool lastPlaying = false;
     int ticks = 0;
     float meterWas = 0;
+    bool shown = false;    // the page has drawn: until then the window shows a loading screen
     juce::Rectangle<int> sizeBeforeFull;
     std::shared_ptr<st::Clip> building;   // the clip arriving in chunks
     juce::String buildingId;

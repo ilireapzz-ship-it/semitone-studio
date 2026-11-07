@@ -96,7 +96,37 @@ void SemitoneEditor::clipFile()
 
 SemitoneEditor::~SemitoneEditor() { stopTimer(); if (proc.host) { proc.host->onList = nullptr; proc.host->onLoaded = nullptr; proc.host->onFxLoaded = nullptr; } }
 
-void SemitoneEditor::resized() { browser.setBounds (getLocalBounds()); }
+// The web view is blank until the page arrives, so it waits just outside the window and the loading screen shows here.
+void SemitoneEditor::resized() { browser.setBounds (shown ? getLocalBounds() : getLocalBounds().withX (getWidth() + 8)); }
+
+void SemitoneEditor::reveal()
+{
+    if (shown) return;
+    shown = true;
+    resized();
+    repaint();
+}
+
+void SemitoneEditor::paint (juce::Graphics& g)
+{
+    g.fillAll (juce::Colour (0xff0A0B0D));
+    if (shown) return;
+    const auto mid = getLocalBounds().getCentre().toFloat();
+    g.setGradientFill (juce::ColourGradient (juce::Colour (0xffF2D7A0), mid.x - 8, mid.y - 56, juce::Colour (0xffC9974E), mid.x + 14, mid.y - 30, true));
+    g.fillEllipse (mid.x - 22, mid.y - 66, 44, 44);
+    g.setColour (juce::Colour (0xffE8ECE5));
+    g.setFont (juce::FontOptions ("Georgia", 26.0f, juce::Font::plain));
+    g.drawText ("Semitone", juce::Rectangle<float> (mid.x - 140, mid.y - 16, 280, 34), juce::Justification::centred);
+    const juce::Rectangle<float> bar (mid.x - 140, mid.y + 30, 280, 3);
+    g.setColour (juce::Colour (0xff24272B));
+    g.fillRoundedRectangle (bar, 1.5f);
+    const float phase = (float) std::fmod (ticks / 70.0, 1.0), w = bar.getWidth() * .34f, x = bar.getX() - w + phase * (bar.getWidth() + w);
+    g.setColour (juce::Colour (0xffE2B971));
+    g.fillRoundedRectangle (bar.getIntersection ({ x, bar.getY(), w, bar.getHeight() }), 1.5f);
+    g.setColour (juce::Colour (0xff9BA1A6));
+    g.setFont (juce::FontOptions (13.0f));
+    g.drawText ("Starting…", juce::Rectangle<float> (mid.x - 140, mid.y + 42, 280, 20), juce::Justification::centred);
+}
 
 juce::WebBrowserComponent::Options SemitoneEditor::makeOptions()
 {
@@ -150,6 +180,7 @@ juce::WebBrowserComponent::Options SemitoneEditor::makeOptions()
             browser.emitEventIfBrowserIsVisible ("st_audio_need", juce::var (o));
         })
         .withEventListener ("st_audio_clip", [this] (const juce::var& v) { clipChunk (v); })
+        .withEventListener ("st_shown", [this] (const juce::var&) { juce::Timer::callAfterDelay (120, [self = juce::Component::SafePointer<SemitoneEditor> (this)] { if (self != nullptr) self->reveal(); }); })
         .withEventListener ("st_master", [this] (const juce::var& v) { proc.setMasterOut ((float) (double) v.getProperty ("v", 1.0)); })
         .withEventListener ("st_fullscreen", [this] (const juce::var&) { toggleFullScreen(); })
         .withEventListener ("st_title", [this] (const juce::var& v) { setTitle (v.getProperty ("title", "Semitone Studio").toString()); })
@@ -320,6 +351,11 @@ void SemitoneEditor::toggleFullScreen()
 
 void SemitoneEditor::timerCallback()
 {
+    if (! shown)
+    {
+        repaint();
+        if (ticks > 60 * 20) reveal();    // never leave the window stuck on the loading screen
+    }
     if ((ticks % 4) == 0)
     {
         const float l = proc.takePeakL(), r = proc.takePeakR();

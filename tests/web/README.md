@@ -47,3 +47,4 @@ node tests/web/regression.test.js
 - `plugin-pass.test.js`: producer moves on plug-ins find controls by name, never swap a plug-in out, and every control returns afterwards.
 - `chord-ideas.test.js`: the sounding chord is lit while the song plays and while an idea previews in context.
 - `beat-master.test.js`: drum rows (drop, add, delete, undo), master volume, meters, sidechain.
+- `track-tools.test.js`: folding tracks into tags, colours, the × buttons, Delete key, right-click menus, editable velocity.
