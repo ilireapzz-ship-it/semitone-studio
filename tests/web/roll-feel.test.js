@@ -46,4 +46,10 @@ let fails=0; const ok=(c,m,x)=>{ if(!c){ fails++; console.log('FAIL',m,x===undef
  // Shift and drag a selected note copies the whole selection
  await p.keyboard.down('Shift'); await p.mouse.move(sc[1].x,sc[1].y); await p.mouse.down(); await p.mouse.move(sc[1].x,sc[1].y-sd.rh*12-2,{steps:6}); await p.mouse.up(); await p.keyboard.up('Shift'); await p.waitForTimeout(100);
  ok(await p.evaluate(n0=>rollArr().length===n0+2&&S.selSet.size===2,n0),'Shift and drag copies every selected note');
+ // clicking an empty spot in the roll moves the play marker there; clicking a note doesn't
+ await p.evaluate(()=>{ stopPlay(); setLayer('melody'); S.rollTool='select'; S.selSet=new Set(); S.selNote=null; S.playFrom=0; renderRoll(); }); await p.waitForTimeout(80);
+ const mk=await p.evaluate(()=>{ const R=$('#roll').getBoundingClientRect(), L=S.rl, beat=L.TB*.5; let y=L.top+2; for(;y<L.H-20;y+=L.rh) if(!hitNote(L.W*.5+.5,y)) break; return {x:R.left+L.W*.5+.5,y:R.top+y,beat}; });
+ await p.mouse.click(mk.x,mk.y); const pf=await p.evaluate(()=>S.playFrom); ok(Math.abs(pf-mk.beat)<=.26&&pf>0,'empty click moves the marker',[pf,mk.beat]);
+ const nt2=await p.evaluate(()=>{ const R=$("#roll").getBoundingClientRect(), q=S.rects.find(r=>r.n.src&&r.w>10&&r.x>40); return {x:R.left+q.x+q.w/2,y:R.top+q.y+q.h/2}; });
+ await p.mouse.click(nt2.x,nt2.y); ok(await p.evaluate(v=>S.playFrom===v,pf),'clicking a note leaves the marker');
  ok(!errs.length,'no page errors',errs); await b.close(); console.log(fails?fails+' failed':'roll-feel ok'); process.exit(fails?1:0); })();

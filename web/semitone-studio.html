@@ -2568,6 +2568,7 @@ function initRollEditing(){
     const p=rollPos(e);
     if(p.y<S.rl.top-4){ setPlayFrom(p.x/S.rl.W*S.rl.TB); return; }
     const q=hitNote(p.x,p.y), T=S.rollTool||'select';
+    if(!q) rollMark(p.x/S.rl.W*S.rl.TB);
     if(T==='erase'){ e.preventDefault(); if(q) deleteNote(q.n.src); S.erasing=true; try{cv.setPointerCapture(e.pointerId);}catch(_){} return; }
     if(!q&&T==='draw'){ e.preventDefault(); rollAdd(p,e); return; }
     if(!q){ e.preventDefault(); marqStart(e,'song',cv); return; }
@@ -2805,6 +2806,8 @@ function fromLabel(){ if(!S.piece) return; const B=METERS[S.meter].B, pf=S.playF
   $('#fromInfo').textContent=pf>0?`Plays from bar ${S.piece.sec.startBar+bar+1}, beat ${+(beat+1).toFixed(2)}`:'Plays from the start of the section'; $('#fromReset').hidden=!(pf>0); }
 function setPlayFrom(beat){ S.cue=null; const B=METERS[S.meter].B, TB=S.piece.bars*B, st=S.snap||.25; S.playFrom=Math.max(0,Math.min(TB-st,Math.floor(beat/st+1e-9)*st)); fromLabel();
   if(S.playing&&S.playMode==='section'){ stopPlay(); play('section'); } else renderRoll(); }
+/* a click on an empty spot in the roll puts the play marker there (clicking a note leaves it); while playing it waits for the next Play so editing doesn't jump the sound */
+function rollMark(beat){ if(S.playing) return; S.cue=null; const B=METERS[S.meter].B, TB=S.piece.bars*B, st=S.snap||.25; S.playFrom=Math.max(0,Math.min(TB-st,Math.floor(beat/st+1e-9)*st)); fromLabel(); }
 function leadVoice(m,t,dur,vel=1){ const prm=SOUNDS[partSound('lead')].lead;
   if(S.parts.lead.sound==='sample'&&S.samples.lead) playSample(S.samples.lead.buf,t,dur,.75*vel,Math.pow(2,(m-60)/12)); else voice(m,t,dur,{...prm,vol:prm.vol*vel}); }
 function auditionContext(src){
