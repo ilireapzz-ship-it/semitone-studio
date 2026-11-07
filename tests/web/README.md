@@ -55,3 +55,4 @@ node tests/web/regression.test.js
 - `startup.test.js`: big songs reach the page in base64, unchanged, so opening never locks up.
 - `daw-tools.test.js`: Redo, Articulation mode, scrolling and zooming the roll and timeline, splitting, duplicate and empty tracks, track and mixer order.
 - `tool-pool.test.js`: the piano roll tool bar starts Select, Slice, Articulation mode; drag to reorder; the Tool Pool window (add, remove, drag in and out, move, undo, search, Starter/Default/Everything), right-click and ⚙ entry points, fits at 900×600, order kept after reopening.
+- `clip-copy.test.js`: right-click Copy on a timeline clip, then Paste and replace, Paste on top and Paste here (empty spot on an added track) for melody, bass and drums; other sections untouched, one undo, saving and opening, ⌘C and ⌘V on clips.
