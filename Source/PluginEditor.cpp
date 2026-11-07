@@ -263,6 +263,7 @@ juce::WebBrowserComponent::Options SemitoneEditor::makeOptions()
         })
         .withEventListener ("st_bounce", [this] (const juce::var& v) { startBounce (v); })
         .withEventListener ("st_host_test", [this] (const juce::var& v) { if (proc.host) proc.host->testNote ((int) v.getProperty ("ch", 0)); })
+        .withEventListener ("st_host_note", [this] (const juce::var& v) { if (proc.host) proc.host->previewNote ((int) v.getProperty ("ch", 0), (int) v.getProperty ("m", 60), (int) v.getProperty ("vel", 80), (int) v.getProperty ("ms", 300)); })
         .withEventListener ("st_host_open", [this] (const juce::var& v) { if (proc.host) proc.host->openWindow ((int) v.getProperty ("ch", 0)); })
         .withEventListener ("st_host_state", [this] (const juce::var& v)
         {

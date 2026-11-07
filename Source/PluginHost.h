@@ -193,6 +193,13 @@ public:
 
     void testNote (int ch) { testCh = ch; }
 
+    // One note, right now, so a note placed on the piano roll is heard in the plug-in's own sound.
+    void previewNote (int ch, int note, int vel, int ms)
+    {
+        const int v = ((juce::jlimit (0, 30, ch) + 1) << 22) | (juce::jlimit (0, 127, note) << 15) | (juce::jlimit (1, 127, vel) << 8) | juce::jlimit (1, 255, ms / 10);
+        for (auto& s : previewQueue) { int empty = 0; if (s.compare_exchange_strong (empty, v)) break; }
+    }
+
     // Your effects. Each part (by channel) and the whole song (target 16) has up to four, in order.
     static constexpr int masterFx = 16, fxSlots = 4;
 
@@ -480,6 +487,17 @@ public:
                 if ((e.status & 15) == ch) midi.addEvent (juce::MidiMessage (e.status & 0xF0, e.d1, e.d2), e.offset);
             if (testCh.load() == ch) { testCh = -1; heldCh = ch; heldLeft = (int) (sr * .7); midi.addEvent (juce::MidiMessage (0x90, 60, 100), 0); }
             if (heldCh == ch && (heldLeft -= n) <= 0) { heldCh = -1; midi.addEvent (juce::MidiMessage (0x80, 60, 0), 0); }
+            for (auto& s : previewQueue)
+            {
+                const int v = s.load();
+                if (v == 0 || (v >> 22) - 1 != ch) continue;
+                s.store (0);
+                const int note = (v >> 15) & 127;
+                for (auto& h : previewHeld)
+                    if (h.ch < 0) { h = { ch, note, (int) (sr * (v & 255) * .01) }; midi.addEvent (juce::MidiMessage (0x90, note, (juce::uint8) ((v >> 8) & 127)), 0); break; }
+            }
+            for (auto& h : previewHeld)
+                if (h.ch == ch && (h.left -= n) <= 0) { h.ch = -1; midi.addEvent (juce::MidiMessage (0x80, h.note, (juce::uint8) 0), 0); }
             const int outs = juce::jmax (2, p->getTotalNumOutputChannels(), p->getTotalNumInputChannels());
             if (outs > maxChannels) continue;
             juce::AudioBuffer<float> view (temp.getArrayOfWritePointers(), outs, n);
@@ -603,6 +621,9 @@ private:
     std::array<std::unique_ptr<HostWindow>, 16> windows;
     juce::SpinLock lock;
     std::atomic<int> testCh { -1 };
+    std::array<std::atomic<int>, 12> previewQueue {};
+    struct PreviewHeld { int ch = -1, note = 0, left = 0; };
+    std::array<PreviewHeld, 12> previewHeld {};
     std::shared_ptr<const std::vector<Lane>> lanes;
     struct LineUp
     {
