@@ -80,7 +80,13 @@ Exact values: `reference.dc.html` (a design-canvas file: copy its values, not it
   - Writing happens with the lane's knob or a learned **MIDI controller knob** (Learn), and each pass is one undo step.
 - **Values stay safe:** plug-in limits (`max` in plugin-maps) and level limits apply, and volume moves above 0 dB warn.
 
-## Macros (`4-Macro.png`)
+## Macros (`4-Macro.png`, exact values in `reference-macro.dc.html`)
+Look: a machined knob (tick ring 0 → .5 → 1, brass arc that glows, dark domed cap with a soft shadow, brass pointer), the value in an
+inset display ("0.48 · at bar 14 · Pre"), and preset chips (Lift, Open up, Pull back, Tension). Each control is a soft card with an icon tile in
+the part colour, its name and where it lives, a recessed range track with tick marks, metal end caps, a fill in the part colour, a glowing brass
+diamond at the current value with a value tag, a small response graph showing where the knob sits now, and an invert toggle. "Across the song"
+shows the Energy line (brass, filled) over section bands, with each control's resulting line (dashed if inverted) and the playhead. The header
+holds an "In FL Studio as 'Macro 1'" switch, Save to ⌘K and ×.
 - A macro is one knob (0–1) that moves several controls. Each has a **range** (value at 0 → value at 1, shown in units with the current value),
   a **response** (Straight, Slow start, Fast start) and **Invert**. A row of small lines shows what the macro's lane does to each control across
   the song.
