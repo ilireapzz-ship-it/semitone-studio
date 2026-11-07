@@ -180,7 +180,7 @@ juce::WebBrowserComponent::Options SemitoneEditor::makeOptions()
             browser.emitEventIfBrowserIsVisible ("st_audio_need", juce::var (o));
         })
         .withEventListener ("st_audio_clip", [this] (const juce::var& v) { clipChunk (v); })
-        .withEventListener ("st_shown", [this] (const juce::var&) { juce::Timer::callAfterDelay (120, [self = juce::Component::SafePointer<SemitoneEditor> (this)] { if (self != nullptr) self->reveal(); }); })
+        .withEventListener ("st_shown", [this] (const juce::var&) { juce::Component::SafePointer<SemitoneEditor> self (this); juce::Timer::callAfterDelay (120, [self] { if (self != nullptr) self->reveal(); }); })
         .withEventListener ("st_master", [this] (const juce::var& v) { proc.setMasterOut ((float) (double) v.getProperty ("v", 1.0)); })
         .withEventListener ("st_fullscreen", [this] (const juce::var&) { toggleFullScreen(); })
         .withEventListener ("st_title", [this] (const juce::var& v) { setTitle (v.getProperty ("title", "Semitone Studio").toString()); })

@@ -48,3 +48,4 @@ node tests/web/regression.test.js
 - `chord-ideas.test.js`: the sounding chord is lit while the song plays and while an idea previews in context.
 - `beat-master.test.js`: drum rows (drop, add, delete, undo), master volume, meters, sidechain.
 - `track-tools.test.js`: folding tracks into tags, colours, the × buttons, Delete key, right-click menus, editable velocity.
+- `one-roll.test.js`: bass and added parts on the same piano roll as melody (move, stretch, add, delete, velocity, undo, linked layers).
