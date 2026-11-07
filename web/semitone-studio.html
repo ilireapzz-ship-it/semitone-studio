@@ -2560,6 +2560,7 @@ function rollPos(e){ const r=$('#roll').getBoundingClientRect(); return {x:e.cli
 function hitNote(x,y){ for(let i=S.rects.length-1;i>=0;i--){ const q=S.rects[i]; if(x>=q.x-1&&x<=q.x+q.w+1&&y>=q.y-1&&y<=q.y+q.h+1) return q; } return null; }
 const edgeZone=q=>Math.max(5,Math.min(10,q.w*.3));
 let drag=null;
+function selToggle(src){ if(S.selSet.has(src)) S.selSet.delete(src); else { if(S.selNote&&!S.selSet.size) S.selSet.add(S.selNote); S.selSet.add(src); } S.selNote=S.selSet.size===1?[...S.selSet][0]:null; if(!S.playing) renderRoll(); selInfo(); }
 function initRollEditing(){
   const cv=$('#roll');
   cv.addEventListener('pointerdown',e=>{
@@ -2572,7 +2573,8 @@ function initRollEditing(){
     if(!q){ e.preventDefault(); marqStart(e,'song',cv); return; }
     e.preventDefault();
     const src=q.n.src, mode=(q.x+q.w-p.x)<=edgeZone(q)?'resize':'move';
-    if(e.shiftKey){ if(S.selSet.has(src)) S.selSet.delete(src); else { if(S.selNote&&!S.selSet.size) S.selSet.add(S.selNote); S.selSet.add(src); } S.selNote=S.selSet.size===1?[...S.selSet][0]:null; if(!S.playing) renderRoll(); selInfo(); return; }
+    if(e.shiftKey&&(mode==='resize'||rollLinked())){ selToggle(src); return; }
+    if(e.shiftKey){ /* like FL Studio: Shift and drag leaves a copy behind; a Shift-click with no drag still adds to the selection */ const G0=S.selSet.has(src)?rollArr().filter(n=>S.selSet.has(n)):[src]; drag={mode:'move',dup:'wait',src,group:G0.map(n=>({n,start0:n.start,dur0:n.dur,m0:n.m})),x0:p.x,y0:p.y,start0:src.start,dur0:src.dur,m0:src.m,lastM:src.m,snap:snapshotMel()}; try{cv.setPointerCapture(e.pointerId);}catch(_){} return; }
     if(!S.selSet.has(src)) S.selSet=new Set([src]);
     const group=rollArr().filter(n=>S.selSet.has(n)).map(n=>({n,start0:n.start,dur0:n.dur,m0:n.m}));
     drag={mode,src,group,x0:p.x,y0:p.y,start0:src.start,dur0:src.dur,m0:src.m,lastM:src.m,snap:snapshotMel()}; selInfo();
@@ -2583,19 +2585,23 @@ function initRollEditing(){
     if(!S.rl) return; const p=rollPos(e);
     if(S.erasing){ const q=hitNote(p.x,p.y); if(q) deleteNote(q.n.src); return; }
     if(!drag){ if(p.y<S.rl.top-4){ cv.style.cursor='pointer'; return; } const q=hitNote(p.x,p.y), T=S.rollTool||'select'; cv.style.cursor=T==='erase'?'not-allowed':!q?(T==='draw'?'cell':'crosshair'):(q.x+q.w-p.x)<=edgeZone(q)?'ew-resize':'grab'; return; }
+    if(drag.dup==='wait'){ if(Math.hypot(p.x-drag.x0,p.y-drag.y0)<4) return; const arr=rollArr(); drag.clones=drag.group.map(g=>{ const c=JSON.parse(JSON.stringify(g.n)); arr.push(c); return c; }); drag.dup=true; S.selSet=new Set(drag.group.map(g=>g.n)); S.selNote=drag.src; selInfo(); auditionNote(drag.src.m,drag.src.vel); }
     S.snapHold=e.metaKey||e.ctrlKey; const L=S.rl, bpp=L.TB/L.W, blockLen=songBL(), src=drag.src, db=(p.x-drag.x0)*bpp;
     const G=drag.group;
     if(drag.mode==='move'){
       const minS=Math.min(...G.map(g=>g.start0)), maxE=Math.max(...G.map(g=>g.start0+g.dur0)), lo=Math.min(...G.map(g=>g.m0)), hi=Math.max(...G.map(g=>g.m0));
       const ds=Math.max(-minS,Math.min(blockLen-maxE,snapB(drag.start0+db)-drag.start0)), dm=Math.max(rollMin()-lo,Math.min(rollMax()-hi,Math.round((drag.y0-p.y)/L.rh)));
       G.forEach(g=>{ g.n.start=+(g.start0+ds).toFixed(4); g.n.m=g.m0+dm; });
-      if(src.m!==drag.lastM){ drag.lastM=src.m; G.slice(0,6).forEach(g=>auditionNote(g.n.m,g.n.vel)); } cv.style.cursor='grabbing';
+      if(src.m!==drag.lastM){ drag.lastM=src.m; G.slice(0,6).forEach(g=>auditionNote(g.n.m,g.n.vel)); } cv.style.cursor=drag.dup?'copy':'grabbing';
     } else {
       const minD=S.snap&&!S.snapHold?S.snap:.03, dd=snapB(drag.dur0+db)-drag.dur0; G.forEach(g=>{ g.n.dur=Math.max(minD,Math.min(blockLen-g.n.start,g.dur0+dd)); }); S.lastLen=src.dur;
     }
     refreshAfterEdit(false);
   });
   const end=()=>{ S.erasing=false; S.snapHold=false; if(!drag) return; const d=drag; drag=null;
+    if(d.dup==='wait'){ selToggle(d.src); return; }
+    if(d.dup&&!d.group.some(g=>g.n.start!==g.start0||g.n.m!==g.m0)){ const arr=rollArr(); d.clones.forEach(c=>{ const i=arr.indexOf(c); if(i>=0) arr.splice(i,1); }); refreshAfterEdit(true); return; }
+    if(d.dup){ const k=d.group.length; toast(`Duplicated ${k} note${k>1?'s':''}`); }
     if(d.group.some(g=>g.n.start!==g.start0||g.n.dur!==g.dur0||g.n.m!==g.m0)){ pushUndo(d.snap); rollArr().sort((a,b)=>a.start-b.start); }
     const moved=d.group.some(g=>g.n.start!==g.start0||g.n.m!==g.m0); refreshAfterEdit(true); if(moved&&d.group.length===1) auditionContext(d.src); };
   cv.addEventListener('pointerup',end); cv.addEventListener('pointercancel',end);
@@ -8162,7 +8168,7 @@ Object.assign(RAIL_I,{semiUp:'<path d="M8 12.5V4M5 7l3-3 3 3"/>',semiDown:'<path
 try{ S.artMode=localStorage.getItem('ss_artmode')==='1'; }catch(_){}
 /* the tool bar down the side of the roll: every tool lives in the Tool Pool, and the bar holds the ones you picked, in your order */
 const RT={
- select:{g:'Write',n:'Select',k:'V',tip:'Select: click or drag to move notes (V)',tool:1,keep:1},
+ select:{g:'Write',n:'Select',k:'V',tip:'Select: click or drag to move notes. Shift and drag to duplicate (V)',tool:1,keep:1},
  slice:{g:'Write',n:'Slice',k:'C',tip:'Slice: click a note to cut it in two (C)',tool:1},
  art:{g:'Write',n:'Articulation mode',tip:'Articulation mode: click a melody note to set how it is played (legato, staccato, slide…). Off: no pop-up while you write.',id:'artModeBtn',fn:()=>artModeToggle()},
  draw:{g:'Write',n:'Draw',k:'P',tip:'Draw: click anywhere to place a note (P)',tool:1},
@@ -8264,7 +8270,7 @@ const MB={open:null,standalone:false};
 function mbCmd(n){ return ()=>{ const c=CMDS.find(q=>q[0]===n); if(c) c[1](); }; }
 function mbKey(key,o={}){ return ()=>document.body.dispatchEvent(new KeyboardEvent('keydown',{key,bubbles:true,cancelable:true,metaKey:!o.plain,...o})); }
 function mbShow(el){ const p=$('#recipePop'); p.hidden=true; }
-function helpKeys(){ const P=$('#recipePop'), L=[['Space','Play or stop'],['V','Select tool'],['P','Draw tool'],['D','Erase tool'],['C','Slice tool'],['G','Snap or free move'],['Hold ⌘ while dragging','Switch snap for a moment'],['Q','Quantize to the grid'],['Delete','Remove what’s selected'],['⌘C, ⌘V, ⌘D','Copy, paste, duplicate'],['⌘A','Select all'],['Arrows','Nudge notes (Shift: an octave)'],['⌘Z, ⇧⌘Z','Undo, redo'],['⌘S','Save'],['⌘K','Search or do anything'],['⌘J','Hide or show the editor'],['⌃⌘F','Full screen']]; P.classList.remove('wide'); P.innerHTML=`<div class="pop-head"><b>Keyboard shortcuts</b></div><div class="hk">${L.map(([k,t])=>`<kbd>${esc(k)}</kbd><span>${esc(t)}</span>`).join('')}</div>`; P.hidden=false; P.onclick=e=>e.stopPropagation(); P.style.left=Math.max(8,innerWidth/2-170)+'px'; P.style.top='70px'; }
+function helpKeys(){ const P=$('#recipePop'), L=[['Space','Play or stop'],['V','Select tool'],['P','Draw tool'],['D','Erase tool'],['C','Slice tool'],['G','Snap or free move'],['Hold ⌘ while dragging','Switch snap for a moment'],['Shift and drag a note','Duplicate it'],['Shift-click','Add a note to the selection'],['Q','Quantize to the grid'],['Delete','Remove what’s selected'],['⌘C, ⌘V, ⌘D','Copy, paste, duplicate'],['⌘A','Select all'],['Arrows','Nudge notes (Shift: an octave)'],['⌘Z, ⇧⌘Z','Undo, redo'],['⌘S','Save'],['⌘K','Search or do anything'],['⌘J','Hide or show the editor'],['⌃⌘F','Full screen']]; P.classList.remove('wide'); P.innerHTML=`<div class="pop-head"><b>Keyboard shortcuts</b></div><div class="hk">${L.map(([k,t])=>`<kbd>${esc(k)}</kbd><span>${esc(t)}</span>`).join('')}</div>`; P.hidden=false; P.onclick=e=>e.stopPropagation(); P.style.left=Math.max(8,innerWidth/2-170)+'px'; P.style.top='70px'; }
 function mbItems(k){ const native=!!window.__JUCE__, part=(role,t)=>[t,()=>{ cmdShowCompose(); xAdd(role); }]; return ({
  File:[['New idea',mbCmd('New idea')],...(native?[['Open a song file…',mbKey('o'),0,'⌘O']]:[]),['Save',mbCmd('Save the song'),0,'⌘S'],['Keep as a new version',mbCmd('Keep as a new version')],'-',['Export song MIDI',mbCmd('Export song MIDI')],['Export to your DAW',mbCmd('Export to your DAW')],['Pitch pack',mbCmd('Pitch pack')]],
  Edit:[['Undo',mbCmd('Undo'),0,'⌘Z'],['Redo',mbCmd('Redo'),0,'⇧⌘Z'],['History',mbCmd('History')],'-',['Cut',mbKey('x'),0,'⌘X'],['Copy',mbKey('c'),0,'⌘C'],['Paste',mbKey('v'),0,'⌘V'],['Duplicate',mbKey('d'),0,'⌘D'],['Delete',mbKey('Delete',{metaKey:false}),0,'Del'],['Select all',mbKey('a'),0,'⌘A'],'-',['Quantize',()=>rollQuant(),0,'Q']],

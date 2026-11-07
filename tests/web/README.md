@@ -51,7 +51,7 @@ node tests/web/regression.test.js
 - `one-roll.test.js`: bass and added parts on the same piano roll as melody (move, stretch, add, delete, velocity, undo, linked layers).
 - `drum-roll.test.js`: the step grid and drum piano roll edit one pattern (add, drag, velocity, delete, undo, both directions).
 - `toolbar.test.js`: snap and free move, Select, Draw, Erase, Slice, Quantize, the timeline grid and the menu bar.
-- `roll-feel.test.js`: hearing notes on click, entry and drag, moving a selection as one, the piano keys, plug-ins opening.
+- `roll-feel.test.js`: hearing notes on click, entry and drag, moving a selection as one, the piano keys, plug-ins opening. Also Shift and drag to duplicate, one undo for it, and Shift-click still selecting.
 - `startup.test.js`: big songs reach the page in base64, unchanged, so opening never locks up.
 - `daw-tools.test.js`: Redo, Articulation mode, scrolling and zooming the roll and timeline, splitting, duplicate and empty tracks, track and mixer order.
 - `tool-pool.test.js`: the piano roll tool bar starts Select, Slice, Articulation mode; drag to reorder; the Tool Pool window (add, remove, drag in and out, move, undo, search, Starter/Default/Everything), right-click and ⚙ entry points, fits at 900×600, order kept after reopening.

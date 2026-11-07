@@ -32,4 +32,18 @@ let fails=0; const ok=(c,m,x)=>{ if(!c){ fails++; console.log('FAIL',m,x===undef
  ok(em===1&&await p.evaluate(()=>$('#recipePop').hidden),'clicking an instrument with a plug-in opens it');
  const nt=await p.evaluate(()=>{ __e.length=0; delete window.partHear; return 1; });
  ok(await p.evaluate(()=>{ __e.length=0; S.parts.bass.sound=''; soundSet('bass','h:Other'); const a=__e.filter(x=>x[0]==='st_host_open').length; HOSTS.showCh===hostCh('bass'); return a===0&&HOSTS.showCh===hostCh('bass'); }),'picking a plug-in waits for it to load');
+ // Shift and drag duplicates, like FL Studio; Shift-click still adds to the selection; one undo removes the copy
+ await p.evaluate(()=>{ setLayer('melody'); S.selSet=new Set(); S.selNote=null; S.rollTool='select'; renderRoll(); }); await p.waitForTimeout(100);
+ const sd=await p.evaluate(()=>{ const R=$('#roll').getBoundingClientRect(), q=S.rects.find(r=>r.n.src&&r.w>14), n=q.n.src; return {x:R.left+q.x+q.w/2,y:R.top+q.y+q.h/2,rh:S.rl.rh,len:rollArr().length,m:n.m,st:n.start}; });
+ await p.keyboard.down('Shift'); await p.mouse.move(sd.x,sd.y); await p.mouse.down(); await p.mouse.move(sd.x,sd.y-sd.rh*2-2,{steps:5}); await p.mouse.up(); await p.keyboard.up('Shift'); await p.waitForTimeout(120);
+ const sr=await p.evaluate(sd=>{ const A=rollArr(); return {len:A.length,orig:A.filter(n=>n.m===sd.m&&Math.abs(n.start-sd.st)<1e-6).length,moved:A.filter(n=>n.m===sd.m+2&&Math.abs(n.start-sd.st)<1e-6).length,sel:S.selSet.size}; },sd);
+ ok(sr.len===sd.len+1&&sr.orig>=1&&sr.moved>=1&&sr.sel===1,'Shift and drag leaves a copy behind',[sd,sr]);
+ await p.evaluate(()=>{ histCheck(true); $('#histUndo').click(); }); await p.waitForTimeout(80);
+ ok(await p.evaluate(n=>rollArr().length===n,sd.len),'one undo takes the copy away');
+ const sc=await p.evaluate(()=>{ S.selSet=new Set(); S.selNote=null; renderRoll(); const R=$('#roll').getBoundingClientRect(), Q=S.rects.filter(r=>r.n.src&&r.w>14); return Q.slice(0,2).map(q=>({x:R.left+q.x+q.w/2,y:R.top+q.y+q.h/2})); });
+ const n0=await p.evaluate(()=>rollArr().length); await p.mouse.click(sc[0].x,sc[0].y); await p.keyboard.down('Shift'); await p.mouse.click(sc[1].x,sc[1].y); await p.keyboard.up('Shift');
+ ok(await p.evaluate(n0=>S.selSet.size===2&&rollArr().length===n0,n0),'Shift-click still adds to the selection');
+ // Shift and drag a selected note copies the whole selection
+ await p.keyboard.down('Shift'); await p.mouse.move(sc[1].x,sc[1].y); await p.mouse.down(); await p.mouse.move(sc[1].x,sc[1].y-sd.rh*12-2,{steps:6}); await p.mouse.up(); await p.keyboard.up('Shift'); await p.waitForTimeout(100);
+ ok(await p.evaluate(n0=>rollArr().length===n0+2&&S.selSet.size===2,n0),'Shift and drag copies every selected note');
  ok(!errs.length,'no page errors',errs); await b.close(); console.log(fails?fails+' failed':'roll-feel ok'); process.exit(fails?1:0); })();
