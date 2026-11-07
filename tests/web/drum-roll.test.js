@@ -34,6 +34,7 @@ let fails=0; const ok=(c,m,x)=>{ if(!c){ fails++; console.log('FAIL',m,x===undef
  await p.click(`#seq .step[data-r="${q.r}"][data-i="${q.i}"]`); await p.waitForTimeout(150);
  await p.evaluate(()=>drumRollOpen()); await p.waitForTimeout(250);
  ok(await p.evaluate(([r,i])=>S.rects.some(k=>drumRow(k.n.m)===r&&near(k.n.start,i*.25)),[q.r,q.i]),'a step lit in the grid shows on the roll',q);
+ { const t=await p.evaluate(()=>{ const n=rollArr().find(q=>q.m<rollMax()), r0=drumRow(n.m); S.selSet=new Set([n]); S.selNote=n; songNudge(0,1); const a=drumRow(n.m)!==r0; n.m=rollMax(); songNudge(0,5); return {moved:a,top:n.m===rollMax()}; }); ok(t.moved&&t.top,'arrow keys move a hit between drums and stop at the top row',t); }
  // back to melody
  await p.evaluate(()=>setLayer('melody')); await p.waitForTimeout(150);
  ok(await p.evaluate(()=>SHELL.part==='lead'&&!rollPart()&&S.rects.length>0&&getComputedStyle($('.clane-wrap')).display!=='none'),'back to Melody');

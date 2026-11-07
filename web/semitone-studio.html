@@ -6694,7 +6694,7 @@ function songPaste(at){ const C=CLIP.song; if(!C){ toast('Nothing copied yet'); 
   mel.sort((a,b)=>a.start-b.start); S.selSet=new Set(add); S.selNote=add[0]||null; refreshAfterEdit(true); selInfo(); toast(`Pasted ${add.length} note${add.length>1?'s':''}${drop?` (${drop} didn’t fit in the ${Math.round(BL/METERS[S.meter].B)}-bar block)`:''}`); }
 function songDuplicate(){ const a=songSel(); if(!a.length) return; songCopy(false); songPaste(CLIP.song.end); }
 function songNudge(ds,dm){ const a=songSel(); if(!a.length) return; const BL=songBL(); const minS=Math.min(...a.map(n=>n.start)), maxE=Math.max(...a.map(n=>n.start+n.dur)), lo=Math.min(...a.map(n=>n.m)), hi=Math.max(...a.map(n=>n.m));
-  ds=Math.max(-minS,Math.min(BL-maxE,ds)); dm=Math.max(36-lo,Math.min(96-hi,dm)); if(!ds&&!dm) return; pushUndo(snapshotMel()); a.forEach(n=>{ n.start=+(n.start+ds).toFixed(4); n.m+=dm; }); matOfSel().melody.sort((x,y)=>x.start-y.start); refreshAfterEdit(true); if(dm&&a.length<=4) auditionNote(a[0].m); }
+  ds=Math.max(-minS,Math.min(BL-maxE,ds)); dm=Math.max(rollMin()-lo,Math.min(rollMax()-hi,dm)); if(!ds&&!dm) return; pushUndo(snapshotMel()); a.forEach(n=>{ n.start=+(n.start+ds).toFixed(4); n.m+=dm; }); rollArr().sort((x,y)=>x.start-y.start); refreshAfterEdit(true); if(dm&&a.length<=4) auditionNote(a[0].m); }
 /* ---- orchestra operations ---- */
 function orchSel(){ const out=[]; Object.entries(O.parts[O.sel]||{}).forEach(([id,arr])=>(arr||[]).forEach(n=>{ if(O.selSet.has(n)||(!O.selSet.size&&n===O.selNote)) out.push({id,n}); })); return out; }
 function redrawIds(ids){ [...new Set(ids)].forEach(id=>refreshORow(id)); }

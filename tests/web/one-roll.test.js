@@ -28,6 +28,7 @@ let fails=0; const ok=(c,m,x)=>{ if(!c){ fails++; console.log('FAIL',m,x===undef
  await p.mouse.move(v.x,v.t+v.h-10); await p.mouse.down(); await p.mouse.up(); await p.waitForTimeout(150);
  const vv=await p.evaluate(()=>{ const bar=barList('song').find(b=>b.si===S.sel&&b.b===0); return {n:rollArr()[0].vel,played:bassNotes(bar)[0].vel}; });
  ok(vv.n<.3&&vv.played===vv.n,'bass velocity is editable and plays',vv);
+ { const low=await p.evaluate(()=>{ const n=rollArr()[0]; n.m=30; S.selSet=new Set([n]); S.selNote=n; invalidateViews(); songNudge(0,-1); return rollArr()[0].m; }); ok(low===29,'arrow keys reach low bass notes',low); }
  // undo walks back to the generated line; follow-the-chords clears it
  await p.evaluate(()=>{ for(let i=0;i<8&&S.bassOwn;i++) $('#undoBtn')?$('#undoBtn').click():0; }); await p.waitForTimeout(250);
  await p.evaluate(()=>{ if(S.bassOwn) bassFollow(); }); await p.waitForTimeout(120);
