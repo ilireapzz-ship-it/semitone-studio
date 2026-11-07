@@ -9,6 +9,7 @@
 #include <map>
 #include <set>
 #include <array>
+#include <mutex>
 
 // The plugin: plays the song from the Semitone interface as MIDI, in time with the host.
 // Each part leaves on its own MIDI channel so the DAW can route it to any instrument (Omnisphere etc).
@@ -16,6 +17,7 @@ class SemitoneProcessor : public juce::AudioProcessor
 {
 public:
     SemitoneProcessor();
+    ~SemitoneProcessor() override;
 
     void prepareToPlay (double sampleRate, int) override;
     void releaseResources() override {}
@@ -57,6 +59,7 @@ public:
     int getSoundMode() const { return soundMode.load(); }
     void setStandaloneTempo (double bpm) { if (bpm > 0) stBpm = bpm; }
     void setListen (float lo, float hi) { listenLo = lo; listenHi = hi; }
+    bool isBouncing() const { return bouncingNow.load(); }
     bool bounce (const juce::File& file, double beats, double bpm, const std::vector<std::pair<double, double>>& tempo, std::function<void (float)> progress);
     // layout: [{id, at}] — returns the clip ids this plugin still needs rendered
     juce::StringArray setAudioLayout (const juce::var& items);
@@ -106,7 +109,9 @@ private:
     std::atomic<float> listenLo { 0 }, listenHi { 0 };   // Listen on: what you hear, never what's exported
     float listenWasLo = 0, listenWasHi = 0;
     st::Biquad listenHp, listenLp;
-    std::atomic<bool> bouncingNow { false };
+    std::atomic<bool> bouncingNow { false }, abortBounce { false };
+    std::mutex renderLock;                 // held for a whole export; a device restart during it waits until the export ends
+    double pendingSr = 0; int pendingBlock = 0;   // a prepareToPlay that arrived mid-export
     std::atomic<bool> engineAll { false };   // app only: the engine plays the whole song (a plug-in is on a part)
     std::atomic<double> tlLength { 0.0 }, tlOffset { 0.0 };
     std::map<juce::String, std::shared_ptr<st::Clip>> clips;   // message thread

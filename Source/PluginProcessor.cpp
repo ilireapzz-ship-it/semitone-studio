@@ -17,12 +17,22 @@ SemitoneProcessor::SemitoneProcessor()
     }
 }
 
+// quitting mid-export: stop the export and wait for its thread before anything it uses goes away
+SemitoneProcessor::~SemitoneProcessor()
+{
+    abortBounce = true;
+    for (int i = 0; i < 500 && bouncingNow.load(); ++i) juce::Thread::sleep (10);
+}
+
 void SemitoneProcessor::prepareToPlay (double sampleRate, int maxBlock)
 {
+    // an export is running on its own thread: changing the engine now would pull buffers out from under it, so do it when the export ends
+    std::unique_lock<std::mutex> g (renderLock, std::try_to_lock);
+    if (! g.owns_lock()) { pendingSr = sampleRate; pendingBlock = maxBlock; return; }
     const bool changed = sampleRate != sr;
     sr = sampleRate;
     blockNow = maxBlock;
-    if (changed) synth.setPatch (nullptr);   // notes rendered for the old rate would play out of tune until the rebuild lands
+    if (changed) { synth.setPatch (nullptr); listenWasLo = listenWasHi = -1; }   // -1: the Listen filters are worked out again for the new rate   // notes rendered for the old rate would play out of tune until the rebuild lands
     synth.prepare (sr);
     synth.plugFx = [this] (int ch, float* l, float* r, int k) { if (host) host->processChannelFx (ch, l, r, k); };
     if (host) host->prepare (sr, maxBlock);
@@ -137,11 +147,14 @@ void SemitoneProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
         {
             for (const auto& e : events) if (waiting.size() < 8192) waiting.push_back ({ sampleClock + e.offset + engineWait, e });
             soon.clear();
-            for (size_t i = 0; i < waiting.size();)
+            // keep arrival order: a note-off and the next note-on on the same sample must reach the synth in that order
+            size_t keep = 0;
+            for (size_t i = 0; i < waiting.size(); ++i)
             {
-                if (waiting[i].at < sampleClock + n) { auto e = waiting[i].e; e.offset = (int) juce::jmax ((juce::int64) 0, waiting[i].at - sampleClock); soon.push_back (e); waiting[i] = waiting.back(); waiting.pop_back(); }
-                else ++i;
+                if (waiting[i].at < sampleClock + n) { auto e = waiting[i].e; e.offset = (int) juce::jmax ((juce::int64) 0, waiting[i].at - sampleClock); soon.push_back (e); }
+                else waiting[keep++] = waiting[i];
             }
+            waiting.erase (waiting.begin() + (std::ptrdiff_t) keep, waiting.end());
             const double held = beat - engineWait * (bpm / 60.0 / sr);
             synth.process (soon, n, L, R, covered ? 0.0f : 1.0f, beat < 0 ? -1 : juce::jmax (-1.0, held), bpm / 60.0 / sr);
         }
@@ -532,6 +545,8 @@ bool SemitoneProcessor::bounce (const juce::File& file, double beats, double bpm
     std::unique_ptr<juce::AudioFormatWriter> w (wav.createWriterFor (stream, sr, 2, 24, {}, 0));
     if (w == nullptr) { delete stream; return false; }
 
+    std::unique_lock<std::mutex> g (renderLock);
+    pendingSr = 0;
     const int bs = juce::jmax (64, juce::jmin (512, blockNow));
     suspendProcessing (true);
     bouncingNow = true;
@@ -546,7 +561,7 @@ bool SemitoneProcessor::bounce (const juce::File& file, double beats, double bpm
     double at = 0;
     bool ok = true;
     int tail = (int) (sr * 3) + skip;
-    while (ok && (at < beats || tail > 0))
+    while (ok && ! abortBounce.load() && (at < beats || tail > 0))
     {
         if (at >= beats) { if (stPlaying.load()) stPlaying = false; tail -= bs; }
         while (mark < tempo.size() && tempo[mark].first <= at) { stBpm = tempo[mark].second; ++mark; }
@@ -565,9 +580,12 @@ bool SemitoneProcessor::bounce (const juce::File& file, double beats, double bpm
     w.reset();
     stBpm = bpm;
     host->setOffline (false);
+    const double psr = pendingSr; const int pblock = pendingBlock;
+    g.unlock();
+    if (psr > 0 && ! abortBounce.load()) prepareToPlay (psr, pblock);
     bouncingNow = false;
     suspendProcessing (false);
-    return ok;
+    return ok && ! abortBounce.load();
 }
 
 void SemitoneProcessor::setStandaloneTransport (bool play, double startBeat, double bpm)

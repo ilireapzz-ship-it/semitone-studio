@@ -109,10 +109,11 @@ public:
         const auto& ns = current->notes;
         double a = ppqStart;
         int guard = 0;
+        double k = std::floor (a / L);   // which pass of the loop; counted, not re-derived, so rounding can't send it back a pass
         while (a < ppqEnd && guard++ < 64)
         {
-            const double base = std::floor (a / L) * L;
-            const double from = a - base;
+            const double base = k * L;
+            const double from = std::max (0.0, a - base);
             const double to = std::min (ppqEnd - base, L);
             const auto& cs = current->ctls;
             auto ci = std::lower_bound (cs.begin(), cs.end(), from, [] (const Ctl& c, double v) { return c.at < v; });
@@ -132,8 +133,8 @@ public:
                 else if (active.size() < active.capacity())
                     active.push_back ({ absEnd, it->ch & 15, it->key & 127 });
             }
-            a = base + to;
-            if (to >= L) a = base + L;
+            if (to >= L) { k += 1; a = k * L; }
+            else a = ppqEnd;
         }
     }
 

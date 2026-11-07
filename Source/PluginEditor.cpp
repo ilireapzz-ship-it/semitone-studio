@@ -209,6 +209,7 @@ juce::WebBrowserComponent::Options SemitoneEditor::makeOptions()
         .withEventListener ("st_timeline", [this] (const juce::var& v) { proc.setTimelineFromVar (v); })
         .withEventListener ("st_state", [this] (const juce::var& v) { proc.setProjectState (v.getProperty ("json", "").toString()); })
         .withEventListener ("st_transport", [this] (const juce::var& v) {
+            if (proc.isBouncing()) return;   // the export owns the transport until it ends
             proc.setStandaloneTransport ((bool) v.getProperty ("play", false), (double) v.getProperty ("beat", 0.0), (double) v.getProperty ("bpm", 120.0));
         })
         .withEventListener ("st_listen", [this] (const juce::var& v) { proc.setListen ((float) (double) v.getProperty ("lo", 0.0), (float) (double) v.getProperty ("hi", 0.0)); })
@@ -619,17 +620,17 @@ void SemitoneEditor::startBounce (const juce::var& v)
         for (int i = 0; i + 1 < t->size(); i += 2) tempo.push_back ({ (double) (*t)[i], (double) (*t)[i + 1] });
     juce::Component::SafePointer<SemitoneEditor> self (this);
     auto say = [self] (const char* id, juce::var o) { juce::MessageManager::callAsync ([self, id, o] { if (self != nullptr) self->browser.emitEventIfBrowserIsVisible (id, o); }); };
-    juce::Thread::launch ([this, self, file, beats, bpm, tempo, say]
+    auto& p = proc;
+    juce::Thread::launch ([&p, self, file, beats, bpm, tempo, say]
     {
         int last = -1;
-        const bool ok = proc.bounce (file, beats, bpm, tempo, [&] (float f)
+        const bool ok = p.bounce (file, beats, bpm, tempo, [&] (float f)
         {
             const int pct = (int) (f * 100);
             if (pct != last) { last = pct; auto* o = new juce::DynamicObject(); o->setProperty ("pct", pct); say ("st_bounce_progress", juce::var (o)); }
         });
         auto* o = new juce::DynamicObject(); o->setProperty ("ok", ok); o->setProperty ("path", file.getFullPathName());
-        say ("st_bounce_done", juce::var (o));
-        bouncing = false;
+        juce::MessageManager::callAsync ([self, o = juce::var (o)] { if (self != nullptr) { self->bouncing = false; self->browser.emitEventIfBrowserIsVisible ("st_bounce_done", o); } });
     });
 }
 

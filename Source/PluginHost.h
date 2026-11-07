@@ -102,11 +102,13 @@ public:
     {
         if (ch < 0 || ch > 15) return;
         clear (ch);
+        const auto gen = ++loadGen[(size_t) ch];   // a later pick (or removing it) wins over a load still on its way
         if (id.isEmpty()) return;
         auto d = known.getTypeForIdentifierString (id);
         if (d == nullptr) { if (onLoaded) onLoaded (ch, false, "That plug-in isn't on this computer"); return; }
-        fm.createPluginInstanceAsync (*d, sr, bs, [this, ch, stateB64] (std::unique_ptr<juce::AudioPluginInstance> p, const juce::String& err)
+        fm.createPluginInstanceAsync (*d, sr, bs, [this, ch, stateB64, gen, alive = aliveFlag] (std::unique_ptr<juce::AudioPluginInstance> p, const juce::String& err)
         {
+            if (! alive->load() || gen != loadGen[(size_t) ch]) return;
             if (p == nullptr) { if (onLoaded) onLoaded (ch, false, err); return; }
             // leave its buses alone: some instruments crash if outputs are switched off. process() gives room for them all and uses the first two.
             p->setRateAndBufferSizeDetails (sr, bs);
@@ -178,6 +180,7 @@ public:
 
     void openWindow (int ch)
     {
+        if (ch < 0 || ch > 15) return;
         auto* p = inst[(size_t) ch].get();
         if (p == nullptr || ! p->hasEditor() || windows[(size_t) ch]) return;
         windows[(size_t) ch] = std::make_unique<HostWindow> (*p, [this, ch] { juce::MessageManager::callAsync ([this, ch] { windows[(size_t) ch].reset(); }); });
@@ -185,6 +188,7 @@ public:
 
     juce::String stateB64 (int ch)
     {
+        if (ch < 0 || ch > 15) return {};
         auto* p = inst[(size_t) ch].get();
         if (p == nullptr) return {};
         juce::MemoryBlock mb; p->getStateInformation (mb);
@@ -231,11 +235,13 @@ public:
         std::unique_ptr<juce::AudioPluginInstance> old;
         { const juce::SpinLock::ScopedLockType sl (lock); old = std::move (fx[(size_t) t][(size_t) slot]); }
         old.reset();
+        const auto gen = ++fxGen[(size_t) t][(size_t) slot];
         if (id.isEmpty()) return;
         auto d = known.getTypeForIdentifierString (id);
         if (d == nullptr) { if (onFxLoaded) onFxLoaded (t, slot, false, "That effect isn't on this computer"); return; }
-        fm.createPluginInstanceAsync (*d, sr, bs, [this, t, slot, stateB64] (std::unique_ptr<juce::AudioPluginInstance> p, const juce::String& err)
+        fm.createPluginInstanceAsync (*d, sr, bs, [this, t, slot, stateB64, gen, alive = aliveFlag] (std::unique_ptr<juce::AudioPluginInstance> p, const juce::String& err)
         {
+            if (! alive->load() || gen != fxGen[(size_t) t][(size_t) slot]) return;
             if (p == nullptr) { if (onFxLoaded) onFxLoaded (t, slot, false, err); return; }
             p->setRateAndBufferSizeDetails (sr, bs);
             if (stateB64.isNotEmpty()) { juce::MemoryBlock mb; if (mb.fromBase64Encoding (stateB64)) p->setStateInformation (mb.getData(), (int) mb.getSize()); }
@@ -377,6 +383,7 @@ public:
     // The controls worth drawing: automatable, named, and not the long lists of MIDI CC stand-ins plug-ins add.
     juce::var paramsVar (int ch, const juce::var& also = {}) const
     {
+        if (ch < 0 || ch > 15) return juce::var (juce::Array<juce::var>());
         juce::Array<juce::var> first, rest;
         auto* p = inst[(size_t) ch].get();
         if (p == nullptr) return first;
@@ -458,8 +465,9 @@ public:
     // Audio thread: skips the block if a plug-in is being swapped.
     void process (const std::vector<Event>& events, int n, float* L, float* R, double beat = -1, bool toEngine = false)
     {
+        outReady.fill (false);   // a skipped block hands back silence, never last block's audio again
         const juce::SpinLock::ScopedTryLockType sl (lock);
-        if (! sl.isLocked() || n > temp.getNumSamples()) return;
+        if (! sl.isLocked() || n > temp.getNumSamples() || n > partOut.getNumSamples()) return;
         // While playing, lanes set the controls. On stop each goes back to its resting value (a lane's first
         // point), so stopping in the gap of a tremolo doesn't leave the plug-in silent.
         const bool stopped = beat < 0 && lanesMoving;
@@ -632,6 +640,8 @@ private:
     std::unique_ptr<ScanThread> scanThread;
     std::atomic<float> scanShare { 0 };
     std::shared_ptr<std::atomic<bool>> aliveFlag = std::make_shared<std::atomic<bool>> (true);
+    std::array<juce::uint32, 16> loadGen {};                       // message thread: which load of each part is the latest
+    std::array<std::array<juce::uint32, fxSlots>, masterFx + 1> fxGen {};
 
     juce::AudioPluginFormatManager fm;
     juce::KnownPluginList known;
