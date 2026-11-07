@@ -81,8 +81,20 @@ Exact values: `reference.dc.html` (a design-canvas file: copy its values, not it
 - **Values stay safe:** plug-in limits (`max` in plugin-maps) and level limits apply, and volume moves above 0 dB warn.
 
 ## Macros (`4-Macro.png`, exact values in `reference-macro.dc.html`)
-Look: a machined knob (tick ring 0 → .5 → 1, brass arc that glows, dark domed cap with a soft shadow, brass pointer), the value in an
-inset display ("0.48 · at bar 14 · Pre"), and preset chips (Lift, Open up, Pull back, Tension). Each control is a soft card with an icon tile in
+Look (modern, clean):
+- **The knob:**
+  - a 41-segment LED ring (lit segments brass, brighter towards the value, unlit graphite);
+  - a dotted inner arc showing the range the song's Energy line covers (0.15–1.00), with end dots;
+  - a matte cap with a fine knurled rim and a soft drop shadow;
+  - a brass pointer line and dot;
+  - the value printed in the centre ("0.48", with "ENERGY · PRE" under it), and 0 and 1 at the ends.
+- Under it, three joined tiles: Lowest / **Now** / Peak.
+- One short line of help.
+- A segmented preset control (Lift, Open up, Pull back, Tension).
+- **Snapshots A and B** ("Verse feel 0.30", "Chorus feel 0.95"): click to jump, drag between them to morph.
+- Then **Draw it from the emotion line**.
+- No empty bands: the song preview on the right grows to fill the height, and "＋ Add a control" is a dashed full-width row
+  ("drag one from the lanes on the left"). Each control is a soft card with an icon tile in
 the part colour, its name and where it lives, a recessed range track with tick marks, metal end caps, a fill in the part colour, a glowing brass
 diamond at the current value with a value tag, a small response graph showing where the knob sits now, and an invert toggle. "Across the song"
 shows the Energy line (brass, filled) over section bands, with each control's resulting line (dashed if inverted) and the playhead. The header
