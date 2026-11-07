@@ -1,0 +1,33 @@
+// Mix tab tidy: Smart pan / Mix check / Mono check sit in the editor's top bar (Mix only), no "Inserts" heading,
+// compact strip headers; the Drums strip's Sidechain sets which parts dip on a drum hit (one undo each, engine too);
+// dragging a strip doesn't select text and shows where it lands.
+const {chromium}=require('playwright'); const url='file://'+require('path').resolve(__dirname,'../../web/semitone-studio.html');
+(async()=>{ const b=await chromium.launch(); const p=await b.newPage({viewport:{width:1440,height:900}}); const errs=[], fails=[]; p.on('pageerror',e=>errs.push(e.message)); const ok=(c,m)=>{ console.log((c?'ok   ':'FAIL ')+m); if(!c) fails.push(m); };
+ await p.addInitScript(()=>{ window.__noStart=1; }); await p.goto(url); await p.waitForTimeout(1500);
+ await p.evaluate(()=>{ S.demo=false; try{ localStorage.removeItem('ss_mixorder'); }catch(e){} shellDock('mix'); }); await p.waitForTimeout(400);
+ const a=await p.evaluate(()=>({bar:document.querySelectorAll('#ss_dock .dock-tabs #drMix [data-mixtool]').length, inMix:document.querySelectorAll('#cMix [data-mixtool]').length, shown:!$('#drMix').hidden, cap:document.querySelectorAll('#cMix .st-cap').length, topH:document.querySelector('#cMix .st-top').offsetHeight}));
+ ok(a.bar===3&&a.inMix===0&&a.shown,'the three mix buttons are in the top bar, not above the strips');
+ ok(a.cap===0,'no "Inserts" heading'); ok(a.topH<=30,'strip headers are compact: '+a.topH+'px');
+ ok(await p.evaluate(()=>{ shellDock('lyrics'); const h=$('#drMix').hidden; shellDock('mix'); return h; }),'the buttons hide on other tabs');
+ await p.click('#drMix [data-mixtool="mono"]'); ok(await p.evaluate(()=>!!AU.monoCheck&&$('#drMix [data-mixtool="mono"]').getAttribute('aria-pressed')==='true'),'Mono check still works from the bar');
+ await p.click('#drMix [data-mixtool="mono"]');
+ await p.evaluate(()=>{ ['lead','chords','bass'].forEach(c=>delete strip('song',c).duck); renderStrips('song'); histCheck(true); });
+ const n0=await p.evaluate(()=>H.past.length);
+ await p.click('#cMix [data-scpop]'); await p.check('#recipePop [data-scc="bass"]'); await p.check('#recipePop [data-scc="chords"]');
+ const s1=await p.evaluate(n0=>({bass:strip('song','bass').duck, ch:strip('song','chords').duck, steps:H.past.length-n0, btn:$('#cMix [data-scpop]').textContent, nd:nativeDuck().length}),n0);
+ ok(s1.bass&&s1.bass.row==='kick'&&s1.ch&&s1.steps===2,'ticking parts sidechains them to the kick, one undo each');
+ ok(/2 parts/.test(s1.btn),'the Drums strip says how many parts dip: '+s1.btn);
+ ok(s1.nd===2,'the app engine gets both');
+ await p.selectOption('#recipePop [data-sct]','snare'); ok(await p.evaluate(()=>strip('song','bass').duck.row==='snare'&&strip('song','chords').duck.row==='snare'),'changing the trigger moves every ticked part to it');
+ await p.evaluate(()=>{ const r=$('#recipePop [data-scp="depth"]'); r.value='0.9'; r.dispatchEvent(new Event('input',{bubbles:true})); r.dispatchEvent(new Event('change',{bubbles:true})); });
+ ok(await p.evaluate(()=>strip('song','bass').duck.depth===0.9&&strip('song','chords').duck.depth===0.9&&/depth/.test(H.past[H.past.length-1].label)),'depth sets every ticked part, one undo');
+ ok(await p.evaluate(()=>{ histUndo(); histUndo(); histUndo(); return !strip('song','chords').duck&&strip('song','bass').duck.row==='kick'; }),'undo steps back one change at a time');
+ await p.keyboard.press('Escape'); await p.evaluate(()=>{ $('#recipePop').hidden=true; renderStrips('song'); });
+ const h=await p.locator('#cMix .strip[data-ch="lead"] .st-top b').boundingBox(); await p.mouse.move(h.x+10,h.y+8); await p.mouse.down(); await p.mouse.move(h.x+420,h.y+60,{steps:8});
+ const d=await p.evaluate(()=>({sel:getSelection().toString().length, lift:!!document.querySelector('#cMix .strip.st-drag'), mark:!!document.querySelector('#cMix .strip.drop-l,#cMix .strip.drop-r')}));
+ await p.mouse.up(); const order=await p.evaluate(()=>[...document.querySelectorAll('#cMix .mix-row .strip')].map(s=>s.dataset.ch).slice(0,3).join(','));
+ ok(d.sel===0&&d.lift&&d.mark,'dragging a strip selects no text, lifts the strip and marks where it lands');
+ ok(order==='chords,lead,bass','the strip lands there: '+order);
+ await p.evaluate(()=>{ try{ localStorage.removeItem('ss_mixorder'); }catch(e){} });
+ ok(!errs.length,'no page errors '+errs.join(' | '));
+ await b.close(); console.log(fails.length?`${fails.length} failed`:'all passed'); process.exit(fails.length?1:0); })();
