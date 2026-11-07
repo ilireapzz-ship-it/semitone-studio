@@ -43,11 +43,13 @@ let fails=0; const ok=(c,m,x)=>{ if(!c){ fails++; console.log('FAIL',m,x===undef
  await p.evaluate(()=>{ $('#recipePop').hidden=true; TG.lines='4'; TG.snap=true; }); ok(await p.evaluate(()=>{ const c=document.querySelector('#timeline [data-i="1"]').getBoundingClientRect(); const q=rulAt(c.left+c.width*.4); return q.beat%16===0; }),'the marker snaps to the grid lines');
  await p.evaluate(()=>{ TG.lines='1'; tlGridSave(); });
  // menu bar
- const names=await p.evaluate(()=>[...document.querySelectorAll('#menuBar button')].map(x=>x.textContent).join()); ok(names==='File,Edit,Add,View,Tools,Options,Help','menu bar',names);
- await p.click('[data-mb="Edit"]'); await p.waitForTimeout(80); ok(await p.isVisible('#ctxMenu')&&/Quantize/.test(await p.textContent('#ctxMenu')),'Edit opens');
- await p.hover('[data-mb="View"]'); await p.waitForTimeout(80); ok(/Timeline grid/.test(await p.textContent('#ctxMenu')),'hovering moves to the next menu');
+ const sub=async k=>{ await p.click('[data-mb="all"]'); await p.waitForTimeout(60); await p.click(`#ctxMenu button:has-text("${k}")`); await p.waitForTimeout(60); };
+ ok(await p.evaluate(()=>document.querySelectorAll('#menuBar button').length===1&&$('#menuBar button').getAttribute('aria-label')==='Settings and menus'),'one settings button instead of the menu words');
+ await p.click('[data-mb="all"]'); await p.waitForTimeout(80); ok(/File[\s\S]*Help/.test(await p.textContent('#ctxMenu')),'the settings button lists every menu');
+ await p.click('#ctxMenu button:has-text("Edit")'); await p.waitForTimeout(80); ok(await p.isVisible('#ctxMenu')&&/Quantize/.test(await p.textContent('#ctxMenu')),'Edit opens');
+ await p.click('#ctxMenu button:has-text("Back")'); await p.waitForTimeout(80); ok(/Tools/.test(await p.textContent('#ctxMenu')),'Back returns to the list');
  await p.keyboard.press('Escape'); await p.mouse.click(700,300); await p.waitForTimeout(80); ok(!await p.isVisible('#ctxMenu'),'clicking away closes it');
- const before=await count(); await p.click('[data-mb="Add"]'); await p.click('#ctxMenu button:has-text("Counter melody")'); await p.waitForTimeout(350); ok(await p.evaluate(()=>/^x/.test(SHELL.part)&&!!rollPart()),'Add makes a part and opens it');
- await p.click('[data-mb="Help"]'); await p.click('#ctxMenu button:has-text("Keyboard shortcuts")'); await p.waitForTimeout(100); ok(await p.isVisible('.hk'),'Help lists the shortcuts');
- await p.mouse.click(700,300); await p.click('[data-mb="View"]'); await p.click('#ctxMenu button:has-text("Timeline grid")'); await p.waitForTimeout(100); ok(await p.isVisible('.tg-pop'),'View opens the grid options');
+ const before=await count(); await sub('Add'); await p.click('#ctxMenu button:has-text("Counter melody")'); await p.waitForTimeout(350); ok(await p.evaluate(()=>/^x/.test(SHELL.part)&&!!rollPart()),'Add makes a part and opens it');
+ await sub('Help'); await p.click('#ctxMenu button:has-text("Keyboard shortcuts")'); await p.waitForTimeout(100); ok(await p.isVisible('.hk'),'Help lists the shortcuts');
+ await p.mouse.click(700,300); await sub('View'); await p.click('#ctxMenu button:has-text("Timeline grid")'); await p.waitForTimeout(100); ok(await p.isVisible('.tg-pop'),'View opens the grid options');
  ok(!errs.length,'no page errors',errs); await b.close(); console.log(fails?fails+' failed':'toolbar ok'); process.exit(fails?1:0); })();

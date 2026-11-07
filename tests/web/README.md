@@ -53,3 +53,4 @@ node tests/web/regression.test.js
 - `toolbar.test.js`: snap and free move, Select, Draw, Erase, Slice, Quantize, the timeline grid and the menu bar.
 - `roll-feel.test.js`: hearing notes on click, entry and drag, moving a selection as one, the piano keys, plug-ins opening.
 - `startup.test.js`: big songs reach the page in base64, unchanged, so opening never locks up.
+- `daw-tools.test.js`: Redo, Articulation mode, scrolling and zooming the roll and timeline, splitting, duplicate and empty tracks, track and mixer order.
