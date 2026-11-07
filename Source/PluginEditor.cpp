@@ -103,6 +103,7 @@ void SemitoneEditor::reveal()
 {
     if (shown) return;
     shown = true;
+    hideTitleOptions();
     resized();
     repaint();
 }
@@ -152,6 +153,7 @@ juce::WebBrowserComponent::Options SemitoneEditor::makeOptions()
             o->setProperty ("recent", st::files::recentVar());
             o->setProperty ("songFile", proc.songFile);
             o->setProperty ("soundMode", proc.getSoundMode());
+            o->setProperty ("standalone", proc.isStandalone());
             o->setProperty ("sr", proc.getSampleRateNow());
             { const juce::File sf (proc.songFile); o->setProperty ("songFileSame", sf.existsAsFile() && sf.loadFileAsString() == proc.getProjectState()); }
             o->setProperty ("prefs", juce::JSON::parse (prefsFile()));  // app settings, shared by the app and the plug-in window
@@ -183,6 +185,7 @@ juce::WebBrowserComponent::Options SemitoneEditor::makeOptions()
         .withEventListener ("st_shown", [this] (const juce::var&) { juce::Component::SafePointer<SemitoneEditor> self (this); juce::Timer::callAfterDelay (120, [self] { if (self != nullptr) self->reveal(); }); })
         .withEventListener ("st_master", [this] (const juce::var& v) { proc.setMasterOut ((float) (double) v.getProperty ("v", 1.0)); })
         .withEventListener ("st_fullscreen", [this] (const juce::var&) { toggleFullScreen(); })
+        .withEventListener ("st_options", [this] (const juce::var&) { showAudioSettings(); })
         .withEventListener ("st_title", [this] (const juce::var& v) { setTitle (v.getProperty ("title", "Semitone Studio").toString()); })
         .withEventListener ("st_timeline", [this] (const juce::var& v) { proc.setTimelineFromVar (v); })
         .withEventListener ("st_state", [this] (const juce::var& v) { proc.setProjectState (v.getProperty ("json", "").toString()); })
@@ -334,6 +337,23 @@ void SemitoneEditor::clipChunk (const juce::var& v)
 }
 
 // The app goes properly full screen. A plug-in lives in the host's window, so it grows to fill the screen and back.
+void SemitoneEditor::showAudioSettings()
+{
+   #if JucePlugin_Build_Standalone
+    if (auto* h = juce::StandalonePluginHolder::getInstance()) h->showAudioSettingsDialog();
+   #endif
+}
+
+// The page has its own menu bar, with Options in it, so the toolkit's lone Options button in the title bar goes.
+void SemitoneEditor::hideTitleOptions()
+{
+    if (! proc.isStandalone()) return;
+    if (auto* top = getTopLevelComponent())
+        for (auto* c : top->getChildren())
+            if (auto* b = dynamic_cast<juce::TextButton*> (c))
+                if (b->getButtonText() == "Options") b->setVisible (false);
+}
+
 void SemitoneEditor::toggleFullScreen()
 {
     if (proc.isStandalone())

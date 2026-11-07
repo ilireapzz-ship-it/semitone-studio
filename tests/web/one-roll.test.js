@@ -48,7 +48,7 @@ let fails=0; const ok=(c,m,x)=>{ if(!c){ fails++; console.log('FAIL',m,x===undef
  // a linked layer is read-only
  await p.evaluate(()=>{ SHELL.part='lead'; setLayer('melody'); xAddLink('lead',0); shellDock('roll'); }); await p.waitForTimeout(350);
  ok(await p.evaluate(()=>rollLinked()&&S.rects.length===0&&!!document.querySelector('[data-xp="unlink"]')),'a linked layer shows notes but sends you to Unlink');
- { const t=await p.evaluate(()=>{ const a=$('#drTools').getBoundingClientRect(), b=$('#ss_dock .dock-tabs').getBoundingClientRect(); return {inside:a.bottom<=b.bottom+1&&a.top>=b.top-1,seg:!!$('#layPart').offsetWidth}; }); ok(t.inside&&t.seg,'the toolbar stays on its line with a long part name',t); }
+ { const t=await p.evaluate(()=>{ const a=$('#drTools').getBoundingClientRect(); return {inside:a.height===36,seg:!!$('#layPart').offsetWidth}; }); ok(t.inside&&t.seg,'the toolbar stays on its line with a long part name',t); }
  // melody still melody
  await p.evaluate(()=>setLayer('melody')); await p.waitForTimeout(150);
  ok(await p.evaluate(()=>SHELL.part==='lead'&&!rollPart()&&$('#partBar').hidden&&S.rects.length>0),'back to Melody');

@@ -42,6 +42,8 @@ private:
     void setTitle (const juce::String& t);
     void clipChunk (const juce::var& v);
     void toggleFullScreen();
+    void showAudioSettings();
+    void hideTitleOptions();
     void reveal();
     static juce::MemoryBlock decode (const juce::String& base64);
 
