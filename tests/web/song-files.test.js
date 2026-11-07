@@ -13,7 +13,7 @@ const {chromium}=require('playwright');
  console.log('after save title',(await last('st_title')).title,'| info',await p.evaluate(()=>$('#projInfo').textContent));
  await p.evaluate(()=>shellDock('roll')); await p.waitForTimeout(100); await p.evaluate(()=>$('#newBtn').click()); await p.waitForTimeout(1300); console.log('after edit title',(await last('st_title')).title,'| info',await p.evaluate(()=>$('#projInfo').textContent));
  await p.keyboard.press('Meta+s'); await p.waitForTimeout(100); console.log('2nd save saveAs?',(await last('st_song_save')).saveAs);
- const json=sv.json; await p.evaluate(j=>__fire('st_song_opened',{ok:true,json:j,path:'/Users/j/Songs/Old one.semitone',name:'Old one',recent:[]}),json); await p.waitForTimeout(1300);
+ const json=sv.json; await p.evaluate(j=>__fire('st_song_opened',{ok:true,jsonB64:btoa(unescape(encodeURIComponent(j))),path:'/Users/j/Songs/Old one.semitone',name:'Old one',recent:[]}),json); await p.waitForTimeout(1300);
  console.log('opened: name',await p.evaluate(()=>$('#projName').value),'title',(await last('st_title')).title,'seed',await p.evaluate(()=>S.seed));
  await p.evaluate(()=>__fire('st_song_opened',{ok:false,why:'missing',recent:[]})); await p.waitForTimeout(200); console.log('toast',await p.evaluate(()=>{const t=document.querySelector('.toast'); return t&&t.textContent;}));
  await p.keyboard.press('Meta+o'); await p.waitForTimeout(100); console.log('open req',JSON.stringify(await last('st_song_open')));

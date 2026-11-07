@@ -6,6 +6,6 @@ const {chromium}=require('playwright'); const url='file://'+require('path').reso
  ok(await p.evaluate(()=>!$('#startView').hidden&&$('#startView').textContent.includes('A song is ready')),'the app opens on the start screen, silently');
  await p.evaluate(()=>document.activeElement.blur()); await p.keyboard.press('Space'); await p.waitForTimeout(300); const c=await p.evaluate(()=>({play:S.playing,mode:S.playMode,demo:S.demo,hid:$('#restoreBar').hidden})); ok(c.play&&c.mode==='song'&&!c.demo&&c.hid,'Space plays the whole song '+JSON.stringify(c)); await p.keyboard.press('Space');
  const saved=await p.evaluate(()=>songStateJSON());
- const q=await open({plugin:false,host:'',project:saved,recent:[]}); ok(await q.evaluate(()=>!S.demo&&$('#restoreBar').hidden),'a saved song opens instead');
+ const q=await open({plugin:false,host:'',projectB64:Buffer.from(saved).toString('base64'),recent:[]}); ok(await q.evaluate(()=>!S.demo&&$('#restoreBar').hidden),'a saved song opens instead');
  const r=await open({plugin:true,host:'FL Studio',project:'',recent:[]}); ok(await r.evaluate(()=>!S.demo&&S.project.name!=='Demo song'),'the plugin never gets the demo');
  console.log(fails.length?fails.length+' FAILED':'all passed'); console.log(errs.slice(0,6)); await b.close(); process.exit(fails.length||errs.length?1:0); })();

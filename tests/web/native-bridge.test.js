@@ -20,7 +20,7 @@ const {chromium}=require('playwright');
  // restore into a fresh page
  const p2=await b.newPage(); await p2.addInitScript(()=>{ window.__noStart=1; window.__nlog=[]; const H={}; window.__JUCE__={backend:{emitEvent:(id,o)=>__nlog.push([id,o]),addEventListener:(id,fn)=>{(H[id]=H[id]||[]).push(fn);}}}; window.__fire=(id,o)=>(H[id]||[]).forEach(f=>f(o)); });
  await p2.goto('file://'+require('path').resolve(__dirname,'../../web/semitone-studio.html')+''); await p2.waitForTimeout(1200); const before=await p2.evaluate(()=>S.seed);
- await p2.evaluate(j=>__fire('st_init',{plugin:true,host:'FL Studio',project:j}),st); await p2.waitForTimeout(300); console.log('restored seed',before,'->',await p2.evaluate(()=>S.seed+' bpm '+S.bpm));
+ await p2.evaluate(j=>__fire('st_init',{plugin:true,host:'FL Studio',projectB64:btoa(unescape(encodeURIComponent(j)))}),st); await p2.waitForTimeout(300); console.log('restored seed',before,'->',await p2.evaluate(()=>S.seed+' bpm '+S.bpm));
  // standalone transport
  const p3=await b.newPage(); await p3.addInitScript(()=>{ window.__noStart=1; window.__nlog=[]; const H={}; window.__JUCE__={backend:{emitEvent:(id,o)=>__nlog.push([id,o]),addEventListener:(id,fn)=>{(H[id]=H[id]||[]).push(fn);}}}; window.__fire=(id,o)=>(H[id]||[]).forEach(f=>f(o)); });
  await p3.goto('file://'+require('path').resolve(__dirname,'../../web/semitone-studio.html')+''); await p3.waitForTimeout(1200); await p3.evaluate(()=>__fire('st_init',{plugin:false,host:'',project:''})); await p3.evaluate(()=>{ location.hash='#compose'; play('song'); }); await p3.waitForTimeout(300); await p3.evaluate(()=>stopPlay());
