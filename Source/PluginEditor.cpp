@@ -16,9 +16,24 @@ static juce::File loopFile (const juce::String& id)
 
 static juce::File prefsFile() { return st::files::appData().getChildFile ("settings.json"); }
 
+// A short timing note for each start, kept on this computer, so a slow start can be looked into.
+// JUCE's message to the page takes far too long over a whole song, because it re-copies the text for every quote mark and
+// backslash, and the app stands still meanwhile. Base64 has neither, so a big song goes across in a moment.
+static juce::String forPage (const juce::String& text) { return juce::Base64::toBase64 (text); }
+
+static void bootMark (const juce::String& what)
+{
+    static const auto f = st::files::appData().getChildFile ("startup-log.txt");
+    static const auto t0 = juce::Time::getMillisecondCounterHiRes();
+    static const bool fresh = f.replaceWithText ({});
+    juce::ignoreUnused (fresh);
+    f.appendText (juce::String (juce::Time::currentTimeMillis()) + " +" + juce::String ((int) (juce::Time::getMillisecondCounterHiRes() - t0)) + " " + what + "\n");
+}
+
 SemitoneEditor::SemitoneEditor (SemitoneProcessor& p)
     : AudioProcessorEditor (p), proc (p), browser (makeOptions())
 {
+    bootMark ("editor made");
     addAndMakeVisible (browser);
     setResizable (true, true);
     setResizeLimits (720, 480, 4096, 3000);
@@ -37,6 +52,7 @@ SemitoneEditor::SemitoneEditor (SemitoneProcessor& p)
         proc.host->onLoaded = [self] (int ch, bool ok, juce::String info)
         {
             if (self == nullptr) return;
+            bootMark ("plug-in open: " + info);
             auto* o = new juce::DynamicObject(); o->setProperty ("ch", ch); o->setProperty ("ok", ok); o->setProperty ("info", info);
             self->browser.emitEventIfBrowserIsVisible ("st_host_loaded", juce::var (o));
         };
@@ -103,6 +119,7 @@ void SemitoneEditor::reveal()
 {
     if (shown) return;
     shown = true;
+    bootMark ("window shows the page");
     hideTitleOptions();
     resized();
     repaint();
@@ -126,7 +143,7 @@ void SemitoneEditor::paint (juce::Graphics& g)
     g.fillRoundedRectangle (bar.getIntersection ({ x, bar.getY(), w, bar.getHeight() }), 1.5f);
     g.setColour (juce::Colour (0xff9BA1A6));
     g.setFont (juce::FontOptions (13.0f));
-    g.drawText ("Starting…", juce::Rectangle<float> (mid.x - 140, mid.y + 42, 280, 20), juce::Justification::centred);
+    g.drawText ("Opening your song…", juce::Rectangle<float> (mid.x - 140, mid.y + 42, 280, 20), juce::Justification::centred);
 }
 
 juce::WebBrowserComponent::Options SemitoneEditor::makeOptions()
@@ -145,11 +162,12 @@ juce::WebBrowserComponent::Options SemitoneEditor::makeOptions()
         .withKeepPageLoadedWhenBrowserIsHidden()
         .withResourceProvider ([this] (const juce::String& url) { return getResource (url); })
         // the interface is ready: tell it where it runs and hand back the song saved in the DAW project
-        .withEventListener ("st_ready", [this] (const juce::var&) {
+        .withEventListener ("st_mark", [] (const juce::var& v) { bootMark ("page: " + v.getProperty ("t", "").toString()); })
+        .withEventListener ("st_ready", [this] (const juce::var&) { bootMark ("page ready");
             auto* o = new juce::DynamicObject();
             o->setProperty ("plugin", ! proc.isStandalone());
             o->setProperty ("host", juce::PluginHostType().getHostDescription());
-            o->setProperty ("project", proc.getProjectState());
+            o->setProperty ("projectB64", forPage (proc.getProjectState()));
             o->setProperty ("recent", st::files::recentVar());
             o->setProperty ("songFile", proc.songFile);
             o->setProperty ("soundMode", proc.getSoundMode());
@@ -157,6 +175,7 @@ juce::WebBrowserComponent::Options SemitoneEditor::makeOptions()
             o->setProperty ("sr", proc.getSampleRateNow());
             { const juce::File sf (proc.songFile); o->setProperty ("songFileSame", sf.existsAsFile() && sf.loadFileAsString() == proc.getProjectState()); }
             o->setProperty ("prefs", juce::JSON::parse (prefsFile()));  // app settings, shared by the app and the plug-in window
+            bootMark ("sending the song to the page");
             browser.emitEventIfBrowserIsVisible ("st_init", juce::var (o));
         })
         .withEventListener ("st_pref", [] (const juce::var& v) {
@@ -221,7 +240,7 @@ juce::WebBrowserComponent::Options SemitoneEditor::makeOptions()
         .withEventListener ("st_clip_file", [this] (const juce::var&) { clipFile(); })
         .withEventListener ("st_host_scan", [this] (const juce::var&) { if (proc.host) proc.host->startScan(); })
         .withEventListener ("st_host_list", [this] (const juce::var&) { sendHostList(); })
-        .withEventListener ("st_host_load", [this] (const juce::var& v) { if (proc.host) proc.host->load ((int) v.getProperty ("ch", 0), v.getProperty ("id", "").toString(), v.getProperty ("state", "").toString()); })
+        .withEventListener ("st_host_load", [this] (const juce::var& v) { bootMark ("plug-in asked for: " + v.getProperty ("id", "").toString()); if (proc.host) proc.host->load ((int) v.getProperty ("ch", 0), v.getProperty ("id", "").toString(), v.getProperty ("state", "").toString()); })
         .withEventListener ("st_host_params", [this] (const juce::var& v)
         {
             if (! proc.host) return;
@@ -779,7 +798,7 @@ void SemitoneEditor::songOpened (const juce::File& f, const juce::String& json)
     st::files::addRecent (f);
     auto* o = new juce::DynamicObject();
     o->setProperty ("ok", true);
-    o->setProperty ("json", json);
+    o->setProperty ("jsonB64", forPage (json));
     o->setProperty ("path", f.getFullPathName());
     o->setProperty ("name", f.getFileNameWithoutExtension());
     o->setProperty ("recent", st::files::recentVar());

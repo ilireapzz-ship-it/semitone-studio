@@ -52,3 +52,4 @@ node tests/web/regression.test.js
 - `drum-roll.test.js`: the step grid and drum piano roll edit one pattern (add, drag, velocity, delete, undo, both directions).
 - `toolbar.test.js`: snap and free move, Select, Draw, Erase, Slice, Quantize, the timeline grid and the menu bar.
 - `roll-feel.test.js`: hearing notes on click, entry and drag, moving a selection as one, the piano keys, plug-ins opening.
+- `startup.test.js`: big songs reach the page in base64, unchanged, so opening never locks up.

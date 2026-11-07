@@ -7,7 +7,9 @@ namespace st::files
 {
     inline juce::File appData()
     {
-        auto d = juce::File::getSpecialLocation (juce::File::userApplicationDataDirectory).getChildFile ("Semitone Studio");
+        // a test copy can work on its own folder and leave the real one alone
+        const auto other = juce::SystemStats::getEnvironmentVariable ("SEMITONE_DATA", {});
+        auto d = other.isNotEmpty() ? juce::File (other) : juce::File::getSpecialLocation (juce::File::userApplicationDataDirectory).getChildFile ("Semitone Studio");
         d.createDirectory();
         return d;
     }
