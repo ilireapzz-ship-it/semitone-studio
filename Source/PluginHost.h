@@ -264,6 +264,28 @@ public:
         return mb.toBase64Encoding();
     }
 
+    // Audio thread: which of Semitone's own parts (no plug-in instrument on the channel) have your effects, one bit each.
+    uint32_t builtInFxMask()
+    {
+        const juce::SpinLock::ScopedTryLockType sl (lock);
+        if (! sl.isLocked()) return lastBuiltInMask;
+        uint32_t m = 0;
+        for (int c = 0; c < 16; ++c)
+        {
+            if (inst[(size_t) c] != nullptr) continue;   // a plug-in instrument's effects already run in process()
+            for (const auto& p : fx[(size_t) c]) if (p != nullptr) { m |= 1u << c; break; }
+        }
+        return lastBuiltInMask = m;
+    }
+
+    // Audio thread: run one built-in part's effects on a block of its sound.
+    void processChannelFx (int t, float* L, float* R, int n)
+    {
+        if (t < 0 || t >= masterFx) return;
+        const juce::SpinLock::ScopedTryLockType sl (lock);
+        if (sl.isLocked() && n <= fxTemp.getNumSamples()) runFx (t, L, R, n);
+    }
+
     // Audio thread: the whole-song effects, after everything is mixed.
     void processMaster (float* L, float* R, int n)
     {
@@ -668,6 +690,7 @@ private:
     std::array<std::array<std::unique_ptr<HostWindow>, 4>, 17> fxWin;
     juce::AudioBuffer<float> fxTemp { maxChannels, 8192 };
     bool lanesMoving = false;
+    uint32_t lastBuiltInMask = 0;
     juce::AudioBuffer<float> partOut { 32, 8192 };
     std::array<bool, 16> outReady {};
     int slowestNow = 0;

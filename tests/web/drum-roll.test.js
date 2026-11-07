@@ -6,7 +6,7 @@ let fails=0; const ok=(c,m,x)=>{ if(!c){ fails++; console.log('FAIL',m,x===undef
  await p.evaluate(()=>{ spPut({big:false}); S.parts.drums.on=true; arrRender(); }); await p.waitForTimeout(300);
  await p.click('[data-arrpart="drums"][data-arrsec="1"]'); await p.waitForTimeout(250);
  ok(await p.evaluate(()=>!document.querySelector('.dock-pane[data-pane="beat"]').hidden),'a drum clip still opens the step grid');
- await p.click('#beatRollBtn'); await p.waitForTimeout(250);
+ await p.click('#drSubs [data-subpane="roll"]'); await p.waitForTimeout(250);
  const a=await p.evaluate(()=>{ const t=S.song.sections[S.sel].type, lit=ROWS.reduce((c,r)=>c+(S.beats[t][r]||[]).filter(Boolean).length,0); return {part:rollPart(),rects:S.rects.length,lit,lay:$('#layPart').textContent,TB:S.rl.TB,rows:S.rl.hi-S.rl.lo+1,n:ROWS.length,strip:getComputedStyle($('.clane-wrap')).display}; });
  ok(a.part==='drums'&&a.rects===a.lit&&a.lit>0&&a.lay==='Drums'&&a.TB===4&&a.rows===a.n&&a.strip==='none','the piano roll shows every hit, one line per drum',a);
  const cell=(row,i)=>p.evaluate(([row,i])=>{ const R=$('#roll').getBoundingClientRect(), L=S.rl; return {x:R.left+(i+.5)*.25/L.TB*L.W,y:R.top+L.top+(ROWS.indexOf(row)+.5)*L.rh}; },[row,i]);

@@ -24,6 +24,7 @@ void SemitoneProcessor::prepareToPlay (double sampleRate, int maxBlock)
     blockNow = maxBlock;
     if (changed) synth.setPatch (nullptr);   // notes rendered for the old rate would play out of tune until the rebuild lands
     synth.prepare (sr);
+    synth.plugFx = [this] (int ch, float* l, float* r, int k) { if (host) host->processChannelFx (ch, l, r, k); };
     if (host) host->prepare (sr, maxBlock);
     if (changed) buildSynthPatch();   // the piano and plucked notes are rendered for one sample rate
 }
@@ -93,6 +94,7 @@ void SemitoneProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
     // In the app the page plays too, on its own clock. With a plug-in on a part the engine plays everything instead,
     // so drums and plug-ins share this one clock and land on the same sample.
     const bool viaEngine = host && isStandalone() && engineAll.load() && mode != 2 && buffer.getNumChannels() > 1;
+    if (! viaEngine) synth.plugFxMask = 0;
     double hostBeat = -1;
     if (host) host->setTransport (bpm, ppq, playing);
     if (host) { const double loop = tlLength.load(); if (playing && loop > 0) { hostBeat = std::fmod (ppq, loop); if (hostBeat < 0) hostBeat += loop; hostBeat += tlOffset.load(); } }
@@ -102,6 +104,7 @@ void SemitoneProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
         // Your plug-ins first, then the engine mixes them in on their strips. The engine's own notes wait for the slowest plug-in.
         host->process (events, n, nullptr, nullptr, hostBeat, true);
         for (int ch = 0; ch < 16; ++ch) synth.setExternal (ch, host->partLeft (ch), host->partRight (ch));
+        synth.plugFxMask = host->builtInFxMask();   // your effects on Semitone's own parts
         engineWait = host->slowestPart();
     }
     if (mode != 2 && (! isStandalone() || engineAll.load()) && buffer.getNumChannels() > 0)

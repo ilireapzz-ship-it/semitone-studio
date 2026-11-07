@@ -16,6 +16,7 @@
 #include <atomic>
 #include <cmath>
 #include <cstdint>
+#include <functional>
 #include <memory>
 #include <vector>
 
@@ -884,7 +885,15 @@ public:
         fxBus = nullptr;
         for (auto& t : transVoices) t.active = false;
         sweepLeft = 0;
+        pfxL.assign ((size_t) 16 * pfxCap, 0.0f); pfxR.assign ((size_t) 16 * pfxCap, 0.0f);
+        preL.assign ((size_t) pfxCap, 0.0f); preR.assign ((size_t) pfxCap, 0.0f);
     }
+
+    // Your effect plug-ins on Semitone's own parts (desktop app). Before process(), the audio thread says which
+    // channels have some (one bit each); `plugFx` runs a channel's chain on one block. Set `plugFx` before audio starts.
+    std::atomic<uint32_t> plugFxMask { 0 };
+    std::function<void (int, float*, float*, int)> plugFx;
+    static constexpr int pfxCap = 8192;
 
     // Any thread. The caller keeps the previous patch alive for a few seconds, as with ClipPlayer's banks.
     void setPatch (std::shared_ptr<const SynthPatch> p) { std::atomic_store (&pending, std::move (p)); }
@@ -909,9 +918,14 @@ public:
             }
         }
         if (! current || n <= 0) return;
+        const uint32_t pmask = plugFx ? plugFxMask.load() : 0u;
+        const bool pfx = pmask != 0 && n <= pfxCap && (int) preL.size() >= n;
+        const bool busMode = fxBus != nullptr || pfx;
+        auto plug = [&] (size_t c) { return pfx && ((pmask >> c) & 1u); };
+        auto via = [&] (size_t c) { return (fxBus && fxBus->any[c]) || plug (c); };
 
         // nothing sounding for a while (the room has rung out): use no CPU at all
-        if (events.empty() && activeVoices() == 0 && ! current->trans && ! current->takes && ! current->hasExt)
+        if (events.empty() && activeVoices() == 0 && ! current->trans && ! current->takes && ! current->hasExt && ! pfx)
         {
             if (idle >= (int64_t) (sr * 8)) { gate = audible; return; }
             idle += n;
@@ -923,6 +937,29 @@ public:
 
         const float dg = (audible - gate) / (float) n;
         secPerBeat = beatInc > 0 ? 1 / (beatInc * sr) : 0;
+        // same order as the page: master gain, room, master effects, filter sweep, master fader, polish
+        auto finish = [&] (int i, float l, float r)
+        {
+                l *= .6f; r *= .6f;
+                if (current->roomMix > 0)
+                {
+                    float wl, wr;
+                    room.run (l, r, wl, wr);
+                    l += wl * current->roomMix * roomGain; r += wr * current->roomMix * roomGain;
+                }
+                if (fxBus && fxBus->any[FxBank::master]) fxBus->run (FxBank::master, l, r);
+                if (sweepLeft > 0)
+                {
+                    if ((sweepLeft & 31) == 0) { const double t = 1 - (double) sweepLeft / sweepTotal; sweep.lowpass (18000 * std::pow (700.0 / 18000, t), .9, sr); }
+                    l = sweep.run (l, 0); r = sweep.run (r, 1); --sweepLeft;
+                }
+                l *= masterGain; r *= masterGain;
+                polish.run (l, r);
+                gate += dg;
+                l *= gate; r *= gate;
+                if (R == L || R == nullptr) L[i] += .5f * (l + r);
+                else { L[i] += l; R[i] += r; }
+        };
         size_t e = 0;
         for (int i = 0; i < n; ++i)
         {
@@ -949,7 +986,7 @@ public:
                     const float fr = (float) (pos - std::floor (pos));
                     tk += seg.audio->data[a] * (1 - fr) + seg.audio->data[a + 1] * fr;
                 }
-                if (fxBus && fxBus->any[15]) { busL[15] += tk; busR[15] += tk; busLevel[15] = takeLevel; }
+                if (via (15)) { busL[15] += tk; busR[15] += tk; busLevel[15] = takeLevel; }
                 else { float pl, pr; panGains (0, false, pl, pr); l += tk * takeLevel * chGain[15] * pl; r += tk * takeLevel * chGain[15] * pr; chSum[15] += tk * takeLevel * chGain[15]; }
             }
             // your plug-ins join here, so they get the part's fader, pan, effects, the room and the master chain
@@ -958,7 +995,7 @@ public:
                 {
                     if (extL[c] == nullptr) continue;
                     const float xl = extL[c][i] * extTrim, xr = extR[c][i] * extTrim;
-                    if (fxBus && fxBus->any[c]) { busL[c] += xl; busR[c] += xr; busLevel[c] = current->extLevel[c]; busPan[c] = current->extPan[c]; busStereo[c] = true; continue; }
+                    if (via (c)) { busL[c] += xl; busR[c] += xr; busLevel[c] = current->extLevel[c]; busPan[c] = current->extPan[c]; busStereo[c] = true; continue; }
                     float pl, pr;
                     panGains (hasPan[c] ? chPan[c] : current->extPan[c], true, pl, pr);
                     l += xl * current->extLevel[c] * chGain[c] * pl; chSum[c] += xl * current->extLevel[c] * chGain[c];
@@ -971,8 +1008,8 @@ public:
                 v.tick (bends[(size_t) (v.ch & 15)]);
                 if (! v.active) continue;
                 const int ci = v.ch & 15;
-                if (! v.isDrum && v.p.chorus > 0) { chorusIn[(size_t) (v.p.chorus - 1)] += v.outL * (fxBus ? 1.0f : v.p.level * chGain[(size_t) ci]); if (fxBus) { chorusCh[(size_t) (v.p.chorus - 1)] = ci; busLevel[(size_t) ci] = v.p.level; busPan[(size_t) ci] = v.p.pan; busStereo[(size_t) ci] = true; } continue; }
-                if (fxBus && fxBus->any[(size_t) ci]) { busL[(size_t) ci] += v.outL; busR[(size_t) ci] += v.outR; busLevel[(size_t) ci] = v.p.level; busPan[(size_t) ci] = v.p.pan; busStereo[(size_t) ci] = v.p.stereo; continue; }
+                if (! v.isDrum && v.p.chorus > 0) { chorusIn[(size_t) (v.p.chorus - 1)] += v.outL * (busMode ? 1.0f : v.p.level * chGain[(size_t) ci]); if (busMode) { chorusCh[(size_t) (v.p.chorus - 1)] = ci; busLevel[(size_t) ci] = v.p.level; busPan[(size_t) ci] = v.p.pan; busStereo[(size_t) ci] = true; } continue; }
+                if (via ((size_t) ci)) { busL[(size_t) ci] += v.outL; busR[(size_t) ci] += v.outR; busLevel[(size_t) ci] = v.p.level; busPan[(size_t) ci] = v.p.pan; busStereo[(size_t) ci] = v.p.stereo; continue; }
                 float pl, pr;
                 panGains (hasPan[(size_t) ci] ? chPan[(size_t) ci] : v.p.pan, v.p.stereo, pl, pr);
                 l += v.outL * v.p.level * chGain[(size_t) ci] * pl; chSum[(size_t) ci] += v.outL * v.p.level * chGain[(size_t) ci];
@@ -982,21 +1019,23 @@ public:
             {
                 float cl, cr;
                 choruses[c].run (chorusIn[c], cl, cr);
-                if (fxBus)
+                if (busMode)
                 {
                     const int ci = chorusCh[c];
-                    if (ci >= 0 && fxBus->any[(size_t) ci]) { busL[(size_t) ci] += cl; busR[(size_t) ci] += cr; continue; }
+                    if (ci >= 0 && via ((size_t) ci)) { busL[(size_t) ci] += cl; busR[(size_t) ci] += cr; continue; }
                     if (ci >= 0) { cl *= busLevel[(size_t) ci] * chGain[(size_t) ci]; cr *= busLevel[(size_t) ci] * chGain[(size_t) ci]; }
                 }
                 l += cl; r += cr;
             }
-            if (fxBus)
+            if (busMode)
                 for (size_t c = 0; c < 16; ++c)
                 {
-                    if (! fxBus->any[c]) continue;
+                    if (! via (c)) continue;
                     float bl = busL[c], br = busR[c];
                     busL[c] = busR[c] = 0;
-                    fxBus->run ((int) c, bl, br);
+                    if (fxBus && fxBus->any[c]) fxBus->run ((int) c, bl, br);
+                    // to your plug-ins: they need the whole block, so this part is mixed in by the second pass below
+                    if (plug (c)) { pfxL[c * pfxCap + (size_t) i] = bl * busLevel[c]; pfxR[c * pfxCap + (size_t) i] = br * busLevel[c]; continue; }
                     float pl, pr;
                     panGains (hasPan[c] ? chPan[c] : busPan[c], busStereo[c], pl, pr);
                     l += bl * busLevel[c] * chGain[c] * pl; chSum[c] += bl * busLevel[c] * chGain[c];
@@ -1004,26 +1043,28 @@ public:
                 }
             for (size_t c = 0; c < 16; ++c)
                 if (chSum[c] != 0) { chMax[c] = std::max (chMax[c], std::abs (chSum[c])); chSum[c] = 0; }
-            // same order as the page: master gain, room, master effects, filter sweep, master fader, polish
-            l *= .6f; r *= .6f;
-            if (current->roomMix > 0)
+            if (pfx) { preL[(size_t) i] = l; preR[(size_t) i] = r; continue; }
+            finish (i, l, r);
+        }
+        if (pfx)
+        {
+            // second pass: each part with plug-ins runs its chain on the whole block, then joins the mix
+            for (size_t c = 0; c < 16; ++c) if (plug (c)) plugFx ((int) c, &pfxL[c * pfxCap], &pfxR[c * pfxCap], n);
+            for (int i = 0; i < n; ++i)
             {
-                float wl, wr;
-                room.run (l, r, wl, wr);
-                l += wl * current->roomMix * roomGain; r += wr * current->roomMix * roomGain;
+                if ((i & 31) == 0) updateLanes (beat < 0 ? -1 : beat + i * beatInc);
+                float l = preL[(size_t) i], r = preR[(size_t) i];
+                for (size_t c = 0; c < 16; ++c)
+                {
+                    if (! plug (c)) continue;
+                    const float bl = pfxL[c * pfxCap + (size_t) i], br = pfxR[c * pfxCap + (size_t) i];
+                    float pl, pr;
+                    panGains (hasPan[c] ? chPan[c] : busPan[c], busStereo[c], pl, pr);
+                    l += bl * chGain[c] * pl; r += br * chGain[c] * pr;
+                    chMax[c] = std::max (chMax[c], std::abs (bl * chGain[c]));
+                }
+                finish (i, l, r);
             }
-            if (fxBus && fxBus->any[FxBank::master]) fxBus->run (FxBank::master, l, r);
-            if (sweepLeft > 0)
-            {
-                if ((sweepLeft & 31) == 0) { const double t = 1 - (double) sweepLeft / sweepTotal; sweep.lowpass (18000 * std::pow (700.0 / 18000, t), .9, sr); }
-                l = sweep.run (l, 0); r = sweep.run (r, 1); --sweepLeft;
-            }
-            l *= masterGain; r *= masterGain;
-            polish.run (l, r);
-            gate += dg;
-            l *= gate; r *= gate;
-            if (R == L || R == nullptr) L[i] += .5f * (l + r);
-            else { L[i] += l; R[i] += r; }
         }
         gate = audible;
         for (size_t c = 0; c < 16; ++c)
@@ -1168,5 +1209,6 @@ private:
     std::array<Chorus, 3> choruses;
     Polish polish;
     std::shared_ptr<const SynthPatch> pending, current;
+    std::vector<float> pfxL, pfxR, preL, preR;
 };
 } // namespace st

@@ -470,6 +470,28 @@ int main()
         printf ("ok: sidechain and channel meters\n");
     }
 
+    // your effect plug-ins on a built-in part: a chain that changes nothing sounds exactly the same, one that does is heard
+    {
+        auto mk = [] { auto p = single (junoPatch (0)); p->polish.on = false; return p; };
+        std::vector<std::pair<int, Event>> evs { { 100, on (0, 57, 100) }, { 30000, off (0, 57) } };
+        Synth a; a.prepare (SR); a.setPatch (mk()); const auto dry = run (a, evs, 48000);
+        Synth b; b.prepare (SR); b.setPatch (mk()); int calls = 0;
+        b.plugFx = [&] (int ch, float*, float*, int) { if (ch == 0) ++calls; }; b.plugFxMask = 1u;
+        const auto same = run (b, evs, 48000);
+        float diff = 0; for (size_t i = 0; i < dry.l.size(); ++i) diff = std::max (diff, std::max (std::abs (dry.l[i] - same.l[i]), std::abs (dry.r[i] - same.r[i])));
+        CHECK (calls > 100 && diff < 1e-5f && peakOf (dry.l, 0, 48000) > .01f, "a do-nothing plug-in chain keeps the sound %d %g", calls, diff);
+        Synth c; c.prepare (SR); c.setPatch (mk());
+        c.plugFx = [] (int, float* L, float* R, int n) { for (int i = 0; i < n; ++i) { L[i] *= .25f; R[i] *= .25f; } }; c.plugFxMask = 1u;
+        const auto quiet = run (c, evs, 48000);
+        const float rd = rmsOf (dry.l, 2000, 28000), rq = rmsOf (quiet.l, 2000, 28000);
+        CHECK (rq < rd * .3f && rq > rd * .2f, "the plug-in's change is heard %f %f", rq, rd);
+        Synth d; d.prepare (SR); d.setPatch (mk()); d.plugFx = [] (int, float* L, float*, int n) { for (int i = 0; i < n; ++i) L[i] = 0; }; d.plugFxMask = 2u;   // effects on another channel leave this one alone
+        const auto other = run (d, evs, 48000); float d2 = 0; for (size_t i = 0; i < dry.l.size(); ++i) d2 = std::max (d2, std::abs (dry.l[i] - other.l[i]));
+        CHECK (d2 < 1e-5f, "a plug-in on another part changes nothing here %g", d2);
+        CHECK (c.takeChannelPeak (0) > 0, "the part's meter reads after its plug-ins");
+        printf ("ok: plug-in effects on built-in parts\n");
+    }
+
     printf (failures ? "%d synth tests FAILED\n" : "all synth tests passed\n", failures);
     return failures ? 1 : 0;
 }
