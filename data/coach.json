@@ -134,7 +134,8 @@
       "loosens": [
         "build",
         "hook-early",
-        "range-arc"
+        "range-arc",
+        "movement"
       ],
       "tightens": [
         "space",
@@ -189,7 +190,8 @@
         "paradox",
         "sound-hook",
         "concise",
-        "keep-the-demo"
+        "keep-the-demo",
+        "movement"
       ],
       "workflow": "skeleton first (main chords and melody), production in dialogue with it, lyrics often last",
       "src": [
@@ -333,7 +335,10 @@
       "area": "harmony",
       "base": 0.7,
       "what": "Tension (dominant chords, suspensions, borrowed chords) is resolved or deliberately left open at the right moment.",
-      "loose": {"rnb": 0.4}, "why": "Expectation and its fulfilment, or denial, is what moves listeners."
+      "loose": {
+        "rnb": 0.4
+      },
+      "why": "Expectation and its fulfilment, or denial, is what moves listeners."
     },
     {
       "id": "borrowed-colour",
@@ -482,6 +487,31 @@
       "what": "Keep what made the rough demo exciting when polishing: a weird sound, a wrong-but-right chord, an odd structure.",
       "why": "Polishing can sand off the thing that made the song special.",
       "test": "Versions: compare the first demo with now and flag lost features (a sound, a chord, a moment)."
+    },
+    {
+      "id": "movement",
+      "area": "production",
+      "base": 0.4,
+      "what": "Something moves across the song: at least one control changes between sections (brightness, space, width or level).",
+      "why": "A static mix makes sections feel the same however the parts change; movement makes arrivals felt.",
+      "loose": {
+        "lana-bb": 0.6,
+        "tiersen-piano": 0.6
+      }
+    },
+    {
+      "id": "nervous",
+      "area": "production",
+      "base": 0.4,
+      "what": "Not too many moves at once: no more than a few changes in a short time, and wobble on only one or two parts.",
+      "why": "Too much movement draws attention away from the song and sounds restless."
+    },
+    {
+      "id": "vocal-space",
+      "area": "mix",
+      "base": 0.5,
+      "what": "Moves on other parts don't mask the vocal: brightness, level and reverb rise around the vocal, not on top of it.",
+      "why": "The vocal carries the song; automation should make room for it."
     }
   ],
   "jury": {
@@ -552,7 +582,9 @@
           "build",
           "space",
           "crowd",
-          "one-sound-world"
+          "one-sound-world",
+          "movement",
+          "nervous"
         ]
       },
       {
@@ -561,7 +593,8 @@
         "asks": "Is it balanced, clear in the low end and does it translate?",
         "rules": [
           "low-end",
-          "mix-translation"
+          "mix-translation",
+          "vocal-space"
         ]
       }
     ],
