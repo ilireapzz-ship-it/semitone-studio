@@ -49,3 +49,4 @@ node tests/web/regression.test.js
 - `beat-master.test.js`: drum rows (drop, add, delete, undo), master volume, meters, sidechain.
 - `track-tools.test.js`: folding tracks into tags, colours, the × buttons, Delete key, right-click menus, editable velocity.
 - `one-roll.test.js`: bass and added parts on the same piano roll as melody (move, stretch, add, delete, velocity, undo, linked layers).
+- `drum-roll.test.js`: the step grid and drum piano roll edit one pattern (add, drag, velocity, delete, undo, both directions).
