@@ -87,6 +87,13 @@ the part colour, its name and where it lives, a recessed range track with tick m
 diamond at the current value with a value tag, a small response graph showing where the knob sits now, and an invert toggle. "Across the song"
 shows the Energy line (brass, filled) over section bands, with each control's resulting line (dashed if inverted) and the playhead. The header
 holds an "In FL Studio as 'Macro 1'" switch, Save to ⌘K and ×.
+- A thin brass "signal" spine runs from the knob down the left of the control cards, and each card is tapped with a glowing brass dot.
+- Icons are drawn line icons per control type: filter curve, reverb waves, stereo arrows, faders.
+- The selected card is lifted (part-colour hairline, soft shadow) and opens fine settings: Glide (ms), Bend, Limit (the plug-in's safe range,
+  from plugin-maps `max`) and Steps.
+- The left column ends with Lowest and Peak tiles (value and section), then **Draw it from the emotion line**.
+- The song preview has faint value gridlines, uppercase section labels, and a glowing brass dot with a "0.48" tag where the playhead meets the Energy line.
+- The panel opens over the lanes at about 900×650 and never scrolls at 1440×900. In smaller windows it fills the drawer.
 - A macro is one knob (0–1) that moves several controls. Each has a **range** (value at 0 → value at 1, shown in units with the current value),
   a **response** (Straight, Slow start, Fast start) and **Invert**. A row of small lines shows what the macro's lane does to each control across
   the song.
