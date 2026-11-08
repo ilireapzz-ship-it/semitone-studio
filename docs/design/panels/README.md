@@ -25,9 +25,20 @@ Two columns of cards, no page scroll at 1440×900:
     (the real section order, e.g. `"form": "I V P C V P C B C O"`, with a source). Use `form` when present. `check_style_data.py` checks the
     letters. Ballad, AABA and Epic need `form` or a length to be detected.
   - Example counts follow the selected style tags (a blend shows songs from each, marked by artist).
-- **Key:** a **circle of fifths** (majors outside, the relative minors near the key inside, the current key filled brass, its relative major ringed)
-  with "E minor · 1 sharp" in the middle. Beside it, the **mode** list, each with its feeling (bright, sad, hopeful minor, dark, dreamy, bluesy,
-  dramatic, unstable).
+- **Key** (change it here as well as in the recipe; both are the same setting and one undo step):
+  - A row of 12 tonic buttons (C … B) plus a **Major / Minor** switch for quick changes.
+  - The **circle of fifths** is clickable too: majors outside, relative minors inside, the current key filled brass, and its relative major ringed.
+  - Mode buttons in two columns, each with its feeling.
+  - **Green dots** on tonic buttons and circle keys mark keys this era's songs use.
+  - **"Lana Del Rey songs in E minor"**: chips of the artist's songs in the chosen key, the current era's first and highlighted ("Old Money · UV"),
+    then other eras (Born to Die, Off to the Races, Nectar of the Gods), with "1 of 10 in Ultraviolence" and the era's most-used keys
+    ("D minor (3) · F (2) · E (2)").
+  - Hovering a chip shows the song's key, tempo and progression from progressions.json. Clicking it offers "Use this key" or "Hear its chords in
+    your sound" (a sketch, never the recording).
+  - Data comes from `progressions.json` `key` per song. Parse "D minor / F major" as both, and modal keys ("E mixolydian") as their tonic,
+    showing the mode. Blended styles show songs from each tag's artist.
+  - **Changing the key:** transposes the song (notes, chords and lyrics stay, everything else follows). It asks once whether to move the melody
+    up or down (nearest by default), and warns if the melody leaves the comfortable range set in Pitch.
 - **Time:** a big tempo readout with − / ＋, Tap tempo, ½×, 2×; metre as a segmented control; **tempo for this style** as a range bar with the
   current tempo marked and one line on what slower/faster feels like; and **song length** (1 · 3 · 5 · 8 · 10+ min, from song-shapes.json).
 - **Feel:** four LED-ring knobs: Swing, Melody (sparse → busy), Leaps (steps → leaps), Quirks (clean → quirky). Each shows a value and its range words.
