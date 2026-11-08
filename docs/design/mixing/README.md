@@ -200,14 +200,14 @@ knobs) still ugly; this refined look replaces it. Principles: restraint, one acc
   - **Knee column** on the left (about 150 px): the in → out curve in white with a soft glow, the 1:1 diagonal dotted, a red dot for the
     current level, sharing the graph's y scale; a hairline separates it from the graph.
   - **Colours (revised with Jamie, 8 Nov): three separate colour families, never two warm ones side by side.** Green for the sound you hear
-    (after), blue for what the compressor took off, red for how much it is turning down. The key in the graph's quiet top-right corner reads
+    (after), champagne gold for what the compressor took off, red for how much it is turning down. The key in the graph's quiet top-right corner reads
     AFTER / TAKEN OFF / TURNED DOWN. Background: deep navy (#131A24 → #090C11) with a faint cool glow from the top.
   - **After (what you hear):** green, as Jamie asked (8 Nov): pale mint → spring green → emerald, fading to nothing by two-thirds down
     (#E6FFF1 → #8EF0B8 → #3FC98A → transparent). Fine vertical grain inside (1 px lines every 3 px at 4.5% white) for texture. Edge: a crisp
     1.2 px mint-white line (#DFFFEE) over a soft 3 px blurred green glow (#7DF0B0). Key swatch and the knee's current-level dot: #6EE7A6.
-  - **Before:** a faint blue fill (#9CC8FF at 32% → transparent) and a crisp 1 px pale-blue edge (#A9D2FF), no glow.
-  - **Taken off:** the band between the before edge and the after edge, filled with a brighter blue gradient (#8EC5FF → #4C8EE0) plus a fine
-    45° hatch, so the difference is the most visible thing on the graph.
+  - **Before:** a faint champagne fill (#E3C58E at 22% → transparent) and a 1 px champagne edge (#F0D9A8), no glow.
+  - **Taken off (compressed areas):** the band between the before edge and the after edge, in tan → champagne gold (#F6E3BC → #E3C58E →
+    #C9A46A, fading as it goes down into the green) with a fine light 45° hatch, so compressed peaks fade into the window's champagne accent.
   - **Gain reduction:** a crisp 1.4 px red line (#FF6170) over a soft blurred red glow, with a single-hue red fill fading down. The biggest
     reduction gets a red dot and a dark pill label ("“home” −9.1 dB"). The knee's current-level dot is green, and the Amount knob's inner ring
     is red, so red always means turning down.
