@@ -220,7 +220,10 @@ public:
         kA = std::exp (-1 / (att * sr)); kR = std::exp (-1 / (rel * sr)); kRf = std::exp (-1 / (rel * .3 * sr)); kRs = std::exp (-1 / (rel * 1.5 * sr));
         cR = ch.rmsT > 0 ? 1 - std::exp (-1 / (ch.rmsT * sr)) : 1;
         const auto o = d.p.find ("out"); mk = std::exp ((o != d.p.end() ? (double) o->second : .5 * curve (-10, ratio)) * .1151292546497);
+        on = d.get ("on", 1) > .5; fade = on ? 1 : 0; step = 1 / (.015 * sr); kk = 1 / sr;
     }
+    // bypass is level-matched like the page: the dry part times the running out/in loudness ratio, with a 15 ms fade
+    void setOn (bool v) { on = v; }
     double curve (double db, double r) const
     {
         const double slope = 1 - 1 / r, over = db - thr;
@@ -238,11 +241,17 @@ public:
         g = std::exp (-gr * .1151292546497);
         double yl = dl * g * mk, yr = dr * g * mk;
         if (ch.sat > 0) { const double s = std::min (1.0, ch.sat * gr / 6); yl += s * (std::tanh (yl * 1.5) / 1.5 - yl); yr += s * (std::tanh (yr * 1.5) / 1.5 - yr); }
-        l = (float) (dl * (1 - mix) + yl * mix); r = (float) (dr * (1 - mix) + yr * mix);
+        const double wl = dl * (1 - mix) + yl * mix, wr = dr * (1 - mix) + yr * mix, tg = on ? 1 : 0;
+        if (fade < tg) fade = std::min (tg, fade + step); else if (fade > tg) fade = std::max (tg, fade - step);
+        mw += (wl * wl + wr * wr - mw) * kk; md += (dl * dl + dr * dr - md) * kk;
+        if (md > 1e-9) avg = std::clamp (std::sqrt (mw / md), .25, 4.0);
+        const double bl = dl * avg, br = dr * avg;
+        l = (float) (bl + (wl - bl) * fade); r = (float) (br + (wr - br) * fade);
     }
-    double reduction() const { return gr; }
+    double reduction() const { return on ? gr : 0; }
 private:
     double sr; PcChar ch; double thr = -18, ratio = 2, knee = 6, mix = 1, kA = 0, kR = 0, kRf = 0, kRs = 0, cR = 1, mk = 1, ms = 0, gr = 0, pk = 0, g = 1;
+    bool on = true; double fade = 1, step = 0, kk = 0, mw = 0, md = 0, avg = 1;
 };
 // Width: mid/side balance for a strip (1 = as is, 0 = mono, 2 = twice the sides)
 class WidthFx : public Fx

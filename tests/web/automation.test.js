@@ -72,5 +72,22 @@ const {chromium}=require('playwright'); const url='file://'+require('path').reso
  await p.evaluate(()=>{ shellDock('auto'); autRender(); }); await p.waitForTimeout(300);
  await p.screenshot({path:require('path').resolve(__dirname,'../../automation.png')});
  for(const [w,h] of [[1440,900],[1280,800],[1024,680],[900,600]]){ await p.setViewportSize({width:w,height:h}); await p.waitForTimeout(250); const r=await p.evaluate(()=>({sx:document.scrollingElement.scrollHeight>innerHeight+1||document.scrollingElement.scrollWidth>innerWidth+1, cv:$('#autCv').getBoundingClientRect().height, sel:(AUT.rows||[]).find(r=>r.sel)})); ok(!r.sx&&r.cv>60,`${w}×${h}: no page scroll, lanes ${Math.round(r.cv)}px tall`); }
+ // checks from the 8 Nov review
+ const tr=await p.evaluate(()=>{ S.auto={}; S.macros=[]; S.autoMac={}; S.volTrim={}; S.parts.lead.vol=1; histCheck(true); S.auto[0]={lead:{vol:[{t:0,v:tN(VOLDEF,1)},{t:4,v:tN(VOLDEF,1)}]}}; autSetTrim('lead',.5); autEnsure(1,'lead','vol'); const v=tV(VOLDEF,S.auto[1].lead.vol[0].v)*autTrim('lead'); S.volTrim={}; return v; });
+ ok(Math.abs(tr-.5)<.01,'with a trim, adding a point in another section keeps the level the same (no double trim): '+tr.toFixed(3));
+ const mr=await p.evaluate(()=>{ S.auto={}; S.macros=[]; S.autoMac={}; histCheck(true); const m=autMacroNew(true); AUT.sel={ch:'chords',tg:'vol'}; autBegin(); autAddPoint({ch:'chords',tg:'vol'},1,.2); autEnd2('Add a volume point'); return {kept:autPts(0,'chords','vol').some(q=>Math.abs(q.t-1)<1e-3&&Math.abs(q.v-.2)<1e-3),free:!m.ctl.some(c=>c.ch==='chords'&&c.tg==='vol')}; });
+ ok(mr.kept&&mr.free,'drawing on a lane the macro drives keeps the point; that lane stops following the macro '+JSON.stringify(mr));
+ const gh=await p.evaluate(()=>{ S.auto={}; S.macros=[]; S.autoMac={}; histCheck(true); const m=autMacroNew(); AUT.sel={ch:'macro',tg:m.id}; histUndo(); autRender(); return {sel:AUT.sel&&AUT.sel.ch,lanes:autLanes().filter(l=>l.ch==='macro').length}; });
+ ok(gh.sel!=='macro'&&gh.lanes===0,'undoing a new macro leaves no ghost lane '+JSON.stringify(gh));
+ const id=await p.evaluate(()=>{ S.auto={}; S.macros=[]; S.autoMac={}; S.autoObj=[]; histCheck(true); const h0=H.past.length; autIdea('fx-cutoff'); const h1=H.past.length; autIdea('breathe'); return [h1-h0,H.past.length-h1]; });
+ ok(id[0]===1&&id[1]===1,'each automation idea is one undo step '+id);
+ const ln=await p.evaluate(()=>{ S.auto={}; histCheck(true); const B=autB(), e0=(S.song.sections[0].startBar+S.song.sections[0].bars)*B; autWrite('chords','pan',e0-8,e0+8,[{x:e0-8,v:.2},{x:e0+8,v:.8}]); return [autValAt('chords','pan',e0-4),autValAt('chords','pan',e0+4)]; });
+ ok(Math.abs(ln[0]-.35)<.01&&Math.abs(ln[1]-.65)<.01,'a straight line across a section edge stays straight '+ln.map(x=>x.toFixed(3)));
+ const off=await p.evaluate(()=>{ AUT.off=true; S.rendering=true; const r=autSkip('lead','vol'); S.rendering=false; AUT.off=false; return r; });
+ ok(off===false,'Automation Off is for listening only: bounces still have the automation');
+ const kk=await p.evaluate(async()=>{ S.auto={}; S.macros=[]; S.volTrim={}; S.parts.bass.vol=.5; arrRender(); H.quietUntil=0; histCheck(true); const h0=H.past.length; const el=document.querySelector('[data-pkn="bass"]'); if(!el) return -1; el.focus(); for(let i=0;i<4;i++) el.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowUp',bubbles:true})); await new Promise(r=>setTimeout(r,700)); return H.past.length-h0; });
+ ok(kk===1,'four quick arrow presses on a part knob are one undo step: '+kk);
+ const au=await p.evaluate(()=>{ S.auto={}; S.macros=[]; histCheck(true); const a=auAdd('other'); if(!a) return null; S.sel=1; autAddLane(a.id,'vol'); const ch=nativeFxCh(a.id); return {page:!!autoTargetsInUse('song')[a.id],plug:nativeLanes().filter(l=>l.ch===ch&&!l.pan).length}; });
+ ok(au&&au.page&&au.plug===1,'an audio track’s volume lane plays in the page and the plug-in '+JSON.stringify(au));
  ok(!errs.length,'no page errors '+errs.join(' | '));
  await b.close(); console.log(fails.length?`${fails.length} failed`:'all passed'); process.exit(fails.length?1:0); })();

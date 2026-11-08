@@ -614,12 +614,18 @@ int main()
         {
             FxDesc d; d.type = "pcomp"; d.p = { { "amt", .5f }, { "c", (float) c }, { "bpm", 120 } }; PcompFx pc (d, sr); double worst = 0; int k = 0;
             for (int i = 0; i < N; ++i) { float l = (float) sig (i), r = (float) (sig (i) * .7); pc.run (l, r); if (i >= 1237 && (i - 1237) % 1201 == 0 && k < 15) worst = std::max (worst, std::abs (l - want[c][k++])); }
-            CHECK (worst < 2e-4, "compressor %s: engine differs from the page by %.6f", nm[c], worst);
+            CHECK (worst < 2e-6, "compressor %s: engine differs from the page by %.7f", nm[c], worst);
         }
         FxDesc a; a.type = "pcomp"; a.ch = 2; a.slot = -1; a.p = { { "amt", .5f }, { "c", 2 }, { "bpm", 120 } };
         FxDesc w; w.type = "width"; w.ch = 2; w.slot = -1; w.p = { { "w", 0 } };
         auto bank = makeFxBank ({ a, w }, sr); CHECK (bank->comp[2] && bank->width[2] && ! bank->comp[1], "compressor and width land on their strip");
         float l = .5f, r = -.5f; bank->run (2, l, r); CHECK (std::abs (l - r) < 1e-6f, "width 0 is mono");
+        // Comp off is level-matched like the page: about as loud as on, not the raw part
+        auto rms = [&] (bool on) { FxDesc d; d.type = "pcomp"; d.p = { { "amt", .8f }, { "c", 0 }, { "bpm", 120 } }; if (! on) d.p["on"] = 0; PcompFx pc (d, sr); double e = 0; int n = 0;
+            for (int i = 0; i < 4 * 48000; ++i) { float x = (float) (.5 * std::sin (2 * synthPi * 220 * i / sr)), y = x; pc.run (x, y); if (i > 3 * 48000) { e += x * x; ++n; } } return std::sqrt (e / n); };
+        const double on = rms (true), off = rms (false), dry = .5 / std::sqrt (2.0);
+        CHECK (std::abs (20 * std::log10 (off / on)) < .5, "compressor bypass is level-matched: %.2f dB from on", 20 * std::log10 (off / on));
+        CHECK (std::abs (20 * std::log10 (dry / on)) > 3, "the compressor really turns this down (%.1f dB)", 20 * std::log10 (dry / on));
     }
 
     printf (failures ? "%d synth tests FAILED\n" : "all synth tests passed\n", failures);

@@ -41,8 +41,8 @@ const {chromium}=require('playwright'); const url='file://'+require('path').reso
  ok(await p.evaluate(()=>pcOf('lead').c==='punch'&&$('#pcWin [data-pcc="punch"]').getAttribute('aria-selected')==='true'),'choosing a character changes the compressor');
  // B in the open window bypasses; the engine gets it too
  const nb=await p.evaluate(()=>H.past.length); await p.keyboard.press('b'); await p.waitForTimeout(40);
- const by=await p.evaluate(nb=>({on:pcOf('lead').on,pill:$('#pcWin .pcw-pill').textContent,status:($('#pcWin [role="status"]')||{}).textContent||'',steps:H.past.length-nb,bar:document.querySelector('#cMix .pcb[data-pcb="lead"]').classList.contains('off'),nat:pcNative().some(x=>x.type==='pcomp'&&x.ch===nativeFxCh('lead'))}),nb);
- ok(!by.on&&/Bypassed/.test(by.pill)&&/at the same loudness/.test(by.status)&&by.steps===1&&by.bar&&!by.nat,'B bypasses the open compressor: pill, status line, the strip turns red, one undo step, the engine drops it '+JSON.stringify(by));
+ const by=await p.evaluate(nb=>({on:pcOf('lead').on,pill:$('#pcWin .pcw-pill').textContent,status:($('#pcWin [role="status"]')||{}).textContent||'',steps:H.past.length-nb,bar:document.querySelector('#cMix .pcb[data-pcb="lead"]').classList.contains('off'),nat:pcNative().some(x=>x.type==='pcomp'&&x.ch===nativeFxCh('lead')&&x.p.on===0)}),nb);
+ ok(!by.on&&/Bypassed/.test(by.pill)&&/at the same loudness/.test(by.status)&&by.steps===1&&by.bar&&by.nat,'B bypasses the open compressor: pill, status line, the strip turns red, one undo step, the plug-in gets a level-matched bypass too '+JSON.stringify(by));
  await p.keyboard.press('b'); await p.keyboard.press('Escape'); await p.waitForTimeout(40);
  ok(await p.evaluate(()=>pcOf('lead').on&&$('#pcWin').hidden),'B again turns it back on; Escape closes the window');
  // ⇧B on a part toggles everything on it; ⌥B the master
@@ -66,5 +66,23 @@ const {chromium}=require('playwright'); const url='file://'+require('path').reso
  // offline renders include the compressor
  const ren=await p.evaluate(async()=>{ const off=new OfflineAudioContext(2,4800,48000); await pcLoad(off); return !!off.__pc; });
  ok(ren,'offline renders (bounce, stems) load the compressor');
+ // ⌥B on a Mac types ∫: the key's place counts. It also bypasses the master's Smart EQ
+ const ab2=await p.evaluate(()=>{ const st=strip('song','master'); st.eq={on:true,bands:[{id:1,t:'bell',f:3000,g:2,q:1}]}; document.activeElement.blur(); const k=o=>document.dispatchEvent(new KeyboardEvent('keydown',{bubbles:true,...o})); k({key:'∫',code:'KeyB',altKey:true}); const r={eq:st.eq.on,fx:st.fx.filter(Boolean).map(f=>f.on)}; k({key:'∫',code:'KeyB',altKey:true}); r.back=st.eq.on; delete st.eq; return r; });
+ ok(ab2.eq===false&&ab2.fx.every(x=>!x)&&ab2.back===true,'⌥B works on a Mac keyboard and bypasses the master EQ too '+JSON.stringify(ab2));
+ // ⇧B takes the smart knob's effect with it
+ const kb=await p.evaluate(()=>{ const st=strip('song','chords'); st.knob={amt:.6}; renderStrips('song'); const before=!!knNative('chords'); document.querySelector('#cMix .pcb-bar[data-pcbar="chords"]').focus(); document.dispatchEvent(new KeyboardEvent('keydown',{bubbles:true,key:'B',code:'KeyB',shiftKey:true})); const off=!!knNative('chords'); document.querySelector('#cMix .pcb-bar[data-pcbar="chords"]').focus(); document.dispatchEvent(new KeyboardEvent('keydown',{bubbles:true,key:'B',code:'KeyB',shiftKey:true})); return {before,off,back:!!knNative('chords')}; });
+ ok(kb.before&&!kb.off&&kb.back,'⇧B bypasses the smart knob’s effect with the rest, in the page and the plug-in '+JSON.stringify(kb));
+ // Duck from kick dips 3 dB at full, as the data says
+ ok(await p.evaluate(()=>{ const st={}; knAmt(st,'bass','duck',1); return Math.abs(20*Math.log10(1-st.duck.depth)+3.1)<.2; }),'the smart knob’s Duck from kick dips about 3 dB at full');
+ // a click on the Comp bar that doesn't move it leaves the smart setting smart, with no hidden change
+ const ck=await p.evaluate(()=>{ delete strip('song','bass').comp; renderStrips('song'); const r=document.querySelector('#cMix .pcb-bar[data-pcbar="bass"]').getBoundingClientRect(); return {x:r.left+r.width/2,y:r.top+r.height/2,n:H.past.length}; });
+ await p.mouse.click(ck.x,ck.y); await p.waitForTimeout(60);
+ ok(await p.evaluate(n=>!strip('song','bass').comp&&H.past.length===n,ck.n),'clicking the Comp bar without moving it changes nothing');
+ // Width keeps a one-channel part in the middle at the same loudness
+ const wd=await p.evaluate(async()=>{ ensureAudio(); const real=ac, out={}; for(const w of [1.0001,2]){ const off=new OfflineAudioContext(2,4800,48000); ac=off; try{ const c=off.createConstantSource(); c.offset.value=.5; const mn=G(1); monoSet(mn,true); c.connect(mn); const wn=widthNode(w,mn), pn=off.createStereoPanner(); wn.connect(pn); pn.connect(off.destination); c.start(); const b=await off.startRendering(); out[w>1.5?'wide':'asis']=[b.getChannelData(0)[4000],b.getChannelData(1)[4000]]; } finally { ac=real; } } return out; });
+ ok(Math.abs(wd.wide[0]-wd.wide[1])<1e-4&&Math.abs(wd.wide[0]-wd.asis[0])<1e-3,'Width keeps a mono part centred and at the same level '+JSON.stringify(wd));
+ // old compressors stop when the song plays again
+ const rp=await p.evaluate(async()=>{ ensureAudio(); await pcLoad(ac); for(let i=0;i<3;i++){ play('song'); await new Promise(r=>setTimeout(r,300)); stopPlay(); } return {alive:PCX.nodes.length,mine:new Set(PCX.nodes.map(x=>x.m)).size===1}; });
+ ok(rp.mine&&rp.alive<=8,'compressors from earlier plays are stopped; only the current mix’s run '+JSON.stringify(rp));
  ok(!errs.length,'no page errors '+errs.join(' | '));
  await b.close(); if(fails.length) process.exit(1); })();
