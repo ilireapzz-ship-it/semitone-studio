@@ -22,7 +22,7 @@ const {chromium}=require('playwright'); const url='file://'+require('path').reso
  ok(ids.length===5,'all five themes checked');
  // the hatched DAW overlay uses tokens, so it is light in light themes
  await p.evaluate(()=>{ themeUse('daylight'); shellDock('mix'); renderStrips('song'); }); await p.waitForTimeout(100);
- const ov=await p.evaluate(()=>{ const f=document.querySelector('#cMix .strip.pt-out .st-fadsec'); if(!f) return null; const c=getComputedStyle(f,'::after').backgroundColor, m=c.match(/[\d.]+/g).map(Number), v=/srgb/.test(c)?m.slice(0,3).map(x=>x*255):m.slice(0,3); return v.reduce((a,x)=>a+x,0)/3; });
+ const ov=await p.evaluate(()=>{ const f=document.querySelector('#cMix .strip.pt-out .sf-daw'); if(!f) return null; const c=getComputedStyle(f).backgroundColor, m=c.match(/[\d.]+/g).map(Number), v=/srgb/.test(c)?m.slice(0,3).map(x=>x*255):m.slice(0,3); return v.reduce((a,x)=>a+x,0)/3; });
  ok(ov>200,'(average '+Math.round(ov)+' of 255) '+'the “mix this part in your DAW” overlay is drawn from theme tokens, not a fixed dark colour');
  const ink=await p.evaluate(()=>{ const r={}; ['studio-black','daylight','riso-zine'].forEach(t=>{ themeUse(t); r[t]=getComputedStyle(document.documentElement).getPropertyValue('--st-ink-soft-melody').trim()+' '+getComputedStyle(document.documentElement).getPropertyValue('--st-section-colors-chorus').trim(); }); themeUse('studio-black'); return r; });
  ok(Object.values(ink).every(v=>/^#[0-9A-F]{6} rgba\(/i.test(v))&&new Set(Object.values(ink)).size===3,'inkSoft and sectionColors tokens differ per theme: '+JSON.stringify(ink));

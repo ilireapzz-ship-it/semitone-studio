@@ -29,7 +29,7 @@ const {chromium}=require('playwright'); const url='file://'+require('path').reso
  await p.mouse.click(cv.x+cv.w*.5,cv.y+cv.h*.3); await p.waitForTimeout(60);
  const a1=await p.evaluate(()=>{ const B=S.mix.chords.eq.bands; return {n:B.length,b:B[0],sel:EQ.sel.size}; });
  ok(a1.n===1&&a1.b.t==='bell'&&a1.b.g>3&&a1.b.f>500&&a1.b.f<1500&&a1.sel===1,'clicking the curve adds a bell where you click '+JSON.stringify(a1.b));
- await p.evaluate(()=>{ const q=[...document.querySelectorAll('[data-eqkeep]')].find(x=>x.dataset.eqkeep==='all'); q.click(); });
+ await p.evaluate(()=>{ document.querySelector('[data-eqx="suggest"]').click(); const q=[...document.querySelectorAll('[data-eqkeep]')].find(x=>x.dataset.eqkeep==='all'); q.click(); });
  const a2=await p.evaluate(()=>({n:S.mix.chords.eq.bands.length,who:S.mix.chords.eq.bands.map(b=>b.who),sug:document.querySelectorAll('.eq-g').length,steps:H.past.length}));
  ok(a2.n>=3&&a2.who.includes('Smart'),'Keep all adds the suggested bands, marked Smart: '+a2.n+' bands');
  ok(a2.steps-was===2,'adding a band and keeping the suggestions are one undo step each');

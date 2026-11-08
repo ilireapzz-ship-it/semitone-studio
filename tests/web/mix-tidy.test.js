@@ -13,12 +13,12 @@ const {chromium}=require('playwright'); const url='file://'+require('path').reso
  await p.click('#drMix [data-mixtool="mono"]');
  await p.evaluate(()=>{ ['lead','chords','bass'].forEach(c=>delete strip('song',c).duck); renderStrips('song'); histCheck(true); });
  const n0=await p.evaluate(()=>H.past.length);
- await p.click('#cMix [data-scpop]'); await p.check('#recipePop [data-scc="bass"]'); await p.check('#recipePop [data-scc="chords"]');
- const s1=await p.evaluate(n0=>({bass:strip('song','bass').duck, ch:strip('song','chords').duck, steps:H.past.length-n0, btn:$('#cMix [data-scpop]').textContent, nd:nativeDuck().length}),n0);
+ const scOpen=async()=>{ await p.click('#cMix .strip[data-ch="drums"] [data-stmore]'); await p.waitForTimeout(60); await p.evaluate(()=>[...document.querySelectorAll('#ctxMenu [data-ci]')].find(x=>/^Sidechain/.test(x.textContent)).click()); await p.waitForTimeout(60); }; await scOpen(); await p.check('#recipePop [data-scc="bass"]'); await p.check('#recipePop [data-scc="chords"]');
+ const s1=await p.evaluate(n0=>({bass:strip('song','bass').duck, ch:strip('song','chords').duck, steps:H.past.length-n0, btn:(()=>{ $('#recipePop').hidden=true; document.querySelector('#cMix .strip[data-ch="drums"] [data-stmore]').click(); const x=[...document.querySelectorAll('#ctxMenu [data-ci]')].find(x=>/^Sidechain/.test(x.textContent)).textContent; ctxClose(); return x; })(), nd:nativeDuck().length}),n0);
  ok(s1.bass&&s1.bass.row==='kick'&&s1.ch&&s1.steps===2,'ticking parts sidechains them to the kick, one undo each');
- ok(/2 parts/.test(s1.btn),'the Drums strip says how many parts dip: '+s1.btn);
+ ok(/2 parts/.test(s1.btn),'the Drums strip’s ⋯ menu says how many parts dip: '+s1.btn);
  ok(s1.nd===2,'the app engine gets both');
- await p.selectOption('#recipePop [data-sct]','snare'); ok(await p.evaluate(()=>strip('song','bass').duck.row==='snare'&&strip('song','chords').duck.row==='snare'),'changing the trigger moves every ticked part to it');
+ await scOpen(); await p.selectOption('#recipePop [data-sct]','snare'); ok(await p.evaluate(()=>strip('song','bass').duck.row==='snare'&&strip('song','chords').duck.row==='snare'),'changing the trigger moves every ticked part to it');
  await p.evaluate(()=>{ const r=$('#recipePop [data-scp="depth"]'); r.value='0.9'; r.dispatchEvent(new Event('input',{bubbles:true})); r.dispatchEvent(new Event('change',{bubbles:true})); });
  ok(await p.evaluate(()=>strip('song','bass').duck.depth===0.9&&strip('song','chords').duck.depth===0.9&&/depth/.test(H.past[H.past.length-1].label)),'depth sets every ticked part, one undo');
  ok(await p.evaluate(()=>{ histUndo(); histUndo(); histUndo(); return !strip('song','chords').duck&&strip('song','bass').duck.row==='kick'; }),'undo steps back one change at a time');

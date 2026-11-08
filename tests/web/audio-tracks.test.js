@@ -12,11 +12,11 @@ const wav=`(()=>{ const sr=48000,n=sr*30,b=new ArrayBuffer(44+n*2),v=new DataVie
  const a=await p.evaluate(async()=>{ S.demo=false; LIVE.countIn=false; const e=$('#structSel'); e.value='pop'; e.dispatchEvent(new Event('change',{bubbles:true})); await new Promise(f=>setTimeout(f,100)); const before=H.past.length;
    $('#addPartBtn').click(); document.querySelector('[data-xau="lead"]').click(); await new Promise(f=>setTimeout(f,50));
    const v=auGet('vox'), st=strip('song','vox'), row=document.querySelector('.arr-row[data-au="vox"]');
-   return {v, st:{pan:st.pan,mono:st.mono,hp:hasHP(st)}, armed:AU.arm, row:!!row, rowArmed:row&&row.classList.contains('armed'), steps:H.past.length-before, btn:$('#recOpen').textContent, mixer:stripChannels('song').some(x=>x[0]==='vox'&&x[1]==='Vocals'), monoBtn:!!document.querySelector('#cMix .strip[data-ch="vox"] [data-mono][aria-pressed="true"]')}; });
+   return {v, st:{pan:st.pan,mono:st.mono,hp:hasHP(st)}, armed:AU.arm, row:!!row, rowArmed:row&&row.classList.contains('armed'), steps:H.past.length-before, btn:$('#recOpen').textContent, mixer:stripChannels('song').some(x=>x[0]==='vox'&&x[1]==='Vocals'), monoBtn:!!document.querySelector('#cMix .strip[data-ch="vox"] [data-stmore]')&&!!strip('song','vox').mono}; });
  ok(a.v&&a.v.ch===15&&a.v.input==='in1'&&a.v.kind==='lead','Vocals is a track on channel 16, mono input 1');
  ok(a.st.pan===0&&a.st.mono===true&&a.st.hp,'the lead vocal starts centred, mono and high-passed');
  ok(a.armed==='vox'&&a.row&&a.rowArmed&&/Rec · Vocals/.test(a.btn),'it is armed: its row is marked and Record says where it goes '+JSON.stringify([a.armed,a.row,a.rowArmed,a.btn]));
- ok(a.steps===1&&a.mixer&&a.monoBtn,'one undo step, and it has a mixer strip with Mono on');
+ ok(a.steps===1&&a.mixer&&a.monoBtn,'one undo step, and it has a mixer strip with Mono on (in its ⋯ menu)');
 
  // 2. smart placement: guitar off to the lighter side; a double puts the pair hard left and right; harmony opposite the lean
  const g=await p.evaluate(()=>{ const x=auAdd('guitar',{quiet:true}), pan1=strip('song',x.id).pan; auDouble(x.id); const d=auTracks().find(a=>a.of===x.id); const bv=auAdd('bv',{quiet:true});
