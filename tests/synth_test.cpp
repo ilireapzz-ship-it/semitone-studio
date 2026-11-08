@@ -429,6 +429,41 @@ int main()
         printf ("ok: volume and pan lanes follow the song position\n");
     }
 
+    // FL Studio's "Macro 1": once the host moves it, the macro's controls follow the host value, not the song's line
+    {
+        Synth sy; sy.prepare (SR);
+        std::array<std::atomic<float>, 8> mv {}; std::array<std::atomic<bool>, 8> on {};
+        for (int i = 0; i < 8; ++i) { mv[(size_t) i] = .5f; on[(size_t) i] = false; }
+        sy.macroVals = mv.data(); sy.macroOn = on.data();
+        auto pt = std::make_shared<SynthPatch>();
+        PartPatch p; p.ch = 0; p.kind = Kind::voice; p.wave = Wave::sine; p.vol = .2f; p.cutoff = 8000; p.attack = .001f; p.level = 1;
+        pt->parts.push_back (p);
+        Lane line; line.ch = 0; line.pts = { { 0, 1.0f }, { 100, 1.0f } };
+        Lane mac; mac.ch = 0; mac.macro = 0; for (int j = 0; j < 17; ++j) mac.tab[(size_t) j] = 1.0f - .9f * (float) j / 16.0f;   // macro 0 → 1.0, 1 → 0.1
+        pt->lanes = { line, mac };
+        sy.setPatch (pt);
+        const int blk = 480; std::vector<float> L ((size_t) blk), R ((size_t) blk);
+        const double bps = 2.0 / SR;
+        auto level = [&] (double& beat, std::vector<Event>& ev, double secs)
+        {
+            double a = 0; int n = 0; const int blocks = (int) (secs * SR / blk);
+            for (int b = 0; b < blocks; ++b)
+            {
+                std::fill (L.begin(), L.end(), 0.f); std::fill (R.begin(), R.end(), 0.f);
+                sy.process (ev, blk, L.data(), R.data(), 1, beat, bps); ev.clear();
+                if (b > blocks / 3) for (int i = 0; i < blk; ++i) { a += L[(size_t) i] * L[(size_t) i]; ++n; }
+                beat += blk * bps;
+            }
+            return std::sqrt (a / std::max (1, n));
+        };
+        double beat = 0; std::vector<Event> ev; Event e {}; e.status = 0x90; e.d1 = 69; e.d2 = 100; e.offset = 0; ev.push_back (e);
+        const double before = level (beat, ev, .5);           // FL hasn't touched it: the song's line (1.0)
+        on[0] = true; mv[0] = 1.0f;
+        const double after = level (beat, ev, .5);            // FL turned Macro 1 up: the table's 0.1
+        CHECK (before > 0 && after / before > .05 && after / before < .2, "macro: before %.4f after %.4f", before, after);
+        if (after / before < .2) printf ("ok: FL Studio's macro takes over its controls in the engine\n");
+    }
+
     // your plug-ins join the mix on their strip: fader, pan, and they keep running when the engine would go idle
     {
         auto p = std::make_shared<SynthPatch> (); p->hasExt = true; p->extLevel[1] = 1; p->polish.on = false;

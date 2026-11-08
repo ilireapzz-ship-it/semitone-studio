@@ -435,6 +435,15 @@ void SemitoneEditor::timerCallback()
             lastAutosaved = json;
     }
 
+    // FL Studio automating "Macro 1-8": tell the page, so the lanes show "FL is automating this"
+    for (int i = 0; i < 8; ++i)
+        if (proc.macroIsHost (i) && std::abs (proc.macroValue (i) - sentMacro[(size_t) i]) > 0.0005f)
+        {
+            sentMacro[(size_t) i] = proc.macroValue (i);
+            auto* o = new juce::DynamicObject();
+            o->setProperty ("i", i); o->setProperty ("v", sentMacro[(size_t) i]);
+            browser.emitEventIfBrowserIsVisible ("st_macro_host", juce::var (o));
+        }
     // notes played into the plugin
     incoming.clear();
     if (proc.popIncomingMidi (incoming) > 0)

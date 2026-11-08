@@ -84,6 +84,15 @@ struct Lane
     int fxSlot = -1, fxParam = -1;     // set: this lane drives an effect's parameter, with absolute values
     std::string fxName;
     std::vector<std::pair<double, float>> pts;
+    // a macro that FL Studio automates: the host value (0-1) looks up this target's value in `tab` (17 steps) instead of `pts`
+    int macro = -1;
+    std::array<float, 17> tab {};
+    float fromMacro (float u) const
+    {
+        const float x = juce_clamp01 (u) * 16.0f; const int i = (int) x; if (i >= 16) return tab[16];
+        return tab[(size_t) i] + (tab[(size_t) i + 1] - tab[(size_t) i]) * (x - (float) i);
+    }
+    static float juce_clamp01 (float v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
 
     float at (double beat) const
     {
@@ -1134,7 +1143,8 @@ private:
         if (beat < 0 || ! current) return;
         for (const auto& k : current->lanes)
         {
-            const float v = k.at (beat);
+            if (k.macro >= 0 && (macroOn == nullptr || ! macroOn[k.macro].load (std::memory_order_relaxed))) continue;
+            const float v = k.macro >= 0 ? k.fromMacro (macroVals[k.macro].load (std::memory_order_relaxed)) : k.at (beat);
             if (k.fxSlot >= 0) { if (fxBus) if (auto* f = fxBus->at (k.ch < 0 ? FxBank::master : k.ch, k.fxSlot)) f->set (k.fxParam, v); }
             else if (k.ch < 0) { if (! k.pan) masterGain = v; }
             else if (k.pan) { chPan[(size_t) (k.ch & 15)] = v; hasPan[(size_t) (k.ch & 15)] = true; }
@@ -1213,6 +1223,11 @@ private:
     int sweepLeft = 0, sweepTotal = 1;
     Biquad sweep;
     float masterGain = 1;
+public:
+    // FL Studio's "Macro 1-8" host parameters: values, and whether FL has taken each one over (set by the processor)
+    const std::atomic<float>* macroVals = nullptr;
+    const std::atomic<bool>* macroOn = nullptr;
+private:
     double secPerBeat = 0;
     std::array<float, 16> chSum {}, chMax {};
     std::array<std::atomic<float>, 16> chPeak {};

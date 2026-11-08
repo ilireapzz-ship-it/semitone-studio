@@ -51,6 +51,7 @@ private:
     juce::WebBrowserComponent browser;
     std::unique_ptr<juce::FileChooser> chooser;
     std::vector<juce::uint32> incoming;
+    std::array<float, 8> sentMacro { -1, -1, -1, -1, -1, -1, -1, -1 };   // FL macro values last sent to the page
     juce::String lastAutosaved;
     int lastHostLatency = 0;
     std::atomic<bool> bouncing { false };

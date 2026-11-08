@@ -8,6 +8,14 @@ SemitoneProcessor::SemitoneProcessor()
                           : BusesProperties().withOutput ("Output", juce::AudioChannelSet::stereo(), true))
 {
     events.reserve (4096); waiting.reserve (8192); soon.reserve (8192);
+    for (int i = 0; i < 8; ++i)
+    {
+        macroVal[(size_t) i] = 0.5f; macroTouched[(size_t) i] = false;
+        auto* p = new juce::AudioParameterFloat (juce::ParameterID { "macro" + juce::String (i + 1), 1 }, "Macro " + juce::String (i + 1), 0.0f, 1.0f, 0.5f);
+        macroParams[(size_t) i] = p; addParameter (p);
+        p->addListener (this);
+    }
+    synth.macroVals = macroVal.data(); synth.macroOn = macroTouched.data();
     // standalone app: come back to the song you were working on, even after a crash
     if (isStandalone())
     {
@@ -17,9 +25,20 @@ SemitoneProcessor::SemitoneProcessor()
     }
 }
 
+// FL moved a macro: from now on its value drives that macro's controls in the engine
+void SemitoneProcessor::parameterValueChanged (int index, float value)
+{
+    for (int i = 0; i < 8; ++i)
+        if (macroParams[(size_t) i] != nullptr && macroParams[(size_t) i]->getParameterIndex() == index)
+        {
+            macroVal[(size_t) i] = value; macroTouched[(size_t) i] = true;
+        }
+}
+
 // quitting mid-export: stop the export and wait for its thread before anything it uses goes away
 SemitoneProcessor::~SemitoneProcessor()
 {
+    for (auto* p : macroParams) if (p != nullptr) p->removeListener (this);
     abortBounce = true;
     for (int i = 0; i < 500 && bouncingNow.load(); ++i) juce::Thread::sleep (10);
 }
@@ -55,7 +74,7 @@ void SemitoneProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
     for (const auto meta : midi)
     {
         const auto m = meta.getMessage();
-        if (m.isNoteOnOrOff() || m.isSustainPedalOn() || m.isSustainPedalOff())
+        if (m.isNoteOnOrOff() || m.isController() || m.isPitchWheel())   // notes, and knobs/wheels/pedals for automation recording
         {
             const auto* d = m.getRawData();
             const auto packed = (juce::uint32) d[0] | ((juce::uint32) d[1] << 8) | ((juce::uint32) (m.getRawDataSize() > 2 ? d[2] : 0) << 16);
@@ -413,6 +432,24 @@ void SemitoneProcessor::setSynthSound (const juce::var& sound, const st::Timelin
         t->monoMask = 0;
         if (auto* list = sound.getProperty ("mono", juce::var()).getArray())
             for (const auto& o : *list) { const int c = (int) o; if (c >= 0 && c <= 16) t->monoMask |= 1u << c; }
+        std::vector<st::Lane> macroLanes;   // applied after every other lane, so FL's macro wins over the song's own line
+        if (auto* macs = sound.getProperty ("macros", juce::var()).getArray())
+            for (const auto& m : *macs)
+            {
+                const int mi = (int) m.getProperty ("i", -1);
+                if (mi < 0 || mi > 7) continue;
+                if (auto* ctl = m.getProperty ("ctl", juce::var()).getArray())
+                    for (const auto& o : *ctl)
+                    {
+                        st::Lane k;
+                        k.macro = mi; k.ch = (int) o.getProperty ("ch", -1); k.pan = (bool) o.getProperty ("pan", false);
+                        const int slot = (int) o.getProperty ("slot", -1);
+                        if (slot >= 0) { k.fxSlot = slot; k.fxName = o.getProperty ("k", "").toString().toStdString(); }
+                        if (auto* tab = o.getProperty ("tab", juce::var()).getArray())
+                            for (int j = 0; j < 17 && j < tab->size(); ++j) k.tab[(size_t) j] = (float) (double) (*tab)[j];
+                        macroLanes.push_back (std::move (k));
+                    }
+            }
         if (auto* lanes = sound.getProperty ("fxLanes", juce::var()).getArray())
             for (const auto& o : *lanes)
             {
@@ -422,6 +459,7 @@ void SemitoneProcessor::setSynthSound (const juce::var& sound, const st::Timelin
                     for (int i = 0; i + 1 < p->size(); i += 2) k.pts.push_back ({ (double) (*p)[i], (float) (double) (*p)[i + 1] });
                 t->lanes.push_back (std::move (k));
             }
+        for (auto& k : macroLanes) t->lanes.push_back (std::move (k));
         if (host)
         {
             auto list = std::make_shared<std::vector<st::Lane>>();

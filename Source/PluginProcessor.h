@@ -13,7 +13,7 @@
 
 // The plugin: plays the song from the Semitone interface as MIDI, in time with the host.
 // Each part leaves on its own MIDI channel so the DAW can route it to any instrument (Omnisphere etc).
-class SemitoneProcessor : public juce::AudioProcessor
+class SemitoneProcessor : public juce::AudioProcessor, private juce::AudioProcessorParameter::Listener
 {
 public:
     SemitoneProcessor();
@@ -123,6 +123,17 @@ private:
 
     // the native engine: plays whatever no rendered section covers
     st::Synth synth;
+    // "Macro 1-8": host parameters FL Studio can automate. Once FL moves one, its value drives that macro's controls (Automation → macros)
+    std::array<juce::AudioParameterFloat*, 8> macroParams {};
+    std::array<std::atomic<float>, 8> macroVal {};
+    std::array<std::atomic<bool>, 8> macroTouched {};
+    void parameterValueChanged (int index, float value) override;
+    void parameterGestureChanged (int, bool) override {}
+public:
+    // for the interface: has FL taken this macro over, and its value
+    bool macroIsHost (int i) const { return i >= 0 && i < 8 && macroTouched[(size_t) i].load(); }
+    float macroValue (int i) const { return i >= 0 && i < 8 ? macroVal[(size_t) i].load() : 0.5f; }
+private:
     void setSynthSound (const juce::var& sound, const st::Timeline& tl);
     void buildSynthPatch();
     juce::CriticalSection synthLock;                               // guards the next two
