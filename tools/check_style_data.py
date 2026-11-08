@@ -151,6 +151,22 @@ for k,v in AM['producers'].items():
     if not v.get('src'): W(f"automation-moves {k}: no sources")
 for k in prids:
     if k not in AM['producers']: I(f"automation-moves: producer {k} has no automation training")
+# mixing and mastering (data/mix-master.json)
+MM=json.load(open('data/mix-master.json'))
+eids={e['id'] for e in MM['engineers']}
+for e in MM['engineers']:
+    if not e['src']: I(f"mix-master {e['id']}: no sources")
+    for s_ in e['styles']:
+        if s_ not in pids: I(f"mix-master {e['id']}: style {s_} not a profile")
+for k,v in MM['bestFor'].items():
+    if k not in pids: I(f"mix-master bestFor: {k} not a profile")
+    for r_ in ('mix','master'):
+        if v[r_] not in eids: I(f"mix-master bestFor {k}: {v[r_]} unknown")
+        elif [e for e in MM['engineers'] if e['id']==v[r_]][0]['role'] not in (r_,'both'): I(f"mix-master bestFor {k}: {v[r_]} is not a {r_} engineer")
+for k in pids:
+    if k not in MM['bestFor']: W(f"mix-master: profile {k} has no best engineers (uses the house profile)")
+for r_ in MM['calibrate']['coachRules']:
+    if r_ not in rid: I(f"mix-master calibrate: coach rule {r_} unknown")
 print('ISSUES',len(issues)); [print(' -',x) for x in issues]
 print('WARNINGS',len(warn)); [print(' -',x) for x in warn]
 sys.exit(1 if issues else 0)
