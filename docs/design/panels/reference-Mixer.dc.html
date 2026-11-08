@@ -33,7 +33,7 @@ button{cursor:pointer;white-space:nowrap}
   <div style="height: 38px; flex-shrink: 0; display: flex; align-items: center; gap: 8px; padding: 0 14px; border-bottom: 1px solid rgba(255,255,255,.06); background: #0E0F12; white-space: nowrap">
     <button class="ghost xs" style="width: 26px; padding: 0">⏮</button><button style="width: 30px; height: 26px; border-radius: 7px; border: 0; background: linear-gradient(#F3F0EA,#D6D2C8); color: #111; font-size: 10px">▶</button>
     <span style="display: flex; align-items: center; gap: 12px; height: 26px; padding: 0 11px; border-radius: 7px; background: #08090A; border: 1px solid rgba(255,255,255,.05)"><span class="mono" style="color: #F1E7D4; font-size: 13.5px">00:12.3</span><span class="mono" style="color: #8A8F98">5.1.1</span><span class="mono" style="color: #C9C5BC">E min · 78 · 4/4</span></span>
-    <span style="margin-left: auto; display: flex; gap: 6px"><button class="ghost xs">↶</button><button class="ghost xs">⟲ Capture</button><button class="ghost xs"><span style="color: #E0443A">●</span> Record</button><button class="prim xs">Share</button></span>
+    <span style="margin-left: auto; display: flex; gap: 6px"><button class="ghost xs">↶</button><sc-if value="{{clickBtn}}" hint-placeholder-val="{{false}}"><span style="display: flex; align-items: center; height: 24px; border-radius: 7px; border: 1px solid {{clickBtn.line}}; background: {{clickBtn.bg}}; overflow: hidden"><button title="Click track (C) · right-click for options" style="height: 22px; padding: 0 8px; border: 0; background: transparent; color: {{clickBtn.ink}}; display: flex; align-items: center; gap: 5px"><svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path d="M5 14 L7.5 2.5 H8.5 L11 14 Z M8 9 L13 4" fill="none" stroke="{{clickBtn.ink}}" stroke-width="1.3" stroke-linejoin="round"></path></svg>{{clickBtn.n}}</button><span style="width: 1px; height: 14px; background: {{clickBtn.line}}"></span><button style="height: 22px; padding: 0 5px; border: 0; background: transparent; color: {{clickBtn.ink}}; font-size: 9px">▾</button></span></sc-if><button class="ghost xs">⟲ Capture</button><button class="ghost xs"><span style="color: #E0443A">●</span> Record</button><button class="prim xs">Share</button></span>
   </div>
   <div style="flex: 1; display: flex; min-height: 0">
     <main style="flex: 1; min-width: 0; display: flex; flex-direction: column">
@@ -104,6 +104,7 @@ class Component extends DCLogic {
     var secs = S.map(function (s) { return { n: s[0], b: s[1], bg: look[s[2]][0], line: look[s[2]][1], ink: look[s[2]][2] }; });
     function tabsOf(on) { return ['Notes', 'Words', 'Sound', 'Mix', 'Automation'].map(function (n) { var o = n === on; return { n: n, line: o ? B : 'transparent', ink: o ? '#EDEBE6' : '#7E838C' }; }); }
     function subsOf(list, on) { return list.map(function (n) { var o = n === on; return { n: n, bg: o ? '#24262B' : 'transparent', ink: o ? '#EDEBE6' : '#8A8F98' }; }); }
+    var clickBtn = { n: 'Click', line: 'rgba(255,255,255,.1)', bg: 'transparent', ink: '#8A8F98' };
     var railI = [['✚', '#9DB4E8', 2], ['♡', '#B9A3E3', 1], ['✎', B, 1]].map(function (r) { return { i: r[0], c: r[1], n: r[2] }; });
     function KN(cx, cy, a, r) { a = a * Math.PI / 180; return (cx + r * Math.cos(a)).toFixed(2) + ' ' + (cy + r * Math.sin(a)).toFixed(2); }
     function knob(v, col, size) { var seg = []; for (var k = 0; k <= 24; k++) { var t = k / 24, ang = 135 + t * 270; seg.push({ d: 'M' + KN(30, 30, ang, 27) + ' L' + KN(30, 30, ang, 23), c: t <= v + 1e-6 ? col : '#0C0D10' }); } var pa = 135 + v * 270; return { seg: seg, ptr: 'M' + KN(30, 30, pa, 5) + ' L' + KN(30, 30, pa, 14), size: size || 54, col: col }; }
@@ -115,7 +116,7 @@ function segOf(list, on) { return list.map(function (n) { var o = n === on; retu
     var route = [['Melody', '#D9776F', 'Ch 1', 0], ['Chords', '#7C95D9', 'Ch 2', 0], ['Counter', '#E3A9C9', 'Ch 3', 1], ['Bass', '#D5A35F', 'Ch 4', 0]].map(function (r) { var on = !!r[3]; return { n: r[0], c: r[1], ch: r[2], bg: on ? '#B8925A' : '#24262B', k: on ? 13 : 2, chBg: on ? 'rgba(217,179,122,.15)' : '#0A0B0D', chInk: on ? '#F1D6A6' : '#6B7079' }; });
     var dOpts = [['Mute Semitone’s sound for parts sent out', 1], ['Send clock & song position', 1]].map(function (o) { var on = !!o[1]; return { n: o[0], bg: on ? '#B8925A' : '#24262B', k: on ? 13 : 2 }; });
     var sendTo = [['⇥', 'Drag a section', 'audio, or ⌥ for MIDI, onto FL’s playlist'], ['▤', 'Stems & MIDI', 'every part, in Share'], ['⚑', 'Markers in FL', 'section names on FL’s playlist']].map(function (x) { return { i: x[0], n: x[1], d: x[2] }; });
-    return { secs: secs, tabs: tabsOf('Mix'), subs: subsOf(['Mixer', 'Snapshots'], 'Mixer'), railI: railI, strips: strips, master: master, mfx: mfx, route: route, dOpts: dOpts, sendTo: sendTo };
+    return { clickBtn: clickBtn, secs: secs, tabs: tabsOf('Mix'), subs: subsOf(['Mixer', 'Snapshots'], 'Mixer'), railI: railI, strips: strips, master: master, mfx: mfx, route: route, dOpts: dOpts, sendTo: sendTo };
   }
 }
 </script>

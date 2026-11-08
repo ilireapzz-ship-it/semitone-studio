@@ -11,8 +11,20 @@ away as a tab**: what it did moves into the mixer and Share.
 Two columns of cards, no page scroll at 1440×900:
 - **Style:** a monogram tile, the style name in serif, its one-line description and producer, tag chips, and **Change style** (opens the tag picker).
   Project Save/Open/New move to the logo menu and ⌘S/⌘O (the title is already in the header).
-- **Structure:** eight picture cards (Single idea, Verse–chorus, Pop + bridge, Ballad, AABA, Hook–verse loop, Epic, Surprise me). Each draws its
+- **Structure:** picture cards (Single idea, Verse–chorus, Verse–pre–chorus, + bridge, Refrain song, Ballad, AABA, Epic). Each draws its
   shape as coloured blocks, and the current one is ringed in brass. The header shows sections · bars · time · length ▾ and ⟳ Shuffle.
+  - **Colour key** above the cards (and the same colours on the timeline's section pills): Intro / outro grey, Verse light blue, Pre-chorus
+    mid blue, Chorus strong blue, Refrain brass, Bridge / break violet. They are alpha tints of theme tokens, so they work in every theme.
+    Add a `sectionColors` token group to themes.json.
+  - **Examples from the chosen artist or era** on every card: up to two song titles in italics ("Brooklyn Baby · West Coast +3") and a count
+    ("5 of 10"). A card with none says "none in this era" and dims. Hovering or ⌥-clicking a card opens the full list, with "Use this shape"
+    and "Hear its shape" (plays the song's own sections as a sketch with the current sounds, never the original recording).
+  - **Where the examples come from:** today `progressions.json` lists the section types per song (verse, pre, chorus, bridge, refrain, outro), so
+    classify by which types appear (verse only → Single idea; + chorus → Verse–chorus; + pre → Verse–pre–chorus; + bridge → + bridge; refrain →
+    Refrain song). That's a guide, so the header says "Examples from <style>". For accuracy, add an optional `form` per song in catalog.json
+    (the real section order, e.g. `"form": "I V P C V P C B C O"`, with a source). Use `form` when present. `check_style_data.py` checks the
+    letters. Ballad, AABA and Epic need `form` or a length to be detected.
+  - Example counts follow the selected style tags (a blend shows songs from each, marked by artist).
 - **Key:** a **circle of fifths** (majors outside, the relative minors near the key inside, the current key filled brass, its relative major ringed)
   with "E minor · 1 sharp" in the middle. Beside it, the **mode** list, each with its feeling (bright, sad, hopeful minor, dark, dreamy, bluesy,
   dramatic, unstable).
@@ -41,6 +53,30 @@ Every change is one undo step, and "changes write a fresh idea with the same see
   ▶ and ★, and **Make melody from comp** turns it into notes.
 - **Options:** Punch in (bars, set by clicking the ruler), Loop record (each pass a new take), Tuning (Off, Natural, Tight; never robotic by default),
   and Timing (ms shift).
+
+### Click track (like FL Studio's metronome, `2-Record.png` shows the menu open)
+- **One button in the transport**, always visible in every lens: a metronome icon + "Click", with a ▾. Click it (or press **C**) to turn it on or off.
+  When on it is lit brass and says when it plays: "Click · rec" (only while recording) or "Click" (always). **⇧C** cycles the "when" setting.
+- **The ▾, or a right-click on the button,** opens the Click menu. It's small and in plain words, and the same menu is on Record's "Click" segment
+  (Off / Recording / Always):
+  - **When:** Off · Only while recording · Always · Count-in only.
+  - **Sound:** Wood (default), Classic beep, Rim, Hi-hat, Shaker, Cowbell, Song's kit (uses the song's own rim or hat), and **Your sample…** (a dashed
+    card: drop a WAV/AIFF or choose a file, optionally a second sample for the accent, trimmed to its start, kept with your settings, not the
+    song). Each card shows the sound's shape and plays it on hover.
+  - **Pattern:** Every beat · Accent bar 1 (default) · 8ths · Follow groove (clicks on the song's swing/shuffle feel) · Bars only (downbeats only,
+    for experienced players). A row of bars under it previews the pattern for two bars of the current metre.
+  - **Level:** Volume and Accent knobs (the same LED-ring knob).
+  - **Switches:** Flash the beat on screen (the time display and the playhead flash on each beat, accent in brass), Click only in headphones (desktop
+    app with a multi-output interface: click on outputs 3–4), Mute during count-in only.
+  - Footer: "Always on the song's grid: tempo changes, metre changes and swing are followed automatically. Never in exports or stems."
+- **Always follows the song:** the click is scheduled from the song's tempo map and metre per section (including tempo automation and the last-chorus
+  +2 BPM kind of moves), so it never drifts. In 6/8 and 12/8 it accents the dotted-quarter pulse, and "8ths" clicks every eighth. Inside FL Studio
+  the plug-in's click follows FL's tempo and stays off by default (FL has its own).
+- **Count-in** stays its own setting (Off / 1 bar / 2 bars) and always uses the click sound, even when the click is off for the take.
+- The click is audible only, never recorded into takes (it is excluded from the input and from export). Settings are saved in app settings,
+  shared by the app and the plug-in, like the theme.
+- Tests: on/off with C; the "when" modes (silent in playback when "Only while recording"); tempo changes and metre changes land on the grid; swing
+  follow; your sample plays and the accent sample on beat 1; never in exports; flash on beat; theme contrast of the menu.
 The desktop app records natively (TakeRecorder). Inside a DAW, recording stays with the DAW, and this panel says so and offers Import a take.
 
 ## 3. The mixer, with your DAW built in (replaces the DAW & MIDI tab)
