@@ -1,0 +1,38 @@
+// Click the empty part of a track's name box to pick the whole track; right-click it to write it, then step through takes with ‹ and › (one undo step, ‹ brings back the exact earlier take), Keep or Esc to finish. Piano hands change together.
+const {chromium}=require('playwright'); const url='file://'+require('path').resolve(__dirname,'../../web/semitone-studio.html');
+(async()=>{ const b=await chromium.launch(); const p=await b.newPage({viewport:{width:1440,height:900}}); const errs=[], fails=[]; p.on('pageerror',e=>errs.push(e.message)); const ok=(c,m)=>{ console.log((c?'ok   ':'FAIL ')+m); if(!c) fails.push(m); };
+ await p.addInitScript(()=>{ window.__noStart=1; }); await p.goto(url); await p.waitForTimeout(1500);
+ await p.evaluate(()=>{ S.demo=false; shellDock('roll'); xAdd('counter'); xAdd('piano'); spPut({big:false,fold:false,h:Math.round(innerHeight*.38)}); spApply(); }); await p.waitForTimeout(300);
+ const spot=id=>p.evaluate(id=>{ const h=document.querySelector(`.arr-row.track[data-track="${id}"] .tr-h`), m=[...h.querySelectorAll('.tr-ms button')].pop().getBoundingClientRect(); return {x:m.right+10,y:m.top+m.height/2}; },id);
+ const pt=await spot('bass'); await p.mouse.click(pt.x,pt.y); await p.waitForTimeout(150);
+ const pk=await p.evaluate(()=>({p:TSEL.p,part:SHELL.part,rows:[...document.querySelectorAll('.arr-row.tr-picked')].map(r=>r.dataset.track),pop:!$('#recipePop').hidden}));
+ ok(pk.p==='bass'&&pk.part==='bass'&&pk.rows.join()==='bass'&&!pk.pop,'clicking the empty part of the Bass name box picks the whole Bass track, no pop-up '+JSON.stringify(pk));
+ const nm=await p.evaluate(()=>{ const r=document.querySelector('.arr-row.track[data-track="bass"] .tr-n b').getBoundingClientRect(); return {x:r.left+5,y:r.top+r.height/2}; }); await p.mouse.click(nm.x,nm.y); await p.waitForTimeout(150);
+ ok(await p.evaluate(()=>!$('#recipePop').hidden),'clicking the name itself still opens the sound picker'); await p.evaluate(()=>{ $('#recipePop').hidden=true; });
+ await p.mouse.click(pt.x,pt.y,{button:'right'}); await p.waitForTimeout(150);
+ const it=await p.evaluate(()=>[...document.querySelectorAll('#ctxMenu [data-ci]')].map(x=>x.textContent));
+ ok(/Fill in Bass for /.test(it[0])&&/whole song/.test(it[1]),'right-clicking the picked track offers to write it '+JSON.stringify(it.slice(0,3)));
+ const bn=()=>p.evaluate(()=>JSON.stringify(barList('song').map(b=>bassNotes(b).map(n=>n.m+':'+n.x+':'+n.dur))));
+ const h0=await p.evaluate(()=>H.past.length);
+ await p.evaluate(()=>[...document.querySelectorAll('#ctxMenu [data-ci]')].find(x=>/whole song/.test(x.textContent)).click()); await p.waitForTimeout(250);
+ const t1=await bn(); ok(await p.evaluate(()=>!$('#wtBar').hidden&&/take 1/.test($('#wtBar').textContent)),'a takes bar opens on take 1');
+ await p.click('#wtBar [data-wt="next"]'); await p.waitForTimeout(200); const t2=await bn();
+ await p.click('#wtBar [data-wt="next"]'); await p.waitForTimeout(200); const t3=await bn();
+ const st=await p.evaluate(()=>({i:WT.i,n:WT.list.length,txt:$('#wtBar').textContent,steps:H.past.length}));
+ ok(t1!==t2&&t2!==t3&&st.i===2&&/take 3 of 3/.test(st.txt),'› writes a new take each time '+JSON.stringify(st));
+ ok(st.steps-h0===1,'however many takes, it stays one undo step');
+ await p.click('#wtBar [data-wt="prev"]'); await p.waitForTimeout(200); ok(await bn()===t2,'‹ brings back take 2 exactly');
+ await p.click('#wtBar [data-wt="prev"]'); await p.waitForTimeout(200); ok(await bn()===t1,'‹ again brings back take 1 exactly');
+ await p.click('#wtBar [data-wt="next"]'); await p.waitForTimeout(200); ok(await bn()===t2,'› goes forward to take 2 without writing a new one');
+ await p.evaluate(()=>$('#histUndo').click()); await p.waitForTimeout(200);
+ const undone=await bn(); ok(undone!==t2,'one Undo takes the takes out');
+ // piano: both hands change together
+ const ids=await p.evaluate(()=>xList().filter(x=>x.pair).map(x=>x.id));
+ const sp=await spot(ids[1]); await p.mouse.click(sp.x,sp.y); await p.mouse.click(sp.x,sp.y,{button:'right'}); await p.waitForTimeout(150);
+ const pn=()=>p.evaluate(()=>xList().filter(x=>x.pair).map(x=>JSON.stringify(x.notes[secKey(S.sel)])));
+ const a0=await pn(); await p.evaluate(()=>[...document.querySelectorAll('#ctxMenu [data-ci]')][0].click()); await p.waitForTimeout(250); await p.click('#wtBar [data-wt="next"]'); await p.waitForTimeout(250); const a1=await pn();
+ ok(a0[0]!==a1[0]&&a0[1]!==a1[1],'a new piano take rewrites both hands together');
+ await p.keyboard.press('Escape'); await p.waitForTimeout(100);
+ ok(await p.evaluate(()=>!TSEL.p&&$('#wtBar').hidden&&!document.querySelector('.tr-picked')),'Esc lets go of the track and closes the takes bar');
+ ok(!errs.length,'no page errors '+errs.join(' | '));
+ console.log(fails.length?fails.length+' failed':'all passed'); await b.close(); process.exit(fails.length?1:0); })();
