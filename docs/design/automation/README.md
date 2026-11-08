@@ -1,6 +1,6 @@
 # Automation, redesigned (agreed with Jamie 8 Nov 2026)
 
-Pictures: 1–4 and `5-Record-with-a-controller.png`. Before: `before.png`. One lane for one section, chosen from two dropdowns, a third for shapes, an 80px strip, a loose
+Pictures: 1–4, `5-Record-with-a-controller.png`, `6-Split-move-copy.png`. Before: `before.png`. One lane for one section, chosen from two dropdowns, a third for shapes, an 80px strip, a loose
 "Smart mix" box, and empty space. After: `1-Whole-song.png`, `2-Add-a-lane.png`, `3-Editing-details.png`, `4-Macro.png`.
 Exact values: `reference.dc.html` (a design-canvas file: copy its values, not its markup). Same look tokens as the rest (themes.json).
 
@@ -162,6 +162,37 @@ also mean FL's own controller links can drive Semitone macros (FL → Semitone),
 **Tests:** fake CC1 while recording writes the selected lane; CC11 → volume; soft takeover never jumps; tidy keeps the shape within 2% and
 Keep raw restores every point; loop record replaces only moved regions; Touch glides back; pads fire snapshots; one undo step per take;
 the indicator shows and fades; the map saves per device; the plug-in path (`st_midiin` with 0xB0) and Web MIDI both work.
+
+## Split, move, copy and delete ranges (`6-Split-move-copy.png`, values in `reference-split.dc.html`)
+Automation is edited like audio clips, not only point by point.
+- **Split anywhere:** with ↖ Select, press E (or right-click → Split here) at the mouse or playhead. A brass dashed line and a "✂ Split at 23.1"
+  tag appear across the lanes in scope. Splitting adds matching points on both sides so the sound doesn't change. The piece between two
+  splits (or any dragged range) becomes a **range** you can work with.
+- **Select a range:** drag across the time ruler or empty lane space. Scope (the first chip on the action bar): **All lanes**, **This part's
+  lanes**, or **This lane**. Shift-click section names to select whole sections, and double-click a section band to select it.
+- **Move:** drag the range. It snaps to bars (⌘ to snap to beats, ⇧ to move freely), and a ghost outline shows where it lands, named
+  ("to Chorus 2"). Edges join the neighbours with a short glide unless the range starts or ends with a hold.
+- **Copy:** ⌥-drag, ⌘C/⌘V at the playhead, or ⌘D to duplicate right after. **Copy to every Chorus** repeats it in each section of that type.
+- **Delete:** ⌫ removes the moves in the range (the lane returns to its resting value there). **Cut** removes and copies.
+  **Back to rest** flattens to the resting value but keeps the points' timing.
+- **Action bar:** floats under the selection: scope ▾, ✂ Split (E), Cut ⌘X, Copy ⌘C, Paste ⌘V, Duplicate ⌘D, Delete ⌫, Copy to every <section>,
+  Back to rest. Every action is one undo step, and it works the same on macro lanes and pass lanes (a pass lane being edited becomes "You").
+- **Stretch:** dragging a range's edge with ⌥ held stretches the moves in time (a 4-bar build becomes 8 bars).
+- Tests: split keeps the value at the split point; move, copy, duplicate and paste land on bars; scope respected; delete returns to rest; cut/paste
+  between lanes of the same unit; stretch; one undo step each.
+
+## Producers use all of this (`data/automation-moves.json`, embedded as `autoMoves`)
+Every producer pass now draws its movement moves from this file (47 moves across the 8 producers). Each producer has:
+- a philosophy, typical density and how tidy its lanes are, and things it avoids;
+- a **macro template** (Antonoff-style "Lift", Max Martin-style "Payoff", Finneas-style "Closer", Mike Dean-style "Sweep", RedOne-style "Drop",
+  Nigro-style "Explode", A. G. Cook-style "Flip"; Rubin-style has none on purpose) with controls, ranges and responses, made when the pass runs;
+- **moves** in the `auto:<parts>:<target>:<shape>{params}@<where>` grammar (also `macro:` and `tidy:`), each with why, when it fits, what to listen
+  for, the coach rules it serves (weighed like every suggestion), the emotion it suits, and **record**: the controller and write mode to perform it by
+  hand ("mod wheel on the selected lane, Touch"), shown on the pass card as "Record it yourself";
+- emotion use and best song length, so the same producer moves differently in a 1-minute sketch and an 8-minute epic.
+Code: `passOp` learns `auto:`, `macro:` and `tidy:` ops and turns shapes into the shape objects above (they stay shapes, ghosted until Keep).
+`check_style_data.py` checks every part, target, shape and rule. Tests: each producer's pass on a 3-minute and a 1-minute demo song writes only lanes
+the grammar allows, makes its macro, respects the length rules, and every move appears as one switchable Session item.
 
 ## Gaps this design closes (found checking the old tab against pro DAWs and Semitone itself)
 1. **Whole-song view:** automation is about arcs across sections; the old tab showed one section only.

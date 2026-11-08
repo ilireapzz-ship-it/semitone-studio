@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Semitone Studio — Merged · P-Style</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600&amp;family=Instrument+Serif&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0A0B0D}
+button,input{font:inherit;letter-spacing:inherit}
+button{cursor:pointer;white-space:nowrap}
+.sm{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#6B7079;font-weight:500}
+.mono{font-family:'JetBrains Mono',monospace;font-variant-numeric:tabular-nums}
+.serif{font-family:'Instrument Serif',Georgia,serif;font-weight:400;letter-spacing:0}
+.ghost{height:28px;padding:0 11px;border-radius:7px;border:1px solid rgba(255,255,255,.09);background:linear-gradient(#1A1C20,#15171A);color:#D9D6CF;box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+.prim{height:28px;padding:0 13px;border-radius:7px;border:0;background:linear-gradient(#F3F0EA,#DCD8CF);color:#121212;font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.5),inset 0 1px 0 #fff}
+.xs{height:24px;padding:0 9px;font-size:11.5px}
+</style>
+</helmet>
+<div style="height: 900px; background: #0A0B0D; color: #EDEBE6; font-family: 'Inter Tight', system-ui, sans-serif; font-size: 12.5px; display: flex; flex-direction: column; overflow: hidden">
+  <header style="height: 46px; flex-shrink: 0; display: flex; align-items: center; gap: 12px; padding: 0 14px; border-bottom: 1px solid rgba(255,255,255,.06); background: linear-gradient(#121316,#0E0F12); white-space: nowrap">
+    <span style="flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #F1D6A6, #B8894A 55%, #5E4524)"></span>
+    <span class="serif" style="font-size: 20px">Drive Me Home</span><button class="ghost xs">v5 ▾</button>
+    <span style="color: #7E838C; display: flex; gap: 6px; align-items: baseline"><span style="color: #EDEBE6; border-bottom: 1px dashed rgba(255,255,255,.22)">Lana Del Rey · Ultraviolence</span>produced like<span style="color: #EDEBE6; border-bottom: 1px dashed rgba(255,255,255,.22)">Jack Antonoff</span>feels<span style="color: #EDEBE6; border-bottom: 1px dashed rgba(255,255,255,.22)">melancholy → euphoric</span>⋯</span>
+    <span style="margin-left: auto; display: flex; gap: 8px; align-items: center"><button style="height: 28px; width: 180px; padding: 0 8px 0 10px; border-radius: 7px; border: 1px solid rgba(255,255,255,.07); background: #0C0D10; color: #6B7079; display: flex; align-items: center; justify-content: space-between">Search or do anything<span class="mono" style="font-size: 10px">⌘K</span></button>
+      <div style="display: flex; padding: 2px; gap: 2px; border-radius: 8px; background: #0C0D10; border: 1px solid rgba(255,255,255,.06)"><button style="height: 22px; padding: 0 11px; border-radius: 6px; border: 0; background: linear-gradient(#24262B,#1B1D21); color: #EDEBE6">Write</button><button style="height: 22px; padding: 0 11px; border-radius: 6px; border: 0; background: transparent; color: #7E838C">Produce</button><button style="height: 22px; padding: 0 11px; border-radius: 6px; border: 0; background: transparent; color: #7E838C">Mix</button></div></span>
+  </header>
+  <div style="height: 38px; flex-shrink: 0; display: flex; align-items: center; gap: 8px; padding: 0 14px; border-bottom: 1px solid rgba(255,255,255,.06); background: #0E0F12; white-space: nowrap">
+    <button class="ghost xs" style="width: 26px; padding: 0">⏮</button><button style="width: 30px; height: 26px; border-radius: 7px; border: 0; background: linear-gradient(#F3F0EA,#D6D2C8); color: #111; font-size: 10px">▶</button>
+    <span style="display: flex; align-items: center; gap: 12px; height: 26px; padding: 0 11px; border-radius: 7px; background: #08090A; border: 1px solid rgba(255,255,255,.05)"><span class="mono" style="color: #F1E7D4; font-size: 13.5px">00:12.3</span><span class="mono" style="color: #8A8F98">5.1.1</span><span class="mono" style="color: #C9C5BC">E min · 78 · 4/4</span></span>
+    <span style="margin-left: auto; display: flex; gap: 6px"><button class="ghost xs">↶</button><button class="ghost xs">⟲ Capture</button><button class="ghost xs"><span style="color: #E0443A">●</span> Record</button><button class="prim xs">Share</button></span>
+  </div>
+  <div style="flex: 1; display: flex; min-height: 0">
+    <main style="flex: 1; min-width: 0; display: flex; flex-direction: column">
+      <div style="flex-shrink: 0; display: flex; background: #0B0C0E; border-bottom: 1px solid rgba(255,255,255,.06)">
+        <div class="sm" style="width: 150px; flex-shrink: 0; height: 26px; display: flex; align-items: center; padding: 0 12px; background: #0E0F12; border-right: 1px solid rgba(255,255,255,.06)">Song</div>
+        <div style="flex: 1; display: flex; padding: 3px 0; height: 26px; box-sizing: border-box"><sc-for list="{{secs}}" as="s" hint-placeholder-count="6"><div style="flex: {{s.b}} 1 0; padding: 0 1px"><div style="height: 100%; border-radius: 5px; padding: 0 7px; display: flex; align-items: center; gap: 6px; background: {{s.bg}}; border: 1px solid {{s.line}}; font-size: 11.5px; white-space: nowrap; overflow: hidden; color: {{s.ink}}; box-sizing: border-box">{{s.n}}</div></div></sc-for></div>
+      </div>
+      <section style="flex: 1; display: flex; flex-direction: column; min-height: 0; background: #0E0F12">
+        <div style="height: 36px; flex-shrink: 0; display: flex; align-items: center; gap: 14px; padding: 0 12px; border-bottom: 1px solid rgba(255,255,255,.06); white-space: nowrap">
+          <button class="ghost xs">Song settings ▾</button>
+          <span style="display: flex; gap: 14px; align-self: stretch"><sc-for list="{{tabs}}" as="d" hint-placeholder-count="5"><button style="padding: 0 1px; border: 0; border-bottom: 1.5px solid {{d.line}}; background: transparent; color: {{d.ink}}">{{d.n}}</button></sc-for></span>
+          <span style="width: 1px; height: 16px; background: rgba(255,255,255,.08)"></span>
+          <span style="display: flex; gap: 2px; padding: 2px; border-radius: 7px; background: #08090A"><sc-for list="{{subs}}" as="x" hint-placeholder-count="4"><button style="height: 22px; padding: 0 10px; border-radius: 5px; border: 0; background: {{x.bg}}; color: {{x.ink}}; font-size: 11.5px">{{x.n}}</button></sc-for></span>
+          <span style="margin-left: auto; display: flex; gap: 4px"><button class="ghost xs" style="width: 26px; padding: 0">▾</button><button class="ghost xs" style="width: 26px; padding: 0">⤢</button></span>
+        </div>
+        <div style="flex: 1; min-height: 0; padding: 14px; display: flex; gap: 14px">
+  <div style="flex: 1.15; display: flex; flex-direction: column; gap: 14px; min-width: 0">
+    <div style="padding: 14px; border-radius: 12px; background: linear-gradient(#121316, #0F1013); border: 1px solid rgba(255,255,255,.06); box-shadow: inset 0 1px 0 rgba(255,255,255,.03); display: flex; flex-direction: column; gap: 10px; min-width: 0; flex-direction: row; align-items: center; gap: 16px">
+      <div style="width: 54px; height: 54px; border-radius: 12px; background: linear-gradient(135deg, #2B3550, #151821); border: 1px solid rgba(124,149,217,.3); display: flex; align-items: center; justify-content: center; color: #C9CFDF; font-size: 22px" class="serif">L</div>
+      <div style="flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0"><span class="sm">Style</span><span class="serif" style="font-size: 22px; line-height: 1.1">Lana Del Rey · Ultraviolence</span><span style="color: #9BA0A8">Slow ♭VI–i–♭VII loops, low breathy voice, reverb and strings · produced like Jack Antonoff</span></div>
+      <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-end"><button class="ghost xs">Change style</button><span style="display: flex; gap: 4px"><span style="font-size: 10.5px; padding: 1px 7px; border-radius: 999px; background: rgba(124,149,217,.12); color: #C9C5BC">cinematic</span><span style="font-size: 10.5px; padding: 1px 7px; border-radius: 999px; background: rgba(124,149,217,.12); color: #C9C5BC">sadcore</span><span style="font-size: 10.5px; padding: 1px 7px; border-radius: 999px; background: rgba(217,179,122,.12); color: #F1D6A6">+ Antonoff</span></span></div>
+    </div>
+    <div style="padding: 14px; border-radius: 12px; background: linear-gradient(#121316, #0F1013); border: 1px solid rgba(255,255,255,.06); box-shadow: inset 0 1px 0 rgba(255,255,255,.03); display: flex; flex-direction: column; gap: 10px; min-width: 0">
+      <div style="display: flex; justify-content: space-between; align-items: baseline"><span class="sm">Structure</span><span style="display: flex; gap: 10px; align-items: center"><span class="mono" style="color: #8A8F98; font-size: 11px">6 sections · 39 bars · 2:03 · about 3 min ▾</span><button class="ghost xs">⟳ Shuffle</button></span></div>
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px">
+        <sc-for list="{{forms}}" as="f" hint-placeholder-count="8"><div style="padding: 9px 10px; border-radius: 9px; background: {{f.bg}}; border: 1px solid {{f.line}}; display: flex; flex-direction: column; gap: 7px"><svg viewBox="0 0 100 10" preserveAspectRatio="none" style="width: 100%; height: 10px" aria-hidden="true"><sc-for list="{{f.blocks}}" as="b" hint-placeholder-count="6"><rect x="{{b.x}}" y="0" width="{{b.w}}" height="10" rx="1.5" fill="{{b.c}}"></rect></sc-for></svg><span style="font-size: 12px; color: {{f.ink}}">{{f.n}}</span></div></sc-for>
+      </div>
+    </div>
+    <div style="display: grid; grid-template-columns: 1.55fr 1fr; gap: 14px; flex: 1; min-height: 0">
+      <div style="padding: 14px; border-radius: 12px; background: linear-gradient(#121316, #0F1013); border: 1px solid rgba(255,255,255,.06); box-shadow: inset 0 1px 0 rgba(255,255,255,.03); display: flex; flex-direction: column; gap: 10px; min-width: 0">
+        <div style="display: flex; justify-content: space-between; align-items: baseline"><span class="sm">Key</span><span class="mono" style="font-size: 11px; color: #8A8F98">E natural minor · relative G major</span></div>
+        <div style="display: flex; gap: 16px; align-items: flex-start; flex: 1; padding-top: 6px">
+          <svg viewBox="0 0 160 160" width="200" height="200" style="flex-shrink: 0" aria-label="Circle of fifths, E minor selected"><circle cx="80" cy="80" r="76" fill="#0C0D10" stroke="rgba(255,255,255,.06)"></circle><circle cx="80" cy="80" r="48" fill="#121316" stroke="rgba(255,255,255,.06)"></circle><sc-for list="{{cof}}" as="k" hint-placeholder-count="12"><circle cx="{{k.x}}" cy="{{k.y}}" r="{{k.r}}" fill="{{k.bg}}" stroke="{{k.line}}"></circle><text x="{{k.x}}" y="{{k.ty}}" text-anchor="middle" font-size="{{k.fs}}" fill="{{k.ink}}" font-family="Inter Tight, sans-serif">{{k.n}}</text></sc-for><text x="80" y="78" text-anchor="middle" font-size="18" fill="#EDEBE6" font-family="Instrument Serif, serif">E minor</text><text x="80" y="94" text-anchor="middle" font-size="8" letter-spacing="1.4" fill="#6B7079" font-family="Inter Tight, sans-serif">1 SHARP</text></svg>
+          <div style="flex: 1; display: flex; flex-direction: column; gap: 8px; min-width: 0">
+            <span class="sm">Mode</span>
+            <div style="display: grid; grid-template-columns: 1fr; gap: 4px"><sc-for list="{{modes}}" as="m" hint-placeholder-count="8"><button style="height: 26px; padding: 0 8px; border-radius: 6px; border: 1px solid {{m.line}}; background: {{m.bg}}; color: {{m.ink}}; font-size: 11.5px; text-align: left; display: flex; justify-content: space-between; align-items: center">{{m.n}}<span style="color: {{m.fc}}; font-size: 10px">{{m.f}}</span></button></sc-for></div>
+          </div>
+        </div>
+      </div>
+      <div style="padding: 14px; border-radius: 12px; background: linear-gradient(#121316, #0F1013); border: 1px solid rgba(255,255,255,.06); box-shadow: inset 0 1px 0 rgba(255,255,255,.03); display: flex; flex-direction: column; gap: 10px; min-width: 0">
+        <div style="display: flex; justify-content: space-between; align-items: baseline"><span class="sm">Time</span></div>
+        <div style="display: flex; align-items: center; gap: 10px"><button class="ghost" style="width: 30px; padding: 0">−</button><span style="flex: 1; text-align: center; padding: 8px 0; border-radius: 9px; background: #08090A; border: 1px solid rgba(255,255,255,.05)"><span class="mono" style="font-size: 30px; color: #F1E7D4">78</span><span class="mono" style="color: #8A8F98"> BPM</span></span><button class="ghost" style="width: 30px; padding: 0">＋</button></div>
+        <div style="display: flex; gap: 6px"><button class="ghost xs" style="flex: 1">Tap tempo</button><button class="ghost xs" style="flex: 1">½×</button><button class="ghost xs" style="flex: 1">2×</button></div>
+        <span class="sm">Metre</span><div style="display: flex; padding: 2px; border-radius: 8px; background: #0C0D10; border: 1px solid rgba(255,255,255,.06)"><sc-for list="{{meters}}" as="o" hint-placeholder-count="4"><button style="flex: 1; height: 26px; padding: 0 8px; border-radius: 6px; border: 0; background: {{o.bg}}; color: {{o.ink}}; font-size: 11.5px; white-space: nowrap">{{o.n}}</button></sc-for></div>
+        <span class="sm">Tempo for this style</span>
+        <div style="position: relative; height: 34px"><span style="position: absolute; left: 0; right: 0; top: 12px; height: 6px; border-radius: 3px; background: #0C0D10"></span><span style="position: absolute; left: 22%; width: 26%; top: 12px; height: 6px; border-radius: 3px; background: rgba(217,179,122,.35)"></span><span style="position: absolute; left: calc(32% - 1px); top: 7px; width: 2px; height: 16px; background: #F1D6A6"></span><span class="mono" style="position: absolute; left: 22%; top: 22px; font-size: 9.5px; color: #8A8F98">68</span><span class="mono" style="position: absolute; left: 44%; top: 22px; font-size: 9.5px; color: #8A8F98">84</span><span class="mono" style="position: absolute; left: 0; top: 22px; font-size: 9.5px; color: #555A62">40</span><span class="mono" style="position: absolute; right: 0; top: 22px; font-size: 9.5px; color: #555A62">200</span></div>
+        <span style="color: #6B7079; font-size: 11px; line-height: 1.45">Ultraviolence-era songs sit at 68–84 BPM. Slower feels heavier, faster feels restless.</span>
+        <span class="sm" style="margin-top: auto">Song length</span><div style="display: flex; padding: 2px; border-radius: 8px; background: #0C0D10; border: 1px solid rgba(255,255,255,.06)"><sc-for list="{{lens}}" as="o" hint-placeholder-count="4"><button style="flex: 1; height: 22px; padding: 0 8px; border-radius: 6px; border: 0; background: {{o.bg}}; color: {{o.ink}}; font-size: 11.5px; white-space: nowrap">{{o.n}}</button></sc-for></div>
+      </div>
+    </div>
+  </div>
+  <div style="flex: 1; display: flex; flex-direction: column; gap: 14px; min-width: 0">
+    <div style="padding: 14px; border-radius: 12px; background: linear-gradient(#121316, #0F1013); border: 1px solid rgba(255,255,255,.06); box-shadow: inset 0 1px 0 rgba(255,255,255,.03); display: flex; flex-direction: column; gap: 10px; min-width: 0">
+      <div style="display: flex; justify-content: space-between; align-items: baseline"><span class="sm">Feel</span><span style="color: #6B7079; font-size: 11px">changes write a fresh idea with the same seed</span></div>
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px">
+        <sc-for list="{{knobs}}" as="k" hint-placeholder-count="4"><div style="display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 8px 4px; border-radius: 10px; background: #0E0F12; border: 1px solid rgba(255,255,255,.05)"><svg viewBox="0 0 60 60" width="64" height="64" style="flex-shrink: 0" aria-hidden="true"><sc-for list="{{k.seg}}" as="g" hint-placeholder-count="25"><path d="{{g.d}}" stroke="{{g.c}}" stroke-width="2.6" stroke-linecap="round"></path></sc-for><circle cx="30" cy="30" r="18" fill="#1A1C20" stroke="rgba(255,255,255,.08)"></circle><circle cx="30" cy="30" r="14.5" fill="none" stroke="rgba(255,255,255,.035)"></circle><path d="{{k.ptr}}" stroke="{{k.col}}" stroke-width="2.4" stroke-linecap="round"></path></svg><span class="mono" style="font-size: 11px; color: #EDEBE6">{{k.v}}</span><span style="font-size: 11px; color: #8A8F98">{{k.n}}</span><span style="font-size: 9.5px; color: #555A62">{{k.r}}</span></div></sc-for>
+      </div>
+      <span class="sm" style="margin-top: 2px">Chord rhythm</span>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px"><sc-for list="{{rhythms}}" as="r" hint-placeholder-count="6"><div style="padding: 7px 8px; border-radius: 8px; background: {{r.bg}}; border: 1px solid {{r.line}}; display: flex; flex-direction: column; gap: 5px"><svg viewBox="0 0 64 8" style="width: 100%; height: 8px" aria-hidden="true"><sc-for list="{{r.hits}}" as="h" hint-placeholder-count="8"><rect x="{{h.x}}" y="0" width="{{h.w}}" height="8" rx="1.5" fill="{{r.c}}"></rect></sc-for></svg><span style="font-size: 11px; color: {{r.ink}}">{{r.n}}</span></div></sc-for></div>
+    </div>
+    <div style="padding: 14px; border-radius: 12px; background: linear-gradient(#121316, #0F1013); border: 1px solid rgba(255,255,255,.06); box-shadow: inset 0 1px 0 rgba(255,255,255,.03); display: flex; flex-direction: column; gap: 10px; min-width: 0">
+      <div style="display: flex; justify-content: space-between; align-items: baseline"><span class="sm">Performance</span></div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px">
+        <sc-for list="{{perf}}" as="p" hint-placeholder-count="6"><div style="display: flex; gap: 10px; align-items: flex-start; padding: 7px 0; border-top: 1px solid rgba(255,255,255,.04)"><span style="width: 26px; height: 14px; border-radius: 999px; background: {{p.bg}}; position: relative; flex-shrink: 0; margin-top: 2px"><span style="position: absolute; top: 2px; left: {{p.k}}px; width: 10px; height: 10px; border-radius: 50%; background: #EDEBE6"></span></span><span style="display: flex; flex-direction: column; gap: 1px"><span style="font-size: 12px">{{p.n}}</span><span style="color: #6B7079; font-size: 10.5px; line-height: 1.35">{{p.d}}</span></span></div></sc-for>
+      </div>
+    </div>
+    <div style="padding: 14px; border-radius: 12px; background: linear-gradient(#121316, #0F1013); border: 1px solid rgba(255,255,255,.06); box-shadow: inset 0 1px 0 rgba(255,255,255,.03); display: flex; flex-direction: column; gap: 10px; min-width: 0; flex: 1">
+      <div style="display: flex; justify-content: space-between; align-items: baseline"><span class="sm">Energy & peaks</span><span style="display: flex; gap: 6px; align-items: center"><span style="color: #8A8F98; font-size: 11px">Final chorus lift</span><div style="display: flex; padding: 2px; border-radius: 8px; background: #0C0D10; border: 1px solid rgba(255,255,255,.06)"><sc-for list="{{lift}}" as="o" hint-placeholder-count="4"><button style="flex: 1; height: 20px; padding: 0 8px; border-radius: 6px; border: 0; background: {{o.bg}}; color: {{o.ink}}; font-size: 11.5px; white-space: nowrap">{{o.n}}</button></sc-for></div></span></div>
+      <div style="position: relative; flex: 1; min-height: 70px; border-radius: 8px; background: #0A0B0D; border: 1px solid rgba(255,255,255,.05); overflow: hidden">
+        <svg viewBox="0 0 1000 100" preserveAspectRatio="none" style="position: absolute; inset: 0; width: 100%; height: 100%" aria-hidden="true"><defs><linearGradient id="eg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="rgba(217,179,122,.3)"></stop><stop offset="1" stop-color="rgba(217,179,122,0)"></stop></linearGradient></defs><path d="{{en}} L1000 100 L0 100 Z" fill="url(#eg)"></path><path d="{{en}}" fill="none" stroke="#D9B37A" stroke-width="2" vector-effect="non-scaling-stroke"></path><path d="{{pk}}" fill="none" stroke="#D9776F" stroke-width="1.4" stroke-dasharray="3 3" vector-effect="non-scaling-stroke"></path></svg>
+        <span class="mono" style="position: absolute; right: 8px; top: 6px; font-size: 10px; color: #D9776F">melody peak E5 · chorus +7 st</span><span class="mono" style="position: absolute; left: 8px; top: 6px; font-size: 10px; color: #D9B37A">energy</span>
+      </div>
+    </div>
+  </div></div>
+      </section>
+    </main>
+    <aside style="width: 46px; flex-shrink: 0; border-left: 1px solid rgba(255,255,255,.06); background: #0E0F12; display: flex; flex-direction: column; align-items: center; gap: 7px; padding: 10px 0">
+      <button class="ghost xs" style="width: 26px; padding: 0">⟨</button>
+      <sc-for list="{{railI}}" as="r" hint-placeholder-count="3"><button style="position: relative; width: 30px; height: 30px; border-radius: 8px; border: 1px solid rgba(255,255,255,.06); background: #121316; color: {{r.c}}">{{r.i}}<span class="mono" style="position: absolute; right: -4px; top: -4px; min-width: 14px; height: 14px; border-radius: 999px; background: {{r.c}}; color: #141210; font-size: 8.5px; display: flex; align-items: center; justify-content: center">{{r.n}}</span></button></sc-for>
+    </aside>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+
+    var B = '#D9B37A';
+    var S = [['Intro', 3, 'edge'], ['Verse 1', 8, 'verse'], ['Pre', 4, 'verse'], ['Chorus 1', 8, 'chorus'], ['Verse 2', 8, 'verse'], ['Chorus 2', 8, 'chorus']];
+    var look = { edge: ['#141518', 'rgba(255,255,255,.06)', '#9BA0A8'], verse: ['#151821', 'rgba(124,149,217,.16)', '#C9CFDF'], chorus: ['#1B2031', 'rgba(124,149,217,.32)', '#E3E8F6'] };
+    var secs = S.map(function (s) { return { n: s[0], b: s[1], bg: look[s[2]][0], line: look[s[2]][1], ink: look[s[2]][2] }; });
+    function tabsOf(on) { return ['Notes', 'Words', 'Sound', 'Mix', 'Automation'].map(function (n) { var o = n === on; return { n: n, line: o ? B : 'transparent', ink: o ? '#EDEBE6' : '#7E838C' }; }); }
+    function subsOf(list, on) { return list.map(function (n) { var o = n === on; return { n: n, bg: o ? '#24262B' : 'transparent', ink: o ? '#EDEBE6' : '#8A8F98' }; }); }
+    var railI = [['✚', '#9DB4E8', 2], ['♡', '#B9A3E3', 1], ['✎', B, 1]].map(function (r) { return { i: r[0], c: r[1], n: r[2] }; });
+    function KN(cx, cy, a, r) { a = a * Math.PI / 180; return (cx + r * Math.cos(a)).toFixed(2) + ' ' + (cy + r * Math.sin(a)).toFixed(2); }
+    function knob(v, col, size) { var seg = []; for (var k = 0; k <= 24; k++) { var t = k / 24, ang = 135 + t * 270; seg.push({ d: 'M' + KN(30, 30, ang, 27) + ' L' + KN(30, 30, ang, 23), c: t <= v + 1e-6 ? col : '#0C0D10' }); } var pa = 135 + v * 270; return { seg: seg, ptr: 'M' + KN(30, 30, pa, 5) + ' L' + KN(30, 30, pa, 14), size: size || 54, col: col }; }
+function segOf(list, on) { return list.map(function (n) { var o = n === on; return { n: n, bg: o ? '#24262B' : 'transparent', ink: o ? '#EDEBE6' : '#8A8F98' }; }); }
+    function blocks(p) { var tot = p.reduce(function (a, b) { return a + b[1]; }, 0), x = 0, C = { e: 'rgba(155,160,168,.25)', v: 'rgba(124,149,217,.35)', p: 'rgba(124,149,217,.55)', c: 'rgba(124,149,217,.85)', b: 'rgba(185,163,227,.6)' }; return p.map(function (q) { var w = q[1] / tot * 100, o = { x: x.toFixed(1), w: Math.max(.5, w - 1.2).toFixed(1), c: C[q[0]] }; x += w; return o; }); }
+    var forms = [['Single idea', [['v', 8]]], ['Verse–chorus', [['e', 3], ['v', 8], ['p', 4], ['c', 8], ['v', 8], ['c', 8]], 1], ['Pop + bridge', [['v', 8], ['p', 4], ['c', 8], ['v', 8], ['p', 4], ['c', 8], ['b', 8], ['c', 8]]], ['Ballad', [['e', 4], ['v', 16], ['c', 8], ['v', 16], ['c', 8], ['e', 8]]], ['AABA', [['v', 8], ['v', 8], ['b', 8], ['v', 8]]], ['Hook–verse loop', [['c', 4], ['v', 8], ['c', 4], ['v', 8], ['c', 4]]], ['Epic (8 min)', [['e', 16], ['v', 8], ['c', 8], ['b', 32], ['c', 16], ['e', 16]]], ['Surprise me', [['v', 6], ['c', 3], ['b', 5], ['v', 4], ['c', 7]]]].map(function (f) { var on = !!f[2]; return { n: f[0], blocks: blocks(f[1]), bg: on ? 'rgba(217,179,122,.07)' : '#0E0F12', line: on ? 'rgba(217,179,122,.5)' : 'rgba(255,255,255,.05)', ink: on ? '#F1D6A6' : '#C9C5BC' }; });
+    var circle = ['C', 'G', 'D', 'A', 'E', 'B', 'F♯', 'D♭', 'A♭', 'E♭', 'B♭', 'F'], inner = ['Am', 'Em', 'Bm', 'F♯m', 'C♯m', 'G♯m', 'D♯m', 'B♭m', 'Fm', 'Cm', 'Gm', 'Dm'];
+    var cof = []; circle.forEach(function (n, i) { var a = (i * 30 - 90) * Math.PI / 180; cof.push({ n: n, x: (80 + 62 * Math.cos(a)).toFixed(1), y: (80 + 62 * Math.sin(a)).toFixed(1), ty: (83.5 + 62 * Math.sin(a)).toFixed(1), r: 10, fs: 10, bg: n === 'G' ? 'rgba(217,179,122,.18)' : 'transparent', line: n === 'G' ? 'rgba(217,179,122,.5)' : 'transparent', ink: n === 'G' ? '#F1D6A6' : '#8A8F98' }); if (i <= 2) cof.push({ n: inner[i], x: (80 + 36 * Math.cos(a)).toFixed(1), y: (80 + 36 * Math.sin(a)).toFixed(1), ty: (83 + 36 * Math.sin(a)).toFixed(1), r: i === 1 ? 10.5 : 0, fs: i === 1 ? 9.5 : 8, bg: i === 1 ? '#D9B37A' : 'transparent', line: 'transparent', ink: i === 1 ? '#1B1408' : '#8A8F98' }); });
+    var modes = [['Major', 'bright'], ['Natural minor', 'sad', 1], ['Dorian', 'hopeful minor'], ['Phrygian', 'dark'], ['Lydian', 'dreamy'], ['Mixolydian', 'bluesy'], ['Harmonic minor', 'dramatic'], ['Locrian', 'unstable']].map(function (m) { var on = !!m[2]; return { n: m[0], f: m[1], bg: on ? 'rgba(217,179,122,.1)' : '#0E0F12', line: on ? 'rgba(217,179,122,.5)' : 'rgba(255,255,255,.05)', ink: on ? '#F1D6A6' : '#C9C5BC', fc: on ? '#C9A46A' : '#555A62' }; });
+    var meters = segOf(['4/4', '3/4', '6/8', '12/8'], '4/4');
+    var knobs = [['Swing', 0, 'straight → shuffle', '0 %'], ['Melody', .32, 'sparse → busy', '32 %'], ['Leaps', .3, 'steps → leaps', '30 %'], ['Quirks', .15, 'clean → quirky', 'low']].map(function (k) { var o = knob(k[1], B, 52); o.n = k[0]; o.r = k[2]; o.v = k[3]; return o; });
+    function hits(list) { return list.map(function (h) { return { x: h[0] * 8, w: h[1] * 8 - 1.5 }; }); }
+    var rhythms = [['Sustained', [[0, 8]], 1], ['On the beat', [[0, 2], [2, 2], [4, 2], [6, 2]]], ['Driving 8ths', [[0, 1], [1, 1], [2, 1], [3, 1], [4, 1], [5, 1], [6, 1], [7, 1]]], ['Push 3+3+2', [[0, 3], [3, 3], [6, 2]]], ['Stabs', [[0, .6], [1.5, .6], [3, .6], [5.5, .6]]], ['Strum', [[0, 1], [1.5, .5], [2, 1], [3.5, .5], [4, 1], [6, 1]]]].map(function (r) { var on = !!r[2]; return { n: r[0], hits: hits(r[1]), c: on ? '#D9B37A' : '#5C6068', bg: on ? 'rgba(217,179,122,.07)' : '#0E0F12', line: on ? 'rgba(217,179,122,.45)' : 'rgba(255,255,255,.05)', ink: on ? '#F1D6A6' : '#C9C5BC' }; });
+    var perf = [['Voice-led chords', 'each chord moves to the nearest notes', 1], ['Human drummer', 'snare 14 ms behind, hats 6 ms', 1], ['Vary repeats', 'small changes on later choruses', 1], ['Seventh chords', 'adds 7ths to the loop', 0], ['Sustain pedal', 'piano chords ring into the next', 1], ['Bass: held roots', 'style default · change ▾', 1]].map(function (p) { var on = !!p[2]; return { n: p[0], d: p[1], bg: on ? '#B8925A' : '#24262B', k: on ? 14 : 2 }; });
+    var lift = segOf(['Off', '+1', '+2'], 'Off'); var lens = segOf(['1', '3', '5', '8', '10+ min'], '3');
+    var E = [[0, .2], [3, .3], [11, .45], [15, .9], [23, .5], [31, 1], [39, 1]], P = [[0, .4], [3, .45], [11, .5], [15, .85], [23, .5], [31, .9], [39, .9]];
+    function L(a) { return 'M' + a.map(function (p) { return (p[0] / 39 * 1000).toFixed(0) + ' ' + (92 - p[1] * 80).toFixed(1); }).join(' L'); }
+    return { secs: secs, tabs: tabsOf('Sound'), subs: subsOf(['Library', 'Emotion', 'Style & settings', 'Record'], 'Style & settings'), railI: railI, forms: forms, cof: cof, modes: modes, meters: meters, knobs: knobs, rhythms: rhythms, perf: perf, lift: lift, lens: lens, en: L(E), pk: L(P) };
+  }
+}
+</script>
+</body>
+</html>

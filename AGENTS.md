@@ -36,6 +36,12 @@ Exact look: `docs/design/merged/reference.dc.html` (a design-canvas file: copy i
     that mean something, Add a lane in plain words, editing details (bends, exact values, Wobble as an object, Write/Touch/Latch, MIDI
     controller), macros, fader trim, 8 host parameters so FL can automate Semitone, **recording automation from any MIDI controller
     (mod wheel follows the selected lane, CC11, knobs, pads → snapshots, soft takeover, tidy after recording)**, and the 15 gaps listed there.
+14. **Automation range editing and producer training** (8 Nov): split anywhere, move/copy/duplicate/delete ranges with scope, stretch
+    (`docs/design/automation/README.md`, "Split, move, copy"), and producer passes that use `data/automation-moves.json` (auto:/macro:/tidy: ops,
+    macro templates, "Record it yourself").
+15. **A volume knob on every part** in the timeline headers (`docs/design/space/README.md`, end).
+16. **Song settings, Record, and the mixer with your DAW built in** (`docs/design/panels/README.md`): the DAW & MIDI tab goes away, every strip
+    says what it plays through, a Your DAW card, theme rules (no fixed dark overlays, `inkSoft` tokens) checked in every theme.
 Rules that always hold: suggest and accept (never surprise changes), one undo step per change, learning about Jamie stays on his
 computer, no copied melodies, lyrics or recordings, no imitating or cloning a real singer's voice. Producers and artists are described
 as "X-style, based on how they're known to work". Ask Jamie before anything that needs hosting, accounts or money.

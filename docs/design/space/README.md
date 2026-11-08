@@ -43,3 +43,13 @@ Exact values: `reference.dc.html` (design-canvas file; copy values, not markup).
   when editing.
 - The splitter, ⤢ and ⌘J states, remembered per lens.
 - Auto-rail below 1280px. Reopening it by hand is respected until the window is resized again.
+
+## A volume knob on every part (8 Nov 2026, `2-Arranging.png`, `1-Editing.png`, values in `reference-arrange.dc.html`)
+Every part's header on the timeline (Melody, Chords, added parts, layers, Bass, Drums, loops, audio parts) gets the same LED-ring knob as
+Automation, coloured in the part colour:
+- 34px in arranging (with the dB value under it and a stereo meter beside M/S), 22px in editing, and 20px in small windows (value on hover).
+- Drag up/down to change, ⇧ for fine steps, double-click for 0 dB, and type a value on ⌘-click. The value is the mixer fader's value (same number, both
+  places).
+- A brass dot on the knob means the part has a volume lane. The knob then shows the value under the playhead and moves as it plays, and turning it
+  sets the trim (as the mixer fader does), so it never fights the automation.
+- With a controller, faders/knobs can be linked to part volumes (the default layout links four faders to the first four parts).
