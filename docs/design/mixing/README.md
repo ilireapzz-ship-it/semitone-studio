@@ -218,6 +218,22 @@ knobs) still ugly; this refined look replaces it. Principles: restraint, one acc
   else moves.
 - **Themes:** device panel, dark in every theme, own inks inside (rule in `docs/design/panels/README.md`). Checked in Daylight.
 
+### 4d. Song-aware: what no other compressor can do (`8-Song-aware-compressor.png`, values in `reference-Comp6.dc.html`)
+Every top compressor only hears level. Semitone knows the words, the sections, the emotion arc and every other part, so its compressor uses
+them (`comp.songAware` in `data/mix-master.json`). The calm window gains:
+- **Lyric lane** under the graph: each word in italic serif at its time; the word with the biggest reduction in gold, kept words in mint.
+- **Rides each word** (on): quiet words are nudged up before compressing ("+1.5" under them), so the compressor works less. It is a real gain
+  lane, visible and editable in Automation.
+- **Follows the song** (on): a thin bar per section under the lyrics ("Verse 2 amount 35 · Chorus 2 amount 50 · tighter"); drag to change.
+- **Keeps the big moments** (on): the emotional peak ("last", the top of the emotion arc) is left uncompressed: no gold, "♥ kept big"
+  beside it. Click any word to keep it big or let it go. The master limiter still stops clipping.
+- **Makes room** (off by default): the parts that mask the vocal dip 1–2 dB in the vocal's band only while words are sung.
+- The right column swaps the knee and meters for a **Knows your song** card: four switches, each with a one-line reason. The knee and
+  meters stay in More.
+- The smart line says what it did in song terms: "rides each word first, a little tighter in the chorus, and leaves “last” big because it's
+  your emotional peak."
+- Everything inside the device panel is solid colour, never see-through (Jamie saw checkerboard "alpha squares" on the canvas).
+
 ## Tests (tests/web/mixing.test.js + synth_test)
 - Every problem's words map to it.
 - A synthetic muddy chorus finds the right zone and parts; a masked vocal finds the masker; sibilance is detected on a vocal take.
@@ -229,3 +245,5 @@ knobs) still ugly; this refined look replaces it. Principles: restraint, one acc
   ⌥-click resets the amount; the window's Amount and the strip's bar stay in sync; Listen & set lands within 1 dB of the target reduction.
 - Compressor pro: upward mode raises quiet passages without raising peaks; Range caps reduction; lookahead latency is reported and lined up;
   Beat and MIDI triggers duck on the grid; sidechain shapes change what triggers but not what you hear; bands sum flat when off.
+- Song-aware: word ride stays within ±3 dB and follows lyric timing; section amounts change at section edges without clicks; kept words
+  get no gain reduction but never clip the master; Makes room dips only masking parts, only in the vocal band, only while words are sung.

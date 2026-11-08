@@ -2407,6 +2407,32 @@
      "ratio": "rises with level"
     }
    }
+  },
+  "songAware": {
+   "about": "What no other compressor can do: Semitone knows the words, the sections, the emotion arc and every other part, so its compressor uses them. Agreed with Jamie 8 Nov 2026. All four are switches in the window's 'Knows your song' card; the first three default on, Makes room defaults off.",
+   "ridesEachWord": {
+    "what": "before compressing, nudge each word toward the phrase's level (±3 dB max) using the lyric timing, so the compressor works less and sounds less squashed",
+    "needs": "word timing from Words (S.vers lyrics aligned to notes or the take)",
+    "show": "italic lyric lane under the graph; small '+1.5' under raised words",
+    "engine": "a gain lane applied before the compressor, recomputed when words or the take change; visible and editable as an automation lane"
+   },
+   "followsTheSong": {
+    "what": "amount per section from the section's energy in the song shape and emotion arc (e.g. verse 35, chorus 50)",
+    "show": "a thin bar per section under the lyrics with its amount",
+    "edit": "drag a section's bar; ✦ Back to smart"
+   },
+   "keepsBigMoments": {
+    "what": "words or notes at an emotional peak (emotion arc peak, the last chorus's hook, a held belt) are not compressed, so the moment stays big",
+    "show": "no gold on that word, '♥ kept big' label, the word in mint in the lyric lane",
+    "edit": "click a word to keep it big or let it be compressed",
+    "limit": "never lets a kept word clip: the master limiter still applies"
+   },
+   "makesRoom": {
+    "what": "while a word is sung, the other parts that mask the vocal (from interactions and spectrum in this file) dip a little (1–2 dB, only in the vocal's band)",
+    "default": false,
+    "show": "toggle with the dip amount; the other parts' strips show a small ↓ while it works"
+   },
+   "why": "Pro-C, 1176, LA-2A and the rest only hear level. None knows which word, which section, or which moment matters."
   }
  }
 }
