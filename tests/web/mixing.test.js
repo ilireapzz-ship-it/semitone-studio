@@ -74,6 +74,13 @@ const {chromium}=require('playwright'); const url='file://'+require('path').reso
  const fk=await p.evaluate(()=>{ const was=H.past.length, n=S.mix.chords.eq.bands.length; document.querySelector('[data-fixkeep="0"]').click(); return {steps:H.past.length-was,more:S.mix.chords.eq.bands.length>n}; });
  ok(fk.steps===1&&fk.more,'keeping a fix is one undo step and lands as a real EQ band');
  const ns=await p.evaluate(async()=>{ await fixRun('the stereo is way too wide'); return (MX.fix.F||{}).none; }); ok(ns===true,'problems the page can’t measure yet say so and give the advice from the data');
+ // the master bus has its own Smart EQ too: curve on the strip, heard first on the master, sent to the plug-in on the master channel
+ await p.evaluate(()=>{ eqClose&&eqClose(); shellDock('mix'); renderStrips('song'); const b=document.querySelector('#cMix .strip[data-ch="master"] .eq-mini'); if(b) b.click(); });
+ ok(await p.evaluate(()=>!$('#eqPanel').hidden&&/Master/.test($('#eqPanel .eq-head').textContent)),'the master strip has an EQ curve that opens the Smart EQ for the master bus');
+ const mcv=await p.evaluate(()=>{ const r=$('#eqCv').getBoundingClientRect(); return {x:r.left,y:r.top,w:r.width,h:r.height}; });
+ await p.mouse.click(mcv.x+mcv.w*.6,mcv.y+mcv.h*.3); await p.waitForTimeout(60);
+ const meq=await p.evaluate(()=>{ ensureAudio(); const m=newMaster('song'), n=(S.mix.master.eq||{bands:[]}).bands.length, nat=eqNative().filter(x=>x.ch===16&&x.type==='peq'); const r={n,inAudio:!!(m.mbus&&m.mbus.eq&&m.mbus.eq.L.length===n),nat:nat.length,natN:nat[0]&&nat[0].p.n}; try{ m.disconnect(); }catch(e){} return r; });
+ ok(meq.n>=1&&meq.inAudio&&meq.nat===1&&meq.natN===meq.n,'a band on the master EQ is in the master sound and goes to the plug-in on the master channel '+JSON.stringify(meq));
  await p.evaluate(()=>{ shellDock('mix'); renderStrips('song'); }); await p.waitForTimeout(100); await p.screenshot({path:'mixing.png'});
  ok(!errs.length,'no page errors '+errs.slice(0,3).join(' | '));
  await b.close(); if(fails.length){ console.log(fails.length+' failed'); process.exit(1); } })();
