@@ -117,6 +117,37 @@ The desktop app records natively (TakeRecorder). Inside a DAW, recording stays w
   features, now next to the routing.
 - Inside the FL plug-in, "Your DAW" shows FL as the host and the routing uses the plug-in's own MIDI output, with no virtual port needed.
 
+## 4. Mixer channels and routing (`4-Mixer-routing.png`, values in `reference-Routing.dc.html`)
+Today every part already gets its own internal channel (`master.buses`, `xFreeCh` for MIDI), but channel numbers aren't shown, there are no
+group buses or separate effect returns, and nothing can be rerouted. Add:
+- **Numbered channels:** each strip shows its number (01, 02…) in a small badge. Numbers follow the timeline's part order and stay stable when parts are
+  added (a new part takes the next free number, a deleted part's number is reused only on "Renumber").
+- **Auto-routing by role (on by default),** using `part-roles.json` families:
+  - lead, harmony, double and vocal audio → **Vocals bus** (glue + de-ess);
+  - chords, pad, arp, counter, bass, bass2, loops → **Music bus**;
+  - drums and perc → **Drums bus** (punch);
+  - everything sends to the **Plate return** at a role default and to the **Echo return** (synced to the song's tempo) only for lead and counter;
+  - bass and pads duck from the kick through a **sidechain** when the style uses it (EDM, pop).
+  - Buses and returns go to Master. New parts are linked the same way the moment they're added, and a style or producer can change the defaults
+    (e.g. an Antonoff-style pass adds a slapback send on the lead).
+- **Manual control, any time:**
+  - Each strip has a **→ route button** above M/S ("→ Vocals bus") that opens the routing card.
+  - **Output:** a list of buses, Master, New bus…, or "FL Studio · Ch n" (MIDI out). The auto choice is marked with its reason
+    ("auto: bass is music").
+  - **Sends:** Plate, Echo and any added return, each a level slider (dB) with pre/post; Sidechain with its source (Kick, Snare…) and amount.
+  - Changing any of these marks the strip **manual** (brass route button) and stops auto-linking for that strip only. **Back to auto** returns it.
+  - Dragging a strip onto a bus in the Buses card also routes it.
+- **The drawer toolbar shows the state:** "● Auto-routing by role · 1 manual · Routing map ›".
+- **Routing map:** a simple left-to-right diagram of parts → buses → master, where lines can be dragged to reroute (same data). Good for checking the
+  whole mix at a glance.
+- **Buses & returns card** (right column): each bus or return with its number (B1, B2…, R1, R2…), what feeds it, a level meter, and ＋ Bus. Clicking one
+  opens its own strip (fader, inserts, the same meter with its ideal and red zones). Returns are tinted violet, buses brass.
+- **MIDI channels for the DAW** stay automatic (`xFreeCh`) and show in the Your DAW card and in each strip's output when sent out. They can be
+  changed in the same route card.
+- Everything is saved in the song and undoable. The native engine and export render buses, returns and sidechain exactly like the page
+  (`Source/Synth.h` mixer). Tests cover auto-routing for every role, manual override and back to auto, sends audible, sidechain ducking, buses
+  in the engine and in stems, and renumbering.
+
 ## Every design in every theme
 - The `themes-check/` folder has the macro panel in all five themes, plus part knobs, controller recording, the mixer, Song settings and Record in
   light and warm themes.
