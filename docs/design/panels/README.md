@@ -109,11 +109,11 @@ The desktop app records natively (TakeRecorder). Inside a DAW, recording stays w
       (film/orchestral may add reverb to bass, high-passed at 600 Hz), then the role pick (bass → Drive, sub → Duck from kick, lead → Echo,
       chords → Plate, pad → Hall, drums → Crush…). Smart never puts reverb or echo on bass unless one of those says so.
     - **Comp:** "COMP" label and amount ("35%"), then the 16 px bar between two 3 px **rails** that stretch with it (Jamie, 8 Nov):
-      - **Left rail = power.** Green (#4FA877) when on. Hover: brighter (#8FF0BA) with a soft glow and a tip "Click to bypass · B". Click
-        toggles bypass. When bypassed the rail turns a dull red (#B04E50; brighter red on hover, tip "Click to turn on · B"), and the whole
+      - **Left rail = power.** Green (#4FA877) when on. Hover: brighter (#8FF0BA) with a soft glow and a tip "Bypass · B". Click
+        toggles bypass. When bypassed the rail turns a dull red (#B04E50; brighter red on hover, tip "Turn on · B"), and the whole
         column goes dull red too: label and amount read "COMP off" in muted red, the bar and its cap tint red-brown, no gain reduction, "—"
         under it.
-      - **Right rail = open.** Gold (#9C7C4C). Hover: bright gold (#F3D9A0) with a glow and a tip "Click to open the compressor". Click opens
+      - **Right rail = open.** Gold (#9C7C4C). Hover: bright gold (#F3D9A0) with a glow and a tip "Open Compressor". Click opens
         the compressor window (double-clicking the bar still works too).
       - Tips are small dark pills with a matching colour tick, shown after ~300 ms of hover; both rails are buttons for keyboard and screen
         readers ("Bypass compressor", "Open compressor") with a hit area wider than they look (at least 10 px).
