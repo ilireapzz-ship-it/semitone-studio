@@ -162,6 +162,29 @@ Different compressors do different jobs, so the window offers five characters, a
   make-up, release fits the tempo (no pumping), bass distortion from a too-fast release (`comp.checks`), each with Fix / Listen / Why.
 - **Today:** parts have no compressor of their own (only the master's Polish). Build it in the page and port it to `Source/SynthFx.h`.
 
+### 4b. Compared with the best, and what was added (`6-Smart-compressor-pro.png`, values in `reference-Comp2.dc.html`)
+Checked 8 Nov 2026; details and sources in `comp.benchmark` and `comp.pro` (`data/mix-master.json`).
+
+| Our type | Best in class | What they have | Added to match |
+|---|---|---|---|
+| Clean | FabFilter Pro-C 3 | upward + multiband up/down styles, Tube/Diode/Bright saturation, Auto Threshold, MIDI and tempo triggers, 6-band sidechain EQ with mid/side, lookahead, 32x oversampling | Direction, Colour, keep-the-same-squeeze, Trigger, Listen to (6-band), Lookahead, Quality, Smooth automation |
+| Punch (VCA) | SSL G bus (Cytomic The Glue) | ratio 2/4/10, stepped attack/release + Auto, Range, sidechain HPF to 2 kHz, peak clipper, dry/wet | classic stepped controls, Range, Clip peaks, low cut to 2 kHz |
+| Fast (FET) | 1176 | input drives it, 4/8/12/20 + All-buttons, attack 20–800 µs, program-dependent release | ratio buttons incl. All, Input-style amount, µs attack, program release |
+| Smooth (opto) | LA-2A | Peak Reduction + Gain, no attack, Compress/Limit, Emphasis | those controls when Smooth is chosen; Emphasis = Ignore lows |
+| Glue (vari-mu) | Fairchild 670 | six time constants (5–6 auto), Lat/Vert, ratio rises with level | Time 1–6, Stereo Linked/Mid/Side |
+
+- **Pro view layout:** the chain at the top (each compressor a card with its reduction; → between; ＋ Another; a Fix can add "Fast before");
+  the display with transfer curve and meters; **the selected type's classic controls** (e.g. Fast: ratio buttons 4 · 8 · 12 · 20 · All, Input,
+  Attack in µs, Release, Output, Mix, "Release follows the singing"); a strip listing each type's classic controls; on the right, **More**
+  (Direction, Colour + Drive + Pre/Post, Range, Lookahead, Stereo, Clip peaks, Smooth automation, Quality), **Listen to** (Trigger: Itself /
+  Another part / Beat 1/8 / MIDI notes; a 6-band sidechain curve; shapes Ignore lows, Focus on esses, Follow the kick, Ignore the hats, Mid only;
+  ◉ Hear it), and **Split into bands** (Off / 2 / 3; band cards with range and reduction). New items carry a small green NEW tag in the design
+  only.
+- **Where Semitone goes further:** the smart pick by role, producer and style; checks and "I hear…" in plain words; Listen & set; tempo-aware
+  release; one Amount shared with the strip; level-matched A/B and Hear what's removed.
+- **Not covered:** external audio sidechain from outside Semitone, surround. Limiting stays on the master, de-essing in the EQ (or "Focus on
+  esses" + a high band here).
+
 ## Tests (tests/web/mixing.test.js + synth_test)
 - Every problem's words map to it.
 - A synthetic muddy chorus finds the right zone and parts; a masked vocal finds the masker; sibilance is detected on a vocal take.
@@ -171,3 +194,5 @@ Different compressors do different jobs, so the window offers five characters, a
 - Every engineer in `bestFor` exists; low-confidence profiles show their note.
 - Smart compressor: each character's curve and timing matches between page and engine on the same notes; double-click the Comp bar opens it;
   ⌥-click resets the amount; the window's Amount and the strip's bar stay in sync; Listen & set lands within 1 dB of the target reduction.
+- Compressor pro: upward mode raises quiet passages without raising peaks; Range caps reduction; lookahead latency is reported and lined up;
+  Beat and MIDI triggers duck on the grid; sidechain shapes change what triggers but not what you hear; bands sum flat when off.

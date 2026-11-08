@@ -2138,6 +2138,275 @@
   "src": [
    "https://bobbyowsinskiblog.com/different-types-of-compressors-and-when-to-use-them/",
    "https://mastering.com/compression-explained-fet-vca-optical-variable-mu/"
-  ]
+  ],
+  "benchmark": {
+   "about": "The best-known compressor of each type, what it offers, and how Semitone matches it. Checked 8 Nov 2026. 'added' are the gaps filled in the pro view (docs/design/mixing/README.md 4b).",
+   "clean": {
+    "best": "FabFilter Pro-C 3 (Jan 2026)",
+    "has": [
+     "many styles incl. Upward and TTM (multiband up+down)",
+     "Tube/Diode/Bright saturation with Drive, pre or post",
+     "Auto Threshold",
+     "sidechain: internal, external, MIDI trigger, host-sync trigger with offset/length",
+     "6-band sidechain EQ with mid/side per band",
+     "adjustable lookahead",
+     "up to 32x oversampling",
+     "dry and wet levels",
+     "A/B, undo, MIDI learn, smart parameter interpolation"
+    ],
+    "added": [
+     "Direction Down/Up/Both",
+     "Colour Off/Tube/Diode/Bright + Drive + Pre/Post",
+     "auto threshold (Listen & set keeps following, 'Keep the same squeeze')",
+     "Trigger: Itself / Another part / Beat (note value) / MIDI notes",
+     "Listen to: 6-band sidechain EQ with shapes and mid/side",
+     "Lookahead",
+     "Quality Normal/High/Best on export",
+     "Smooth automation"
+    ],
+    "src": [
+     "https://www.fabfilter.com/news/1768435200/fabfilter-releases-pro-c-3-compressor-plug-in"
+    ]
+   },
+   "punch": {
+    "best": "SSL G-series bus compressor (Cytomic The Glue as the model)",
+    "has": [
+     "ratio 2/4/10",
+     "attack 0.01–30 ms, release 0.1–1.2 s + Auto",
+     "Range (cap on reduction)",
+     "sidechain high-pass 0–2000 Hz",
+     "peak clipper",
+     "dry/wet"
+    ],
+    "added": [
+     "classic stepped controls when Punch is chosen",
+     "Range",
+     "Clip peaks (soft, from −2 dB)",
+     "sidechain low cut up to 2 kHz"
+    ],
+    "src": [
+     "https://www.soundonsound.com/reviews/cytomic-glue"
+    ]
+   },
+   "fast": {
+    "best": "UREI / Universal Audio 1176",
+    "has": [
+     "fixed threshold, Input drives the amount",
+     "ratio 4/8/12/20 and All-buttons (British mode: grit, steep curve)",
+     "attack 20–800 µs, release 50 ms–1.1 s, program-dependent"
+    ],
+    "added": [
+     "Input-style Amount when Fast is chosen",
+     "ratio buttons 4/8/12/20/All",
+     "µs attack range and program-dependent release in the engine"
+    ],
+    "src": [
+     "https://en.wikipedia.org/wiki/1176_Peak_Limiter",
+     "https://www.uaudio.com/blogs/ua/1176-vs-la-2a-understanding-two-legendary-compressors"
+    ]
+   },
+   "smooth": {
+    "best": "Teletronix LA-2A",
+    "has": [
+     "Peak Reduction + Gain only",
+     "no attack control; program-dependent release",
+     "Compress/Limit switch",
+     "Emphasis: sidechain filter so lows trigger less"
+    ],
+    "added": [
+     "Smooth shows Peak reduction + Gain, attack hidden",
+     "Compress/Limit",
+     "Emphasis (same as a 'Ignore lows' shape)"
+    ],
+    "src": [
+     "https://www.uaudio.com/blogs/ua/1176-vs-la-2a-understanding-two-legendary-compressors",
+     "https://www.puremix.com/blog/f-reid-shippen-universal-audio-la-2a-emphasis"
+    ]
+   },
+   "glue": {
+    "best": "Fairchild 670",
+    "has": [
+     "six time constants (attack 0.2–0.8 ms, release 0.3–25 s; 5 and 6 automatic)",
+     "Lateral/Vertical (mid/side)",
+     "ratio rises with level"
+    ],
+    "added": [
+     "Time 1–6 selector when Glue is chosen",
+     "Stereo Linked/Mid/Side"
+    ],
+    "src": [
+     "https://mixdownmag.com.au/?p=71617"
+    ]
+   },
+   "beyond": [
+    "Smart pick by role, producer and style",
+    "plain-words checks and 'I hear…' fixes",
+    "Listen & set",
+    "release that follows the song's tempo",
+    "one Amount on the strip, linked to the window",
+    "two (or more) in a row, with a Fix that adds the second one",
+    "level-matched A/B and 'Hear what's removed'"
+   ],
+   "notCovered": [
+    "external audio sidechain from outside Semitone",
+    "surround / Atmos",
+    "a dedicated limiter, de-esser and multiband window are the Master limiter, the EQ's de-ess band and 'Split into bands' here"
+   ]
+  },
+  "pro": {
+   "direction": [
+    "down",
+    "up",
+    "both"
+   ],
+   "colour": {
+    "modes": [
+     "off",
+     "tube",
+     "diode",
+     "bright"
+    ],
+    "drive": [
+     0,
+     1
+    ],
+    "where": [
+     "pre",
+     "post"
+    ]
+   },
+   "range": "0 to −24 dB, off by default",
+   "lookahead": "0–20 ms, latency reported to LineUp",
+   "stereo": [
+    "linked",
+    "mid",
+    "side"
+   ],
+   "link": [
+    0,
+    1
+   ],
+   "clip": "soft clip from −2 dB, after the compressor",
+   "quality": [
+    "normal",
+    "high (4x)",
+    "best on export (8x on bounce)"
+   ],
+   "smoothAutomation": true,
+   "trigger": [
+    "self",
+    "part",
+    "beat",
+    "midi"
+   ],
+   "sidechainEq": {
+    "bands": 6,
+    "perBand": [
+     "shape",
+     "freq",
+     "gain",
+     "q",
+     "mid/side"
+    ],
+    "shapes": {
+     "Ignore lows": "low cut 180 Hz",
+     "Focus on esses": "+6 dB bell at 6.5 kHz",
+     "Follow the kick": "trigger = Drums kick notes or band 40–120 Hz",
+     "Ignore the hats": "high cut 8 kHz",
+     "Mid only": "detector on mid"
+    }
+   },
+   "bands": {
+    "max": 3,
+    "default": [
+     "< 250 Hz",
+     "250 Hz–4 kHz",
+     "> 4 kHz"
+    ],
+    "each": [
+     "on",
+     "amount",
+     "character inherited"
+    ]
+   },
+   "chain": {
+    "max": 4,
+    "order": "drag to reorder; Fix may add 'Fast before' for single jumps"
+   },
+   "classic": {
+    "clean": [
+     "threshold",
+     "ratio",
+     "attack",
+     "release",
+     "knee",
+     "hold"
+    ],
+    "punch": {
+     "ratio": [
+      2,
+      4,
+      10
+     ],
+     "attackMs": [
+      0.1,
+      0.3,
+      1,
+      3,
+      10,
+      30
+     ],
+     "releaseS": [
+      0.1,
+      0.3,
+      0.6,
+      1.2,
+      "auto"
+     ]
+    },
+    "fast": {
+     "ratio": [
+      4,
+      8,
+      12,
+      20,
+      "all"
+     ],
+     "attackUs": [
+      20,
+      800
+     ],
+     "releaseMs": [
+      50,
+      1100
+     ],
+     "amount": "input"
+    },
+    "smooth": {
+     "controls": [
+      "peak reduction",
+      "gain",
+      "compress/limit",
+      "emphasis"
+     ],
+     "attack": "none"
+    },
+    "glue": {
+     "time": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+     ],
+     "auto": [
+      5,
+      6
+     ],
+     "ratio": "rises with level"
+    }
+   }
+  }
  }
 }

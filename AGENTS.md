@@ -49,7 +49,8 @@ Exact look: `docs/design/merged/reference.dc.html` (a design-canvas file: copy i
     `data/mix-master.json` (producer > style exception > role; changeable, Back to smart), and the Comp bar becomes a real one-amount compressor
     (`comp` in the same file, port to `Source/SynthFx.h`). Spec: `docs/design/panels/README.md`, strip layout. Test: bass never gets a reverb pick
     unless a sourced exception applies. Double-click the Comp bar opens the **Smart compressor** window (five characters: Clean, Punch/VCA,
-    Fast/FET, Smooth/opto, Glue/vari-mu; `docs/design/mixing/README.md` section 4, `comp` in `data/mix-master.json`).
+    Fast/FET, Smooth/opto, Glue/vari-mu; `docs/design/mixing/README.md` section 4, `comp` in `data/mix-master.json`), with the pro view in section 4b (classic
+    controls per type, Direction, Colour, Range, Lookahead, Stereo, sidechain EQ and triggers, bands, chains).
 Rules that always hold: suggest and accept (never surprise changes), one undo step per change, learning about Jamie stays on his
 computer, no copied melodies, lyrics or recordings, no imitating or cloning a real singer's voice. Producers and artists are described
 as "X-style, based on how they're known to work". Ask Jamie before anything that needs hosting, accounts or money.

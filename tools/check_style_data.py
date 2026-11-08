@@ -188,6 +188,8 @@ for e in SK['exceptions']:
 CH=MM['comp']['characters']
 for k_,v in CH.items():
     if not v.get('src'): I(f"mix-master comp character {k_}: no sources")
+for k_ in CH:
+    if k_ not in MM['comp']['benchmark'] or not MM['comp']['benchmark'][k_].get('src'): I(f"mix-master comp benchmark {k_}: missing or unsourced")
 for r_,(st_,a_) in MM['comp']['roles'].items():
     if st_ not in CH: I(f"mix-master comp {r_}: character {st_} unknown")
 for k_,v in MM['comp']['styles'].items():
