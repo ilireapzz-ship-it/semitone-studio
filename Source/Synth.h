@@ -159,6 +159,13 @@ struct SynthPatch
     std::vector<PartPatch> parts;
     std::vector<Lane> lanes;
     std::vector<Duck> ducks;
+    // routing (the page's buses and returns): bus b is FX channel 17 + b; each part channel goes to a bus or the master and sends to returns
+    struct RouteBus { float level = 1, pan = 0; bool mono = false; };
+    std::vector<RouteBus> rbus;
+    std::array<int8_t, 16> rOut = [] { std::array<int8_t, 16> v; v.fill (-1); return v; }();
+    std::array<std::array<float, 8>, 16> rSend {};
+    std::array<uint8_t, 16> rPre {};
+    uint32_t routeMask = 0;
     std::shared_ptr<std::vector<FxDesc>> fxList;   // what the page asked for
     std::shared_ptr<FxBank> fx;                    // built off the audio thread by the caller; running state lives here
     std::vector<NoteBuffers> buffers;   // one per part (the buffers are owned by the caller's cache)
@@ -898,6 +905,7 @@ public:
         sweepLeft = 0;
         pfxL.assign ((size_t) 16 * pfxCap, 0.0f); pfxR.assign ((size_t) 16 * pfxCap, 0.0f);
         preL.assign ((size_t) pfxCap, 0.0f); preR.assign ((size_t) pfxCap, 0.0f);
+        rbufL.assign ((size_t) FxBank::buses * pfxCap, 0.0f); rbufR.assign ((size_t) FxBank::buses * pfxCap, 0.0f);
     }
 
     // Your effect plug-ins on Semitone's own parts (desktop app). Before process(), the audio thread says which
@@ -934,7 +942,8 @@ public:
         // audio tracks and mono channels always mix through their channel bus, like a part with effects
         uint32_t takeMask = 0;
         if (current->takes) for (const auto& seg : *current->takes) takeMask |= 1u << (seg.ch & 15);
-        const uint32_t forced = takeMask | (current->monoMask & 0xffffu);
+        const uint32_t forced = takeMask | (current->monoMask & 0xffffu) | current->routeMask;   // routed parts mix through their channel bus too
+        const int nb = (int) std::min (current->rbus.size(), (size_t) FxBank::buses);
         const bool busMode = fxBus != nullptr || pfx || forced != 0;
         auto plug = [&] (size_t c) { return pfx && ((pmask >> c) & 1u); };
         auto mono = [&] (size_t c) { return ((current->monoMask >> c) & 1u) != 0; };
@@ -988,6 +997,19 @@ public:
                 if (beat >= 0) fireTrans (beat + i * beatInc);
             }
             float l = 0, r = 0;
+            float rbL[FxBank::buses] {}, rbR[FxBank::buses] {};
+            // a channel's panned, faded signal goes to its bus (or the mix) and to the returns it sends to; `dl`/`dr` is it before the fader
+            auto toOut = [&] (size_t c, float ol, float orr, float dl, float dr)
+            {
+                const int o = current->rOut[c];
+                if (o >= 0 && o < nb) { rbL[o] += ol; rbR[o] += orr; } else { l += ol; r += orr; }
+                for (int b = 0; b < nb; ++b)
+                {
+                    const float g = current->rSend[c][(size_t) b];
+                    if (g <= 0) continue;
+                    if ((current->rPre[c] >> b) & 1u) { rbL[b] += dl * g; rbR[b] += dr * g; } else { rbL[b] += ol * g; rbR[b] += orr * g; }
+                }
+            };
             float tr = 0;
             for (auto& t : transVoices) if (t.active) tr += t.run (rng);
             if (tr != 0) { float pl, pr; panGains (0, false, pl, pr); l += tr * current->transLevel * pl; r += tr * current->transLevel * pr; }
@@ -1059,12 +1081,18 @@ public:
                     if (plug (c)) { pfxL[c * pfxCap + (size_t) i] = bl * busLevel[c]; pfxR[c * pfxCap + (size_t) i] = br * busLevel[c]; continue; }
                     float pl, pr;
                     panGains (hasPan[c] ? chPan[c] : busPan[c], busStereo[c] && ! mono (c), pl, pr);
-                    l += bl * busLevel[c] * chGain[c] * pl; chSum[c] += bl * busLevel[c] * chGain[c];
-                    r += br * busLevel[c] * chGain[c] * pr;
+                    const float g = busLevel[c] * chGain[c];
+                    toOut (c, bl * g * pl, br * g * pr, bl, br); chSum[c] += bl * g;
                 }
             for (size_t c = 0; c < 16; ++c)
                 if (chSum[c] != 0) { chMax[c] = std::max (chMax[c], std::abs (chSum[c])); chSum[c] = 0; }
-            if (pfx) { preL[(size_t) i] = l; preR[(size_t) i] = r; continue; }
+            if (pfx)
+            {
+                preL[(size_t) i] = l; preR[(size_t) i] = r;
+                for (int b = 0; b < nb; ++b) { rbufL[(size_t) b * pfxCap + (size_t) i] = rbL[b]; rbufR[(size_t) b * pfxCap + (size_t) i] = rbR[b]; }
+                continue;
+            }
+            runBuses (nb, rbL, rbR, l, r);
             finish (i, l, r);
         }
         if (pfx)
@@ -1075,6 +1103,8 @@ public:
             {
                 if ((i & 31) == 0) updateLanes (beat < 0 ? -1 : beat + i * beatInc);
                 float l = preL[(size_t) i], r = preR[(size_t) i];
+                float rbL[FxBank::buses] {}, rbR[FxBank::buses] {};
+                for (int b = 0; b < nb; ++b) { rbL[b] = rbufL[(size_t) b * pfxCap + (size_t) i]; rbR[b] = rbufR[(size_t) b * pfxCap + (size_t) i]; }
                 for (size_t c = 0; c < 16; ++c)
                 {
                     if (! plug (c)) continue;
@@ -1082,19 +1112,28 @@ public:
                     if (mono (c)) bl = br = .5f * (bl + br);
                     float pl, pr;
                     panGains (hasPan[c] ? chPan[c] : busPan[c], busStereo[c] && ! mono (c), pl, pr);
-                    l += bl * chGain[c] * pl; r += br * chGain[c] * pr;
+                    const float ol = bl * chGain[c] * pl, orr = br * chGain[c] * pr;
+                    const int o = current->rOut[c];
+                    if (o >= 0 && o < nb) { rbL[o] += ol; rbR[o] += orr; } else { l += ol; r += orr; }
+                    for (int b = 0; b < nb; ++b)
+                    {
+                        const float g = current->rSend[c][(size_t) b];
+                        if (g <= 0) continue;
+                        if ((current->rPre[c] >> b) & 1u) { rbL[b] += bl * g; rbR[b] += br * g; } else { rbL[b] += ol * g; rbR[b] += orr * g; }
+                    }
                     chMax[c] = std::max (chMax[c], std::abs (bl * chGain[c]));
                 }
+                runBuses (nb, rbL, rbR, l, r);
                 finish (i, l, r);
             }
         }
         gate = audible;
-        for (size_t c = 0; c < 16; ++c)
+        for (size_t c = 0; c < chMax.size(); ++c)
             if (chMax[c] > 0) { chPeak[c].store (std::max (chPeak[c].load(), chMax[c])); chMax[c] = 0; }
     }
 
-    // Any thread: the loudest this channel has been since the last call, for its meter.
-    float takeChannelPeak (int ch) { return chPeak[(size_t) (ch & 15)].exchange (0); }
+    // Any thread: the loudest this channel has been since the last call, for its meter (17 and up: the buses and returns).
+    float takeChannelPeak (int ch) { return ch >= 0 && ch < (int) chPeak.size() ? chPeak[(size_t) ch].exchange (0) : 0.0f; }
 
     // Audio thread: cut everything off (the sound was switched to MIDI only).
     void silence()
@@ -1229,8 +1268,27 @@ public:
     const std::atomic<bool>* macroOn = nullptr;
 private:
     double secPerBeat = 0;
-    std::array<float, 16> chSum {}, chMax {};
-    std::array<std::atomic<float>, 16> chPeak {};
+    std::array<float, 16> chSum {};
+    std::array<float, FxBank::count> chMax {};
+    std::array<std::atomic<float>, FxBank::count> chPeak {};
+    std::vector<float> rbufL, rbufR;   // the buses' input for a block, while your plug-ins' second pass runs
+    // the buses and returns: their own EQ, compressor and inserts, then fader and pan, into the mix (same order as the page)
+    void runBuses (int nb, const float* inL, const float* inR, float& l, float& r)
+    {
+        for (int b = 0; b < nb; ++b)
+        {
+            float bl = inL[b], br = inR[b];
+            const int fc = FxBank::master + 1 + b;
+            if (fxBus && fxBus->any[(size_t) fc]) fxBus->run (fc, bl, br);
+            const auto& B = current->rbus[(size_t) b];
+            if (B.mono) bl = br = .5f * (bl + br);
+            float pl, pr;
+            panGains (B.pan, ! B.mono, pl, pr);
+            const float ol = bl * B.level * pl, orr = br * B.level * pr;
+            l += ol; r += orr;
+            chMax[(size_t) fc] = std::max (chMax[(size_t) fc], std::max (std::abs (ol), std::abs (orr)));
+        }
+    }
     std::array<double, 16> bends { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
     std::vector<Event> sorted;
     Room room;

@@ -86,8 +86,27 @@ and the style-data check (ISSUES 0) pass after these fixes.
 - Inside the app or FL the plug-in measures its own output the same way and sends it to the page, so the card works there too.
 - Kept: the master strip (its effects and EQ) and the Finishing box (reference track), whose Polish menu follows the card.
 
+**Routing, built after the review (panels §4).** Not heard yet: please listen before trusting it.
+- Every part now plays through a **bus** chosen by what it is: melody, harmony, double and sung audio → **Vocals bus** (gentle glue
+  compressor and a soft dip at 6.8 kHz for s and t sounds: a fixed dip, not a true de-esser); chords, pad, arp, counter-melody, bass, sub,
+  loops and other audio → **Music bus** (clean); drums → **Drums bus** (punch compressor). Buses go to the master.
+- Two **returns**: **Plate** (every part sends to it at a level set by its role, e.g. bass −22 dB) and **Echo** (a dotted quarter synced to
+  the tempo; only the lead and the counter-melody send to it). A style whose notes mention slapback adds a **Slap return** for the lead.
+  A part that already has its own reverb or echo (an insert, or its smart knob) is **not** also sent, so nothing is doubled.
+- In a style that pumps (its notes mention sidechain, or Disco), the bass, sub and pads duck from the kick automatically.
+- Each strip has a **→ button** above M/S ("→ Music bus"). It opens a card with Output (the buses, Master, New bus…, or FL Studio · Ch n,
+  with the automatic choice marked by its reason, "auto: bass is music"), the sends in dB with pre/post, and Sidechain with its source and
+  amount. Changing anything makes that strip **manual** (the button turns brass) and stops auto-linking for it only; **Back to auto** undoes
+  that. New parts link themselves the moment they're added.
+- The toolbar says "● Auto-routing by role · 1 manual · Routing map ›". The **routing map** draws parts → buses → master; drag a part's
+  dot onto a bus to reroute it, or click a part for its card.
+- **Buses & returns** card in the right-hand column (B1–B3, R1–R2, what feeds each, a level meter, ＋ Bus). Clicking one opens its own
+  strip next to the master (fader, meter, EQ, compressor, inserts). Dragging a strip onto a bus routes it.
+- Saved with the song, one undo step per change. The plug-in mixes the same buses, returns, sends and ducking (so FL and exports match),
+  and stems go through their bus.
+- Not done: removing an added bus, automation lanes on bus faders in the plug-in, and bus compressor meters inside the plug-in.
+
 **Still missing (found in the review, not yet built):**
-- **Routing** (panels §4, step 17): buses, Plate/Echo returns, sends. Until then the smart knob's sends (Plate, Echo…) are inserts on the strip.
 - **Strip layout details:** four insert slots (the engine uses slot 4 for the smart knob), the ● record-arm button, the EQ curve below the
   inserts, and a hatched red zone above 0 dB.
 - **Record** (panels §2): input device and gain, Hear myself / Low-cut / Mono / Pre-roll, Loop record, Tuning, Make melody from comp.

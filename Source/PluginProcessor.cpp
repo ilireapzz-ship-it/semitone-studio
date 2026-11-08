@@ -441,6 +441,37 @@ void SemitoneProcessor::setSynthSound (const juce::var& sound, const st::Timelin
         t->monoMask = 0;
         if (auto* list = sound.getProperty ("mono", juce::var()).getArray())
             for (const auto& o : *list) { const int c = (int) o; if (c >= 0 && c <= 16) t->monoMask |= 1u << c; }
+        // routing: buses and returns (FX channels 17 and up), where each part goes and what it sends
+        {
+            const auto rt = sound.getProperty ("route", juce::var());
+            if (auto* bl = rt.getProperty ("buses", juce::var()).getArray())
+                for (const auto& o : *bl)
+                {
+                    if (t->rbus.size() >= (size_t) st::FxBank::buses) break;
+                    st::SynthPatch::RouteBus b; b.level = num (o, "level", 1); b.pan = num (o, "pan", 0); b.mono = (int) o.getProperty ("mono", 0) != 0;
+                    t->rbus.push_back (b);
+                }
+            const int nb = (int) t->rbus.size();
+            if (auto* cl = rt.getProperty ("ch", juce::var()).getArray())
+                for (const auto& o : *cl)
+                {
+                    const int c = (int) o.getProperty ("ch", -1);
+                    if (c < 0 || c > 15) continue;
+                    const int out = (int) o.getProperty ("out", -1);
+                    t->rOut[(size_t) c] = (int8_t) (out >= 0 && out < nb ? out : -1);
+                    bool any = t->rOut[(size_t) c] >= 0;
+                    if (auto* sl = o.getProperty ("sends", juce::var()).getArray())
+                        for (const auto& x : *sl)
+                        {
+                            const int b = (int) x.getProperty ("b", -1);
+                            if (b < 0 || b >= nb) continue;
+                            t->rSend[(size_t) c][(size_t) b] = juce::jlimit (0.0f, 4.0f, num (x, "g", 0));
+                            if ((int) x.getProperty ("pre", 0) != 0) t->rPre[(size_t) c] |= (uint8_t) (1u << b);
+                            any = any || t->rSend[(size_t) c][(size_t) b] > 0;
+                        }
+                    if (any && nb > 0) t->routeMask |= 1u << c;
+                }
+        }
         std::vector<st::Lane> macroLanes;   // applied after every other lane, so FL's macro wins over the song's own line
         if (auto* macs = sound.getProperty ("macros", juce::var()).getArray())
             for (const auto& m : *macs)

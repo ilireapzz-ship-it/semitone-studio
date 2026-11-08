@@ -493,13 +493,13 @@ private:
 class FxBank
 {
 public:
-    static constexpr int master = 16;
-    std::array<std::array<std::unique_ptr<Fx>, 4>, 17> slots;   // three inserts, then the smart knob's effect
-    std::array<std::unique_ptr<Fx>, 17> comp, width;   // the strip's compressor (after its EQ) and its Width (last)
-    std::array<std::unique_ptr<Fx>, 17> eq;   // the strip's Smart EQ, before its inserts
-    std::array<bool, 17> any {};
+    static constexpr int master = 16, buses = 8, count = 17 + buses;   // 0-15 parts, 16 master, then the routing's buses and returns
+    std::array<std::array<std::unique_ptr<Fx>, 4>, count> slots;   // three inserts, then the smart knob's effect
+    std::array<std::unique_ptr<Fx>, count> comp, width;   // the strip's compressor (after its EQ) and its Width (last)
+    std::array<std::unique_ptr<Fx>, count> eq;   // the strip's Smart EQ, before its inserts
+    std::array<bool, count> any {};
 
-    Fx* at (int ch, int slot) const { return ch >= 0 && ch < 17 && slot >= 0 && slot < 4 ? slots[(size_t) ch][(size_t) slot].get() : nullptr; }
+    Fx* at (int ch, int slot) const { return ch >= 0 && ch < count && slot >= 0 && slot < 4 ? slots[(size_t) ch][(size_t) slot].get() : nullptr; }
     void run (int ch, float& l, float& r) { if (auto& e = eq[(size_t) ch]) e->run (l, r); if (auto& c = comp[(size_t) ch]) c->run (l, r); for (auto& f : slots[(size_t) ch]) if (f) f->run (l, r); if (auto& w = width[(size_t) ch]) w->run (l, r); }
 };
 
@@ -522,10 +522,10 @@ inline std::shared_ptr<FxBank> makeFxBank (const std::vector<FxDesc>& list, doub
         else if (d.type == "autopan") f = std::make_unique<AutopanFx> (d, sr);
         else if (d.type == "phaser") f = std::make_unique<PhaserFx> (d, sr);
         else if (d.type == "wide") f = std::make_unique<WideFx> (d, sr);
-        else if ((d.type == "pcomp" && d.slot < 0) || d.type == "width") { if (d.ch >= 0 && d.ch < 17) { auto& dst = d.type == "width" ? b->width : b->comp; if (d.type == "width") dst[(size_t) d.ch] = std::make_unique<WidthFx> (d, sr); else dst[(size_t) d.ch] = std::make_unique<PcompFx> (d, sr); b->any[(size_t) d.ch] = true; } continue; }
+        else if ((d.type == "pcomp" && d.slot < 0) || d.type == "width") { if (d.ch >= 0 && d.ch < FxBank::count) { auto& dst = d.type == "width" ? b->width : b->comp; if (d.type == "width") dst[(size_t) d.ch] = std::make_unique<WidthFx> (d, sr); else dst[(size_t) d.ch] = std::make_unique<PcompFx> (d, sr); b->any[(size_t) d.ch] = true; } continue; }
         else if (d.type == "pcomp") f = std::make_unique<PcompFx> (d, sr);
-        else if (d.type == "peq") { if (d.ch >= 0 && d.ch < 17) { b->eq[(size_t) d.ch] = std::make_unique<PeqFx> (d, sr); b->any[(size_t) d.ch] = true; } continue; }
-        if (f && d.ch >= 0 && d.ch < 17 && d.slot >= 0 && d.slot < 4) { b->slots[(size_t) d.ch][(size_t) d.slot] = std::move (f); b->any[(size_t) d.ch] = true; }
+        else if (d.type == "peq") { if (d.ch >= 0 && d.ch < FxBank::count) { b->eq[(size_t) d.ch] = std::make_unique<PeqFx> (d, sr); b->any[(size_t) d.ch] = true; } continue; }
+        if (f && d.ch >= 0 && d.ch < FxBank::count && d.slot >= 0 && d.slot < 4) { b->slots[(size_t) d.ch][(size_t) d.slot] = std::move (f); b->any[(size_t) d.ch] = true; }
     }
     return b;
 }

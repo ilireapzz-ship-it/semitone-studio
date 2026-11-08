@@ -401,7 +401,7 @@ void SemitoneEditor::timerCallback()
     {
         const float l = proc.takePeakL(), r = proc.takePeakR(), inPeak = proc.takeRecorder.active() ? proc.takeRecorder.takePeak() : 0.0f;
         juce::Array<juce::var> chs; float most = juce::jmax (l, r, proc.takeRecorder.active() ? 1.0e-4f : 0.0f);
-        for (int c = 0; c < 16; ++c) { const float p = proc.takeChannelPeak (c); most = juce::jmax (most, p); chs.add ((double) p); }
+        for (int c = 0; c < 25; ++c) { const float p = c == 16 ? 0.0f : proc.takeChannelPeak (c); most = juce::jmax (most, p); chs.add ((double) p); }   // 17 and up: buses and returns
         if (most > 0 || meterWas > 0)
         {
             auto* o = new juce::DynamicObject(); o->setProperty ("l", (double) l); o->setProperty ("r", (double) r); o->setProperty ("ch", chs);

@@ -571,6 +571,37 @@ int main()
         else printf ("ok: audio tracks: own channel, level, pan, stereo sides and Mono\n");
     }
 
+    // routing: a part into a bus (its fader and effects), sends into a return (post or pre fader), bus meters
+    {
+        auto mk = [] (float lvl) { auto p = std::make_shared<SynthPatch> (); p->hasExt = true; p->extLevel[1] = lvl; p->polish.on = false; return p; };
+        std::vector<float> in (512), zero (512, 0.f), L (512), R (512);
+        for (size_t i = 0; i < in.size(); ++i) in[i] = .004f * (float) std::sin (2 * synthPi * 750 * (double) i / SR);   // quiet: under the safety compressor
+        auto blockOf = [&] (Synth& sy, const std::vector<float>& src) { std::fill (L.begin(), L.end(), 0.f); std::fill (R.begin(), R.end(), 0.f); sy.setExternal (1, src.data(), src.data()); sy.process ({}, 512, L.data(), R.data(), 1, -1, 0); double e = 0; for (float x : L) e += (double) x * x; return (float) std::sqrt (e / 512); };
+        auto settle = [&] (Synth& sy, const std::vector<float>& src) { float v = 0; for (int k = 0; k < 8; ++k) v = blockOf (sy, src); return v; };
+        Synth a; a.prepare (SR); a.setPatch (mk (1)); const float dry = settle (a, in);
+        auto pb = mk (1); pb->rbus.push_back ({ .5f, 0, false }); pb->rOut[1] = 0; pb->routeMask = 2;
+        Synth b; b.prepare (SR); b.setPatch (pb); const float bus = settle (b, in);
+        CHECK (dry > 1e-3f && std::abs (bus - dry * .5f) < dry * .02f, "a part routed into a bus at -6 dB comes out at half %f %f", bus, dry);
+        CHECK (b.takeChannelPeak (17) > 1e-3f && b.takeChannelPeak (17) == 0, "the bus has its own meter (channel 17)");
+        // a return with a plate: the send adds a tail that keeps going after the part stops
+        auto pc = mk (1); pc->rbus.push_back ({ 1, 0, false }); pc->rSend[1][0] = .5f; pc->routeMask = 2;
+        FxDesc pl; pl.type = "plate"; pl.ch = 17; pl.slot = 0; pl.p = { { "decay", 1.8f }, { "pre", 20 }, { "damp", 7000 }, { "mix", 1 } };
+        pc->fx = makeFxBank ({ pl }, SR);
+        Synth c; c.prepare (SR); c.setPatch (pc); settle (c, in); for (int k = 0; k < 6; ++k) blockOf (c, zero); const float tail = blockOf (c, zero);
+        Synth a2; a2.prepare (SR); a2.setPatch (mk (1)); settle (a2, in); for (int k = 0; k < 6; ++k) blockOf (a2, zero); const float none = blockOf (a2, zero);
+        CHECK (tail > dry * .01f && none < dry * 1e-3f, "the Plate return rings on after the part stops %g %g", tail, none);
+        // pre-fader: with the part's fader down the send still feeds the return; post-fader it follows the fader
+        auto pp = mk (0); pp->rbus.push_back ({ 1, 0, false }); pp->rSend[1][0] = 1; pp->rPre[1] = 1; pp->routeMask = 2;
+        Synth d; d.prepare (SR); d.setPatch (pp); const float pre = settle (d, in);
+        auto po = mk (0); po->rbus.push_back ({ 1, 0, false }); po->rSend[1][0] = 1; po->routeMask = 2;
+        Synth e; e.prepare (SR); e.setPatch (po); const float post = settle (e, in);
+        CHECK (std::abs (pre - dry) < dry * .02f && post < dry * 1e-3f, "pre-fader sends ignore the fader, post-fader ones follow it %f %f %f", pre, post, dry);
+        // with plug-in effects on the part (the second pass), routing still holds
+        Synth f; f.prepare (SR); f.setPatch (pb); f.plugFx = [] (int, float*, float*, int) {}; f.plugFxMask = 2u; const float bus2 = settle (f, in);
+        CHECK (std::abs (bus2 - bus) < dry * .02f, "routing is the same when the part has plug-in effects %f %f", bus2, bus);
+        printf ("ok: routing: buses, returns, pre and post sends, bus meters\n");
+    }
+
     // Smart EQ: the engine's bands answer like the page's BiquadFilterNodes (getFrequencyResponse values from the page, 48 kHz)
     {
         const double sr = 48000; const double F[] = { 50, 100, 200, 400, 1000, 2500, 5000, 8000, 12000 };
