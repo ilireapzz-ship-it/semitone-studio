@@ -210,7 +210,7 @@ knobs) still ugly; this refined look replaces it. Principles: restraint, one acc
   - **Threshold:** a dashed white line across the graph with a white value pill at the right end (drag either).
   - Bar numbers and section names in small caps under the graph.
 - **Hero column (320 px):** one **Amount knob** (220 px): matte graphite body, champagne pointer, the value in the serif inside ("45") with
-  "AMOUNT" under it; an outer thin champagne arc for the amount, a cream dot for the smart amount, and an inner part-colour arc showing the live
+  "AMOUNT" under it; an outer thin champagne arc for the amount, a small cream ✦ sparkle on the ring for the smart amount (hover label "Smart: 35"; click it to jump there), and an inner part-colour arc showing the live
   gain reduction. Under it two readouts split by a hairline: "−3.4 dB REDUCING" and "35 ✦ SMART"; then thin IN and OUT meters with a peak tick.
 - **Parameter row:** no knobs. Each parameter is a column: spaced-caps label (✦ if Smart set it), the value large and light (17 px, tabular),
   and a 2 px line underneath showing its position (champagne if Smart set it). Drag the value up or down, or click to type. Right: "Listen to ·
