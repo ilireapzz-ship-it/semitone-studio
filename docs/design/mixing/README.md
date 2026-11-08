@@ -245,7 +245,8 @@ bypassed quickly, and the state never relies on colour alone.
   status message sits over the graph: "Bypassed · You're hearing the vocal without the compressor, at the same loudness. Press B to turn it
   back on." (`role="status"`, read out once.)
 - **On the mixer strip:** each insert slot starts with a small power icon (green on, grey off); an off slot also shows "off" and greys its
-  name. The EQ thumbnail and the Comp column each have their own power icon. Empty slots show no icon.
+  name. The EQ thumbnail has its own power icon; the Comp column uses its green left rail (red when bypassed) and gold right rail (open), see
+  `docs/design/panels/README.md`. Empty slots show no icon.
 - **Keys:** B toggles the effect in focus or the open window; ⇧B toggles every effect on the selected part; ⌥B bypasses everything on the
   master (a quick "with / without" check). Bypass is MIDI-learnable and automatable.
 - **How it sounds:** a 10–20 ms crossfade (no click); bypassed effects keep their delay so timing doesn't jump; the compressor's bypass is

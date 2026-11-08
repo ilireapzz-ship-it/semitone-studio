@@ -108,12 +108,19 @@ The desktop app records natively (TakeRecorder). Inside a DAW, recording stays w
       entry for the role (sourced move in that producer's pass, e.g. Antonoff-style: vocal → Slap, drums → Room), then a sourced style exception
       (film/orchestral may add reverb to bass, high-passed at 600 Hz), then the role pick (bass → Drive, sub → Duck from kick, lead → Echo,
       chords → Plate, pad → Hall, drums → Crush…). Smart never puts reverb or echo on bass unless one of those says so.
-    - **Comp:** label, amount ("35%"), then a 16 px bar that stretches to the bottom. A metal cap marks the **amount** (drag up for more, scroll
-      for fine steps, double-click = open the Smart compressor (`docs/design/mixing/README.md` section 4; the Comp label has an open-window icon),
-      ⌥-click = smart amount, right-click = Style Smooth/Steady/Punchy/Glue/Squash, Sidechain from…, Full view); a faint
-      brass tint fills below the cap; the live **gain reduction** draws from the top in brass, with the dB under the bar. Style and amount per
-      role come from `comp` in `data/mix-master.json`; Amount is an automation target and controller-learnable. Parts mixed in your DAW show "—".
-      Today parts have no compressor of their own (only the master's Polish): add one per part in the page and port it to `Source/SynthFx.h`. The right column has a **dB scale** (+6, 0, −6, −12, −18, −24, −36, −60, with 0 in
+    - **Comp:** "COMP" label and amount ("35%"), then the 16 px bar between two 3 px **rails** that stretch with it (Jamie, 8 Nov):
+      - **Left rail = power.** Green (#4FA877) when on. Hover: brighter (#8FF0BA) with a soft glow and a tip "Click to bypass · B". Click
+        toggles bypass. When bypassed the rail turns a dull red (#B04E50; brighter red on hover, tip "Click to turn on · B"), and the whole
+        column goes dull red too: label and amount read "COMP off" in muted red, the bar and its cap tint red-brown, no gain reduction, "—"
+        under it.
+      - **Right rail = open.** Gold (#9C7C4C). Hover: bright gold (#F3D9A0) with a glow and a tip "Click to open the compressor". Click opens
+        the compressor window (double-clicking the bar still works too).
+      - Tips are small dark pills with a matching colour tick, shown after ~300 ms of hover; both rails are buttons for keyboard and screen
+        readers ("Bypass compressor", "Open compressor") with a hit area wider than they look (at least 10 px).
+      - The bar itself: a metal cap marks the **amount** (drag up for more, scroll for fine steps, ⌥-click = smart amount, right-click =
+        Style, Sidechain from…, Full view), a faint tint below the cap, the live **gain reduction** in brass from the top, the dB under it.
+        Parts mixed in your DAW show grey rails and "—". Today parts have no compressor of their own (only the master's Polish): add one per
+        part in the page and port it to `Source/SynthFx.h`.
     the text colour and +6 in red), the fader with a metal cap, and a full-width stereo meter.
 - **The meter:**
   - Green → yellow → red gradient that reaches red only near 0 dB.
