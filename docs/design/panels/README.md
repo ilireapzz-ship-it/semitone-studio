@@ -85,8 +85,28 @@ The desktop app records natively (TakeRecorder). Inside a DAW, recording stays w
   or **send to your DAW** on a channel.
 - A strip sent to the DAW is outlined in brass. Its fader area is hatched with "mix this part in FL Studio" (Semitone isn't making that sound), and
   its inserts are empty.
-- Strips have inserts (empty slots dashed), Pan and Room knobs (the same LED-ring knob), a fader with metal cap, a stereo meter, dB readout and
-  M / S / ● (record arm).
+- **Strip layout (no wasted width):**
+  - Top to bottom: plays through, four insert slots (empty ones dashed), then a small **EQ curve** in the part colour (click to open the EQ).
+  - At the bottom, a two-column **fader area**. The left column stacks the **Pan, Room and Width** knobs (same LED-ring knob, label and value
+    under each), so they no longer sit in a row above the fader. The right column has a **dB scale** (+6, 0, −6, −12, −18, −24, −36, −60, with 0 in
+    the text colour and +6 in red), the fader with a metal cap, and a full-width stereo meter.
+- **The meter:**
+  - Green → yellow → red gradient that reaches red only near 0 dB.
+  - A **peak-hold line** that falls slowly.
+  - A **clip light** above it that latches red until clicked.
+  - A hatched **red zone** above 0 dB ("above this the part clips").
+  - A green-outlined **ideal zone**: the target average level for this part's role, from `part-roles.json` `levelVsLead` relative to the lead, set
+    so the mix sums near the master target. For example, lead −12…−6, chords −18…−12, drums −10…−4. It moves with the song's genre profile.
+- **Readouts:**
+  - Two readouts under the meter: fader dB and peak dB (the peak turns red above 0).
+  - One plain **verdict line** under them, in a colour that matches: "In the ideal zone" (green), "A little quiet: +2 dB" (brass), "Clipping: lower
+    1 dB" (red, and the strip gets a red hairline), or "Level is set in FL".
+  - Clicking the verdict applies the fix as one undo step.
+- M / S / ● (record arm) stay at the bottom.
+- **Master:** the knob plus inserts, then two horizontal bars:
+  - **Loudness** (short-term LUFS) with the green ideal zone for the "Listen on" target (streaming −14 to −9 by default; club, film and podcast change it).
+  - **Peak** (true peak) with the red zone above −1 dBTP.
+  - The header says "−9.4 LUFS · on target" or what to change. A key line reads "green: ideal for streaming · red: clips".
 - **Master card:** LED-ring master knob, LUFS, Polish, Limiter and Listen on.
 - **Your DAW card** (brass):
   - The DAW and port ("FL Studio 2026 · MIDI out · port 'Semitone' (IAC)", Port ▾) with a linked status.
