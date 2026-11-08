@@ -98,8 +98,12 @@ The desktop app records natively (TakeRecorder). Inside a DAW, recording stays w
   its inserts are empty.
 - **Strip layout (no wasted width):**
   - Top to bottom: plays through, four insert slots (empty ones dashed), then a small **EQ curve** in the part colour (click to open the EQ).
-  - At the bottom, a two-column **fader area**. The left column stacks the **Pan, Room and Width** knobs (same LED-ring knob, label and value
-    under each), so they no longer sit in a row above the fader. The right column has a **dB scale** (+6, 0, −6, −12, −18, −24, −36, −60, with 0 in
+  - At the bottom, a two-column **fader area**. The left column is one small rounded **knob panel** (slightly darker than the strip, 8 px corners)
+    filled top to bottom with no even-spaced gaps: **Pan** and **Width** (30 px LED-ring knobs, label and value under each, 4 px apart), a tiny
+    "SENDS" label, **Plate** and **Echo** send knobs (lilac ring, "off" when 0), then a "COMP" label and a thin **gain-reduction meter** (8 px wide,
+    brass fill growing down from the top, value like "−3 dB" under it) that stretches to fill whatever height is left, so the panel always ends
+    level with the fader. Parts mixed in your DAW show "—". (Replaces the earlier Pan / Room / Width column, whose three knobs were spread
+    with large gaps; Room is now the Plate send.) The right column has a **dB scale** (+6, 0, −6, −12, −18, −24, −36, −60, with 0 in
     the text colour and +6 in red), the fader with a metal cap, and a full-width stereo meter.
 - **The meter:**
   - Green → yellow → red gradient that reaches red only near 0 dB.
