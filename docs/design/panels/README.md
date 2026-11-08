@@ -108,7 +108,8 @@ The desktop app records natively (TakeRecorder). Inside a DAW, recording stays w
       (film/orchestral may add reverb to bass, high-passed at 600 Hz), then the role pick (bass → Drive, sub → Duck from kick, lead → Echo,
       chords → Plate, pad → Hall, drums → Crush…). Smart never puts reverb or echo on bass unless one of those says so.
     - **Comp:** label, amount ("35%"), then a 16 px bar that stretches to the bottom. A metal cap marks the **amount** (drag up for more, scroll
-      for fine steps, double-click = smart amount, right-click = Style Smooth/Steady/Punchy/Glue/Squash, Sidechain from…, Full view); a faint
+      for fine steps, double-click = open the Smart compressor (`docs/design/mixing/README.md` section 4; the Comp label has an open-window icon),
+      ⌥-click = smart amount, right-click = Style Smooth/Steady/Punchy/Glue/Squash, Sidechain from…, Full view); a faint
       brass tint fills below the cap; the live **gain reduction** draws from the top in brass, with the dB under the bar. Style and amount per
       role come from `comp` in `data/mix-master.json`; Amount is an automation target and controller-learnable. Parts mixed in your DAW show "—".
       Today parts have no compressor of their own (only the master's Polish): add one per part in the page and port it to `Source/SynthFx.h`. The right column has a **dB scale** (+6, 0, −6, −12, −18, −24, −36, −60, with 0 in

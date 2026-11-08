@@ -185,8 +185,18 @@ for e in SK['exceptions']:
     if not e.get('src'): I("mix-master smartKnob exception without a source")
     for s_ in e['when'].get('styles',[]):
         if s_ not in pids: I(f"mix-master smartKnob exception: style {s_} not a profile")
+CH=MM['comp']['characters']
+for k_,v in CH.items():
+    if not v.get('src'): I(f"mix-master comp character {k_}: no sources")
 for r_,(st_,a_) in MM['comp']['roles'].items():
-    if st_ not in MM['comp']['styles']: I(f"mix-master comp {r_}: style {st_} unknown")
+    if st_ not in CH: I(f"mix-master comp {r_}: character {st_} unknown")
+for k_,v in MM['comp']['styles'].items():
+    if v not in CH: I(f"mix-master comp style {k_}: character {v} unknown")
+for pid,m in MM['comp']['producer'].items():
+    for r_,(ch_,a_,mv) in m.items():
+        for x in (ch_ if isinstance(ch_,list) else [ch_]):
+            if x not in CH: I(f"mix-master comp {pid}/{r_}: character {x} unknown")
+        if mv not in prod_moves.get(pid,()): I(f"mix-master comp {pid}/{r_}: move {mv} not in that producer's pass")
 print('ISSUES',len(issues)); [print(' -',x) for x in issues]
 print('WARNINGS',len(warn)); [print(' -',x) for x in warn]
 sys.exit(1 if issues else 0)

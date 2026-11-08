@@ -134,6 +134,34 @@ Checked against FabFilter Pro-Q 4's published feature list (Dec 2024). We take t
   transients (plosives), crest factor, stereo correlation and mono loss, noise floor and hum harmonics, and the section loudness curve. They run
   in the page for the web version and in native code in the app (offline render).
 
+## 4. Smart compressor (double-click a strip's Comp bar; `5-Smart-compressor.png`, values in `reference-Comp.dc.html`)
+Different compressors do different jobs, so the window offers five characters, and Smart picks one for the part. The brain is `comp` in
+`data/mix-master.json` (characters with sources, role picks, producer picks, the "I hear…" fixes and the checks).
+- **How it opens:** double-click the Comp bar on any strip (or Full view in its right-click menu). The strip shows it two ways: a small
+  open-window icon next to the "COMP" label, and the hover tip "◦◦ Double-click to open". ⌥/Alt-click the bar now resets to the smart amount
+  (it used to be double-click).
+- **Header:** "06 Vocal · Compressor", legend (in = grey outline, out = part colour, squeezed = brass from the top), A/B, Level-matched,
+  **Hear what's removed** (only what the compressor takes away), Presets, close.
+- **Five characters** (cards in a row): **Clean** (digital: transparent), **Punch** (VCA: tight, keeps hits; drums and buses), **Fast** (FET:
+  grabs peaks, adds bite; vocals, bass, drums; never on the master), **Smooth** (opto: slow, warm, evens a performance; vocals, bass), **Glue**
+  (vari-mu: gentle, ratio rises as it works; buses and master). Each card has a one-line sound, a speed meter (1–5) and what it's for. The smart
+  pick has a filled "✦ smart pick" badge. How each must sound is in `characters[].engine` (detection, knee, release behaviour, saturation).
+- **Display:** 4 bars of the part scrolling: input outline, output fill, gain reduction drawn from the top, a draggable dashed **threshold** line
+  with its value, section marks, and callouts in plain words on the biggest jump ("“home” jumps 8 dB over the line") and on breaths.
+  Beside it: the **transfer curve** (knee and the current point) and **In / GR / Out** meters.
+- **Amount:** the big knob, the same value as the strip's bar (moves threshold and ratio together).
+- **Fine control:** Threshold, Ratio, Attack, Release (ms or a note value, "auto"), Knee, Mix (parallel), Output ("auto" make-up), Detect
+  Peak/RMS/Auto, **Listen to** (sidechain: itself or another part, with a low cut, default 120 Hz so the bass doesn't pump it), **Squeeze only**
+  (whole range, or lows/mids/highs: a band compressor), **＋ Second compressor** (two in a row, e.g. a Nigro-style vocal: Fast catches peaks,
+  then Smooth evens it). Values Smart set show ✦; touching one makes it yours, and Listen & set never overwrites yours unless asked.
+- **Smart panel:** what it picked and why, in plain words, from the part's measured loud-to-quiet range and the producer or engineer profile
+  ("Light and close, like his dry vocals… Smooth (opto) at about 3 dB"). **Listen & set** plays 8 bars (or the selection) and sets the threshold
+  for the target reduction. **Match reference…**
+- **I hear…:** Uneven, Squashed, Pumping, Lost its punch, Breaths too loud, Crunchy, Buried, Too flat. Each maps to one change (`comp.hear`).
+- **Checks for this part:** even across sections, single jumps too fast for the character, still alive (loud-to-quiet kept), breaths raised by
+  make-up, release fits the tempo (no pumping), bass distortion from a too-fast release (`comp.checks`), each with Fix / Listen / Why.
+- **Today:** parts have no compressor of their own (only the master's Polish). Build it in the page and port it to `Source/SynthFx.h`.
+
 ## Tests (tests/web/mixing.test.js + synth_test)
 - Every problem's words map to it.
 - A synthetic muddy chorus finds the right zone and parts; a masked vocal finds the masker; sibilance is detected on a vocal take.
@@ -141,3 +169,5 @@ Checked against FabFilter Pro-Q 4's published feature list (Dec 2024). We take t
 - Destination targets are met within ±1 LU with true peak ≤ target.
 - The EQ (including dynamic and M/S bands) sounds the same in the page and the engine.
 - Every engineer in `bestFor` exists; low-confidence profiles show their note.
+- Smart compressor: each character's curve and timing matches between page and engine on the same notes; double-click the Comp bar opens it;
+  ⌥-click resets the amount; the window's Amount and the strip's bar stay in sync; Listen & set lands within 1 dB of the target reduction.

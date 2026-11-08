@@ -1844,99 +1844,300 @@
   ]
  },
  "comp": {
-  "about": "Every strip has a compressor driven by one Amount (0–100%). The bar beside the knobs is that control: drag the cap up for more, scroll for fine steps, double-click for the smart amount, right-click for Style, Sidechain from, and Full view. Inside the bar, the live gain reduction draws from the top. Amount is a normal automation target and can be learned to a controller.",
+  "about": "Every strip has a compressor driven by one Amount (0–100%). The bar beside the knobs is that control: drag the cap for more or less, scroll for fine steps, Alt/⌥-click for the smart amount, and double-click to open the Smart compressor window (the Comp label carries a small open-window icon and the hover tip says 'Double-click to open'). Inside the bar the live gain reduction draws from the top. Amount is an automation target and can be learned to a controller.",
   "amountMaps": "Amount sets threshold and ratio together (0% = off; 100% = about 12 dB of reduction on loud passages); attack and release come from the style and the song's tempo, so they always suit it.",
   "styles": {
-   "Smooth": {
-    "ratio": "2–3:1",
-    "attack": "medium (10–20 ms)",
-    "release": "auto / about one beat",
-    "for": "vocals and leads: even level, natural"
-   },
-   "Steady": {
-    "ratio": "4:1",
-    "attack": "fast (3–10 ms)",
-    "release": "medium",
-    "for": "bass: every note the same level"
-   },
-   "Punchy": {
-    "ratio": "4:1",
-    "attack": "slow (20–30 ms) so hits come through",
-    "release": "fast, timed to the groove",
-    "for": "drums: keeps the snap"
-   },
-   "Glue": {
-    "ratio": "1.5–2:1",
-    "attack": "slow",
-    "release": "auto",
-    "for": "chords, pads, buses: holds parts together"
-   },
-   "Squash": {
-    "ratio": "8:1+",
-    "attack": "fast",
-    "release": "fast",
-    "for": "effect: pumping, lo-fi, parallel crush"
-   }
+   "Smooth": "smooth",
+   "Steady": "fast",
+   "Punchy": "punch",
+   "Glue": "glue",
+   "Squash": "fast"
   },
   "roles": {
    "lead": [
-    "Smooth",
+    "smooth",
     0.35
    ],
    "counter": [
-    "Smooth",
+    "smooth",
     0.25
    ],
    "harmony": [
-    "Glue",
+    "glue",
     0.3
    ],
    "double": [
-    "Glue",
+    "glue",
     0.3
    ],
    "chords": [
-    "Glue",
+    "glue",
     0.25
    ],
    "pad": [
-    "Glue",
+    "glue",
     0.15
    ],
    "arp": [
-    "Glue",
+    "clean",
     0.2
    ],
    "bass": [
-    "Steady",
+    "fast",
     0.55
    ],
    "bass2": [
-    "Steady",
+    "clean",
     0.4
    ],
    "drums": [
-    "Punchy",
+    "punch",
     0.4
    ],
    "perc": [
-    "Punchy",
+    "punch",
     0.3
    ],
    "texture": [
-    "Glue",
+    "glue",
     0.1
    ],
    "loop": [
-    "Glue",
+    "clean",
     0.15
    ],
    "audio": [
-    "Smooth",
+    "smooth",
     0.45
    ]
   },
   "engineer": "The style's mix engineer profile (bestFor) can shift amounts: e.g. a profile that favours parallel compression moves drums to Crush on the smart knob and lowers the insert amount.",
-  "today": "Parts have no compressor of their own yet (only the master's Polish). Add one per part in the page and port it to Source/SynthFx.h, reusing the Compressor class in Synth.h."
+  "today": "Parts have no compressor of their own yet (only the master's Polish). Build one per part in the page with the five characters above, and port it to Source/SynthFx.h reusing the Compressor class in Synth.h; character curves must match between page and engine (render the same notes in both).",
+  "characters": {
+   "clean": {
+    "label": "Clean",
+    "kind": "digital",
+    "sound": "transparent and exact; no colour",
+    "speed": 2,
+    "for": [
+     "any part",
+     "master"
+    ],
+    "engine": "feed-forward, RMS/peak blend, smooth knee, no saturation; program-dependent release off",
+    "src": [
+     "https://bobbyowsinskiblog.com/different-types-of-compressors-and-when-to-use-them/"
+    ]
+   },
+   "punch": {
+    "label": "Punch",
+    "kind": "VCA",
+    "sound": "tight and punchy; keeps hits sharp; can thin out if pushed",
+    "speed": 4,
+    "for": [
+     "drums",
+     "bus"
+    ],
+    "engine": "feed-forward, peak detection, hard-ish knee, clean gain stage",
+    "src": [
+     "https://bobbyowsinskiblog.com/different-types-of-compressors-and-when-to-use-them/",
+     "https://mastering.com/compression-explained-fet-vca-optical-variable-mu/"
+    ]
+   },
+   "fast": {
+    "label": "Fast",
+    "kind": "FET",
+    "sound": "grabs peaks instantly; bite and colour; not for the master",
+    "speed": 5,
+    "for": [
+     "vocals",
+     "bass",
+     "drums"
+    ],
+    "engine": "feedback detection, very fast attack (20 µs–1 ms), fast release, odd-harmonic saturation rising with gain reduction",
+    "src": [
+     "https://bobbyowsinskiblog.com/different-types-of-compressors-and-when-to-use-them/",
+     "https://mastering.com/compression-explained-fet-vca-optical-variable-mu/"
+    ]
+   },
+   "smooth": {
+    "label": "Smooth",
+    "kind": "opto",
+    "sound": "slow, warm and musical; evens a performance; won't catch sharp peaks",
+    "speed": 2,
+    "for": [
+     "vocals",
+     "bass"
+    ],
+    "engine": "RMS detection, program-dependent two-stage release (fast first 50%, slow tail), soft knee, mild even harmonics",
+    "src": [
+     "https://bobbyowsinskiblog.com/different-types-of-compressors-and-when-to-use-them/",
+     "https://mastering.com/compression-explained-fet-vca-optical-variable-mu/"
+    ]
+   },
+   "glue": {
+    "label": "Glue",
+    "kind": "vari-mu",
+    "sound": "gentle and rich; ratio rises the harder it works; holds a mix together",
+    "speed": 1,
+    "for": [
+     "bus",
+     "master",
+     "pads"
+    ],
+    "engine": "RMS detection, ratio rising with gain reduction, slow attack/release, warm saturation",
+    "src": [
+     "https://bobbyowsinskiblog.com/different-types-of-compressors-and-when-to-use-them/",
+     "https://mastering.com/compression-explained-fet-vca-optical-variable-mu/"
+    ]
+   }
+  },
+  "stylesNote": "Strip right-click styles map to characters: Smooth→opto, Steady→FET, Punchy→VCA, Glue→vari-mu, Squash→FET at high amount (or parallel with Mix).",
+  "producer": {
+   "antonoff": {
+    "audio": [
+     "smooth",
+     0.3,
+     "dry-vocal"
+    ],
+    "lead": [
+     "smooth",
+     0.3,
+     "dry-vocal"
+    ]
+   },
+   "nigro": {
+    "audio": [
+     [
+      "fast",
+      "smooth"
+     ],
+     0.5,
+     "vocal-chain"
+    ]
+   },
+   "finneas": {
+    "audio": [
+     "smooth",
+     0.4,
+     "print-fx"
+    ]
+   }
+  },
+  "producerNote": "[character or [first, second] in a row, amount, move id in that producer's pass]. Nigro-style vocal: two in a row, FET catches peaks then opto smooths.",
+  "window": {
+   "opens": "double-click the strip's Comp bar, or Full view in its right-click menu",
+   "header": [
+    "part number and name · Compressor",
+    "legend: in (grey outline), out (part colour), squeezed (brass, from the top)",
+    "A/B",
+    "Level-matched (A/B and bypass at equal loudness)",
+    "Hear what's removed (delta listen)",
+    "Presets",
+    "close"
+   ],
+   "characters": "five cards: name, kind, one line, speed (1–5 bars), what it's for; the smart pick has a filled '✦ smart pick' badge",
+   "display": "4 bars of the part scrolling: input outline, output fill, gain reduction from the top, draggable dashed threshold line with a label, section marks, callouts on the biggest jump and breaths",
+   "side": "transfer curve (knee, current point) and In / GR / Out meters",
+   "amount": "big Amount knob (same as the strip's bar)",
+   "fine": [
+    "Threshold",
+    "Ratio",
+    "Attack",
+    "Release (ms or note value, 'auto')",
+    "Knee",
+    "Mix (parallel)",
+    "Output ('auto' make-up)",
+    "Detect Peak/RMS/Auto",
+    "Listen to (sidechain: itself or another part, with its own low cut, default 120 Hz so bass doesn't pump it)",
+    "Squeeze only (whole range, or lows/mids/highs: a band compressor)",
+    "Then: + Second compressor (two in a row)"
+   ],
+   "smartPanel": [
+    "what it picked and why in plain words, using the part's measured loud-to-quiet range and the producer/engineer profile",
+    "Listen & set: plays 8 bars (or the selection) and sets threshold so loud passages get the target reduction",
+    "Match reference…"
+   ],
+   "fineRule": "values Smart set show ✦; touching one makes it yours; Listen & set never overwrites yours unless asked"
+  },
+  "hear": [
+   {
+    "id": "uneven",
+    "words": "Uneven, jumps out",
+    "do": "more amount; if single words jump, add a Fast catch first (two in a row)"
+   },
+   {
+    "id": "squashed",
+    "words": "Squashed, lifeless",
+    "do": "less amount or lower ratio; or keep it and use Mix 50–70% (parallel)"
+   },
+   {
+    "id": "pumping",
+    "words": "Pumping",
+    "do": "longer release or tempo-synced release; sidechain low cut so lows don't drive it"
+   },
+   {
+    "id": "punch",
+    "words": "Lost its punch",
+    "do": "slower attack (20–30 ms) so hits pass; or Punch (VCA)"
+   },
+   {
+    "id": "breaths",
+    "words": "Breaths too loud",
+    "do": "less make-up; Range limit; or a gentle expander between lines"
+   },
+   {
+    "id": "crunchy",
+    "words": "Crunchy",
+    "do": "slower release on low parts (distortion from fast release on bass); or Clean character"
+   },
+   {
+    "id": "buried",
+    "words": "Buried",
+    "do": "more amount with auto make-up, then check the fader zone"
+   },
+   {
+    "id": "flat",
+    "words": "Too flat",
+    "do": "less amount; Smooth or Glue instead of Fast"
+   }
+  ],
+  "checks": [
+   {
+    "id": "even",
+    "measure": "level range across sections after compression",
+    "good": "within 2 dB verse to chorus"
+   },
+   {
+    "id": "jumps",
+    "measure": "biggest single overshoot above threshold",
+    "warn": "more than 6 dB over and the character is slow (opto, vari-mu)",
+    "fix": "add Fast before"
+   },
+   {
+    "id": "alive",
+    "measure": "loud-to-quiet (crest) before and after",
+    "warn": "after is under half of before, or under 4 dB"
+   },
+   {
+    "id": "breaths",
+    "measure": "level of gaps between phrases before vs after",
+    "warn": "up 3 dB or more"
+   },
+   {
+    "id": "release",
+    "measure": "release vs beat length and gain reduction ripple",
+    "warn": "ripple at the beat rate (pumping) unless the style asks for it"
+   },
+   {
+    "id": "bassdist",
+    "measure": "release shorter than one cycle at the part's lowest note",
+    "warn": "distortion on bass",
+    "fix": "lengthen release"
+   }
+  ],
+  "src": [
+   "https://bobbyowsinskiblog.com/different-types-of-compressors-and-when-to-use-them/",
+   "https://mastering.com/compression-explained-fet-vca-optical-variable-mu/"
+  ]
  }
 }
