@@ -856,6 +856,25 @@
    ],
    "tip": "carve 2–3 dB where the vocal lives"
   },
+  "pianoR": {
+   "fund": "200 Hz–1.3 kHz",
+   "highpass": "80–120 Hz (lower when it plays alone)",
+   "presence": "2–5 kHz",
+   "watch": [
+    "mud 250–400 Hz",
+    "masks vocal 1–4 kHz"
+   ],
+   "tip": "dip 1–3 dB around 2.5 kHz under a vocal; a touch of air above 10 kHz"
+  },
+  "pianoL": {
+   "fund": "40–250 Hz",
+   "highpass": "30–40 Hz",
+   "watch": [
+    "fights bass 60–200 Hz",
+    "mud 200–400 Hz"
+   ],
+   "tip": "with a bass part playing, thin the left hand below 100 Hz instead of cutting it"
+  },
   "pad": {
    "highpass": "150–200 Hz",
    "lowpass": "10–12 kHz",
