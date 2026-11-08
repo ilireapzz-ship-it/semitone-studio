@@ -2432,7 +2432,14 @@
     "default": false,
     "show": "toggle with the dip amount; the other parts' strips show a small ↓ while it works"
    },
-   "why": "Pro-C, 1176, LA-2A and the rest only hear level. None knows which word, which section, or which moment matters."
+   "why": "Pro-C, 1176, LA-2A and the rest only hear level. None knows which word, which section, or which moment matters.",
+   "breatheWithDrums": {
+    "what": "release follows the song's actual drum pattern (kick and snare hits from the Drums part, swing included), letting go just before the next hit, instead of a fixed time or plain tempo sync",
+    "default": true,
+    "needs": "Drums part notes (or detected hits on a drum take)",
+    "show": "switch in Knows your song; Release shows 'groove' instead of a note value",
+    "fallback": "tempo-synced release when there are no drums"
+   }
   }
  }
 }

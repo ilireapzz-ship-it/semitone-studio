@@ -227,12 +227,30 @@ them (`comp.songAware` in `data/mix-master.json`). The calm window gains:
 - **Follows the song** (on): a thin bar per section under the lyrics ("Verse 2 amount 35 · Chorus 2 amount 50 · tighter"); drag to change.
 - **Keeps the big moments** (on): the emotional peak ("last", the top of the emotion arc) is left uncompressed: no gold, "♥ kept big"
   beside it. Click any word to keep it big or let it go. The master limiter still stops clipping.
+- **Breathe with the drums** (on when there are drums): the release follows the song's real drum hits, swing included, letting go just
+  before the next kick or snare; Release then reads "groove". Falls back to tempo-synced release with no drums.
 - **Makes room** (off by default): the parts that mask the vocal dip 1–2 dB in the vocal's band only while words are sung.
-- The right column swaps the knee and meters for a **Knows your song** card: four switches, each with a one-line reason. The knee and
+- The right column swaps the knee and meters for a **Knows your song** card: five switches (Breathe with the drums first), each with a one-line reason. The knee and
   meters stay in More.
 - The smart line says what it did in song terms: "rides each word first, a little tighter in the chorus, and leaves “last” big because it's
   your emotional peak."
 - Everything inside the device panel is solid colour, never see-through (Jamie saw checkerboard "alpha squares" on the canvas).
+
+## 5. Bypass on every native effect (Jamie, 8 Nov; `9-Bypassed.png`, values in `reference-Comp7.dc.html`)
+Every effect Semitone makes (compressor, EQ, the 13 mixer effects, Polish, the master limiter, returns) and every hosted plug-in slot can be
+bypassed quickly, and the state never relies on colour alone.
+- **In each effect window:** an **On / Bypassed pill** first in the header, before the name: power icon + the word. On: green-tinted pill
+  ("⏻ On"); bypassed: amber-tinted ("⏻ Bypassed"). `aria-pressed`, label "Compressor on. Press B to bypass", hit area at least 32 px.
+- **Bypassed window:** the graph and side column turn grey and dim (a solid filter, never see-through), the controls stay usable, and a
+  status message sits over the graph: "Bypassed · You're hearing the vocal without the compressor, at the same loudness. Press B to turn it
+  back on." (`role="status"`, read out once.)
+- **On the mixer strip:** each insert slot starts with a small power icon (green on, grey off); an off slot also shows "off" and greys its
+  name. The EQ thumbnail and the Comp column each have their own power icon. Empty slots show no icon.
+- **Keys:** B toggles the effect in focus or the open window; ⇧B toggles every effect on the selected part; ⌥B bypasses everything on the
+  master (a quick "with / without" check). Bypass is MIDI-learnable and automatable.
+- **How it sounds:** a 10–20 ms crossfade (no click); bypassed effects keep their delay so timing doesn't jump; the compressor's bypass is
+  level-matched by default (the make-up gain is matched so you judge the sound, not the volume). One undo step per toggle.
+- Hosted plug-ins use the host's bypass (`PartHost`), with the same icon and keys.
 
 ## Tests (tests/web/mixing.test.js + synth_test)
 - Every problem's words map to it.
@@ -247,3 +265,5 @@ them (`comp.songAware` in `data/mix-master.json`). The calm window gains:
   Beat and MIDI triggers duck on the grid; sidechain shapes change what triggers but not what you hear; bands sum flat when off.
 - Song-aware: word ride stays within ±3 dB and follows lyric timing; section amounts change at section edges without clicks; kept words
   get no gain reduction but never clip the master; Makes room dips only masking parts, only in the vocal band, only while words are sung.
+- Bypass: B, ⇧B, ⌥B work from the keyboard and screen reader; state is announced; no click on toggle; timing unchanged; level-matched
+  compressor bypass within 0.5 dB; every native effect and slot exposes a bypass.

@@ -97,7 +97,8 @@ The desktop app records natively (TakeRecorder). Inside a DAW, recording stays w
 - A strip sent to the DAW is outlined in brass. Its fader area is hatched with "mix this part in FL Studio" (Semitone isn't making that sound), and
   its inserts are empty.
 - **Strip layout (no wasted width):**
-  - Top to bottom: plays through, four insert slots (empty ones dashed), then a small **EQ curve** in the part colour (click to open the EQ).
+  - Top to bottom: plays through, four insert slots (empty ones dashed; filled ones start with a power icon to bypass, "off" when bypassed;
+    see `docs/design/mixing/README.md` section 5), then a small **EQ curve** in the part colour (click to open the EQ).
   - At the bottom, a two-column **fader area**. The left column is one small rounded **knob panel** (slightly darker than the strip, 8 px corners)
     filled top to bottom: **Pan**, **Width**, and one **smart knob** (30 px LED-ring knobs, 4 px apart), then the **Comp** control filling the rest.
     - **Smart knob:** its label is the effect it controls with ✦ and ▾ ("✦ Drive ▾"), lilac ring for sends (Plate, Echo, Slap, Room, Hall),

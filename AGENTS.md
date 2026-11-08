@@ -52,7 +52,8 @@ Exact look: `docs/design/merged/reference.dc.html` (a design-canvas file: copy i
     Fast/FET, Smooth/opto, Glue/vari-mu; `docs/design/mixing/README.md` section 4, `comp` in `data/mix-master.json`), with the pro view in section 4b (classic
     controls per type, Direction, Colour, Range, Lookahead, Stereo, sidechain EQ and triggers, bands, chains). Default look: the refined
     device panel in section 4c (calm level graph, Amount knob with gain-reduction ring, parameter row, More for the pro panels), and the song-aware
-    features in 4d (rides each word, follows the song, keeps big moments, makes room; `comp.songAware`).
+    features in 4d (breathe with the drums, rides each word, follows the song, keeps big moments, makes room; `comp.songAware`).
+    Every native effect and slot gets an accessible bypass (`docs/design/mixing/README.md` section 5: On/Bypassed pill, power icons, B keys).
 Rules that always hold: suggest and accept (never surprise changes), one undo step per change, learning about Jamie stays on his
 computer, no copied melodies, lyrics or recordings, no imitating or cloning a real singer's voice. Producers and artists are described
 as "X-style, based on how they're known to work". Ask Jamie before anything that needs hosting, accounts or money.
