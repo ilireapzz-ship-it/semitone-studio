@@ -54,6 +54,10 @@ Exact look: `docs/design/merged/reference.dc.html` (a design-canvas file: copy i
     device panel in section 4c (calm level graph, Amount knob with gain-reduction ring, parameter row, More for the pro panels), and the song-aware
     features in 4d (breathe with the drums, rides each word, follows the song, keeps big moments, makes room; `comp.songAware`).
     Every native effect and slot gets an accessible bypass (`docs/design/mixing/README.md` section 5: On/Bypassed pill, power icons, B keys).
+19. **Match the designs** (Jamie, 8 Nov evening: "the designs weren't integrated properly"): `docs/design/fidelity/README.md`.
+    Screens must look like their boards: give each screen the whole window (slim song strip, Session rail), remove the old panels the
+    designs replaced, rebuild Mixer strips, Record, Smart EQ to their references; add the compressor's Knows your song card and pro view.
+    Prove it with after-*.png screenshots next to each board.
 Rules that always hold: suggest and accept (never surprise changes), one undo step per change, learning about Jamie stays on his
 computer, no copied melodies, lyrics or recordings, no imitating or cloning a real singer's voice. Producers and artists are described
 as "X-style, based on how they're known to work". Ask Jamie before anything that needs hosting, accounts or money.
