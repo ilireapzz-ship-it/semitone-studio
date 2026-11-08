@@ -199,16 +199,18 @@ knobs) still ugly; this refined look replaces it. Principles: restraint, one acc
   ground (#18202B → #0B0F15, 10 px corners) inside the panel. One dB scale for everything (0 at the top, −60 at the bottom; labels on the right).
   - **Knee column** on the left (about 150 px): the in → out curve in white with a soft glow, the 1:1 diagonal dotted, a red dot for the
     current level, sharing the graph's y scale; a hairline separates it from the graph.
-  - **Colours chosen so before and after are easy to tell apart (Jamie, 8 Nov):** cool blue for before, warm coral for after, red for turned
-    down. A small key sits in the graph's quiet top-right corner: BEFORE / AFTER / TURNED DOWN with a short colour bar each.
-  - **Input (before):** an ice-blue to cobalt gradient (#8FE0FF → #4FB4F0 → #3A6FD0 → transparent indigo), with a 1.3 px glowing edge
-    shifting cyan → pale blue → periwinkle, drawn on top of everything. Wherever the compressor takes level off, a clear blue band shows above
-    the coral.
-  - **Output (after):** a warm gradient from the part colour: peach at the peaks → coral → rose → plum → transparent (5 stops), a faint white
-    sheen across the middle, and a 1.3 px glowing edge shifting peach → light apricot → pink.
-  - **Gain reduction:** a red line hanging from 0 dB at the top, shifting orange-red → red → pink-red
-    across the graph, with a soft glow and a fill that fades red → magenta → transparent, on the same dB scale; the
-    biggest reduction gets a red dot and label ("“home” −9 dB").
+  - **Colours (revised with Jamie, 8 Nov): three separate colour families, never two warm ones side by side.** Gold for the sound you hear
+    (after), blue for what the compressor took off, red for how much it is turning down. The key in the graph's quiet top-right corner reads
+    AFTER / TAKEN OFF / TURNED DOWN. Background: deep navy (#131A24 → #090C11) with a faint cool glow from the top.
+  - **After (what you hear):** ivory → champagne → amber, fading to nothing by two-thirds down (#FFF4E0 → #F6D29A → #E2AE70 → transparent;
+    never brown at the bottom). Fine vertical grain inside (1 px lines every 3 px at 4.5% white) for texture. Edge: a crisp 1.2 px ivory line
+    over a soft 3 px blurred gold glow.
+  - **Before:** a faint blue fill (#9CC8FF at 32% → transparent) and a crisp 1 px pale-blue edge (#A9D2FF), no glow.
+  - **Taken off:** the band between the before edge and the after edge, filled with a brighter blue gradient (#8EC5FF → #4C8EE0) plus a fine
+    45° hatch, so the difference is the most visible thing on the graph.
+  - **Gain reduction:** a crisp 1.4 px red line (#FF6170) over a soft blurred red glow, with a single-hue red fill fading down. The biggest
+    reduction gets a red dot and a dark pill label ("“home” −9.1 dB"). The knee's current-level dot is gold, and the Amount knob's inner ring
+    is red, so red always means turning down.
   - Shapes: instant rise, smooth fall (an envelope follower), with the room tone as a floor, so words read as smooth peaks, never boxes.
   - **Threshold:** a dashed white line across the graph with a white value pill at the right end (drag either).
   - Bar numbers and section names in small caps under the graph.
