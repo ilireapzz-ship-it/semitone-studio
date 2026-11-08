@@ -58,6 +58,9 @@ Exact look: `docs/design/merged/reference.dc.html` (a design-canvas file: copy i
     Screens must look like their boards: give each screen the whole window (slim song strip, Session rail), remove the old panels the
     designs replaced, rebuild Mixer strips, Record, Smart EQ to their references; add the compressor's Knows your song card and pro view.
     Prove it with after-*.png screenshots next to each board.
+20. **Match the designs, round 2** (9 Nov): `docs/design/fidelity/round2/README.md`. Graphs empty when stopped (compressor, Smart EQ),
+    EQ bands as nodes + cards + band panel, compressor More = pro panels and knob rings, strip EQ power + kept verdicts, mixer header
+    tidy, Record/Automation finishing. Prove with after-*.png in that folder.
 Rules that always hold: suggest and accept (never surprise changes), one undo step per change, learning about Jamie stays on his
 computer, no copied melodies, lyrics or recordings, no imitating or cloning a real singer's voice. Producers and artists are described
 as "X-style, based on how they're known to work". Ask Jamie before anything that needs hosting, accounts or money.
