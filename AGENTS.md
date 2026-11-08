@@ -42,6 +42,9 @@ Exact look: `docs/design/merged/reference.dc.html` (a design-canvas file: copy i
 15. **A volume knob on every part** in the timeline headers (`docs/design/space/README.md`, end).
 16. **Song settings, Record, and the mixer with your DAW built in** (`docs/design/panels/README.md`): the DAW & MIDI tab goes away, every strip
     says what it plays through, a Your DAW card, theme rules (no fixed dark overlays, `inkSoft` tokens) checked in every theme.
+17. **Smart EQ, Calibrate, Fix what I hear** (8 Nov): `docs/design/mixing/README.md` and `data/mix-master.json` (12 sourced mix and mastering
+    engineer profiles, best per style, spectrum by role, interactions, 22 problems, destinations). Also: numbered channels, auto-routing to buses
+    and returns, and level zones on strips (`docs/design/panels/README.md` sections 3–4).
 Rules that always hold: suggest and accept (never surprise changes), one undo step per change, learning about Jamie stays on his
 computer, no copied melodies, lyrics or recordings, no imitating or cloning a real singer's voice. Producers and artists are described
 as "X-style, based on how they're known to work". Ask Jamie before anything that needs hosting, accounts or money.
