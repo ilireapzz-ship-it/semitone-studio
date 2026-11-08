@@ -42,7 +42,7 @@ const {chromium}=require('playwright'); const url='file://'+require('path').reso
  const resp=await p.evaluate(()=>{ const r=eqResponse([{t:'bell',f:1000,g:6,q:2}],new Float32Array([1000,100])); const c=eqResponse([{t:'lowcut',f:150,s:24}],new Float32Array([150,50])); return [r[0],r[1],c[0],c[1]]; });
  ok(Math.abs(resp[0]-6)<.05&&Math.abs(resp[1])<.1&&Math.abs(resp[2]+3)<.2&&resp[3]<-30,'the curve maths: a +6 dB bell, a 24 dB/oct low cut −3 dB at its frequency '+resp.map(x=>x.toFixed(1)).join(' '));
  // checks, I hear, lock, delete, Esc
- const ih=await p.evaluate(()=>{ document.querySelector('[data-eqhear="harsh"]').click(); const g=EQ.ghost[0]; return {g,shown:document.querySelector('.eq-g b').textContent}; });
+ const ih=await p.evaluate(()=>{ document.querySelector('[data-eqhear="harsh"]').click(); const g=EQ.ghost[0]; return {g,shown:document.querySelector('#eqPanel .eq-gk').title}; });
  ok(ih.g&&ih.g.t==='bell'&&ih.g.g<0&&ih.g.f>=2500&&ih.g.f<=4500,'“I hear… Harsh” proposes a dip at 2.5–4.5 kHz: '+ih.shown);
  const lk=await p.evaluate(()=>{ const B=S.mix.chords.eq.bands, b=B[0]; EQ.sel=new Set([b.id]); eqRender(); document.querySelector('[data-eqx="lock"]').click(); const before=S.mix.chords.eq.bands.length; document.querySelector('[data-eqx="del"]').click(); return {locked:S.mix.chords.eq.bands[0].lock,kept:S.mix.chords.eq.bands.length===before}; });
  ok(lk.locked&&lk.kept,'a locked band can’t be deleted by accident');

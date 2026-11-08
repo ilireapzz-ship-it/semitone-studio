@@ -12,7 +12,7 @@ const {chromium}=require('playwright');
  // section midi length check: count note-ons in section vs whole song
  console.log('midi sizes: section',await p.evaluate(()=>sectionMidi(2).length),'song',await p.evaluate(()=>buildMidi().length));
  await p.evaluate(()=>shellDock('daw')); await p.waitForTimeout(100);
- const c=await p.locator('.dx-sec:not([data-orch])').boundingBox(); await p.mouse.move(c.x+10,c.y+8); await p.mouse.down(); await p.mouse.move(c.x+60,c.y+40,{steps:5}); await p.mouse.up(); await p.waitForTimeout(200);
+ const c=await p.locator('.sec-drag.dx-sec:not([data-orch])').boundingBox(); await p.mouse.move(c.x+10,c.y+8); await p.mouse.down(); await p.mouse.move(c.x+60,c.y+40,{steps:5}); await p.mouse.up(); await p.waitForTimeout(200);
  console.log('whole song:',await p.evaluate(()=>{ const d=__nlog.filter(x=>x[0]==='st_drag_audio').pop()[1]; return d.name+' items '+d.items.length+' beats '+d.items.map(x=>x.beats).join(','); }));
  await p.click('#timeline .sec >> nth=3'); console.log('plain click selects:',await p.evaluate(()=>S.sel));
  await p.evaluate(()=>__fire('st_dragdone',{ok:false,why:'notready'})); await p.waitForTimeout(100); console.log('toast:',await p.evaluate(()=>{ const t=document.querySelector('.toast'); return t?t.textContent:''; }));

@@ -6,10 +6,10 @@ const {chromium}=require('playwright'); const url='file://'+require('path').reso
  await p.addInitScript(()=>{ window.__noStart=1; }); await p.goto(url); await p.waitForTimeout(1500);
  await p.evaluate(()=>{ S.demo=false; try{ localStorage.removeItem('ss_mixorder'); }catch(e){} shellDock('mix'); }); await p.waitForTimeout(400);
  const a=await p.evaluate(()=>({bar:document.querySelectorAll('#ss_dock .dock-tabs #drMix [data-mixtool]').length, inMix:document.querySelectorAll('#cMix [data-mixtool]').length, shown:!$('#drMix').hidden, cap:document.querySelectorAll('#cMix .st-cap').length, topH:document.querySelector('#cMix .st-top').offsetHeight}));
- ok(a.bar===3&&a.inMix===0&&a.shown,'the three mix buttons are in the top bar, not above the strips');
+ ok(a.bar===2&&a.inMix===0&&a.shown,'Tools ▾ and Mix check are in the top bar, not above the strips');
  ok(a.cap===0,'no "Inserts" heading'); ok(a.topH<=30,'strip headers are compact: '+a.topH+'px');
  ok(await p.evaluate(()=>{ shellDock('lyrics'); const h=$('#drMix').hidden; shellDock('mix'); return h; }),'the buttons hide on other tabs');
- await p.click('#drMix [data-mixtool="mono"]'); ok(await p.evaluate(()=>!!AU.monoCheck&&$('#drMix [data-mixtool="mono"]').getAttribute('aria-pressed')==='true'),'Mono check still works from the bar');
+ await p.click('#drMix [data-mixtool="tools"]'); await p.waitForTimeout(60); await p.evaluate(()=>[...document.querySelectorAll('#ctxMenu [data-ci]')].find(x=>/Mono check/.test(x.textContent)).click()); await p.waitForTimeout(60); ok(await p.evaluate(()=>!!AU.monoCheck&&$('#drMix [data-mixtool="mono"]').getAttribute('aria-pressed')==='true'),'Mono check works from Tools ▾ and shows ● Mono in the bar while on');
  await p.click('#drMix [data-mixtool="mono"]');
  await p.evaluate(()=>{ ['lead','chords','bass'].forEach(c=>delete strip('song',c).duck); renderStrips('song'); histCheck(true); });
  const n0=await p.evaluate(()=>H.past.length);
