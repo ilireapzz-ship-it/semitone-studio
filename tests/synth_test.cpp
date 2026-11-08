@@ -599,6 +599,29 @@ int main()
         CHECK (peakOut < .01f, "smart EQ notch removes 2.5 kHz (peak %.4f)", peakOut);
     }
 
+
+    // Smart compressor: each character in the engine matches the page's worklet (PcDsp) on the same signal, sample for sample
+    {
+        const double sr = 48000; const int N = 19200;
+        const double want[5][15] = { {-0.127932,0.129838,-0.131658,1.020103,-0.394286,0.332191,-0.319604,0.079558,-0.092087,0.109400,-0.126995,0.427329,-0.342411,0.315749,-0.308161},
+{-0.132443,0.134498,-0.136441,1.006484,-0.325814,0.279637,-0.271496,0.068220,-0.086219,0.104504,-0.122385,0.404591,-0.289134,0.270418,-0.266004},
+{-0.137097,0.139224,-0.141236,0.526981,-0.465305,0.470424,-0.475161,0.123265,-0.166386,0.202747,-0.228606,0.449617,-0.426212,0.427465,-0.428355},
+{-0.126690,0.128655,-0.130394,1.054196,-0.513033,0.390909,-0.361503,0.088886,-0.093410,0.104162,-0.119789,0.413728,-0.409627,0.366347,-0.346995},
+{-0.116689,0.118499,-0.120211,0.974517,-0.706556,0.490086,-0.380377,0.081915,-0.079910,0.081173,-0.083046,0.255365,-0.260924,0.264121,-0.266099} };
+        const char* nm[5] = { "Clean", "Punch", "Fast", "Smooth", "Glue" };
+        auto sig = [&] (int i) { const double a = i < 4800 ? .1 : i < 9600 ? .8 : i < 14400 ? .2 : .6; return a * std::sin (2 * synthPi * 220 * i / sr); };
+        for (int c = 0; c < 5; ++c)
+        {
+            FxDesc d; d.type = "pcomp"; d.p = { { "amt", .5f }, { "c", (float) c }, { "bpm", 120 } }; PcompFx pc (d, sr); double worst = 0; int k = 0;
+            for (int i = 0; i < N; ++i) { float l = (float) sig (i), r = (float) (sig (i) * .7); pc.run (l, r); if (i >= 1237 && (i - 1237) % 1201 == 0 && k < 15) worst = std::max (worst, std::abs (l - want[c][k++])); }
+            CHECK (worst < 2e-4, "compressor %s: engine differs from the page by %.6f", nm[c], worst);
+        }
+        FxDesc a; a.type = "pcomp"; a.ch = 2; a.slot = -1; a.p = { { "amt", .5f }, { "c", 2 }, { "bpm", 120 } };
+        FxDesc w; w.type = "width"; w.ch = 2; w.slot = -1; w.p = { { "w", 0 } };
+        auto bank = makeFxBank ({ a, w }, sr); CHECK (bank->comp[2] && bank->width[2] && ! bank->comp[1], "compressor and width land on their strip");
+        float l = .5f, r = -.5f; bank->run (2, l, r); CHECK (std::abs (l - r) < 1e-6f, "width 0 is mono");
+    }
+
     printf (failures ? "%d synth tests FAILED\n" : "all synth tests passed\n", failures);
     return failures ? 1 : 0;
 }

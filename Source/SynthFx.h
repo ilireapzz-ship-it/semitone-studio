@@ -193,6 +193,67 @@ private:
     double sr; std::vector<Biquad> bq; float out = 1;
 };
 
+// The per-part compressor (docs/design/mixing §4): one Amount and five characters. The page runs the very same maths in an AudioWorklet
+// (pcProcessor in semitone-studio.html), so a part sounds alike in both. p: amt 0..1, c character (0 clean, 1 punch, 2 fast, 3 smooth, 4 glue),
+// bpm, and optional overrides thr (dB), ratio, att / rel (seconds), knee (dB), mix (0..1), out (dB; absent = auto make-up).
+struct PcChar { double att, relBeats, knee, rmsT, sat, rMin, rMax; int det; bool fb, two, rise; };
+inline const PcChar& pcChar (int c)
+{
+    static const PcChar t[5] = {
+        { .010, .25, 6, .010, 0, 1.5, 6, 2, false, false, false },   // clean: digital, RMS/peak blend, smooth knee
+        { .008, .25, 2, 0, 0, 2, 8, 0, false, false, false },        // punch: VCA, peak, hard-ish knee
+        { .0004, .125, 1, 0, .12, 3, 12, 0, true, false, false },    // fast: FET, feedback, bite rising with reduction
+        { .012, .5, 10, .030, .04, 2, 5, 1, false, true, false },    // smooth: opto, RMS, two-stage release
+        { .030, 1, 8, .050, .06, 1.5, 3, 1, false, false, true } };  // glue: vari-mu, ratio rises as it works
+    return t[std::clamp (c, 0, 4)];
+}
+class PcompFx : public Fx
+{
+public:
+    PcompFx (const FxDesc& d, double rate) : sr (rate)
+    {
+        const double a = std::clamp ((double) d.get ("amt", 0), 0.0, 1.0); ch = pcChar ((int) d.get ("c", 0));
+        const double beat = 60.0 / std::max (20.0, (double) d.get ("bpm", 120));
+        thr = d.get ("thr", (float) (-6 - 26 * a)); ratio = std::max (1.0, (double) d.get ("ratio", (float) (ch.rMin + (ch.rMax - ch.rMin) * a)));
+        const double att = std::max (.00002, (double) d.get ("att", (float) ch.att)), rel = std::max (.005, (double) d.get ("rel", (float) std::clamp (beat * ch.relBeats, .03, 1.5)));
+        knee = std::max (0.0, (double) d.get ("knee", (float) ch.knee)); mix = std::clamp ((double) d.get ("mix", 1), 0.0, 1.0);
+        kA = std::exp (-1 / (att * sr)); kR = std::exp (-1 / (rel * sr)); kRf = std::exp (-1 / (rel * .3 * sr)); kRs = std::exp (-1 / (rel * 1.5 * sr));
+        cR = ch.rmsT > 0 ? 1 - std::exp (-1 / (ch.rmsT * sr)) : 1;
+        const auto o = d.p.find ("out"); mk = std::exp ((o != d.p.end() ? (double) o->second : .5 * curve (-10, ratio)) * .1151292546497);
+    }
+    double curve (double db, double r) const
+    {
+        const double slope = 1 - 1 / r, over = db - thr;
+        if (2 * over < -knee) return 0;
+        if (knee > 0 && 2 * over <= knee) return slope * (over + knee / 2) * (over + knee / 2) / (2 * knee);
+        return slope * over;
+    }
+    void run (float& l, float& r) override
+    {
+        const double dl = l, dr = r, x = std::max (std::abs (dl), std::abs (dr)) * (ch.fb ? g : 1.0);
+        double lev = x; if (ch.det != 0) { ms += (x * x - ms) * cR; const double rm = std::sqrt (ms); lev = ch.det == 1 ? rm : .5 * (rm + x); }
+        const double db = 20 * std::log10 (std::max (lev, 1e-6)), rr = ch.rise ? std::min (20.0, ratio * (1 + gr / 6)) : ratio, want = curve (db, rr);
+        if (want > gr) { gr = want + (gr - want) * kA; pk = std::max (pk, gr); }
+        else { const double k = ch.two ? (gr > pk * .5 ? kRf : kRs) : kR; gr = want + (gr - want) * k; if (gr < .01) pk = 0; }
+        g = std::exp (-gr * .1151292546497);
+        double yl = dl * g * mk, yr = dr * g * mk;
+        if (ch.sat > 0) { const double s = std::min (1.0, ch.sat * gr / 6); yl += s * (std::tanh (yl * 1.5) / 1.5 - yl); yr += s * (std::tanh (yr * 1.5) / 1.5 - yr); }
+        l = (float) (dl * (1 - mix) + yl * mix); r = (float) (dr * (1 - mix) + yr * mix);
+    }
+    double reduction() const { return gr; }
+private:
+    double sr; PcChar ch; double thr = -18, ratio = 2, knee = 6, mix = 1, kA = 0, kR = 0, kRf = 0, kRs = 0, cR = 1, mk = 1, ms = 0, gr = 0, pk = 0, g = 1;
+};
+// Width: mid/side balance for a strip (1 = as is, 0 = mono, 2 = twice the sides)
+class WidthFx : public Fx
+{
+public:
+    WidthFx (const FxDesc& d, double) : w (std::clamp ((double) d.get ("w", 1), 0.0, 2.0)) {}
+    void run (float& l, float& r) override { const double m = (l + r) * .5, s = (l - r) * .5 * w; l = (float) (m + s); r = (float) (m - s); }
+private:
+    double w;
+};
+
 class EchoFx : public Fx
 {
 public:
@@ -424,12 +485,13 @@ class FxBank
 {
 public:
     static constexpr int master = 16;
-    std::array<std::array<std::unique_ptr<Fx>, 3>, 17> slots;
+    std::array<std::array<std::unique_ptr<Fx>, 4>, 17> slots;   // three inserts, then the smart knob's effect
+    std::array<std::unique_ptr<Fx>, 17> comp, width;   // the strip's compressor (after its EQ) and its Width (last)
     std::array<std::unique_ptr<Fx>, 17> eq;   // the strip's Smart EQ, before its inserts
     std::array<bool, 17> any {};
 
-    Fx* at (int ch, int slot) const { return ch >= 0 && ch < 17 && slot >= 0 && slot < 3 ? slots[(size_t) ch][(size_t) slot].get() : nullptr; }
-    void run (int ch, float& l, float& r) { if (auto& e = eq[(size_t) ch]) e->run (l, r); for (auto& f : slots[(size_t) ch]) if (f) f->run (l, r); }
+    Fx* at (int ch, int slot) const { return ch >= 0 && ch < 17 && slot >= 0 && slot < 4 ? slots[(size_t) ch][(size_t) slot].get() : nullptr; }
+    void run (int ch, float& l, float& r) { if (auto& e = eq[(size_t) ch]) e->run (l, r); if (auto& c = comp[(size_t) ch]) c->run (l, r); for (auto& f : slots[(size_t) ch]) if (f) f->run (l, r); if (auto& w = width[(size_t) ch]) w->run (l, r); }
 };
 
 inline std::shared_ptr<FxBank> makeFxBank (const std::vector<FxDesc>& list, double sr)
@@ -451,8 +513,10 @@ inline std::shared_ptr<FxBank> makeFxBank (const std::vector<FxDesc>& list, doub
         else if (d.type == "autopan") f = std::make_unique<AutopanFx> (d, sr);
         else if (d.type == "phaser") f = std::make_unique<PhaserFx> (d, sr);
         else if (d.type == "wide") f = std::make_unique<WideFx> (d, sr);
+        else if ((d.type == "pcomp" && d.slot < 0) || d.type == "width") { if (d.ch >= 0 && d.ch < 17) { auto& dst = d.type == "width" ? b->width : b->comp; if (d.type == "width") dst[(size_t) d.ch] = std::make_unique<WidthFx> (d, sr); else dst[(size_t) d.ch] = std::make_unique<PcompFx> (d, sr); b->any[(size_t) d.ch] = true; } continue; }
+        else if (d.type == "pcomp") f = std::make_unique<PcompFx> (d, sr);
         else if (d.type == "peq") { if (d.ch >= 0 && d.ch < 17) { b->eq[(size_t) d.ch] = std::make_unique<PeqFx> (d, sr); b->any[(size_t) d.ch] = true; } continue; }
-        if (f && d.ch >= 0 && d.ch < 17 && d.slot >= 0 && d.slot < 3) { b->slots[(size_t) d.ch][(size_t) d.slot] = std::move (f); b->any[(size_t) d.ch] = true; }
+        if (f && d.ch >= 0 && d.ch < 17 && d.slot >= 0 && d.slot < 4) { b->slots[(size_t) d.ch][(size_t) d.slot] = std::move (f); b->any[(size_t) d.ch] = true; }
     }
     return b;
 }

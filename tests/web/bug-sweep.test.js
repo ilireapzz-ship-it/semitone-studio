@@ -5,7 +5,7 @@ const {chromium}=require('playwright'); const url='file://'+require('path').reso
 (async()=>{ const b=await chromium.launch(); const p=await b.newPage({viewport:{width:1440,height:900}}); const errs=[], fails=[]; p.on('pageerror',e=>errs.push(e.message)); const ok=(c,m)=>{ console.log((c?'ok   ':'FAIL ')+m); if(!c) fails.push(m); };
  await p.addInitScript(()=>{ window.__noStart=1; }); await p.goto(url); await p.waitForTimeout(1500);
  const a=await p.evaluate(()=>{ S.demo=false; const m0=nativeLanes().filter(l=>l.ch===-1).length; xAdd('pad'); const x=xList()[xList().length-1]; const st=strip('song',x.id); st.fx=[{type:'echo',on:true,p:fxDefaults('echo')}]; st.mono=true; S.auto[0]=S.auto[0]||{}; S.auto[0][x.id]={vol:[{t:0,v:.2},{t:4,v:.8}],'fx0.mix':[{t:0,v:.1},{t:4,v:.9}]};
-   const fx=nativeFx().filter(f=>f.ch===x.ch).length, lanes=nativeLanes().filter(l=>l.ch===x.ch).length, fxl=nativeFxLanes().filter(l=>l.ch===x.ch).length, master=nativeLanes().filter(l=>l.ch===-1).length-m0, mono=nativeMono().includes(x.ch);
+   const fx=nativeFx().filter(f=>f.ch===x.ch&&f.type==='echo').length, lanes=nativeLanes().filter(l=>l.ch===x.ch).length, fxl=nativeFxLanes().filter(l=>l.ch===x.ch).length, master=nativeLanes().filter(l=>l.ch===-1).length-m0, mono=nativeMono().includes(x.ch);
    histCheck(true); xRemove(x.id); return {fx,lanes,fxl,master,mono,gone:!S.mix[x.id]&&!(S.auto[0]||{})[x.id]}; });
  ok(a.fx===1&&a.lanes===1&&a.fxl===1&&a.mono&&a.master===0,'an added part’s effects, mono and automation go to its own channel in the app, never the master: '+JSON.stringify(a));
  ok(a.gone,'removing the part clears its mixer settings and automation');
