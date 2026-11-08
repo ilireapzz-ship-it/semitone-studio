@@ -1,0 +1,971 @@
+{
+  "version": 1,
+  "about": "How each producer uses automation in Semitone's automation system (shapes, macros, ranges, controllers, tidy), based on how they're known to work; nothing is copied. Producer passes draw their movement moves from here. Each move has an op, why, when it fits, what to listen for, the coach rules it serves, and how to record it by hand with a controller. Agreed with Jamie 8 Nov 2026.",
+  "grammar": {
+    "auto": "auto:<parts>:<target>:<shape>{params}@<where>. parts: a role or comma list from part-roles.json, or all/master. targets: volume, pan, width, reverb, echo, brightness, warmth, drive, lowcut, tremolo, chorus, vibrato, filterWobble, silence, fx (every effect lane). shapes: build, swell, breathe, pump, sweep, drop, wobble, steps, fade, set, ride, back-to-rest.",
+    "macro": "macro:<name>:<shape|set|steps>{params}@<where>. Uses the producer's macro template below.",
+    "tidy": "tidy:<parts>:thin{tolerance}@<where>.",
+    "params": "units are written as in the interface (Hz/kHz, dB, %, bars, beats, 1/4 1/8 1/16, free). from/to may be 'open' (fully bright) or -inf (silent).",
+    "where": "section words (intro, verse, pre, chorus, post-chorus, bridge, solo, outro, last-chorus, all), ranges (verse2..chorus2), last-bar(<section>), phrase-end(<section>), section-end, hook-tag, one-bar (the app picks one)."
+  },
+  "shared": {
+    "shapes": [
+      "build",
+      "swell",
+      "breathe",
+      "pump",
+      "sweep",
+      "drop",
+      "wobble",
+      "steps",
+      "fade"
+    ],
+    "lengthRules": "1min: at most 3 moves, no long sweeps; 3min: moves land on section changes; 5min+: long sweeps and outro moves allowed; 10min+: very slow macros over themes.",
+    "controller": "Every move can be recorded by hand: the pass shows 'Record it yourself' with the suggested control and write mode, so the producer's idea becomes Jamie's performance."
+  },
+  "producers": {
+    "antonoff": {
+      "philosophy": "Emotion first: the record breathes between intimate and huge. Moves are big but few, and they always serve the turn into the chorus or the drop into a quiet moment.",
+      "density": "low-medium (about 6–10 moves a song)",
+      "tidy": "loose: keeps a little of the hand-made feel",
+      "avoid": [
+        "constant wobble",
+        "moves on the lead vocal's level (keep it dry and present)"
+      ],
+      "macro": {
+        "name": "Lift",
+        "controls": [
+          [
+            "chords",
+            "brightness",
+            "600 Hz",
+            "9 kHz",
+            "slow start"
+          ],
+          [
+            "all",
+            "width",
+            "70 %",
+            "100 %",
+            "fast start"
+          ],
+          [
+            "lead",
+            "reverb",
+            "30 %",
+            "12 %",
+            "straight"
+          ],
+          [
+            "drums",
+            "volume",
+            "-6 dB",
+            "0 dB",
+            "straight"
+          ]
+        ],
+        "draw": "from the emotion line"
+      },
+      "moves": [
+        {
+          "id": "open-into-chorus",
+          "what": "Open the chords' brightness through the pre so the chorus arrives",
+          "op": "auto:chords:brightness:build{from:600Hz,to:7kHz}@pre",
+          "why": "The arrival is felt before it's heard; the sound world gets bigger as the emotion turns",
+          "when": "emotion rises into the chorus; any length with a pre",
+          "listenFor": "the chorus feeling like a door opening, not a jump",
+          "serves": [
+            "build",
+            "movement"
+          ],
+          "c": "high",
+          "record": "mod wheel on the selected lane, Touch",
+          "emotion": "hopeful→euphoric"
+        },
+        {
+          "id": "drop-last-bar",
+          "what": "Drop the drums for the last bar of the pre",
+          "op": "auto:drums:volume:drop{bars:1}@pre",
+          "why": "A beat of air makes the chorus downbeat land harder",
+          "when": "3- and 5-minute songs; before the first and last chorus",
+          "listenFor": "a held breath before the chorus",
+          "serves": [
+            "section-contrast",
+            "surprise"
+          ],
+          "c": "medium"
+        },
+        {
+          "id": "slapback-throws",
+          "what": "Echo throws on the last word of chosen lines",
+          "op": "auto:lead:echo:swell{len:1/2bar}@phrase-end(chorus)",
+          "why": "Tape-style slapback that blooms only at line ends keeps the vocal dry but the space big",
+          "when": "choruses and the last line of verses",
+          "listenFor": "the last word hanging in the room",
+          "serves": [
+            "vocal-space"
+          ],
+          "c": "medium",
+          "record": "knob linked to Lead · Echo send, Touch",
+          "emotion": "nostalgic"
+        },
+        {
+          "id": "bridge-pullback",
+          "what": "Pull everything back for the bridge except piano and voice",
+          "op": "auto:all:volume:fade{to:-12dB,except:lead,chords}@bridge",
+          "why": "Big-then-intimate is the contrast these records are built on",
+          "when": "songs with a bridge; melancholy or tender bridges",
+          "listenFor": "the room suddenly getting small",
+          "serves": [
+            "section-contrast",
+            "space"
+          ],
+          "c": "medium",
+          "emotion": "intimate"
+        },
+        {
+          "id": "widen-chorus",
+          "what": "Widen the stereo on the chorus downbeat, narrow for verses",
+          "op": "auto:all:width:steps{verse:70%,chorus:100%}@all",
+          "why": "Width is the cheapest way to make a chorus feel huge",
+          "when": "every chorus",
+          "listenFor": "the chorus wrapping around you",
+          "serves": [
+            "section-contrast"
+          ],
+          "c": "medium"
+        },
+        {
+          "id": "last-chorus-energy",
+          "what": "Energy macro to 1 in the last chorus",
+          "op": "macro:Lift:set{1}@last-chorus",
+          "why": "The last chorus should be the biggest moment",
+          "when": "any song with two or more choruses",
+          "listenFor": "the end feeling earned",
+          "serves": [
+            "build"
+          ],
+          "c": "medium",
+          "record": "Knob 1 → Lift macro, Latch"
+        },
+        {
+          "id": "synth-wow",
+          "what": "A little tape wobble on the chords in verses",
+          "op": "auto:chords:vibrato:wobble{rate:free,depth:8%}@verse",
+          "why": "Old machines drift; a hint of wow makes synths feel human",
+          "when": "verses only, subtle",
+          "listenFor": "warmth, not seasickness",
+          "serves": [
+            "one-sound-world"
+          ],
+          "c": "medium",
+          "emotion": "nostalgic"
+        }
+      ],
+      "src": [
+        "https://abbeyroadinstitute.nl/blog/jack-antonoff-brutal-honesty/",
+        "https://mixdownmag.com.au/features/jack-antonoff-on-recording-new-bleachers-album-bruce-springsteen-and-daring-to-suck",
+        "https://www.grammy.com/news/lorde-melodrama-album-anniversary-jack-antonoff-producer-star-pure-heroine-green-light"
+      ],
+      "emotionUse": "euphoric and nostalgic get the Lift macro; intimate gets pull-backs",
+      "bestLength": "3–5 min"
+    },
+    "maxmartin": {
+      "philosophy": "Precision and payoff: every section has a clear energy level, the vocal is always on top, and nothing moves without a reason you can name in one sentence.",
+      "density": "medium, on the grid",
+      "tidy": "strict: snap to bars, few points",
+      "avoid": [
+        "free-running wobble",
+        "moves that compete with the hook"
+      ],
+      "macro": {
+        "name": "Payoff",
+        "controls": [
+          [
+            "all",
+            "width",
+            "75 %",
+            "100 %",
+            "straight"
+          ],
+          [
+            "drums",
+            "volume",
+            "-5 dB",
+            "0 dB",
+            "straight"
+          ],
+          [
+            "chords",
+            "brightness",
+            "1.5 kHz",
+            "8 kHz",
+            "straight"
+          ],
+          [
+            "lead",
+            "volume",
+            "0 dB",
+            "+1 dB",
+            "straight"
+          ]
+        ],
+        "draw": "steps per section"
+      },
+      "moves": [
+        {
+          "id": "energy-steps",
+          "what": "Set energy as clear steps: verse low, pre higher, chorus full",
+          "op": "macro:Payoff:steps{verse:.35,pre:.65,chorus:1}@all",
+          "why": "Each section must feel like a promise and a payoff",
+          "when": "3-minute singles",
+          "listenFor": "no section sounding like the one before",
+          "serves": [
+            "section-contrast",
+            "hook-early"
+          ],
+          "c": "medium"
+        },
+        {
+          "id": "beat-before-chorus",
+          "what": "One beat of near-silence before the chorus downbeat",
+          "op": "auto:all:volume:drop{beats:1,except:lead}@pre",
+          "why": "The gap makes the hook land",
+          "when": "before every chorus",
+          "listenFor": "the hook hitting like a reveal",
+          "serves": [
+            "surprise",
+            "hook-repeat"
+          ],
+          "c": "medium"
+        },
+        {
+          "id": "vocal-on-top",
+          "what": "Duck the chords and pads 2 dB whenever the lead sings",
+          "op": "auto:chords,pad:volume:breathe{depth:-2dB}@all",
+          "why": "The melody is the product; everything makes room for it",
+          "when": "whole song",
+          "listenFor": "every word clear without the vocal sounding loud",
+          "serves": [
+            "vocal-space"
+          ],
+          "c": "medium"
+        },
+        {
+          "id": "post-chorus-lift",
+          "what": "Lift width and brightness for the post-chorus hook",
+          "op": "auto:all:width:set{100%}@post-chorus",
+          "why": "A post-chorus is a second hook and needs its own energy",
+          "when": "songs with a post-chorus",
+          "listenFor": "the second hook sounding as big as the first",
+          "serves": [
+            "hook-repeat"
+          ],
+          "c": "medium"
+        },
+        {
+          "id": "pre-build-grid",
+          "what": "Brightness build across the pre, exactly on the bar",
+          "op": "auto:chords:brightness:steps{per:bar}@pre",
+          "why": "Stepped builds keep the tension rhythmic and tight",
+          "when": "pre-choruses",
+          "listenFor": "tension counting up to the chorus",
+          "serves": [
+            "build"
+          ],
+          "c": "medium",
+          "record": "fader → Chords brightness, Write, snap to bar"
+        },
+        {
+          "id": "final-modulation-space",
+          "what": "Last chorus: widen and lift the lead 1 dB",
+          "op": "auto:lead:volume:set{+1dB}@last-chorus",
+          "why": "The final chorus should feel bigger without new parts",
+          "when": "last chorus",
+          "listenFor": "the end feeling like the top of the song",
+          "serves": [
+            "build"
+          ],
+          "c": "medium"
+        }
+      ],
+      "src": [
+        "https://americansongwriter.com/all-those-pop-songs-you-love-thats-not-magic-thats-melodic-math-and-this-is-how-it-works",
+        "https://www.theringer.com/2020/12/17/music/60-songs-backstreet-boys-i-want-it-that-way-history",
+        "https://www.musicradar.com/tutorials/music-theory-songwriting/the-verse-and-chorus-of-that-song-are-exactly-the-same-but-you-dont-really-notice-since-the-energy-of-the-chorus-is-completely-different-cracking-open-max-martins-uber-succesful-songwriting-formula"
+      ],
+      "emotionUse": "every emotion is a section energy level",
+      "bestLength": "3 min, strict hook timing"
+    },
+    "finneas": {
+      "philosophy": "Intimacy and space: the voice is close and dry, the room stays small, and the few moves are dramatic because everything else is still.",
+      "density": "low (a handful of moves)",
+      "tidy": "loose",
+      "avoid": [
+        "busy movement",
+        "wide reverbs on the lead"
+      ],
+      "macro": {
+        "name": "Closer",
+        "controls": [
+          [
+            "lead",
+            "reverb",
+            "20 %",
+            "4 %",
+            "straight"
+          ],
+          [
+            "pad",
+            "brightness",
+            "2 kHz",
+            "500 Hz",
+            "straight"
+          ],
+          [
+            "bass",
+            "volume",
+            "-8 dB",
+            "0 dB",
+            "slow start"
+          ]
+        ],
+        "draw": "by hand"
+      },
+      "moves": [
+        {
+          "id": "dark-intro-open",
+          "what": "Start everything dark and low-passed, open it at the first chorus",
+          "op": "auto:all:brightness:sweep{from:600Hz,to:open}@intro..chorus",
+          "why": "Hiding the top end makes the first open moment feel like light coming in",
+          "when": "songs that start quiet",
+          "listenFor": "the first chorus feeling like a window opening",
+          "serves": [
+            "build",
+            "movement"
+          ],
+          "c": "medium",
+          "record": "mod wheel → Master brightness, Write"
+        },
+        {
+          "id": "breathe-pad",
+          "what": "Let the pad breathe around the vocal",
+          "op": "auto:pad:volume:breathe{depth:-4dB}@verse",
+          "why": "The whisper needs space more than support",
+          "when": "verses",
+          "listenFor": "the voice sitting in a pocket of air",
+          "serves": [
+            "vocal-space",
+            "space"
+          ],
+          "c": "medium"
+        },
+        {
+          "id": "sub-swell",
+          "what": "Swell the sub bass into the drop",
+          "op": "auto:bass:volume:build{from:-12dB,to:0dB}@last-bar(pre)",
+          "why": "A low swell is felt in the body before the drop lands",
+          "when": "before a drop or chorus",
+          "listenFor": "the floor rising under you",
+          "serves": [
+            "build"
+          ],
+          "c": "medium"
+        },
+        {
+          "id": "sudden-silence",
+          "what": "Cut to silence for a beat before the chorus",
+          "op": "auto:all:silence:drop{beats:1}@pre",
+          "why": "Silence is the loudest sound in a quiet record",
+          "when": "once or twice a song, never every chorus",
+          "listenFor": "a held breath",
+          "serves": [
+            "surprise"
+          ],
+          "c": "medium",
+          "record": "pad 1 → Drop, one-shot"
+        },
+        {
+          "id": "dry-close-lead",
+          "what": "Keep the lead's reverb almost off, add a touch only on the last word of a section",
+          "op": "auto:lead:reverb:swell{len:1beat}@section-end",
+          "why": "Closeness is the effect; space is a reward",
+          "when": "whole song",
+          "listenFor": "the vocal in your ear",
+          "serves": [
+            "vocal-space"
+          ],
+          "c": "medium",
+          "emotion": "intimate"
+        }
+      ],
+      "src": [
+        "https://www.mixonline.com/recording/finneas-on-producing-billie-eilishs-number-one-album-in-his-bedroom",
+        "https://mixingaband.com/vocal-production-for-billie-eilish-by-finneas/",
+        "https://www.soundonsound.com/people/billie-eilish"
+      ],
+      "emotionUse": "intimate and dark keep moves minimal; euphoric gets a single big open",
+      "bestLength": "2–4 min"
+    },
+    "mikedean": {
+      "philosophy": "Sound as drama: long synth sweeps, expressive leads and big spaces; the arrangement is a canvas for movement in tone.",
+      "density": "medium-high, long gestures",
+      "tidy": "medium",
+      "avoid": [
+        "short fiddly moves"
+      ],
+      "macro": {
+        "name": "Sweep",
+        "controls": [
+          [
+            "lead",
+            "brightness",
+            "800 Hz",
+            "12 kHz",
+            "slow start"
+          ],
+          [
+            "lead",
+            "drive",
+            "0 %",
+            "30 %",
+            "fast start"
+          ],
+          [
+            "all",
+            "reverb",
+            "15 %",
+            "45 %",
+            "straight"
+          ]
+        ],
+        "draw": "long ramps over 8–16 bars"
+      },
+      "moves": [
+        {
+          "id": "long-filter-sweep",
+          "what": "A filter sweep on the synth over 8–16 bars",
+          "op": "auto:chords:brightness:sweep{bars:16,from:400Hz,to:10kHz}@verse2..chorus2",
+          "why": "Slow tonal change carries tension across sections",
+          "when": "5-minute songs and outros",
+          "listenFor": "the sound slowly coming into focus",
+          "serves": [
+            "build",
+            "movement"
+          ],
+          "c": "medium",
+          "record": "mod wheel on the selected lane, Write"
+        },
+        {
+          "id": "expressive-lead",
+          "what": "Vibrato and brightness moves on the synth lead, played on the mod wheel",
+          "op": "auto:lead:vibrato:wobble{rate:1/8,depth:20%,starts:fades in}@solo",
+          "why": "A synth solo should feel sung",
+          "when": "solos and outros",
+          "listenFor": "the synth breathing like a voice",
+          "serves": [
+            "motif"
+          ],
+          "c": "medium",
+          "record": "mod wheel → Lead vibrato, Touch"
+        },
+        {
+          "id": "outro-reverb-swell",
+          "what": "Swell the reverb into the outro",
+          "op": "auto:all:reverb:build{to:45%}@outro",
+          "why": "A cinematic ending lets the song dissolve",
+          "when": "outros, 5-minute and longer songs",
+          "listenFor": "the song turning into a room",
+          "serves": [
+            "build"
+          ],
+          "c": "medium"
+        },
+        {
+          "id": "drive-build",
+          "what": "Drive on the lead synth rising into the climax",
+          "op": "auto:lead:drive:build{to:30%}@last-chorus",
+          "why": "Grit adds urgency at the peak",
+          "when": "last chorus or solo",
+          "listenFor": "the lead getting hotter",
+          "serves": [
+            "build"
+          ],
+          "c": "medium"
+        },
+        {
+          "id": "width-bloom",
+          "what": "Widen the synths slowly across the whole chorus",
+          "op": "auto:chords,pad:width:build{from:60%,to:100%}@chorus",
+          "why": "Space opening over time feels cinematic",
+          "when": "choruses in 5-minute songs",
+          "listenFor": "the chorus slowly surrounding you",
+          "serves": [
+            "build"
+          ],
+          "c": "medium"
+        },
+        {
+          "id": "master-shine",
+          "what": "Lift master brightness a touch for the final section",
+          "op": "auto:master:brightness:set{+1.5dB@10kHz}@last-chorus",
+          "why": "A final polish of air makes the end shine",
+          "when": "last chorus or outro",
+          "listenFor": "the mix sparkling at the end",
+          "serves": [
+            "build",
+            "mix-translation"
+          ],
+          "c": "medium"
+        },
+        {
+          "id": "tempo-hold-outro",
+          "what": "Let the outro breathe: tempo eases back slightly",
+          "op": "auto:master:tempo:fade{to:-3BPM}@outro",
+          "why": "A slight slow-down feels like a film ending",
+          "when": "long outros only",
+          "listenFor": "the song exhaling",
+          "serves": [
+            "concise"
+          ],
+          "c": "medium"
+        }
+      ],
+      "src": [
+        "https://thefader.com/2018/10/08/mike-dean-interview-travis-scott-and-kanye-west",
+        "https://en.wikipedia.org/wiki/Mike_Dean_(music_producer)",
+        "https://reverb.com/featured/in-the-studio-with-super-producer-mike-dean"
+      ],
+      "emotionUse": "dreamy and cinematic get long sweeps",
+      "bestLength": "5 min+"
+    },
+    "redone": {
+      "philosophy": "Energy and impact: pumping grooves, big builds and drops, hooks that hit like a chant.",
+      "density": "high, rhythmic",
+      "tidy": "strict, on the grid",
+      "avoid": [
+        "slow fades in choruses"
+      ],
+      "macro": {
+        "name": "Drop",
+        "controls": [
+          [
+            "chords",
+            "volume",
+            "-10 dB",
+            "0 dB",
+            "fast start"
+          ],
+          [
+            "all",
+            "brightness",
+            "1 kHz",
+            "open",
+            "slow start"
+          ],
+          [
+            "drums",
+            "volume",
+            "-12 dB",
+            "0 dB",
+            "straight"
+          ]
+        ],
+        "draw": "build then slam"
+      },
+      "moves": [
+        {
+          "id": "pump",
+          "what": "Pump the chords and pads on every beat",
+          "op": "auto:chords,pad:volume:pump{rate:1/4,depth:-8dB}@chorus",
+          "why": "The pump makes the groove breathe with the kick",
+          "when": "choruses and drops",
+          "listenFor": "the track moving with the kick",
+          "serves": [
+            "groove-pocket"
+          ],
+          "c": "medium"
+        },
+        {
+          "id": "riser-build",
+          "what": "Filter build plus riser into the chorus",
+          "op": "auto:all:brightness:build{from:800Hz}@pre",
+          "why": "A build tells the crowd a drop is coming",
+          "when": "pre-choruses",
+          "listenFor": "rising tension",
+          "serves": [
+            "build"
+          ],
+          "c": "medium",
+          "record": "fader → Drop macro, Write"
+        },
+        {
+          "id": "drop-before-drop",
+          "what": "Cut to the vocal hook alone for one bar before the drop",
+          "op": "auto:all:volume:drop{bars:1,except:lead}@pre",
+          "why": "The hook alone makes the drop explode",
+          "when": "before the main drop",
+          "listenFor": "a shouted hook then impact",
+          "serves": [
+            "surprise",
+            "hook-repeat"
+          ],
+          "c": "medium"
+        },
+        {
+          "id": "chant-up",
+          "what": "Lift the group vocal on the chant hook",
+          "op": "auto:harmony:volume:set{+3dB}@chorus",
+          "why": "Chant hooks need to feel like a crowd",
+          "when": "choruses with a chant",
+          "listenFor": "everyone singing",
+          "serves": [
+            "hook-repeat"
+          ],
+          "c": "medium"
+        },
+        {
+          "id": "snare-roll-volume",
+          "what": "Snare roll volume build in the last bar of the pre",
+          "op": "auto:drums:volume:build{from:-10dB}@last-bar(pre)",
+          "why": "A roll that swells pushes the crowd into the chorus",
+          "when": "before choruses",
+          "listenFor": "the roll pulling you forward",
+          "serves": [
+            "build"
+          ],
+          "c": "medium"
+        },
+        {
+          "id": "width-snap",
+          "what": "Width snaps to full on the chorus downbeat",
+          "op": "auto:all:width:steps{pre:60%,chorus:100%}@all",
+          "why": "Instant width reads as impact",
+          "when": "every chorus",
+          "listenFor": "the chorus hitting wide",
+          "serves": [
+            "section-contrast"
+          ],
+          "c": "medium"
+        }
+      ],
+      "src": [
+        "https://ladygaganow.net/news/redone-and-akon-interviewed-by-ew-about-lady-gagas-just-dance-for-its-10th-anniversary-r99",
+        "https://en.wikipedia.org/wiki/Poker_Face_(song)",
+        "https://www.songwriteruniverse.com/redone-songwriter-interview-2016/"
+      ],
+      "emotionUse": "euphoric and defiant get pump and drops",
+      "bestLength": "3 min"
+    },
+    "rubin": {
+      "philosophy": "Less: automation only where the performance needs help. Most moves are removals: back to rest, fewer points, no effect moves.",
+      "density": "very low",
+      "tidy": "aggressive thinning",
+      "avoid": [
+        "effect automation for its own sake",
+        "wobble",
+        "builds that cover a weak song"
+      ],
+      "macro": null,
+      "moves": [
+        {
+          "id": "strip-moves",
+          "what": "Suggest removing effect moves that don't serve the song",
+          "op": "auto:all:fx:back-to-rest@all",
+          "why": "If the song needs effects moving to work, the song needs work",
+          "when": "after other passes",
+          "listenFor": "the performance standing on its own",
+          "serves": [
+            "song-survives",
+            "nervous"
+          ],
+          "c": "high"
+        },
+        {
+          "id": "performance-ride",
+          "what": "Gentle volume rides so every word of the vocal is heard",
+          "op": "auto:lead:volume:ride{max:±2dB}@all",
+          "why": "Serve the performance, nothing more",
+          "when": "whole song",
+          "listenFor": "words, not production",
+          "serves": [
+            "vocal-space"
+          ],
+          "c": "medium",
+          "record": "fader → Lead volume, Touch"
+        },
+        {
+          "id": "thin-points",
+          "what": "Thin every lane to the fewest points that keep its shape",
+          "op": "tidy:all:thin{tolerance:3%}@all",
+          "why": "Simplicity is clarity",
+          "when": "always",
+          "listenFor": "nothing fussy",
+          "serves": [
+            "nervous"
+          ],
+          "c": "medium"
+        },
+        {
+          "id": "remove-crutch",
+          "what": "Flag builds that cover a weak section and suggest testing it bare",
+          "op": "auto:all:fx:back-to-rest@pre",
+          "why": "If the pre only works with a riser, rewrite the pre",
+          "when": "after other passes",
+          "listenFor": "whether the section still lifts with nothing moving",
+          "serves": [
+            "song-survives"
+          ],
+          "c": "medium"
+        },
+        {
+          "id": "room-not-effects",
+          "what": "Prefer a single room level over moving reverbs",
+          "op": "auto:all:reverb:set{one value per section}@all",
+          "why": "A real space feels honest; moving reverbs feel produced",
+          "when": "whole song",
+          "listenFor": "a band in a room",
+          "serves": [
+            "one-sound-world",
+            "nervous"
+          ],
+          "c": "medium"
+        }
+      ],
+      "src": [
+        "https://webflow.rev.com/transcripts/rick-rubin-the-60-minutes-interview-transcript",
+        "https://www.loudersound.com/bands-artists/johnny-cash-american-recordings-rick-rubin-story-behind-album",
+        "https://en.wikipedia.org/wiki/21_(Adele_album)"
+      ],
+      "emotionUse": "every emotion: remove before adding",
+      "bestLength": "any"
+    },
+    "nigro": {
+      "philosophy": "Theatre: dynamics as storytelling, quiet confessions exploding into big singalongs, with vocal stacks and guitars that grow.",
+      "density": "medium",
+      "tidy": "loose",
+      "avoid": [
+        "flat dynamics"
+      ],
+      "macro": {
+        "name": "Explode",
+        "controls": [
+          [
+            "all",
+            "volume",
+            "-6 dB",
+            "0 dB",
+            "fast start"
+          ],
+          [
+            "chords",
+            "drive",
+            "0 %",
+            "35 %",
+            "slow start"
+          ],
+          [
+            "harmony",
+            "width",
+            "40 %",
+            "100 %",
+            "straight"
+          ]
+        ],
+        "draw": "quiet verse, explode chorus"
+      },
+      "moves": [
+        {
+          "id": "quiet-loud",
+          "what": "Dry and close verses, full and wide choruses",
+          "op": "macro:Explode:steps{verse:.2,chorus:1}@all",
+          "why": "The contrast is the story",
+          "when": "whole song",
+          "listenFor": "a confession then a shout",
+          "serves": [
+            "section-contrast"
+          ],
+          "c": "medium"
+        },
+        {
+          "id": "guitar-drive-build",
+          "what": "Guitar drive rising through the pre",
+          "op": "auto:chords:drive:build{to:35%}@pre",
+          "why": "Grit growing tells you something is about to break",
+          "when": "pre-choruses",
+          "listenFor": "the guitar getting angry",
+          "serves": [
+            "build"
+          ],
+          "c": "medium",
+          "record": "knob → Chords drive, Touch"
+        },
+        {
+          "id": "stack-widen",
+          "what": "Widen the vocal stack in the last chorus",
+          "op": "auto:harmony:width:set{100%}@last-chorus",
+          "why": "A huge stack at the end turns a song into an anthem",
+          "when": "last chorus",
+          "listenFor": "a crowd singing back",
+          "serves": [
+            "build"
+          ],
+          "c": "medium"
+        },
+        {
+          "id": "reverb-throw",
+          "what": "Reverb throw on the last word before a quiet section",
+          "op": "auto:lead:reverb:swell{len:1bar}@section-end",
+          "why": "Drama lives in the transitions",
+          "when": "before bridges and breakdowns",
+          "listenFor": "the word echoing into silence",
+          "serves": [
+            "surprise"
+          ],
+          "c": "medium"
+        },
+        {
+          "id": "bridge-collapse",
+          "what": "Collapse to voice and one instrument in the bridge, then slam back",
+          "op": "auto:all:volume:steps{bridge:-14dB,last-chorus:0dB,except:lead}@bridge..last-chorus",
+          "why": "The collapse makes the return feel huge",
+          "when": "songs with a bridge",
+          "listenFor": "silence then everything",
+          "serves": [
+            "section-contrast",
+            "surprise"
+          ],
+          "c": "medium"
+        },
+        {
+          "id": "tempo-push",
+          "what": "Push the tempo 2 BPM in the last chorus",
+          "op": "auto:master:tempo:set{+2BPM}@last-chorus",
+          "why": "A slight push adds excitement live bands have naturally",
+          "when": "rock and theatrical styles",
+          "listenFor": "the band leaning forward",
+          "serves": [
+            "build"
+          ],
+          "c": "medium"
+        }
+      ],
+      "src": [
+        "https://www.soundonsound.com/techniques/inside-track-olivia-rodrigo-vampire",
+        "https://www.musicradar.com/artists/producers-engineers/chappell-is-one-of-the-greatest-singers-ive-ever-worked-with-her-voice-can-do-things-that-most-singers-can-never-do-producer-dan-nigro-breaks-down-chappell-roans-iconic-good-luck-babe-vocal-flips",
+        "https://www.uaudio.com/blogs/ua/apollo-creators-daniel-nigro"
+      ],
+      "emotionUse": "angry and triumphant get the Explode contrast",
+      "bestLength": "3–4 min"
+    },
+    "agcook": {
+      "philosophy": "Extremes and contrast: avoid the middle, slam between states, treat sounds as hooks, and let structured randomness surprise you.",
+      "density": "high but concentrated in moments",
+      "tidy": "keep the weird bits",
+      "avoid": [
+        "gentle middle-ground moves everywhere"
+      ],
+      "macro": {
+        "name": "Flip",
+        "controls": [
+          [
+            "all",
+            "width",
+            "0 % (mono)",
+            "100 %",
+            "steps"
+          ],
+          [
+            "lead",
+            "drive",
+            "0 %",
+            "60 %",
+            "fast start"
+          ],
+          [
+            "all",
+            "brightness",
+            "300 Hz",
+            "open",
+            "steps"
+          ]
+        ],
+        "draw": "slams, not ramps"
+      },
+      "moves": [
+        {
+          "id": "mono-explode",
+          "what": "Collapse to mono, then explode to full width on the drop",
+          "op": "auto:all:width:steps{from:0%,to:100%}@last-bar(pre)",
+          "why": "Extreme contrast is more memorable than a smooth build",
+          "when": "before the drop or last chorus",
+          "listenFor": "the song suddenly bursting open",
+          "serves": [
+            "avoid-middle",
+            "section-contrast"
+          ],
+          "c": "medium",
+          "record": "pad → Flip macro, one-shot"
+        },
+        {
+          "id": "filter-slam",
+          "what": "Slam the filter shut for a beat, then open",
+          "op": "auto:all:brightness:drop{beats:1,to:300Hz}@chorus",
+          "why": "Sudden tonal cuts become hooks",
+          "when": "once per chorus",
+          "listenFor": "a sound you remember",
+          "serves": [
+            "sound-hook",
+            "surprise"
+          ],
+          "c": "medium"
+        },
+        {
+          "id": "stutter-steps",
+          "what": "Stepped volume chops at 1/16 on the vocal tag",
+          "op": "auto:lead:volume:steps{rate:1/16,depth:-inf}@hook-tag",
+          "why": "Treat the voice as a sound",
+          "when": "hook tags, short songs",
+          "listenFor": "the vocal turning into a riff",
+          "serves": [
+            "sound-hook"
+          ],
+          "c": "medium",
+          "record": "pad → stutter, Touch"
+        },
+        {
+          "id": "paradox-switch",
+          "what": "Clean acoustic verse, distorted chorus: drive jumps 0 → 60%",
+          "op": "auto:chords:drive:steps{verse:0%,chorus:60%}@all",
+          "why": "Acoustic vs electronic in one song gives it identity",
+          "when": "whole song",
+          "listenFor": "two worlds colliding",
+          "serves": [
+            "paradox",
+            "avoid-middle"
+          ],
+          "c": "medium"
+        },
+        {
+          "id": "random-wobble",
+          "what": "Random-shape wobble at 1/16 for one bar",
+          "op": "auto:lead:filterWobble:wobble{shape:random,rate:1/16}@one-bar",
+          "why": "Structured randomness surprises even you",
+          "when": "once, somewhere unexpected",
+          "listenFor": "a glitch that feels intentional",
+          "serves": [
+            "surprise"
+          ],
+          "c": "medium"
+        }
+      ],
+      "src": [
+        "https://www.musicradar.com/news/charli-xcx-brat-theory",
+        "https://www.internettattoo.com/blog/ag-cook-hyperpop-plugin-svst",
+        "https://en.wikipedia.org/wiki/A._G._Cook"
+      ],
+      "emotionUse": "playful and anxious get slams and randomness",
+      "bestLength": "1–3 min"
+    }
+  }
+}

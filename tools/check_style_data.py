@@ -132,6 +132,25 @@ for r in CO['rules']:
 for j in CO['jury']['items']:
     for r in j['rules']:
         if r not in rid: I(f"coach jury {j['id']}: rule {r} unknown")
+# producer automation (data/automation-moves.json)
+AM=json.load(open('data/automation-moves.json'))
+roles=set(R['roles'])|{'all','master'}
+shapes=set(AM['shared']['shapes'])|{'set','ride','back-to-rest','steps'}
+import re as _r2
+for k,v in AM['producers'].items():
+    if k not in prids: I(f"automation-moves: {k} is not a producer")
+    for m in v['moves']:
+        for r in m['serves']:
+            if r not in rid: I(f"automation-moves {k}/{m['id']}: rule {r} not in coach.json")
+        g=_r2.match(r'auto:([\w,]+):(\w+):([\w-]+)',m['op'])
+        if g:
+            for part in g.group(1).split(','):
+                if part not in roles: I(f"automation-moves {k}/{m['id']}: part {part} unknown")
+            if g.group(3) not in shapes: I(f"automation-moves {k}/{m['id']}: shape {g.group(3)} unknown")
+        elif not _r2.match(r'(macro|tidy):',m['op']): I(f"automation-moves {k}/{m['id']}: op doesn't match the grammar")
+    if not v.get('src'): W(f"automation-moves {k}: no sources")
+for k in prids:
+    if k not in AM['producers']: I(f"automation-moves: producer {k} has no automation training")
 print('ISSUES',len(issues)); [print(' -',x) for x in issues]
 print('WARNINGS',len(warn)); [print(' -',x) for x in warn]
 sys.exit(1 if issues else 0)
