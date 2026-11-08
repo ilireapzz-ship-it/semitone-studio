@@ -190,16 +190,23 @@ Sections 4 and 4b say *what* is in the window; this says how it looks. Jamie fou
 knobs) still ugly; this refined look replaces it. Principles: restraint, one accent colour, real data drawn well, no boxes.
 - **Panel:** 16 px corners, graphite gradient (#141518 → #0F1012), 1 px hairline border rgba(255,255,255,.07), faint top highlight, soft
   shadow. Sections split by hairlines only. Inks: #EEECE8 text, #8D8F95 secondary, #5D6066 labels; one accent, champagne #E3C58E; the part
-  colour (here #E9A59B) only for the audio.
+  colour (here #E9A59B) only for the audio; red only for gain reduction.
 - **Header:** part name in the serif (28 px) with "COMPRESSOR" in spaced caps beside it. The five types are plain text tabs on one hairline;
   the chosen one is in the text colour with a 1.5 px champagne underline. Right: A / B, Hear removed, Presets, × as quiet text.
 - **Smart line:** a small ✦ in a thin champagne circle, one sentence ("Smooth, about 3 dB — evens out the loud words…"), "2 notes", and the
   only filled button, **Listen & set** (champagne pill).
-- **Display:** a real waveform, mirrored around a centre line: phrases with true silence between them, rounded word shapes, fine noise
-  texture (not spikes). Output is the part colour with a soft vertical gradient; the input shows as a faint grey ghost only where it is louder
-  (so you see exactly what was taken off). Threshold = two faint dotted champagne lines. Above it, a separate **gain reduction lane** (label in
-  spaced caps, champagne line with a fading fill); the biggest reduction gets a dot and a tiny label ("“home” −9 dB"). Bar numbers and section
-  names in small caps at the bottom.
+- **Display (FabFilter Pro-C style, asked for by Jamie 8 Nov):** a scrolling **level graph**, not a mirrored waveform. Its own deep blue-slate
+  ground (#18202B → #0B0F15, 10 px corners) inside the panel. One dB scale for everything (0 at the top, −60 at the bottom; labels on the right).
+  - **Knee column** on the left (about 150 px): the in → out curve in white with a soft glow, the 1:1 diagonal dotted, a red dot for the
+    current level, sharing the graph's y scale; a hairline separates it from the graph.
+  - **Input:** pale blue-silver fill fading to nothing at the bottom, with a crisp 1 px edge drawn on top of everything, so wherever the
+    compressor takes level off, the silver shows above the output.
+  - **Output:** the part colour, light at the top and fading out, with a 1.2 px glowing edge.
+  - **Gain reduction:** a red line (#FF5A4E) hanging from 0 dB at the top with a soft glow and a fading red fill, on the same dB scale; the
+    biggest reduction gets a red dot and label ("“home” −9 dB").
+  - Shapes: instant rise, smooth fall (an envelope follower), with the room tone as a floor, so words read as smooth peaks, never boxes.
+  - **Threshold:** a dashed white line across the graph with a white value pill at the right end (drag either).
+  - Bar numbers and section names in small caps under the graph.
 - **Hero column (320 px):** one **Amount knob** (220 px): matte graphite body, champagne pointer, the value in the serif inside ("45") with
   "AMOUNT" under it; an outer thin champagne arc for the amount, a cream dot for the smart amount, and an inner part-colour arc showing the live
   gain reduction. Under it two readouts split by a hairline: "−3.4 dB REDUCING" and "35 ✦ SMART"; then thin IN and OUT meters with a peak tick.
