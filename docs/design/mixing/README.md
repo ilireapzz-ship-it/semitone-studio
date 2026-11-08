@@ -185,29 +185,30 @@ Checked 8 Nov 2026; details and sources in `comp.benchmark` and `comp.pro` (`dat
 - **Not covered:** external audio sidechain from outside Semitone, surround. Limiting stays on the master, de-essing in the EQ (or "Focus on
   esses" + a high band here).
 
-### 4c. The luxe finish: this is how the window looks by default (`7-Compressor-luxe.png`, values in `reference-Comp3.dc.html`)
-Sections 4 and 4b say *what* is in the window; this says how it should look and feel. Fewer boxes, one clear path: **pick a type → set the
-amount → Listen & set**. Everything else is one click away under **More ⌄** (which opens the 4b pro panels).
-- **One device panel**, not cards: 18 px corners, a warm black gradient (#131210 → #0C0B0A) with a faint champagne glow top-left, a 1 px
-  champagne hairline border (rgba(232,201,143,.16)) and a soft drop shadow. Sections are split by hairlines, never boxes.
-- **Header:** small spaced caps "COMPRESSOR · 06" in brass over the part name in the serif at 30 px. The five types are one **pill row**, each
-  with a tiny curve glyph of how it reacts (Clean: square, Punch: spike, Fast: instant, Smooth: slow curve, Glue: gentle slope); the chosen pill
-  has a champagne hairline and a raised fill. Right side as quiet text: A/B, ◉ Removed, Presets, ×.
-- **Smart note:** one line under the header ("✦ Smooth, about 3 dB. Evens your loud words…"), then "2 notes ›" (the checks, opened on click)
-  and the one gold button, **Listen & set**. The "I hear…" chips live behind "2 notes ›".
-- **Display:** full width, thinner lines: output as a soft part-colour gradient with a 1 px edge, input as a faint cream outline, gain
-  reduction as a champagne line with a fading fill from the top. Threshold is a dotted champagne line with a gold value pill on the right
-  (drag either). Problems are a gold dot with a small rounded tag ("“home” +8 dB"), not boxes.
-- **Hero column (340 px):** a **VU-style gain-reduction meter**: cream face, brass bezel, glass sheen, 0–20 dB scale (square-root spacing), red
-  from 10 dB, needle pivot hidden below the face, "GAIN REDUCTION" and "dB" in spaced caps. Under it the **machined Amount knob** (150 px:
-  knurled ring, brass pointer, 41 tick LEDs lit in champagne up to the value, a cream tick marking the smart amount) with the value in the serif
-  ("45%") and "AMOUNT · ✦ SMART AT 35".
-- **Fine-control rail:** small knobs on one line, no boxes: Thresh, Ratio, Attack, Release | Knee, Mix, Output, values in mono, labels in spaced
-  caps, ✦ on ones Smart set. Right side, as quiet links: Listen to, Bands, Then (＋ Compressor), and the outlined **More ⌄**.
-- **Motion:** needle has VU ballistics (about 300 ms), Amount ticks light in sequence as you turn, Listen & set sweeps the needle once while it
-  measures. Nothing else animates.
-- **Themes:** the device panel keeps its dark finish in every theme, like a piece of hardware on the desk; text inside uses its own inks
-  (#F6EBD2, #F2E6CC, #A8A193, #8A857A, #6B655A), not theme tokens. Checked in Daylight and Riso.
+### 4c. The finish: how the window looks by default (`7-Compressor.png`, values in `reference-Comp4.dc.html`)
+Sections 4 and 4b say *what* is in the window; this says how it looks. Jamie found the first luxe try (brown waveform, cream VU meter, small
+knobs) still ugly; this refined look replaces it. Principles: restraint, one accent colour, real data drawn well, no boxes.
+- **Panel:** 16 px corners, graphite gradient (#141518 → #0F1012), 1 px hairline border rgba(255,255,255,.07), faint top highlight, soft
+  shadow. Sections split by hairlines only. Inks: #EEECE8 text, #8D8F95 secondary, #5D6066 labels; one accent, champagne #E3C58E; the part
+  colour (here #E9A59B) only for the audio.
+- **Header:** part name in the serif (28 px) with "COMPRESSOR" in spaced caps beside it. The five types are plain text tabs on one hairline;
+  the chosen one is in the text colour with a 1.5 px champagne underline. Right: A / B, Hear removed, Presets, × as quiet text.
+- **Smart line:** a small ✦ in a thin champagne circle, one sentence ("Smooth, about 3 dB — evens out the loud words…"), "2 notes", and the
+  only filled button, **Listen & set** (champagne pill).
+- **Display:** a real waveform, mirrored around a centre line: phrases with true silence between them, rounded word shapes, fine noise
+  texture (not spikes). Output is the part colour with a soft vertical gradient; the input shows as a faint grey ghost only where it is louder
+  (so you see exactly what was taken off). Threshold = two faint dotted champagne lines. Above it, a separate **gain reduction lane** (label in
+  spaced caps, champagne line with a fading fill); the biggest reduction gets a dot and a tiny label ("“home” −9 dB"). Bar numbers and section
+  names in small caps at the bottom.
+- **Hero column (320 px):** one **Amount knob** (220 px): matte graphite body, champagne pointer, the value in the serif inside ("45") with
+  "AMOUNT" under it; an outer thin champagne arc for the amount, a cream dot for the smart amount, and an inner part-colour arc showing the live
+  gain reduction. Under it two readouts split by a hairline: "−3.4 dB REDUCING" and "35 ✦ SMART"; then thin IN and OUT meters with a peak tick.
+- **Parameter row:** no knobs. Each parameter is a column: spaced-caps label (✦ if Smart set it), the value large and light (17 px, tabular),
+  and a 2 px line underneath showing its position (champagne if Smart set it). Drag the value up or down, or click to type. Right: "Listen to ·
+  Itself", "Bands · Off" and an outlined **More** (opens the 4b panels).
+- **Motion:** the waveform scrolls with playback, the gain reduction line draws live, the inner ring follows it with gentle ballistics; nothing
+  else moves.
+- **Themes:** device panel, dark in every theme, own inks inside (rule in `docs/design/panels/README.md`). Checked in Daylight.
 
 ## Tests (tests/web/mixing.test.js + synth_test)
 - Every problem's words map to it.
