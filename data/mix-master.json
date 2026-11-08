@@ -1,1525 +1,1942 @@
 {
-  "version": 1,
-  "about": "Semitone's mixing and mastering brain: engineer profiles (mix and master, based on how they're known to work; nothing is copied), the best documented profile for each style, how each instrument registers on the spectrum, how parts interact, common problems in plain words with how to find and fix them, destination targets, and the Calibrate workflow. Agreed with Jamie 8 Nov 2026.",
-  "engineers": [
+ "version": 1,
+ "about": "Semitone's mixing and mastering brain: engineer profiles (mix and master, based on how they're known to work; nothing is copied), the best documented profile for each style, how each instrument registers on the spectrum, how parts interact, common problems in plain words with how to find and fix them, destination targets, and the Calibrate workflow. Agreed with Jamie 8 Nov 2026.",
+ "engineers": [
+  {
+   "id": "scheps",
+   "name": "Andrew Scheps-style mix",
+   "role": "mix",
+   "styles": [
+    "rhcp",
+    "rhcp-funk",
+    "fleetwood",
+    "psych",
+    "gaga-mayhem"
+   ],
+   "src": [
+    "https://audiotechnology.com/?p=32546",
+    "https://en.audiofanzine.com/sound-technique/editorial/articles/mixing-in-parallel-part-1.html"
+   ],
+   "c": "high",
+   "philosophy": "The song comes first: be a fan of it and find its best version. Drums first, the lead vocal last so it fits what's built around it. Lots of shared parallel compression and a rear bus that glues everything except the drums.",
+   "priorities": [
+    "the song",
+    "drums first",
+    "parallel glue",
+    "vocal last"
+   ],
+   "moves": [
     {
-      "id": "scheps",
-      "name": "Andrew Scheps-style mix",
-      "role": "mix",
-      "styles": [
-        "rhcp",
-        "rhcp-funk",
-        "fleetwood",
-        "psych",
-        "gaga-mayhem"
-      ],
-      "src": [
-        "https://audiotechnology.com/?p=32546",
-        "https://en.audiofanzine.com/sound-technique/editorial/articles/mixing-in-parallel-part-1.html"
-      ],
-      "c": "high",
-      "philosophy": "The song comes first: be a fan of it and find its best version. Drums first, the lead vocal last so it fits what's built around it. Lots of shared parallel compression and a rear bus that glues everything except the drums.",
-      "priorities": [
-        "the song",
-        "drums first",
-        "parallel glue",
-        "vocal last"
-      ],
-      "moves": [
-        {
-          "id": "drum-parallel",
-          "what": "Shared parallel compression for the drums: one for kick and snare, one for the whole kit, blended under the dry drums",
-          "op": "bus:drums:parallel{ratio:8,attack:fast,release:auto,blend:35%}",
-          "why": "Shared compressors make the kit move together"
-        },
-        {
-          "id": "rear-bus",
-          "what": "A 'rear bus': everything except drums through one glue compressor, blended in",
-          "op": "bus:music+vocals:parallel{glue,blend:30%}",
-          "why": "Glues the music without squashing the drums"
-        },
-        {
-          "id": "vocal-last",
-          "what": "Balance the vocal last, after the band is set",
-          "op": "order:lead:last",
-          "why": "The vocal fits around the arrangement"
-        },
-        {
-          "id": "character-not-clinical",
-          "what": "Use character EQ and saturation when something is wrong, not surgical cuts first",
-          "op": "eq:any:broad;sat:light",
-          "why": "Musical colour over clinical correction"
-        }
-      ],
-      "mixOrder": [
-        "drums",
-        "bass",
-        "music",
-        "vocals"
-      ]
+     "id": "drum-parallel",
+     "what": "Shared parallel compression for the drums: one for kick and snare, one for the whole kit, blended under the dry drums",
+     "op": "bus:drums:parallel{ratio:8,attack:fast,release:auto,blend:35%}",
+     "why": "Shared compressors make the kit move together"
     },
     {
-      "id": "cla",
-      "name": "Chris Lord-Alge-style mix",
-      "role": "mix",
-      "styles": [
-        "rhcp",
-        "fleetwood-blues",
-        "gaga-joanne",
-        "country"
-      ],
-      "src": [
-        "https://www.soundonsound.com/techniques/secrets-mix-engineers-chris-lord-alge"
-      ],
-      "c": "high",
-      "philosophy": "Fast, bright and punchy. All faders up to find the balance, then shape the song in short passes with fader rides more than EQ. Compression mostly moves only a few dB; impact comes from dynamics and rides, not limiting. Mixes quietly.",
-      "priorities": [
-        "balance first",
-        "rides over EQ",
-        "brightness",
-        "punch"
-      ],
-      "moves": [
-        {
-          "id": "faders-up",
-          "what": "Start with every fader up and balance by ear before processing",
-          "op": "order:balance-first",
-          "why": "Balance is most of the mix"
-        },
-        {
-          "id": "ride-sections",
-          "what": "Ride faders section by section (15–30 seconds at a time) instead of heavier compression",
-          "op": "auto:drums,lead:volume:ride{max:±3dB}@all",
-          "why": "Rides keep impact that compression would flatten"
-        },
-        {
-          "id": "bright-guitars",
-          "what": "Brighten guitars around 8 kHz and piano around 5 kHz",
-          "op": "eq:chords:shelf{+2dB@8kHz};eq:keys:bell{+2dB@5kHz}",
-          "why": "Bright parts cut through a dense rock mix"
-        },
-        {
-          "id": "bass-top",
-          "what": "Add top end to the bass so it still reads when heavy guitars come in",
-          "op": "eq:bass:bell{+2.5dB@1.2kHz,q:1}",
-          "why": "The bass's attack carries it in a busy mix"
-        },
-        {
-          "id": "kick-mids",
-          "what": "Cut the kick's mids and add top to the snare",
-          "op": "eq:drums:kick{-4dB@350Hz};eq:drums:snare{+2dB@6kHz}",
-          "why": "Clear, punchy drums"
-        },
-        {
-          "id": "vocal-1176",
-          "what": "Fast compression and tempo-synced delays on the vocal, then ride it forward",
-          "op": "comp:lead{fast,4-7dB};send:lead:echo{1/4,sync}",
-          "why": "A forward, consistent vocal"
-        }
-      ],
-      "monitorQuiet": true
+     "id": "rear-bus",
+     "what": "A 'rear bus': everything except drums through one glue compressor, blended in",
+     "op": "bus:music+vocals:parallel{glue,blend:30%}",
+     "why": "Glues the music without squashing the drums"
     },
     {
-      "id": "elmhirst",
-      "name": "Tom Elmhirst-style mix",
-      "role": "mix",
-      "styles": [
-        "lana-btd",
-        "lana-uv",
-        "lana-honeymoon",
-        "lana-nfr",
-        "lana-bb",
-        "jazz"
-      ],
-      "src": [
-        "https://www.soundonsound.com/techniques/secrets-mix-engineers-tom-elmhirst",
-        "https://www.audiotechnology.com/features/interview/vox-pop-tom-elmhirst"
-      ],
-      "c": "high",
-      "philosophy": "Warmth and feel. The vocal is warm, never harsh, and gets the most time. Problem frequencies are removed with narrow, deep notches found by sweeping. Few effects, chosen for character (springs), and moving with the song. If it feels good, it is good.",
-      "priorities": [
-        "warm vocal",
-        "surgical notches",
-        "few effects",
-        "feel"
-      ],
-      "moves": [
-        {
-          "id": "sweep-notch",
-          "what": "Find and notch ringing or harsh frequencies on the vocal with narrow cuts",
-          "op": "eq:lead:find-resonances{max:4,depth:-6..-18dB,q:8}",
-          "why": "Removes what's unpleasant without dulling the voice"
-        },
-        {
-          "id": "two-stage-vocal",
-          "what": "Two compressors on the vocal: a fast one for peaks, a slow one for level",
-          "op": "comp:lead{fast,peaks,3dB}+comp:lead{slow,level,3dB}",
-          "why": "Natural but steady vocal"
-        },
-        {
-          "id": "midrange-room",
-          "what": "Carve the midrange where horns, keys and drums compete",
-          "op": "eq:interaction:mid-masking{1-4kHz}",
-          "why": "Clarity in a busy arrangement"
-        },
-        {
-          "id": "spring-rides",
-          "what": "A spring-style reverb on drums that rises in the chorus and bridge",
-          "op": "send:drums:spring@verse:low,chorus:high",
-          "why": "Space that moves with the song"
-        },
-        {
-          "id": "low-cut-spill",
-          "what": "Low-cut instruments that don't need low end (piano, keys)",
-          "op": "eq:chords,keys:highpass{120Hz}",
-          "why": "Less mud, more room for bass"
-        }
-      ]
+     "id": "vocal-last",
+     "what": "Balance the vocal last, after the band is set",
+     "op": "order:lead:last",
+     "why": "The vocal fits around the arrangement"
     },
     {
-      "id": "ghenea",
-      "name": "Serban Ghenea-style mix",
-      "role": "mix",
-      "styles": [
-        "chappell",
-        "gaga",
-        "charli-pop",
-        "charli-pop2",
-        "edm"
-      ],
-      "src": [
-        "https://waves.com/waves-grammys-2021-serban-ghenea-taylor-swift",
-        "https://www.soundonsound.com/people/mix-review-october-2011"
-      ],
-      "c": "high",
-      "philosophy": "No fixed formula: the song dictates what to do. Find the song's emotional core and maximise it. Polished, precise pop with a clear, controlled lead vocal and tidy de-essing.",
-      "priorities": [
-        "song first",
-        "emotional core",
-        "polish",
-        "vocal clarity"
-      ],
-      "moves": [
-        {
-          "id": "vocal-deess",
-          "what": "Careful de-essing and level control on every vocal",
-          "op": "dyn:lead,harmony:deess{5.5-8kHz,4dB}",
-          "why": "Bright pop vocals without sting"
-        },
-        {
-          "id": "vocal-on-top",
-          "what": "Keep the lead above the track at all times, riding words that dip",
-          "op": "auto:lead:volume:ride{max:±2dB}",
-          "why": "The hook is the product"
-        },
-        {
-          "id": "emotion-peak",
-          "what": "Push the element that carries the emotion in each section",
-          "op": "balance:feature-per-section",
-          "why": "Maximise what moves you"
-        },
-        {
-          "id": "clean-low",
-          "what": "Tight, mono low end with kick and bass taking turns",
-          "op": "dyn:bass:sidechain{from:kick,2-3dB};width:bass:mono<120Hz",
-          "why": "Clean, loud-friendly low end"
-        }
-      ]
-    },
-    {
-      "id": "marroquin",
-      "name": "Manny Marroquin-style mix",
-      "role": "mix",
-      "styles": [
-        "chappell",
-        "gaga",
-        "charli",
-        "jazz",
-        "edm"
-      ],
-      "src": [
-        "https://www.crutchfield.com/learn/manny-marroquin-interview.html",
-        "https://tapeop.com/interviews/109/manny-marroquin"
-      ],
-      "c": "high",
-      "philosophy": "Starts with feeling: is it moody or bright? Mixing is a performance with constant moves of faders, EQ and effects. Natural-sounding results that respect the artist's identity over technical perfection.",
-      "priorities": [
-        "feel",
-        "performance",
-        "natural",
-        "artist identity"
-      ],
-      "moves": [
-        {
-          "id": "mood-first",
-          "what": "Set the overall tone from the song's mood (darker for moody, brighter for bright)",
-          "op": "eq:master:tilt{from:emotion}",
-          "why": "Tone serves the feeling"
-        },
-        {
-          "id": "performed-mix",
-          "what": "Make the mix move: rides on effects and EQ through the song",
-          "op": "auto:any:fx:ride",
-          "why": "Mixes feel alive"
-        },
-        {
-          "id": "respect-character",
-          "what": "Leave intentional character (tuning, distortion, timing) alone",
-          "op": "guard:keep-character",
-          "why": "The artist's identity comes first"
-        }
-      ]
-    },
-    {
-      "id": "everett",
-      "name": "Shawn Everett-style mix",
-      "role": "mix",
-      "styles": [
-        "psych",
-        "tiersen-postrock",
-        "country",
-        "fleetwood",
-        "lana-nfr"
-      ],
-      "src": [
-        "https://www.soundonsound.com/techniques/inside-track-alabama-shakes-sound-color",
-        "https://reverb.com/news/interview-shawn-everett",
-        "https://recordingstudiorockstars.libsyn.com/rsr270-shawn-everett-mixing-alabama-shakes-sound-color-and-kacey-musgraves-golden-hour"
-      ],
-      "c": "high",
-      "philosophy": "Sound as paint: re-amping, tape and saturation to give parts character; the widest range, lowest lows and highest highs both filled. Loudness from balance, not limiting. Parallel drum compression blended with a clean bus.",
-      "priorities": [
-        "character",
-        "full range",
-        "balance for loudness",
-        "experiment"
-      ],
-      "moves": [
-        {
-          "id": "character-sat",
-          "what": "Warm and thicken parts with saturation (tape, drive), darker on the snare",
-          "op": "sat:any:tape{light};sat:drums:snare{darken}",
-          "why": "Character over clean"
-        },
-        {
-          "id": "full-range",
-          "what": "Make sure both the lowest lows and the highest highs are present",
-          "op": "eq:master:check{sub:present,air:present}",
-          "why": "A wide, open record"
-        },
-        {
-          "id": "drum-parallel-clean",
-          "what": "Parallel compressed drum bus blended with a clean drum bus",
-          "op": "bus:drums:parallel{blend:40%}",
-          "why": "Weight without losing transients"
-        },
-        {
-          "id": "loud-by-balance",
-          "what": "Get loudness from balance so the master needs little limiting",
-          "op": "guard:limiter<=2dB",
-          "why": "Dynamics survive mastering"
-        }
-      ]
-    },
-    {
-      "id": "mikedean-mix",
-      "name": "Mike Dean-style mix",
-      "role": "mix",
-      "styles": [
-        "edm",
-        "charli-mff"
-      ],
-      "src": [
-        "https://www.soundonsound.com/people/mike-dean"
-      ],
-      "c": "high",
-      "philosophy": "Quick passes, keep the session's character, don't reinvent the song. Producer effects on vocals are part of the sound. Familiar tools, big synths and low end.",
-      "priorities": [
-        "speed",
-        "keep the demo's character",
-        "low end",
-        "synths"
-      ],
-      "moves": [
-        {
-          "id": "keep-fx",
-          "what": "Keep the producer's vocal effects instead of starting clean",
-          "op": "guard:keep-character",
-          "why": "They're part of the artist's sound"
-        },
-        {
-          "id": "short-passes",
-          "what": "Calibrate in short passes, listening fresh each time",
-          "op": "order:short-passes",
-          "why": "Avoids overworking"
-        },
-        {
-          "id": "sub-weight",
-          "what": "Weighty sub, mono and controlled",
-          "op": "width:bass:mono<120Hz;dyn:bass:limit{soft}",
-          "why": "Hip-hop low end translates"
-        }
-      ]
-    },
-    {
-      "id": "meyerson",
-      "name": "Alan Meyerson-style score mix",
-      "role": "mix",
-      "styles": [
-        "cinematic",
-        "strangerthings",
-        "tiersen",
-        "tiersen-piano"
-      ],
-      "src": [
-        "https://film-mixing.com/2016/07/28/film-score-mixing-with-alan-meyerson/",
-        "https://www.puremix.com/library/tutorials/interviews/alan-meyerson-interview"
-      ],
-      "c": "high",
-      "philosophy": "Balance first, then polish. Process stems (groups) rather than single tracks; pan like an orchestra on stage; several reverbs with low and high cuts on the sends; long reverbs to feather note endings; don't build mixes in the middle.",
-      "priorities": [
-        "balance",
-        "stems",
-        "orchestral placement",
-        "depth"
-      ],
-      "moves": [
-        {
-          "id": "stem-process",
-          "what": "Process groups (strings, brass, percussion) instead of single parts",
-          "op": "bus:group:by-family",
-          "why": "Coherent sections"
-        },
-        {
-          "id": "orchestra-pan",
-          "what": "Pan by orchestral seating",
-          "op": "pan:by-family:orchestra",
-          "why": "Natural stage picture"
-        },
-        {
-          "id": "reverb-sends-filtered",
-          "what": "Low- and high-cut every reverb send",
-          "op": "eq:returns:band{150Hz..9kHz}",
-          "why": "Space without mud or fizz"
-        },
-        {
-          "id": "feather",
-          "what": "Longer reverb to feather note endings in slow passages",
-          "op": "send:pad,strings:hall{long}@slow",
-          "why": "Endings don't drop away"
-        },
-        {
-          "id": "back-off-fifth",
-          "what": "After setting a process, back it off by about a fifth",
-          "op": "guard:reduce-20%",
-          "why": "Leaves room for parts to interact"
-        },
-        {
-          "id": "not-too-loud",
-          "what": "Keep the master below loud pop levels",
-          "op": "master:target{-16LUFS}",
-          "why": "Room for the final dub"
-        }
-      ]
-    },
-    {
-      "id": "katz",
-      "name": "Bob Katz-style master",
-      "role": "master",
-      "styles": [
-        "jazz",
-        "cinematic",
-        "tiersen",
-        "tiersen-piano",
-        "lana-bb",
-        "fleetwood"
-      ],
-      "src": [
-        "https://uaudio.com/webzine/2006/march/text/content2.html",
-        "https://www.uaudio.com/blog/mastering-with-the-masters/"
-      ],
-      "c": "high",
-      "philosophy": "Dynamics and calibrated listening. Measure average loudness (the K-System), keep peaks as protection only, and don't chase loudness: louder masters lose quality and fatigue listeners.",
-      "priorities": [
-        "dynamic range",
-        "calibration",
-        "quality over loudness"
-      ],
-      "moves": [
-        {
-          "id": "k-system",
-          "what": "Master to a K-System scale: K-20 for wide-range music, K-14 for most pop and home listening, K-12 for broadcast",
-          "op": "master:meter{K-14|K-20|K-12}",
-          "why": "Consistent, uncompromised loudness"
-        },
-        {
-          "id": "gentle-limit",
-          "what": "Limit only peaks; aim for a healthy crest factor",
-          "op": "master:limiter{max:2dB,ceiling:-1dBTP}",
-          "why": "Keeps punch and clarity"
-        },
-        {
-          "id": "lossy-safe",
-          "what": "Leave headroom so streaming codecs don't distort",
-          "op": "master:truepeak{-1dBTP}",
-          "why": "Clean on every platform"
-        }
-      ],
-      "targets": {
-        "stream": {
-          "lufs": [
-            -16,
-            -12
-          ],
-          "peak": -1
-        },
-        "wide": {
-          "lufs": [
-            -20,
-            -16
-          ],
-          "peak": -1
-        }
-      }
-    },
-    {
-      "id": "ludwig",
-      "name": "Bob Ludwig-style master",
-      "role": "master",
-      "styles": [
-        "rhcp",
-        "fleetwood",
-        "fleetwood-blues",
-        "country",
-        "psych",
-        "gaga-joanne"
-      ],
-      "src": [
-        "https://www.christiancastle.com/articles/2014/1/16/recording-tips-for-the-the-loudness-wars-an-interview-with-mastering-great-bob-ludwig",
-        "https://tapeop.com/interviews/105/bob-ludwig"
-      ],
-      "c": "high",
-      "philosophy": "Accuracy and translation: master on a flat, accurate system so it sounds right everywhere, from earbuds to car. Compression carries a live performance's energy, but never so much that it sucks the life out.",
-      "priorities": [
-        "translation",
-        "energy",
-        "not over-loud"
-      ],
-      "moves": [
-        {
-          "id": "translate",
-          "what": "Check on phone, earbuds, car and studio; fix the worst translation first",
-          "op": "master:listen-on:all",
-          "why": "Sounds right everywhere"
-        },
-        {
-          "id": "centre-low",
-          "what": "Keep kick and bass centred; fold low bass to mono",
-          "op": "width:master:mono<100Hz",
-          "why": "Solid on earbuds and vinyl"
-        },
-        {
-          "id": "energy-not-squash",
-          "what": "Compression for energy, capped before the life goes",
-          "op": "master:comp{2dB};guard:crest>=8dB",
-          "why": "Punch without fatigue"
-        }
-      ],
-      "targets": {
-        "stream": {
-          "lufs": [
-            -14,
-            -10
-          ],
-          "peak": -1
-        }
-      }
-    },
-    {
-      "id": "lazar",
-      "name": "Emily Lazar-style master",
-      "role": "master",
-      "styles": [
-        "lana-uv",
-        "lana-honeymoon",
-        "lana-nfr",
-        "lana-btd",
-        "charli",
-        "psych",
-        "chappell"
-      ],
-      "src": [
-        "https://musictech.com/features/interviews/emily-lazar/",
-        "https://www.uaudio.com/blogs/ua/emily-lazar"
-      ],
-      "c": "high",
-      "philosophy": "Listening first and aligning with the artist's goal. No fixed method: each project shapes the chain. Analogue-style colour and glue (Pultec-style lifts, glue compression); stem mastering when a mix needs help. A clear target and A/B to avoid endless tweaking.",
-      "priorities": [
-        "listening",
-        "artist's goal",
-        "colour & glue",
-        "clear target"
-      ],
-      "moves": [
-        {
-          "id": "ask-goal",
-          "what": "Ask what the artist wants (warmer, wider, louder, more like a reference) before touching anything",
-          "op": "ask:goal",
-          "why": "Masters serve the vision"
-        },
-        {
-          "id": "pultec-lift",
-          "what": "Broad, musical low and high lifts with a slight dip around 400 Hz",
-          "op": "master:eq{+1.5dB@60Hz shelf,-1dB@400Hz,+1.5dB@12kHz shelf}",
-          "why": "Colour and polish"
-        },
-        {
-          "id": "glue",
-          "what": "Gentle glue compression across the mix",
-          "op": "master:comp{glue,1-2dB}",
-          "why": "Holds the mix together"
-        },
-        {
-          "id": "stems-if-needed",
-          "what": "If one part is the problem, fix it in the stem, not the whole master",
-          "op": "master:stem-fix",
-          "why": "Surgical help without collateral damage"
-        },
-        {
-          "id": "ab-target",
-          "what": "Set a target, A/B against it level-matched, and stop when it's met",
-          "op": "master:ab{level-matched}",
-          "why": "Avoids over-processing"
-        }
-      ]
-    },
-    {
-      "id": "merrill",
-      "name": "Randy Merrill-style master (low confidence)",
-      "role": "master",
-      "styles": [
-        "gaga",
-        "chappell",
-        "charli-pop",
-        "charli-pop2",
-        "edm"
-      ],
-      "src": [
-        "https://en.wikipedia.org/wiki/Randy_Merrill",
-        "https://mixwiththemasters.com/masters/randy-merrill"
-      ],
-      "c": "low",
-      "philosophy": "Credits on modern pop (Adele, Ariana Grande, Lady Gaga, Mark Ronson). His methods aren't described in our sources, so this profile uses general modern-pop mastering norms and says so on every card.",
-      "priorities": [
-        "competitive pop loudness",
-        "clarity",
-        "translation"
-      ],
-      "moves": [
-        {
-          "id": "pop-loud",
-          "what": "Competitive but clean pop loudness",
-          "op": "master:target{-9..-7LUFS};guard:crest>=6dB",
-          "why": "Holds up next to current pop (stand-in)"
-        },
-        {
-          "id": "bright-clear",
-          "what": "Clear top end, controlled low end",
-          "op": "master:eq{tilt:+0.5dB}",
-          "why": "Pop clarity (stand-in)"
-        }
-      ],
-      "standIn": true
+     "id": "character-not-clinical",
+     "what": "Use character EQ and saturation when something is wrong, not surgical cuts first",
+     "op": "eq:any:broad;sat:light",
+     "why": "Musical colour over clinical correction"
     }
-  ],
-  "house": {
-    "id": "semitone",
-    "name": "Semitone house profile",
-    "role": "both",
-    "styles": [],
-    "src": [],
-    "c": "medium",
-    "philosophy": "Mixing and mastering best practice for the genre, used where no engineer profile is researched yet. Says so on every card.",
-    "priorities": [
-      "best practice"
-    ],
-    "moves": []
+   ],
+   "mixOrder": [
+    "drums",
+    "bass",
+    "music",
+    "vocals"
+   ]
   },
-  "bestFor": {
-    "chappell": {
-      "mix": "ghenea",
-      "master": "lazar",
-      "why": "closest documented approach to this style; change it any time"
+  {
+   "id": "cla",
+   "name": "Chris Lord-Alge-style mix",
+   "role": "mix",
+   "styles": [
+    "rhcp",
+    "fleetwood-blues",
+    "gaga-joanne",
+    "country"
+   ],
+   "src": [
+    "https://www.soundonsound.com/techniques/secrets-mix-engineers-chris-lord-alge"
+   ],
+   "c": "high",
+   "philosophy": "Fast, bright and punchy. All faders up to find the balance, then shape the song in short passes with fader rides more than EQ. Compression mostly moves only a few dB; impact comes from dynamics and rides, not limiting. Mixes quietly.",
+   "priorities": [
+    "balance first",
+    "rides over EQ",
+    "brightness",
+    "punch"
+   ],
+   "moves": [
+    {
+     "id": "faders-up",
+     "what": "Start with every fader up and balance by ear before processing",
+     "op": "order:balance-first",
+     "why": "Balance is most of the mix"
     },
-    "gaga": {
-      "mix": "ghenea",
-      "master": "merrill",
-      "why": "closest documented approach to this style; change it any time"
+    {
+     "id": "ride-sections",
+     "what": "Ride faders section by section (15–30 seconds at a time) instead of heavier compression",
+     "op": "auto:drums,lead:volume:ride{max:±3dB}@all",
+     "why": "Rides keep impact that compression would flatten"
     },
-    "gaga-joanne": {
-      "mix": "cla",
-      "master": "ludwig",
-      "why": "closest documented approach to this style; change it any time"
+    {
+     "id": "bright-guitars",
+     "what": "Brighten guitars around 8 kHz and piano around 5 kHz",
+     "op": "eq:chords:shelf{+2dB@8kHz};eq:keys:bell{+2dB@5kHz}",
+     "why": "Bright parts cut through a dense rock mix"
     },
-    "gaga-mayhem": {
-      "mix": "scheps",
-      "master": "merrill",
-      "why": "closest documented approach to this style; change it any time"
+    {
+     "id": "bass-top",
+     "what": "Add top end to the bass so it still reads when heavy guitars come in",
+     "op": "eq:bass:bell{+2.5dB@1.2kHz,q:1}",
+     "why": "The bass's attack carries it in a busy mix"
     },
-    "fleetwood": {
-      "mix": "scheps",
-      "master": "ludwig",
-      "why": "closest documented approach to this style; change it any time"
+    {
+     "id": "kick-mids",
+     "what": "Cut the kick's mids and add top to the snare",
+     "op": "eq:drums:kick{-4dB@350Hz};eq:drums:snare{+2dB@6kHz}",
+     "why": "Clear, punchy drums"
     },
-    "fleetwood-blues": {
-      "mix": "cla",
-      "master": "ludwig",
-      "why": "closest documented approach to this style; change it any time"
-    },
-    "rhcp": {
-      "mix": "scheps",
-      "master": "ludwig",
-      "why": "closest documented approach to this style; change it any time"
-    },
-    "rhcp-funk": {
-      "mix": "scheps",
-      "master": "ludwig",
-      "why": "closest documented approach to this style; change it any time"
-    },
-    "tiersen": {
-      "mix": "meyerson",
-      "master": "katz",
-      "why": "closest documented approach to this style; change it any time"
-    },
-    "tiersen-piano": {
-      "mix": "meyerson",
-      "master": "katz",
-      "why": "closest documented approach to this style; change it any time"
-    },
-    "tiersen-postrock": {
-      "mix": "everett",
-      "master": "katz",
-      "why": "closest documented approach to this style; change it any time"
-    },
-    "strangerthings": {
-      "mix": "meyerson",
-      "master": "katz",
-      "why": "closest documented approach to this style; change it any time"
-    },
-    "jazz": {
-      "mix": "elmhirst",
-      "master": "katz",
-      "why": "closest documented approach to this style; change it any time"
-    },
-    "charli": {
-      "mix": "marroquin",
-      "master": "lazar",
-      "why": "closest documented approach to this style; change it any time"
-    },
-    "charli-pop": {
-      "mix": "ghenea",
-      "master": "merrill",
-      "why": "closest documented approach to this style; change it any time"
-    },
-    "charli-pop2": {
-      "mix": "ghenea",
-      "master": "merrill",
-      "why": "closest documented approach to this style; change it any time"
-    },
-    "charli-mff": {
-      "mix": "mikedean-mix",
-      "master": "merrill",
-      "why": "closest documented approach to this style; change it any time"
-    },
-    "lana-btd": {
-      "mix": "elmhirst",
-      "master": "lazar",
-      "why": "closest documented approach to this style; change it any time"
-    },
-    "lana-uv": {
-      "mix": "elmhirst",
-      "master": "lazar",
-      "why": "closest documented approach to this style; change it any time"
-    },
-    "lana-honeymoon": {
-      "mix": "elmhirst",
-      "master": "lazar",
-      "why": "closest documented approach to this style; change it any time"
-    },
-    "lana-nfr": {
-      "mix": "everett",
-      "master": "lazar",
-      "why": "closest documented approach to this style; change it any time"
-    },
-    "lana-bb": {
-      "mix": "elmhirst",
-      "master": "katz",
-      "why": "closest documented approach to this style; change it any time"
-    },
-    "cinematic": {
-      "mix": "meyerson",
-      "master": "katz",
-      "why": "closest documented approach to this style; change it any time"
-    },
-    "country": {
-      "mix": "everett",
-      "master": "ludwig",
-      "why": "closest documented approach to this style; change it any time"
-    },
-    "edm": {
-      "mix": "ghenea",
-      "master": "merrill",
-      "why": "closest documented approach to this style; change it any time"
-    },
-    "psych": {
-      "mix": "everett",
-      "master": "ludwig",
-      "why": "closest documented approach to this style; change it any time"
+    {
+     "id": "vocal-1176",
+     "what": "Fast compression and tempo-synced delays on the vocal, then ride it forward",
+     "op": "comp:lead{fast,4-7dB};send:lead:echo{1/4,sync}",
+     "why": "A forward, consistent vocal"
     }
+   ],
+   "monitorQuiet": true
   },
-  "bands": [
+  {
+   "id": "elmhirst",
+   "name": "Tom Elmhirst-style mix",
+   "role": "mix",
+   "styles": [
+    "lana-btd",
+    "lana-uv",
+    "lana-honeymoon",
+    "lana-nfr",
+    "lana-bb",
+    "jazz"
+   ],
+   "src": [
+    "https://www.soundonsound.com/techniques/secrets-mix-engineers-tom-elmhirst",
+    "https://www.audiotechnology.com/features/interview/vox-pop-tom-elmhirst"
+   ],
+   "c": "high",
+   "philosophy": "Warmth and feel. The vocal is warm, never harsh, and gets the most time. Problem frequencies are removed with narrow, deep notches found by sweeping. Few effects, chosen for character (springs), and moving with the song. If it feels good, it is good.",
+   "priorities": [
+    "warm vocal",
+    "surgical notches",
+    "few effects",
+    "feel"
+   ],
+   "moves": [
     {
-      "id": "sub",
-      "range": "20–60 Hz",
-      "means": "felt more than heard; kick and bass fundamentals"
+     "id": "sweep-notch",
+     "what": "Find and notch ringing or harsh frequencies on the vocal with narrow cuts",
+     "op": "eq:lead:find-resonances{max:4,depth:-6..-18dB,q:8}",
+     "why": "Removes what's unpleasant without dulling the voice"
     },
     {
-      "id": "bass",
-      "range": "60–120 Hz",
-      "means": "weight and punch"
+     "id": "two-stage-vocal",
+     "what": "Two compressors on the vocal: a fast one for peaks, a slow one for level",
+     "op": "comp:lead{fast,peaks,3dB}+comp:lead{slow,level,3dB}",
+     "why": "Natural but steady vocal"
     },
     {
-      "id": "warmth",
-      "range": "120–250 Hz",
-      "means": "body; too much is woolly"
+     "id": "midrange-room",
+     "what": "Carve the midrange where horns, keys and drums compete",
+     "op": "eq:interaction:mid-masking{1-4kHz}",
+     "why": "Clarity in a busy arrangement"
     },
     {
-      "id": "mud",
-      "range": "250–500 Hz",
-      "means": "where mixes get muddy"
+     "id": "spring-rides",
+     "what": "A spring-style reverb on drums that rises in the chorus and bridge",
+     "op": "send:drums:spring@verse:low,chorus:high",
+     "why": "Space that moves with the song"
     },
     {
-      "id": "box",
-      "range": "500–1000 Hz",
-      "means": "boxy, honky, nasal"
-    },
-    {
-      "id": "presence",
-      "range": "1–4 kHz",
-      "means": "clarity and attack; the ear's most sensitive zone"
-    },
-    {
-      "id": "harsh",
-      "range": "2.5–5 kHz",
-      "means": "harshness and listening fatigue"
-    },
-    {
-      "id": "sibilance",
-      "range": "5–9 kHz",
-      "means": "s, t, cymbal sizzle"
-    },
-    {
-      "id": "air",
-      "range": "10–20 kHz",
-      "means": "sparkle and openness"
+     "id": "low-cut-spill",
+     "what": "Low-cut instruments that don't need low end (piano, keys)",
+     "op": "eq:chords,keys:highpass{120Hz}",
+     "why": "Less mud, more room for bass"
     }
-  ],
-  "spectrum": {
-    "lead": {
-      "fund": "100–1000 Hz (by voice)",
-      "highpass": "80–120 Hz",
-      "body": "150–300 Hz",
-      "clarity": "2–5 kHz",
-      "sibilance": "5–9 kHz",
-      "air": "10–14 kHz",
-      "watch": [
-        "mud 250–400 Hz",
-        "nasal 800–1.2 kHz",
-        "harsh 2.5–4 kHz",
-        "sibilance"
-      ],
-      "dyn": "de-ess, 2-stage compression"
-    },
-    "harmony": {
-      "highpass": "150 Hz",
-      "watch": [
-        "clash with lead 2–4 kHz",
-        "sibilance stacking"
-      ],
-      "tip": "thinner and darker than the lead"
-    },
-    "chords": {
-      "highpass": "100–150 Hz (unless the only low part)",
-      "watch": [
-        "mud 200–400 Hz",
-        "masks vocal 1–4 kHz"
-      ],
-      "tip": "carve 2–3 dB where the vocal lives"
-    },
-    "pad": {
-      "highpass": "150–200 Hz",
-      "lowpass": "10–12 kHz",
-      "watch": [
-        "fills the mud zone",
-        "masks vocal"
-      ],
-      "tip": "duck under the vocal"
-    },
-    "arp": {
-      "highpass": "250 Hz",
-      "watch": [
-        "harsh 2–5 kHz"
-      ]
-    },
-    "counter": {
-      "highpass": "150 Hz",
-      "watch": [
-        "masks lead 1–4 kHz"
-      ],
-      "tip": "slightly darker or different register than the lead"
-    },
-    "bass": {
-      "fund": "40–120 Hz",
-      "highpass": "25–35 Hz",
-      "attack": "700 Hz–1.5 kHz",
-      "watch": [
-        "fights kick 50–100 Hz",
-        "mud 200–300 Hz"
-      ],
-      "dyn": "compress for even level; mono below 120 Hz"
-    },
-    "bass2": {
-      "tip": "only one part owns the sub; high-pass the other"
-    },
-    "drums": {
-      "kick": "50–80 Hz thump, 2–5 kHz click, cut 300–500 Hz box",
-      "snare": "150–250 Hz body, 5–8 kHz crack",
-      "hats": "highpass 300–500 Hz",
-      "overheads": "watch 2–4 kHz harshness",
-      "watch": [
-        "kick vs bass",
-        "cymbal harshness"
-      ]
-    },
-    "perc": {
-      "highpass": "400 Hz"
-    },
-    "loop": {
-      "highpass": "150 Hz unless it's a bass or drum loop",
-      "watch": [
-        "clashing key, masking"
-      ]
-    },
-    "returns": {
-      "band": "cut below 150–200 Hz and above 8–10 kHz on reverb returns"
-    },
-    "master": {
-      "watch": [
-        "sub energy",
-        "mud build-up",
-        "harshness",
-        "translation"
-      ],
-      "mono": "below 100–120 Hz"
-    }
+   ]
   },
-  "interactions": [
+  {
+   "id": "ghenea",
+   "name": "Serban Ghenea-style mix",
+   "role": "mix",
+   "styles": [
+    "chappell",
+    "gaga",
+    "charli-pop",
+    "charli-pop2",
+    "edm"
+   ],
+   "src": [
+    "https://waves.com/waves-grammys-2021-serban-ghenea-taylor-swift",
+    "https://www.soundonsound.com/people/mix-review-october-2011"
+   ],
+   "c": "high",
+   "philosophy": "No fixed formula: the song dictates what to do. Find the song's emotional core and maximise it. Polished, precise pop with a clear, controlled lead vocal and tidy de-essing.",
+   "priorities": [
+    "song first",
+    "emotional core",
+    "polish",
+    "vocal clarity"
+   ],
+   "moves": [
     {
-      "pair": [
-        "drums.kick",
-        "bass"
-      ],
-      "zone": "40–120 Hz",
-      "fix": [
-        "decide who owns the sub",
-        "sidechain the bass 2–3 dB from the kick",
-        "complementary EQ: dip the bass where the kick peaks"
-      ]
+     "id": "vocal-deess",
+     "what": "Careful de-essing and level control on every vocal",
+     "op": "dyn:lead,harmony:deess{5.5-8kHz,4dB}",
+     "why": "Bright pop vocals without sting"
     },
     {
-      "pair": [
-        "lead",
-        "chords|pad|counter|arp|loop"
-      ],
-      "zone": "1–4 kHz",
-      "fix": [
-        "dynamic EQ dip on the other part only while the vocal sings (−2 to −4 dB)"
-      ]
+     "id": "vocal-on-top",
+     "what": "Keep the lead above the track at all times, riding words that dip",
+     "op": "auto:lead:volume:ride{max:±2dB}",
+     "why": "The hook is the product"
     },
     {
-      "pair": [
-        "chords",
-        "pad"
-      ],
-      "zone": "200–500 Hz",
-      "fix": [
-        "high-pass the pad higher; one part owns the warmth"
-      ]
+     "id": "emotion-peak",
+     "what": "Push the element that carries the emotion in each section",
+     "op": "balance:feature-per-section",
+     "why": "Maximise what moves you"
     },
     {
-      "pair": [
-        "bass",
-        "bass2"
-      ],
-      "zone": "20–120 Hz",
-      "fix": [
-        "one owns the sub; the other high-passed above 120 Hz"
-      ]
-    },
-    {
-      "pair": [
-        "lead",
-        "harmony"
-      ],
-      "zone": "2–8 kHz",
-      "fix": [
-        "harmony darker and de-essed harder; pan the stack"
-      ]
-    },
-    {
-      "pair": [
-        "returns",
-        "everything"
-      ],
-      "zone": "<200 Hz and >10 kHz",
-      "fix": [
-        "band-limit reverb and echo returns"
-      ]
-    },
-    {
-      "pair": [
-        "any",
-        "any"
-      ],
-      "zone": "sum of all parts in 200–400 Hz",
-      "fix": [
-        "find the parts adding most and trim the least important"
-      ]
+     "id": "clean-low",
+     "what": "Tight, mono low end with kick and bass taking turns",
+     "op": "dyn:bass:sidechain{from:kick,2-3dB};width:bass:mono<120Hz",
+     "why": "Clean, loud-friendly low end"
     }
-  ],
-  "problems": [
+   ]
+  },
+  {
+   "id": "marroquin",
+   "name": "Manny Marroquin-style mix",
+   "role": "mix",
+   "styles": [
+    "chappell",
+    "gaga",
+    "charli",
+    "jazz",
+    "edm"
+   ],
+   "src": [
+    "https://www.crutchfield.com/learn/manny-marroquin-interview.html",
+    "https://tapeop.com/interviews/109/manny-marroquin"
+   ],
+   "c": "high",
+   "philosophy": "Starts with feeling: is it moody or bright? Mixing is a performance with constant moves of faders, EQ and effects. Natural-sounding results that respect the artist's identity over technical perfection.",
+   "priorities": [
+    "feel",
+    "performance",
+    "natural",
+    "artist identity"
+   ],
+   "moves": [
     {
-      "id": "muddy",
-      "words": [
-        "muddy",
-        "cloudy",
-        "woolly",
-        "thick"
-      ],
-      "usually": "Too much 200–500 Hz summed across many parts.",
-      "find": "Measure each part's energy in 200–500 Hz while the mix plays; list the top contributors and where in the song it builds up.",
-      "fixes": [
-        "high-pass parts that don't need lows",
-        "dip 250–400 Hz on the 2 biggest contributors (−2 to −4 dB)",
-        "check reverb returns"
-      ],
-      "tools": [
-        "eq",
-        "dyn-eq"
-      ],
-      "limits": "max −6 dB per band; never on the lead without asking"
+     "id": "mood-first",
+     "what": "Set the overall tone from the song's mood (darker for moody, brighter for bright)",
+     "op": "eq:master:tilt{from:emotion}",
+     "why": "Tone serves the feeling"
     },
     {
-      "id": "boomy",
-      "words": [
-        "boomy",
-        "too much bass",
-        "woofy"
-      ],
-      "usually": "Sub and bass energy too high or uncontrolled; often kick and bass fighting.",
-      "find": "Low-band level vs genre target; kick/bass overlap.",
-      "fixes": [
-        "sidechain or complementary EQ kick vs bass",
-        "tame 60–120 Hz resonances",
-        "mono below 120 Hz"
-      ],
-      "tools": [
-        "eq",
-        "sidechain",
-        "width"
-      ],
-      "limits": "keep the genre's low-end target"
+     "id": "performed-mix",
+     "what": "Make the mix move: rides on effects and EQ through the song",
+     "op": "auto:any:fx:ride",
+     "why": "Mixes feel alive"
     },
     {
-      "id": "thin",
-      "words": [
-        "thin",
-        "weak",
-        "no body"
-      ],
-      "usually": "Missing 100–250 Hz, or over-high-passed parts.",
-      "find": "Compare low-mid energy with the genre target; find over-eager high-passes.",
-      "fixes": [
-        "relax high-pass filters",
-        "gentle shelf on the main body part",
-        "saturation for perceived weight"
-      ],
-      "tools": [
-        "eq",
-        "sat"
-      ],
-      "limits": "never add mud back"
-    },
-    {
-      "id": "boxy",
-      "words": [
-        "boxy",
-        "cardboard",
-        "honky",
-        "nasal"
-      ],
-      "usually": "Resonance in 400 Hz–1.2 kHz.",
-      "find": "Sweep for narrow peaks on the suspected part.",
-      "fixes": [
-        "narrow cut on the resonance (−3 to −6 dB)"
-      ],
-      "tools": [
-        "eq"
-      ],
-      "limits": "q ≥ 3"
-    },
-    {
-      "id": "harsh",
-      "words": [
-        "harsh",
-        "piercing",
-        "hurts",
-        "edgy",
-        "fatiguing"
-      ],
-      "usually": "Peaks in 2.5–5 kHz, often from several bright parts or a resonance.",
-      "find": "Find narrow peaks and summed energy 2–5 kHz; flag the loudest contributors.",
-      "fixes": [
-        "dynamic EQ on the peak (acts only when it's loud)",
-        "dip competing parts, not the vocal"
-      ],
-      "tools": [
-        "dyn-eq"
-      ],
-      "limits": "prefer dynamic over static cuts"
-    },
-    {
-      "id": "sibilant",
-      "words": [
-        "too much ess",
-        "sibilant",
-        "s sounds",
-        "spitty"
-      ],
-      "usually": "Sibilance 5–9 kHz on vocals, harmonies or hats.",
-      "find": "Detect s/t events on vocal parts; measure peak vs body.",
-      "fixes": [
-        "de-ess the part (3–6 dB on the s only)",
-        "darken harmonies more than the lead",
-        "check reverb isn't splashing esses"
-      ],
-      "tools": [
-        "deess"
-      ],
-      "limits": "never dull the whole vocal"
-    },
-    {
-      "id": "dull",
-      "words": [
-        "dull",
-        "dark",
-        "lifeless",
-        "closed"
-      ],
-      "usually": "Not enough 8–16 kHz, or masking up top.",
-      "find": "Air-band energy vs genre target.",
-      "fixes": [
-        "gentle high shelf on the master or the key parts",
-        "remove top-end masking from pads"
-      ],
-      "tools": [
-        "eq"
-      ],
-      "limits": "watch sibilance after"
-    },
-    {
-      "id": "buried-vocal",
-      "words": [
-        "can't hear the vocal",
-        "vocal buried",
-        "words unclear"
-      ],
-      "usually": "Vocal too low or masked in 1–4 kHz.",
-      "find": "Vocal-to-music level; masking partners in 1–4 kHz.",
-      "fixes": [
-        "raise and ride the vocal",
-        "dynamic dips on masking parts while the vocal sings",
-        "more consistent compression"
-      ],
-      "tools": [
-        "auto",
-        "dyn-eq",
-        "comp"
-      ],
-      "limits": "never above the genre's vocal level"
-    },
-    {
-      "id": "vocal-too-loud",
-      "words": [
-        "vocal too loud",
-        "sticks out"
-      ],
-      "usually": "Vocal level above genre target or too dry.",
-      "find": "Vocal-to-music level vs target.",
-      "fixes": [
-        "lower 1–2 dB",
-        "a touch more space"
-      ],
-      "tools": [
-        "fader",
-        "send"
-      ],
-      "limits": ""
-    },
-    {
-      "id": "cluttered",
-      "words": [
-        "cluttered",
-        "busy",
-        "messy",
-        "everything at once"
-      ],
-      "usually": "Too many parts in the same register and time.",
-      "find": "part-roles crowd and mask checks.",
-      "fixes": [
-        "mute or thin the least important part in that section",
-        "pan and register separation"
-      ],
-      "tools": [
-        "mute",
-        "pan",
-        "eq"
-      ],
-      "limits": "suggest, never delete parts"
-    },
-    {
-      "id": "no-punch",
-      "words": [
-        "no punch",
-        "flat",
-        "weak drums"
-      ],
-      "usually": "Transients squashed or masked; kick/snare too low.",
-      "find": "Crest factor on drums; transient level vs body.",
-      "fixes": [
-        "parallel compression on drums",
-        "less bus limiting",
-        "transient emphasis on kick and snare"
-      ],
-      "tools": [
-        "comp",
-        "bus"
-      ],
-      "limits": ""
-    },
-    {
-      "id": "squashed",
-      "words": [
-        "squashed",
-        "lifeless",
-        "too compressed",
-        "pumping"
-      ],
-      "usually": "Over-compression or limiting.",
-      "find": "Crest factor, gain reduction totals per bus and master.",
-      "fixes": [
-        "reduce limiter and bus compression",
-        "slower release"
-      ],
-      "tools": [
-        "comp",
-        "limiter"
-      ],
-      "limits": "master crest ≥ 6 dB pop, ≥ 8 dB others"
-    },
-    {
-      "id": "too-wide",
-      "words": [
-        "phasey",
-        "disappears on phone",
-        "too wide"
-      ],
-      "usually": "Out-of-phase stereo content; wide lows.",
-      "find": "Correlation meter; mono fold-down loss per part.",
-      "fixes": [
-        "mono below 120 Hz",
-        "reduce width on offending parts"
-      ],
-      "tools": [
-        "width"
-      ],
-      "limits": "keep mono compatibility"
-    },
-    {
-      "id": "too-narrow",
-      "words": [
-        "narrow",
-        "small",
-        "in the middle"
-      ],
-      "usually": "Everything panned centre, no stereo effects.",
-      "find": "Stereo image width.",
-      "fixes": [
-        "pan supporting parts",
-        "stereo returns",
-        "double-track width"
-      ],
-      "tools": [
-        "pan",
-        "width"
-      ],
-      "limits": ""
-    },
-    {
-      "id": "washy",
-      "words": [
-        "washy",
-        "drowning",
-        "too much reverb"
-      ],
-      "usually": "Reverb too long/loud or low-mid heavy.",
-      "find": "Reverb return level and decay vs tempo.",
-      "fixes": [
-        "shorter decay timed to the tempo",
-        "band-limit returns",
-        "duck reverb under the vocal"
-      ],
-      "tools": [
-        "send",
-        "eq"
-      ],
-      "limits": ""
-    },
-    {
-      "id": "ringing",
-      "words": [
-        "ringing",
-        "whistle",
-        "feedback-like"
-      ],
-      "usually": "A narrow resonance.",
-      "find": "Sweep for sustained narrow peaks.",
-      "fixes": [
-        "narrow notch −6 to −18 dB"
-      ],
-      "tools": [
-        "eq"
-      ],
-      "limits": "q ≥ 6"
-    },
-    {
-      "id": "plosive",
-      "words": [
-        "pops",
-        "p sounds",
-        "thumps"
-      ],
-      "usually": "Plosive low-frequency bursts on vocals.",
-      "find": "Detect low-frequency transients on vocal takes.",
-      "fixes": [
-        "dynamic high-pass on the p only"
-      ],
-      "tools": [
-        "dyn-eq"
-      ],
-      "limits": ""
-    },
-    {
-      "id": "noisy",
-      "words": [
-        "hiss",
-        "noise",
-        "hum",
-        "clicks"
-      ],
-      "usually": "Background noise, mains hum or edit clicks.",
-      "find": "Noise floor in gaps; 50/60 Hz harmonics; discontinuities.",
-      "fixes": [
-        "gate or expand in gaps",
-        "notch hum harmonics",
-        "crossfade edits"
-      ],
-      "tools": [
-        "gate",
-        "eq",
-        "fade"
-      ],
-      "limits": ""
-    },
-    {
-      "id": "uneven",
-      "words": [
-        "levels jump",
-        "inconsistent",
-        "verse too quiet"
-      ],
-      "usually": "Section levels or vocal level vary too much.",
-      "find": "Section loudness vs the energy curve.",
-      "fixes": [
-        "section rides",
-        "bus automation"
-      ],
-      "tools": [
-        "auto"
-      ],
-      "limits": "follow the emotion curve, not flatten it"
-    },
-    {
-      "id": "translation",
-      "words": [
-        "sounds bad on phone",
-        "bad in car",
-        "earbuds"
-      ],
-      "usually": "Mix depends on studio speakers (low end, width, harshness).",
-      "find": "Listen-on simulations: phone, earbuds, car, laptop.",
-      "fixes": [
-        "bass harmonics (saturation) for small speakers",
-        "mono check",
-        "tame 2–4 kHz for earbuds"
-      ],
-      "tools": [
-        "sat",
-        "width",
-        "eq"
-      ],
-      "limits": ""
-    },
-    {
-      "id": "too-quiet",
-      "words": [
-        "too quiet",
-        "not loud enough"
-      ],
-      "usually": "Master below destination target.",
-      "find": "Integrated LUFS vs target.",
-      "fixes": [
-        "more limiting up to the target with crest guard"
-      ],
-      "tools": [
-        "limiter"
-      ],
-      "limits": "stop at the target; streaming turns loud masters down"
-    },
-    {
-      "id": "too-loud",
-      "words": [
-        "distorted",
-        "crunchy master",
-        "clipping"
-      ],
-      "usually": "Over-limited or clipping.",
-      "find": "True peak, inter-sample overs, distortion detection.",
-      "fixes": [
-        "back off the limiter",
-        "true-peak ceiling −1 dBTP"
-      ],
-      "tools": [
-        "limiter"
-      ],
-      "limits": ""
+     "id": "respect-character",
+     "what": "Leave intentional character (tuning, distortion, timing) alone",
+     "op": "guard:keep-character",
+     "why": "The artist's identity comes first"
     }
-  ],
-  "destinations": {
+   ]
+  },
+  {
+   "id": "everett",
+   "name": "Shawn Everett-style mix",
+   "role": "mix",
+   "styles": [
+    "psych",
+    "tiersen-postrock",
+    "country",
+    "fleetwood",
+    "lana-nfr"
+   ],
+   "src": [
+    "https://www.soundonsound.com/techniques/inside-track-alabama-shakes-sound-color",
+    "https://reverb.com/news/interview-shawn-everett",
+    "https://recordingstudiorockstars.libsyn.com/rsr270-shawn-everett-mixing-alabama-shakes-sound-color-and-kacey-musgraves-golden-hour"
+   ],
+   "c": "high",
+   "philosophy": "Sound as paint: re-amping, tape and saturation to give parts character; the widest range, lowest lows and highest highs both filled. Loudness from balance, not limiting. Parallel drum compression blended with a clean bus.",
+   "priorities": [
+    "character",
+    "full range",
+    "balance for loudness",
+    "experiment"
+   ],
+   "moves": [
+    {
+     "id": "character-sat",
+     "what": "Warm and thicken parts with saturation (tape, drive), darker on the snare",
+     "op": "sat:any:tape{light};sat:drums:snare{darken}",
+     "why": "Character over clean"
+    },
+    {
+     "id": "full-range",
+     "what": "Make sure both the lowest lows and the highest highs are present",
+     "op": "eq:master:check{sub:present,air:present}",
+     "why": "A wide, open record"
+    },
+    {
+     "id": "drum-parallel-clean",
+     "what": "Parallel compressed drum bus blended with a clean drum bus",
+     "op": "bus:drums:parallel{blend:40%}",
+     "why": "Weight without losing transients"
+    },
+    {
+     "id": "loud-by-balance",
+     "what": "Get loudness from balance so the master needs little limiting",
+     "op": "guard:limiter<=2dB",
+     "why": "Dynamics survive mastering"
+    }
+   ]
+  },
+  {
+   "id": "mikedean-mix",
+   "name": "Mike Dean-style mix",
+   "role": "mix",
+   "styles": [
+    "edm",
+    "charli-mff"
+   ],
+   "src": [
+    "https://www.soundonsound.com/people/mike-dean"
+   ],
+   "c": "high",
+   "philosophy": "Quick passes, keep the session's character, don't reinvent the song. Producer effects on vocals are part of the sound. Familiar tools, big synths and low end.",
+   "priorities": [
+    "speed",
+    "keep the demo's character",
+    "low end",
+    "synths"
+   ],
+   "moves": [
+    {
+     "id": "keep-fx",
+     "what": "Keep the producer's vocal effects instead of starting clean",
+     "op": "guard:keep-character",
+     "why": "They're part of the artist's sound"
+    },
+    {
+     "id": "short-passes",
+     "what": "Calibrate in short passes, listening fresh each time",
+     "op": "order:short-passes",
+     "why": "Avoids overworking"
+    },
+    {
+     "id": "sub-weight",
+     "what": "Weighty sub, mono and controlled",
+     "op": "width:bass:mono<120Hz;dyn:bass:limit{soft}",
+     "why": "Hip-hop low end translates"
+    }
+   ]
+  },
+  {
+   "id": "meyerson",
+   "name": "Alan Meyerson-style score mix",
+   "role": "mix",
+   "styles": [
+    "cinematic",
+    "strangerthings",
+    "tiersen",
+    "tiersen-piano"
+   ],
+   "src": [
+    "https://film-mixing.com/2016/07/28/film-score-mixing-with-alan-meyerson/",
+    "https://www.puremix.com/library/tutorials/interviews/alan-meyerson-interview"
+   ],
+   "c": "high",
+   "philosophy": "Balance first, then polish. Process stems (groups) rather than single tracks; pan like an orchestra on stage; several reverbs with low and high cuts on the sends; long reverbs to feather note endings; don't build mixes in the middle.",
+   "priorities": [
+    "balance",
+    "stems",
+    "orchestral placement",
+    "depth"
+   ],
+   "moves": [
+    {
+     "id": "stem-process",
+     "what": "Process groups (strings, brass, percussion) instead of single parts",
+     "op": "bus:group:by-family",
+     "why": "Coherent sections"
+    },
+    {
+     "id": "orchestra-pan",
+     "what": "Pan by orchestral seating",
+     "op": "pan:by-family:orchestra",
+     "why": "Natural stage picture"
+    },
+    {
+     "id": "reverb-sends-filtered",
+     "what": "Low- and high-cut every reverb send",
+     "op": "eq:returns:band{150Hz..9kHz}",
+     "why": "Space without mud or fizz"
+    },
+    {
+     "id": "feather",
+     "what": "Longer reverb to feather note endings in slow passages",
+     "op": "send:pad,strings:hall{long}@slow",
+     "why": "Endings don't drop away"
+    },
+    {
+     "id": "back-off-fifth",
+     "what": "After setting a process, back it off by about a fifth",
+     "op": "guard:reduce-20%",
+     "why": "Leaves room for parts to interact"
+    },
+    {
+     "id": "not-too-loud",
+     "what": "Keep the master below loud pop levels",
+     "op": "master:target{-16LUFS}",
+     "why": "Room for the final dub"
+    }
+   ]
+  },
+  {
+   "id": "katz",
+   "name": "Bob Katz-style master",
+   "role": "master",
+   "styles": [
+    "jazz",
+    "cinematic",
+    "tiersen",
+    "tiersen-piano",
+    "lana-bb",
+    "fleetwood"
+   ],
+   "src": [
+    "https://uaudio.com/webzine/2006/march/text/content2.html",
+    "https://www.uaudio.com/blog/mastering-with-the-masters/"
+   ],
+   "c": "high",
+   "philosophy": "Dynamics and calibrated listening. Measure average loudness (the K-System), keep peaks as protection only, and don't chase loudness: louder masters lose quality and fatigue listeners.",
+   "priorities": [
+    "dynamic range",
+    "calibration",
+    "quality over loudness"
+   ],
+   "moves": [
+    {
+     "id": "k-system",
+     "what": "Master to a K-System scale: K-20 for wide-range music, K-14 for most pop and home listening, K-12 for broadcast",
+     "op": "master:meter{K-14|K-20|K-12}",
+     "why": "Consistent, uncompromised loudness"
+    },
+    {
+     "id": "gentle-limit",
+     "what": "Limit only peaks; aim for a healthy crest factor",
+     "op": "master:limiter{max:2dB,ceiling:-1dBTP}",
+     "why": "Keeps punch and clarity"
+    },
+    {
+     "id": "lossy-safe",
+     "what": "Leave headroom so streaming codecs don't distort",
+     "op": "master:truepeak{-1dBTP}",
+     "why": "Clean on every platform"
+    }
+   ],
+   "targets": {
     "stream": {
-      "name": "Streaming",
-      "lufs": -14,
-      "range": [
-        -16,
-        -9
-      ],
-      "peak": -1,
-      "note": "platforms turn loud masters down; dynamics win"
+     "lufs": [
+      -16,
+      -12
+     ],
+     "peak": -1
     },
-    "loud-pop": {
-      "name": "Competitive pop",
-      "lufs": -8,
-      "range": [
-        -10,
-        -7
-      ],
-      "peak": -1,
-      "note": "only with a crest guard"
-    },
-    "club": {
-      "name": "Club / DJ",
-      "lufs": -7,
-      "range": [
-        -9,
-        -6
-      ],
-      "peak": -0.5,
-      "note": "mono low end essential"
-    },
-    "film": {
-      "name": "Film / score",
-      "lufs": -20,
-      "range": [
-        -24,
-        -16
-      ],
-      "peak": -2,
-      "note": "leave room for the dub"
-    },
-    "broadcast": {
-      "name": "Broadcast (EBU R128)",
-      "lufs": -23,
-      "range": [
-        -24,
-        -22
-      ],
-      "peak": -1
-    },
-    "podcast": {
-      "name": "Podcast",
-      "lufs": -16,
-      "range": [
-        -17,
-        -15
-      ],
-      "peak": -1
-    },
-    "vinyl": {
-      "name": "Vinyl",
-      "lufs": -12,
-      "range": [
-        -14,
-        -10
-      ],
-      "peak": -1,
-      "note": "mono bass, tame sibilance"
+    "wide": {
+     "lufs": [
+      -20,
+      -16
+     ],
+     "peak": -1
     }
+   }
   },
-  "calibrate": {
-    "about": "Mix it for me / Master it for me: pressed by the user only. Runs the steps below with the chosen engineer profile as the weighting (like producer passes), produces a list of changes with reasons, a level-matched A/B, and keeps the user's manual choices.",
-    "steps": [
-      "gain staging: every part peaks around −18 to −10 dBFS before processing",
-      "cleanup: high-passes by role, plosives, noise, resonances",
-      "interactions: masking pairs and the summed mud and harsh zones (interactions above)",
-      "tone: each part toward its role's target, the whole mix toward the genre's tonal curve",
-      "dynamics: compression and de-essing by role, bus glue by the engineer's style",
-      "space: returns, panning, width, mono low end",
-      "rides: section and vocal rides from the emotion curve",
-      "master (Master it): tonal balance vs genre curve, glue, limiter to the destination, true peak, translation checks"
-    ],
-    "rules": [
-      "level-match A/B so louder never fools the ear",
-      "never touch what the user locked (🔒 on a band, strip or bus)",
-      "each change is a switchable item with its reason and the engineer layer that led",
-      "max change per pass: ±6 dB EQ per band, 6 dB gain reduction per compressor; bigger needs a click",
-      "explain in plain words and show where in the spectrum and the song",
-      "re-run is incremental: only changes what moved since last time"
-    ],
-    "coachRules": [
-      "low-end",
-      "mix-translation",
-      "vocal-space",
-      "nervous"
-    ]
+  {
+   "id": "ludwig",
+   "name": "Bob Ludwig-style master",
+   "role": "master",
+   "styles": [
+    "rhcp",
+    "fleetwood",
+    "fleetwood-blues",
+    "country",
+    "psych",
+    "gaga-joanne"
+   ],
+   "src": [
+    "https://www.christiancastle.com/articles/2014/1/16/recording-tips-for-the-the-loudness-wars-an-interview-with-mastering-great-bob-ludwig",
+    "https://tapeop.com/interviews/105/bob-ludwig"
+   ],
+   "c": "high",
+   "philosophy": "Accuracy and translation: master on a flat, accurate system so it sounds right everywhere, from earbuds to car. Compression carries a live performance's energy, but never so much that it sucks the life out.",
+   "priorities": [
+    "translation",
+    "energy",
+    "not over-loud"
+   ],
+   "moves": [
+    {
+     "id": "translate",
+     "what": "Check on phone, earbuds, car and studio; fix the worst translation first",
+     "op": "master:listen-on:all",
+     "why": "Sounds right everywhere"
+    },
+    {
+     "id": "centre-low",
+     "what": "Keep kick and bass centred; fold low bass to mono",
+     "op": "width:master:mono<100Hz",
+     "why": "Solid on earbuds and vinyl"
+    },
+    {
+     "id": "energy-not-squash",
+     "what": "Compression for energy, capped before the life goes",
+     "op": "master:comp{2dB};guard:crest>=8dB",
+     "why": "Punch without fatigue"
+    }
+   ],
+   "targets": {
+    "stream": {
+     "lufs": [
+      -14,
+      -10
+     ],
+     "peak": -1
+    }
+   }
+  },
+  {
+   "id": "lazar",
+   "name": "Emily Lazar-style master",
+   "role": "master",
+   "styles": [
+    "lana-uv",
+    "lana-honeymoon",
+    "lana-nfr",
+    "lana-btd",
+    "charli",
+    "psych",
+    "chappell"
+   ],
+   "src": [
+    "https://musictech.com/features/interviews/emily-lazar/",
+    "https://www.uaudio.com/blogs/ua/emily-lazar"
+   ],
+   "c": "high",
+   "philosophy": "Listening first and aligning with the artist's goal. No fixed method: each project shapes the chain. Analogue-style colour and glue (Pultec-style lifts, glue compression); stem mastering when a mix needs help. A clear target and A/B to avoid endless tweaking.",
+   "priorities": [
+    "listening",
+    "artist's goal",
+    "colour & glue",
+    "clear target"
+   ],
+   "moves": [
+    {
+     "id": "ask-goal",
+     "what": "Ask what the artist wants (warmer, wider, louder, more like a reference) before touching anything",
+     "op": "ask:goal",
+     "why": "Masters serve the vision"
+    },
+    {
+     "id": "pultec-lift",
+     "what": "Broad, musical low and high lifts with a slight dip around 400 Hz",
+     "op": "master:eq{+1.5dB@60Hz shelf,-1dB@400Hz,+1.5dB@12kHz shelf}",
+     "why": "Colour and polish"
+    },
+    {
+     "id": "glue",
+     "what": "Gentle glue compression across the mix",
+     "op": "master:comp{glue,1-2dB}",
+     "why": "Holds the mix together"
+    },
+    {
+     "id": "stems-if-needed",
+     "what": "If one part is the problem, fix it in the stem, not the whole master",
+     "op": "master:stem-fix",
+     "why": "Surgical help without collateral damage"
+    },
+    {
+     "id": "ab-target",
+     "what": "Set a target, A/B against it level-matched, and stop when it's met",
+     "op": "master:ab{level-matched}",
+     "why": "Avoids over-processing"
+    }
+   ]
+  },
+  {
+   "id": "merrill",
+   "name": "Randy Merrill-style master (low confidence)",
+   "role": "master",
+   "styles": [
+    "gaga",
+    "chappell",
+    "charli-pop",
+    "charli-pop2",
+    "edm"
+   ],
+   "src": [
+    "https://en.wikipedia.org/wiki/Randy_Merrill",
+    "https://mixwiththemasters.com/masters/randy-merrill"
+   ],
+   "c": "low",
+   "philosophy": "Credits on modern pop (Adele, Ariana Grande, Lady Gaga, Mark Ronson). His methods aren't described in our sources, so this profile uses general modern-pop mastering norms and says so on every card.",
+   "priorities": [
+    "competitive pop loudness",
+    "clarity",
+    "translation"
+   ],
+   "moves": [
+    {
+     "id": "pop-loud",
+     "what": "Competitive but clean pop loudness",
+     "op": "master:target{-9..-7LUFS};guard:crest>=6dB",
+     "why": "Holds up next to current pop (stand-in)"
+    },
+    {
+     "id": "bright-clear",
+     "what": "Clear top end, controlled low end",
+     "op": "master:eq{tilt:+0.5dB}",
+     "why": "Pop clarity (stand-in)"
+    }
+   ],
+   "standIn": true
   }
+ ],
+ "house": {
+  "id": "semitone",
+  "name": "Semitone house profile",
+  "role": "both",
+  "styles": [],
+  "src": [],
+  "c": "medium",
+  "philosophy": "Mixing and mastering best practice for the genre, used where no engineer profile is researched yet. Says so on every card.",
+  "priorities": [
+   "best practice"
+  ],
+  "moves": []
+ },
+ "bestFor": {
+  "chappell": {
+   "mix": "ghenea",
+   "master": "lazar",
+   "why": "closest documented approach to this style; change it any time"
+  },
+  "gaga": {
+   "mix": "ghenea",
+   "master": "merrill",
+   "why": "closest documented approach to this style; change it any time"
+  },
+  "gaga-joanne": {
+   "mix": "cla",
+   "master": "ludwig",
+   "why": "closest documented approach to this style; change it any time"
+  },
+  "gaga-mayhem": {
+   "mix": "scheps",
+   "master": "merrill",
+   "why": "closest documented approach to this style; change it any time"
+  },
+  "fleetwood": {
+   "mix": "scheps",
+   "master": "ludwig",
+   "why": "closest documented approach to this style; change it any time"
+  },
+  "fleetwood-blues": {
+   "mix": "cla",
+   "master": "ludwig",
+   "why": "closest documented approach to this style; change it any time"
+  },
+  "rhcp": {
+   "mix": "scheps",
+   "master": "ludwig",
+   "why": "closest documented approach to this style; change it any time"
+  },
+  "rhcp-funk": {
+   "mix": "scheps",
+   "master": "ludwig",
+   "why": "closest documented approach to this style; change it any time"
+  },
+  "tiersen": {
+   "mix": "meyerson",
+   "master": "katz",
+   "why": "closest documented approach to this style; change it any time"
+  },
+  "tiersen-piano": {
+   "mix": "meyerson",
+   "master": "katz",
+   "why": "closest documented approach to this style; change it any time"
+  },
+  "tiersen-postrock": {
+   "mix": "everett",
+   "master": "katz",
+   "why": "closest documented approach to this style; change it any time"
+  },
+  "strangerthings": {
+   "mix": "meyerson",
+   "master": "katz",
+   "why": "closest documented approach to this style; change it any time"
+  },
+  "jazz": {
+   "mix": "elmhirst",
+   "master": "katz",
+   "why": "closest documented approach to this style; change it any time"
+  },
+  "charli": {
+   "mix": "marroquin",
+   "master": "lazar",
+   "why": "closest documented approach to this style; change it any time"
+  },
+  "charli-pop": {
+   "mix": "ghenea",
+   "master": "merrill",
+   "why": "closest documented approach to this style; change it any time"
+  },
+  "charli-pop2": {
+   "mix": "ghenea",
+   "master": "merrill",
+   "why": "closest documented approach to this style; change it any time"
+  },
+  "charli-mff": {
+   "mix": "mikedean-mix",
+   "master": "merrill",
+   "why": "closest documented approach to this style; change it any time"
+  },
+  "lana-btd": {
+   "mix": "elmhirst",
+   "master": "lazar",
+   "why": "closest documented approach to this style; change it any time"
+  },
+  "lana-uv": {
+   "mix": "elmhirst",
+   "master": "lazar",
+   "why": "closest documented approach to this style; change it any time"
+  },
+  "lana-honeymoon": {
+   "mix": "elmhirst",
+   "master": "lazar",
+   "why": "closest documented approach to this style; change it any time"
+  },
+  "lana-nfr": {
+   "mix": "everett",
+   "master": "lazar",
+   "why": "closest documented approach to this style; change it any time"
+  },
+  "lana-bb": {
+   "mix": "elmhirst",
+   "master": "katz",
+   "why": "closest documented approach to this style; change it any time"
+  },
+  "cinematic": {
+   "mix": "meyerson",
+   "master": "katz",
+   "why": "closest documented approach to this style; change it any time"
+  },
+  "country": {
+   "mix": "everett",
+   "master": "ludwig",
+   "why": "closest documented approach to this style; change it any time"
+  },
+  "edm": {
+   "mix": "ghenea",
+   "master": "merrill",
+   "why": "closest documented approach to this style; change it any time"
+  },
+  "psych": {
+   "mix": "everett",
+   "master": "ludwig",
+   "why": "closest documented approach to this style; change it any time"
+  }
+ },
+ "bands": [
+  {
+   "id": "sub",
+   "range": "20–60 Hz",
+   "means": "felt more than heard; kick and bass fundamentals"
+  },
+  {
+   "id": "bass",
+   "range": "60–120 Hz",
+   "means": "weight and punch"
+  },
+  {
+   "id": "warmth",
+   "range": "120–250 Hz",
+   "means": "body; too much is woolly"
+  },
+  {
+   "id": "mud",
+   "range": "250–500 Hz",
+   "means": "where mixes get muddy"
+  },
+  {
+   "id": "box",
+   "range": "500–1000 Hz",
+   "means": "boxy, honky, nasal"
+  },
+  {
+   "id": "presence",
+   "range": "1–4 kHz",
+   "means": "clarity and attack; the ear's most sensitive zone"
+  },
+  {
+   "id": "harsh",
+   "range": "2.5–5 kHz",
+   "means": "harshness and listening fatigue"
+  },
+  {
+   "id": "sibilance",
+   "range": "5–9 kHz",
+   "means": "s, t, cymbal sizzle"
+  },
+  {
+   "id": "air",
+   "range": "10–20 kHz",
+   "means": "sparkle and openness"
+  }
+ ],
+ "spectrum": {
+  "lead": {
+   "fund": "100–1000 Hz (by voice)",
+   "highpass": "80–120 Hz",
+   "body": "150–300 Hz",
+   "clarity": "2–5 kHz",
+   "sibilance": "5–9 kHz",
+   "air": "10–14 kHz",
+   "watch": [
+    "mud 250–400 Hz",
+    "nasal 800–1.2 kHz",
+    "harsh 2.5–4 kHz",
+    "sibilance"
+   ],
+   "dyn": "de-ess, 2-stage compression"
+  },
+  "harmony": {
+   "highpass": "150 Hz",
+   "watch": [
+    "clash with lead 2–4 kHz",
+    "sibilance stacking"
+   ],
+   "tip": "thinner and darker than the lead"
+  },
+  "chords": {
+   "highpass": "100–150 Hz (unless the only low part)",
+   "watch": [
+    "mud 200–400 Hz",
+    "masks vocal 1–4 kHz"
+   ],
+   "tip": "carve 2–3 dB where the vocal lives"
+  },
+  "pad": {
+   "highpass": "150–200 Hz",
+   "lowpass": "10–12 kHz",
+   "watch": [
+    "fills the mud zone",
+    "masks vocal"
+   ],
+   "tip": "duck under the vocal"
+  },
+  "arp": {
+   "highpass": "250 Hz",
+   "watch": [
+    "harsh 2–5 kHz"
+   ]
+  },
+  "counter": {
+   "highpass": "150 Hz",
+   "watch": [
+    "masks lead 1–4 kHz"
+   ],
+   "tip": "slightly darker or different register than the lead"
+  },
+  "bass": {
+   "fund": "40–120 Hz",
+   "highpass": "25–35 Hz",
+   "attack": "700 Hz–1.5 kHz",
+   "watch": [
+    "fights kick 50–100 Hz",
+    "mud 200–300 Hz"
+   ],
+   "dyn": "compress for even level; mono below 120 Hz"
+  },
+  "bass2": {
+   "tip": "only one part owns the sub; high-pass the other"
+  },
+  "drums": {
+   "kick": "50–80 Hz thump, 2–5 kHz click, cut 300–500 Hz box",
+   "snare": "150–250 Hz body, 5–8 kHz crack",
+   "hats": "highpass 300–500 Hz",
+   "overheads": "watch 2–4 kHz harshness",
+   "watch": [
+    "kick vs bass",
+    "cymbal harshness"
+   ]
+  },
+  "perc": {
+   "highpass": "400 Hz"
+  },
+  "loop": {
+   "highpass": "150 Hz unless it's a bass or drum loop",
+   "watch": [
+    "clashing key, masking"
+   ]
+  },
+  "returns": {
+   "band": "cut below 150–200 Hz and above 8–10 kHz on reverb returns"
+  },
+  "master": {
+   "watch": [
+    "sub energy",
+    "mud build-up",
+    "harshness",
+    "translation"
+   ],
+   "mono": "below 100–120 Hz"
+  }
+ },
+ "interactions": [
+  {
+   "pair": [
+    "drums.kick",
+    "bass"
+   ],
+   "zone": "40–120 Hz",
+   "fix": [
+    "decide who owns the sub",
+    "sidechain the bass 2–3 dB from the kick",
+    "complementary EQ: dip the bass where the kick peaks"
+   ]
+  },
+  {
+   "pair": [
+    "lead",
+    "chords|pad|counter|arp|loop"
+   ],
+   "zone": "1–4 kHz",
+   "fix": [
+    "dynamic EQ dip on the other part only while the vocal sings (−2 to −4 dB)"
+   ]
+  },
+  {
+   "pair": [
+    "chords",
+    "pad"
+   ],
+   "zone": "200–500 Hz",
+   "fix": [
+    "high-pass the pad higher; one part owns the warmth"
+   ]
+  },
+  {
+   "pair": [
+    "bass",
+    "bass2"
+   ],
+   "zone": "20–120 Hz",
+   "fix": [
+    "one owns the sub; the other high-passed above 120 Hz"
+   ]
+  },
+  {
+   "pair": [
+    "lead",
+    "harmony"
+   ],
+   "zone": "2–8 kHz",
+   "fix": [
+    "harmony darker and de-essed harder; pan the stack"
+   ]
+  },
+  {
+   "pair": [
+    "returns",
+    "everything"
+   ],
+   "zone": "<200 Hz and >10 kHz",
+   "fix": [
+    "band-limit reverb and echo returns"
+   ]
+  },
+  {
+   "pair": [
+    "any",
+    "any"
+   ],
+   "zone": "sum of all parts in 200–400 Hz",
+   "fix": [
+    "find the parts adding most and trim the least important"
+   ]
+  }
+ ],
+ "problems": [
+  {
+   "id": "muddy",
+   "words": [
+    "muddy",
+    "cloudy",
+    "woolly",
+    "thick"
+   ],
+   "usually": "Too much 200–500 Hz summed across many parts.",
+   "find": "Measure each part's energy in 200–500 Hz while the mix plays; list the top contributors and where in the song it builds up.",
+   "fixes": [
+    "high-pass parts that don't need lows",
+    "dip 250–400 Hz on the 2 biggest contributors (−2 to −4 dB)",
+    "check reverb returns"
+   ],
+   "tools": [
+    "eq",
+    "dyn-eq"
+   ],
+   "limits": "max −6 dB per band; never on the lead without asking"
+  },
+  {
+   "id": "boomy",
+   "words": [
+    "boomy",
+    "too much bass",
+    "woofy"
+   ],
+   "usually": "Sub and bass energy too high or uncontrolled; often kick and bass fighting.",
+   "find": "Low-band level vs genre target; kick/bass overlap.",
+   "fixes": [
+    "sidechain or complementary EQ kick vs bass",
+    "tame 60–120 Hz resonances",
+    "mono below 120 Hz"
+   ],
+   "tools": [
+    "eq",
+    "sidechain",
+    "width"
+   ],
+   "limits": "keep the genre's low-end target"
+  },
+  {
+   "id": "thin",
+   "words": [
+    "thin",
+    "weak",
+    "no body"
+   ],
+   "usually": "Missing 100–250 Hz, or over-high-passed parts.",
+   "find": "Compare low-mid energy with the genre target; find over-eager high-passes.",
+   "fixes": [
+    "relax high-pass filters",
+    "gentle shelf on the main body part",
+    "saturation for perceived weight"
+   ],
+   "tools": [
+    "eq",
+    "sat"
+   ],
+   "limits": "never add mud back"
+  },
+  {
+   "id": "boxy",
+   "words": [
+    "boxy",
+    "cardboard",
+    "honky",
+    "nasal"
+   ],
+   "usually": "Resonance in 400 Hz–1.2 kHz.",
+   "find": "Sweep for narrow peaks on the suspected part.",
+   "fixes": [
+    "narrow cut on the resonance (−3 to −6 dB)"
+   ],
+   "tools": [
+    "eq"
+   ],
+   "limits": "q ≥ 3"
+  },
+  {
+   "id": "harsh",
+   "words": [
+    "harsh",
+    "piercing",
+    "hurts",
+    "edgy",
+    "fatiguing"
+   ],
+   "usually": "Peaks in 2.5–5 kHz, often from several bright parts or a resonance.",
+   "find": "Find narrow peaks and summed energy 2–5 kHz; flag the loudest contributors.",
+   "fixes": [
+    "dynamic EQ on the peak (acts only when it's loud)",
+    "dip competing parts, not the vocal"
+   ],
+   "tools": [
+    "dyn-eq"
+   ],
+   "limits": "prefer dynamic over static cuts"
+  },
+  {
+   "id": "sibilant",
+   "words": [
+    "too much ess",
+    "sibilant",
+    "s sounds",
+    "spitty"
+   ],
+   "usually": "Sibilance 5–9 kHz on vocals, harmonies or hats.",
+   "find": "Detect s/t events on vocal parts; measure peak vs body.",
+   "fixes": [
+    "de-ess the part (3–6 dB on the s only)",
+    "darken harmonies more than the lead",
+    "check reverb isn't splashing esses"
+   ],
+   "tools": [
+    "deess"
+   ],
+   "limits": "never dull the whole vocal"
+  },
+  {
+   "id": "dull",
+   "words": [
+    "dull",
+    "dark",
+    "lifeless",
+    "closed"
+   ],
+   "usually": "Not enough 8–16 kHz, or masking up top.",
+   "find": "Air-band energy vs genre target.",
+   "fixes": [
+    "gentle high shelf on the master or the key parts",
+    "remove top-end masking from pads"
+   ],
+   "tools": [
+    "eq"
+   ],
+   "limits": "watch sibilance after"
+  },
+  {
+   "id": "buried-vocal",
+   "words": [
+    "can't hear the vocal",
+    "vocal buried",
+    "words unclear"
+   ],
+   "usually": "Vocal too low or masked in 1–4 kHz.",
+   "find": "Vocal-to-music level; masking partners in 1–4 kHz.",
+   "fixes": [
+    "raise and ride the vocal",
+    "dynamic dips on masking parts while the vocal sings",
+    "more consistent compression"
+   ],
+   "tools": [
+    "auto",
+    "dyn-eq",
+    "comp"
+   ],
+   "limits": "never above the genre's vocal level"
+  },
+  {
+   "id": "vocal-too-loud",
+   "words": [
+    "vocal too loud",
+    "sticks out"
+   ],
+   "usually": "Vocal level above genre target or too dry.",
+   "find": "Vocal-to-music level vs target.",
+   "fixes": [
+    "lower 1–2 dB",
+    "a touch more space"
+   ],
+   "tools": [
+    "fader",
+    "send"
+   ],
+   "limits": ""
+  },
+  {
+   "id": "cluttered",
+   "words": [
+    "cluttered",
+    "busy",
+    "messy",
+    "everything at once"
+   ],
+   "usually": "Too many parts in the same register and time.",
+   "find": "part-roles crowd and mask checks.",
+   "fixes": [
+    "mute or thin the least important part in that section",
+    "pan and register separation"
+   ],
+   "tools": [
+    "mute",
+    "pan",
+    "eq"
+   ],
+   "limits": "suggest, never delete parts"
+  },
+  {
+   "id": "no-punch",
+   "words": [
+    "no punch",
+    "flat",
+    "weak drums"
+   ],
+   "usually": "Transients squashed or masked; kick/snare too low.",
+   "find": "Crest factor on drums; transient level vs body.",
+   "fixes": [
+    "parallel compression on drums",
+    "less bus limiting",
+    "transient emphasis on kick and snare"
+   ],
+   "tools": [
+    "comp",
+    "bus"
+   ],
+   "limits": ""
+  },
+  {
+   "id": "squashed",
+   "words": [
+    "squashed",
+    "lifeless",
+    "too compressed",
+    "pumping"
+   ],
+   "usually": "Over-compression or limiting.",
+   "find": "Crest factor, gain reduction totals per bus and master.",
+   "fixes": [
+    "reduce limiter and bus compression",
+    "slower release"
+   ],
+   "tools": [
+    "comp",
+    "limiter"
+   ],
+   "limits": "master crest ≥ 6 dB pop, ≥ 8 dB others"
+  },
+  {
+   "id": "too-wide",
+   "words": [
+    "phasey",
+    "disappears on phone",
+    "too wide"
+   ],
+   "usually": "Out-of-phase stereo content; wide lows.",
+   "find": "Correlation meter; mono fold-down loss per part.",
+   "fixes": [
+    "mono below 120 Hz",
+    "reduce width on offending parts"
+   ],
+   "tools": [
+    "width"
+   ],
+   "limits": "keep mono compatibility"
+  },
+  {
+   "id": "too-narrow",
+   "words": [
+    "narrow",
+    "small",
+    "in the middle"
+   ],
+   "usually": "Everything panned centre, no stereo effects.",
+   "find": "Stereo image width.",
+   "fixes": [
+    "pan supporting parts",
+    "stereo returns",
+    "double-track width"
+   ],
+   "tools": [
+    "pan",
+    "width"
+   ],
+   "limits": ""
+  },
+  {
+   "id": "washy",
+   "words": [
+    "washy",
+    "drowning",
+    "too much reverb"
+   ],
+   "usually": "Reverb too long/loud or low-mid heavy.",
+   "find": "Reverb return level and decay vs tempo.",
+   "fixes": [
+    "shorter decay timed to the tempo",
+    "band-limit returns",
+    "duck reverb under the vocal"
+   ],
+   "tools": [
+    "send",
+    "eq"
+   ],
+   "limits": ""
+  },
+  {
+   "id": "ringing",
+   "words": [
+    "ringing",
+    "whistle",
+    "feedback-like"
+   ],
+   "usually": "A narrow resonance.",
+   "find": "Sweep for sustained narrow peaks.",
+   "fixes": [
+    "narrow notch −6 to −18 dB"
+   ],
+   "tools": [
+    "eq"
+   ],
+   "limits": "q ≥ 6"
+  },
+  {
+   "id": "plosive",
+   "words": [
+    "pops",
+    "p sounds",
+    "thumps"
+   ],
+   "usually": "Plosive low-frequency bursts on vocals.",
+   "find": "Detect low-frequency transients on vocal takes.",
+   "fixes": [
+    "dynamic high-pass on the p only"
+   ],
+   "tools": [
+    "dyn-eq"
+   ],
+   "limits": ""
+  },
+  {
+   "id": "noisy",
+   "words": [
+    "hiss",
+    "noise",
+    "hum",
+    "clicks"
+   ],
+   "usually": "Background noise, mains hum or edit clicks.",
+   "find": "Noise floor in gaps; 50/60 Hz harmonics; discontinuities.",
+   "fixes": [
+    "gate or expand in gaps",
+    "notch hum harmonics",
+    "crossfade edits"
+   ],
+   "tools": [
+    "gate",
+    "eq",
+    "fade"
+   ],
+   "limits": ""
+  },
+  {
+   "id": "uneven",
+   "words": [
+    "levels jump",
+    "inconsistent",
+    "verse too quiet"
+   ],
+   "usually": "Section levels or vocal level vary too much.",
+   "find": "Section loudness vs the energy curve.",
+   "fixes": [
+    "section rides",
+    "bus automation"
+   ],
+   "tools": [
+    "auto"
+   ],
+   "limits": "follow the emotion curve, not flatten it"
+  },
+  {
+   "id": "translation",
+   "words": [
+    "sounds bad on phone",
+    "bad in car",
+    "earbuds"
+   ],
+   "usually": "Mix depends on studio speakers (low end, width, harshness).",
+   "find": "Listen-on simulations: phone, earbuds, car, laptop.",
+   "fixes": [
+    "bass harmonics (saturation) for small speakers",
+    "mono check",
+    "tame 2–4 kHz for earbuds"
+   ],
+   "tools": [
+    "sat",
+    "width",
+    "eq"
+   ],
+   "limits": ""
+  },
+  {
+   "id": "too-quiet",
+   "words": [
+    "too quiet",
+    "not loud enough"
+   ],
+   "usually": "Master below destination target.",
+   "find": "Integrated LUFS vs target.",
+   "fixes": [
+    "more limiting up to the target with crest guard"
+   ],
+   "tools": [
+    "limiter"
+   ],
+   "limits": "stop at the target; streaming turns loud masters down"
+  },
+  {
+   "id": "too-loud",
+   "words": [
+    "distorted",
+    "crunchy master",
+    "clipping"
+   ],
+   "usually": "Over-limited or clipping.",
+   "find": "True peak, inter-sample overs, distortion detection.",
+   "fixes": [
+    "back off the limiter",
+    "true-peak ceiling −1 dBTP"
+   ],
+   "tools": [
+    "limiter"
+   ],
+   "limits": ""
+  }
+ ],
+ "destinations": {
+  "stream": {
+   "name": "Streaming",
+   "lufs": -14,
+   "range": [
+    -16,
+    -9
+   ],
+   "peak": -1,
+   "note": "platforms turn loud masters down; dynamics win"
+  },
+  "loud-pop": {
+   "name": "Competitive pop",
+   "lufs": -8,
+   "range": [
+    -10,
+    -7
+   ],
+   "peak": -1,
+   "note": "only with a crest guard"
+  },
+  "club": {
+   "name": "Club / DJ",
+   "lufs": -7,
+   "range": [
+    -9,
+    -6
+   ],
+   "peak": -0.5,
+   "note": "mono low end essential"
+  },
+  "film": {
+   "name": "Film / score",
+   "lufs": -20,
+   "range": [
+    -24,
+    -16
+   ],
+   "peak": -2,
+   "note": "leave room for the dub"
+  },
+  "broadcast": {
+   "name": "Broadcast (EBU R128)",
+   "lufs": -23,
+   "range": [
+    -24,
+    -22
+   ],
+   "peak": -1
+  },
+  "podcast": {
+   "name": "Podcast",
+   "lufs": -16,
+   "range": [
+    -17,
+    -15
+   ],
+   "peak": -1
+  },
+  "vinyl": {
+   "name": "Vinyl",
+   "lufs": -12,
+   "range": [
+    -14,
+    -10
+   ],
+   "peak": -1,
+   "note": "mono bass, tame sibilance"
+  }
+ },
+ "calibrate": {
+  "about": "Mix it for me / Master it for me: pressed by the user only. Runs the steps below with the chosen engineer profile as the weighting (like producer passes), produces a list of changes with reasons, a level-matched A/B, and keeps the user's manual choices.",
+  "steps": [
+   "gain staging: every part peaks around −18 to −10 dBFS before processing",
+   "cleanup: high-passes by role, plosives, noise, resonances",
+   "interactions: masking pairs and the summed mud and harsh zones (interactions above)",
+   "tone: each part toward its role's target, the whole mix toward the genre's tonal curve",
+   "dynamics: compression and de-essing by role, bus glue by the engineer's style",
+   "space: returns, panning, width, mono low end",
+   "rides: section and vocal rides from the emotion curve",
+   "master (Master it): tonal balance vs genre curve, glue, limiter to the destination, true peak, translation checks"
+  ],
+  "rules": [
+   "level-match A/B so louder never fools the ear",
+   "never touch what the user locked (🔒 on a band, strip or bus)",
+   "each change is a switchable item with its reason and the engineer layer that led",
+   "max change per pass: ±6 dB EQ per band, 6 dB gain reduction per compressor; bigger needs a click",
+   "explain in plain words and show where in the spectrum and the song",
+   "re-run is incremental: only changes what moved since last time"
+  ],
+  "coachRules": [
+   "low-end",
+   "mix-translation",
+   "vocal-space",
+   "nervous"
+  ]
+ },
+ "smartKnob": {
+  "about": "Each mixer strip has Pan, Width and one smart knob. The smart knob controls the one effect a producer would most likely reach for on that kind of part, picked by role, then by the song's producer profile, then by style. The user can point it at anything else (another effect, any insert or plug-in control, or learn a controller); a manual choice sticks for that part and 'Back to smart' returns it. Agreed with Jamie 8 Nov 2026.",
+  "options": {
+   "plate": {
+    "label": "Plate",
+    "kind": "send",
+    "what": "smooth reverb, the classic vocal reverb",
+    "to": "Plate return"
+   },
+   "room": {
+    "label": "Room",
+    "kind": "send",
+    "what": "short room ambience; thickens without washing out",
+    "to": "Room return (made when first picked)"
+   },
+   "hall": {
+    "label": "Hall",
+    "kind": "send",
+    "what": "long, big reverb for pads and cinematic parts",
+    "to": "Hall return (made when first picked)"
+   },
+   "echo": {
+    "label": "Echo",
+    "kind": "send",
+    "what": "delay synced to the song's tempo (1/4 dotted by default)",
+    "to": "Echo return"
+   },
+   "slap": {
+    "label": "Slap",
+    "kind": "send",
+    "what": "one short slapback repeat (80–120 ms)",
+    "to": "Slap return (made when first picked)"
+   },
+   "drive": {
+    "label": "Drive",
+    "kind": "insert",
+    "what": "parallel saturation: adds harmonics so low parts are heard on small speakers"
+   },
+   "crush": {
+    "label": "Crush",
+    "kind": "insert",
+    "what": "parallel compression: heavy squash blended under the dry part"
+   },
+   "duck": {
+    "label": "Duck from kick",
+    "kind": "insert",
+    "what": "sidechain dip when the kick hits",
+    "amount": "2–3 dB at full"
+   },
+   "tone": {
+    "label": "Tone",
+    "kind": "insert",
+    "what": "one-knob tilt: darker ← → brighter"
+   },
+   "width": {
+    "label": "Wider",
+    "kind": "insert",
+    "what": "stereo widening (never below 120 Hz)"
+   },
+   "chorus": {
+    "label": "Chorus",
+    "kind": "insert",
+    "what": "gentle movement and width"
+   },
+   "tremolo": {
+    "label": "Tremolo",
+    "kind": "insert",
+    "what": "volume pulse synced to the song"
+   },
+   "air": {
+    "label": "Air",
+    "kind": "insert",
+    "what": "high shelf above 10 kHz"
+   },
+   "any": {
+    "label": "Any plug-in control…",
+    "kind": "plug",
+    "what": "any insert or hosted plug-in control (plug.<index>), same path as plug-in lanes"
+   },
+   "learn": {
+    "label": "Learn controller",
+    "kind": "cc",
+    "what": "move a knob on your controller to assign it"
+   }
+  },
+  "roles": {
+   "lead": {
+    "pick": "echo",
+    "amount": 0.18,
+    "useful": [
+     "echo",
+     "slap",
+     "plate",
+     "drive"
+    ],
+    "why": "a tempo-synced delay adds space but keeps a melody upfront; reverb pushes it back"
+   },
+   "counter": {
+    "pick": "echo",
+    "amount": 0.2,
+    "useful": [
+     "echo",
+     "plate",
+     "chorus"
+    ],
+    "why": "echo answers the lead without crowding it"
+   },
+   "harmony": {
+    "pick": "plate",
+    "amount": 0.3,
+    "useful": [
+     "plate",
+     "width",
+     "chorus"
+    ],
+    "why": "backing parts sit behind the lead with more reverb"
+   },
+   "double": {
+    "pick": "width",
+    "amount": 0.5,
+    "useful": [
+     "width",
+     "plate"
+    ],
+    "why": "doubles are there to widen"
+   },
+   "chords": {
+    "pick": "plate",
+    "amount": 0.25,
+    "useful": [
+     "plate",
+     "room",
+     "chorus",
+     "tone"
+    ],
+    "why": "glues the chords into one space"
+   },
+   "pad": {
+    "pick": "hall",
+    "amount": 0.3,
+    "useful": [
+     "hall",
+     "chorus",
+     "tremolo",
+     "width"
+    ],
+    "why": "pads are space already; a long hall extends them"
+   },
+   "arp": {
+    "pick": "echo",
+    "amount": 0.22,
+    "useful": [
+     "echo",
+     "width",
+     "tone"
+    ],
+    "why": "tempo echoes make arps feel bigger"
+   },
+   "bass": {
+    "pick": "drive",
+    "amount": 0.3,
+    "useful": [
+     "drive",
+     "duck",
+     "tone"
+    ],
+    "rare": [
+     "plate",
+     "room",
+     "hall",
+     "echo"
+    ],
+    "why": "bass is often lost on phones and laptops; harmonics let it be heard",
+    "rareWhy": "reverb blurs the low end and spreads a mono bass into stereo, causing phase problems"
+   },
+   "bass2": {
+    "pick": "duck",
+    "amount": 0.5,
+    "useful": [
+     "duck",
+     "drive"
+    ],
+    "rare": [
+     "plate",
+     "room",
+     "hall",
+     "echo"
+    ],
+    "why": "the sub and the kick share 40–120 Hz; ducking makes room"
+   },
+   "drums": {
+    "pick": "crush",
+    "amount": 0.25,
+    "useful": [
+     "crush",
+     "room",
+     "drive"
+    ],
+    "why": "parallel compression keeps drums steady and full while keeping their hits"
+   },
+   "perc": {
+    "pick": "room",
+    "amount": 0.25,
+    "useful": [
+     "room",
+     "echo",
+     "width"
+    ],
+    "why": "a little room places percussion in the kit's space"
+   },
+   "texture": {
+    "pick": "hall",
+    "amount": 0.3,
+    "useful": [
+     "hall",
+     "tone",
+     "width"
+    ],
+    "why": "textures live in the background"
+   },
+   "loop": {
+    "pick": "tone",
+    "amount": 0.5,
+    "useful": [
+     "tone",
+     "duck",
+     "width"
+    ],
+    "why": "loops arrive mixed; tone fits them to the song"
+   },
+   "audio": {
+    "pick": "plate",
+    "amount": 0.35,
+    "useful": [
+     "plate",
+     "slap",
+     "room",
+     "echo"
+    ],
+    "why": "a plate is the standard vocal reverb"
+   }
+  },
+  "producer": {
+   "antonoff": {
+    "audio": [
+     "slap",
+     "dry-vocal"
+    ],
+    "lead": [
+     "slap",
+     "dry-vocal"
+    ],
+    "pad": [
+     "tremolo",
+     "pulse-pads"
+    ],
+    "drums": [
+     "room",
+     "room"
+    ]
+   },
+   "finneas": {
+    "audio": [
+     "tremolo",
+     "tremolo-chop"
+    ],
+    "lead": [
+     "tremolo",
+     "tremolo-chop"
+    ]
+   },
+   "nigro": {
+    "audio": [
+     "plate",
+     "vocal-chain"
+    ]
+   },
+   "rubin": {
+    "drums": [
+     "room",
+     "live-feel"
+    ]
+   }
+  },
+  "producerNote": "Each entry is [option, move id in that producer's pass in data/style-library.json]; the move carries the source. A producer with no entry for a role uses the role pick.",
+  "exceptions": [
+   {
+    "role": [
+     "bass",
+     "bass2"
+    ],
+    "allow": [
+     "hall",
+     "plate"
+    ],
+    "when": {
+     "styles": [
+      "tiersen",
+      "tiersen-piano",
+      "tiersen-postrock",
+      "strangerthings",
+      "cinematic"
+     ]
+    },
+    "why": "orchestral and film low end (double bass, timpani, sub drops) gains impact from reverb",
+    "how": "high-pass the send at about 600 Hz, pre-delay about 20 ms, so the fundamental stays dry and mono",
+    "src": [
+     "https://www.sonible.com/?p=402524",
+     "https://www.musicguymixing.com/reverb-on-bass-guitar/"
+    ]
+   }
+  ],
+  "order": "producer entry for the role > style exception (only adds to 'useful', never replaces the pick unless the style's recipe asks) > role pick",
+  "src": [
+   "https://www.sonible.com/?p=402524",
+   "https://www.musicguymixing.com/reverb-on-bass-guitar/",
+   "https://blog.faderpro.com/mixing/mixing-bass-for-all-speaker-sizes/",
+   "https://sageaudio.com/articles/top-10-vocal-reverb-tips",
+   "https://mixdownmag.com.au/?p=72716"
+  ]
+ },
+ "comp": {
+  "about": "Every strip has a compressor driven by one Amount (0–100%). The bar beside the knobs is that control: drag the cap up for more, scroll for fine steps, double-click for the smart amount, right-click for Style, Sidechain from, and Full view. Inside the bar, the live gain reduction draws from the top. Amount is a normal automation target and can be learned to a controller.",
+  "amountMaps": "Amount sets threshold and ratio together (0% = off; 100% = about 12 dB of reduction on loud passages); attack and release come from the style and the song's tempo, so they always suit it.",
+  "styles": {
+   "Smooth": {
+    "ratio": "2–3:1",
+    "attack": "medium (10–20 ms)",
+    "release": "auto / about one beat",
+    "for": "vocals and leads: even level, natural"
+   },
+   "Steady": {
+    "ratio": "4:1",
+    "attack": "fast (3–10 ms)",
+    "release": "medium",
+    "for": "bass: every note the same level"
+   },
+   "Punchy": {
+    "ratio": "4:1",
+    "attack": "slow (20–30 ms) so hits come through",
+    "release": "fast, timed to the groove",
+    "for": "drums: keeps the snap"
+   },
+   "Glue": {
+    "ratio": "1.5–2:1",
+    "attack": "slow",
+    "release": "auto",
+    "for": "chords, pads, buses: holds parts together"
+   },
+   "Squash": {
+    "ratio": "8:1+",
+    "attack": "fast",
+    "release": "fast",
+    "for": "effect: pumping, lo-fi, parallel crush"
+   }
+  },
+  "roles": {
+   "lead": [
+    "Smooth",
+    0.35
+   ],
+   "counter": [
+    "Smooth",
+    0.25
+   ],
+   "harmony": [
+    "Glue",
+    0.3
+   ],
+   "double": [
+    "Glue",
+    0.3
+   ],
+   "chords": [
+    "Glue",
+    0.25
+   ],
+   "pad": [
+    "Glue",
+    0.15
+   ],
+   "arp": [
+    "Glue",
+    0.2
+   ],
+   "bass": [
+    "Steady",
+    0.55
+   ],
+   "bass2": [
+    "Steady",
+    0.4
+   ],
+   "drums": [
+    "Punchy",
+    0.4
+   ],
+   "perc": [
+    "Punchy",
+    0.3
+   ],
+   "texture": [
+    "Glue",
+    0.1
+   ],
+   "loop": [
+    "Glue",
+    0.15
+   ],
+   "audio": [
+    "Smooth",
+    0.45
+   ]
+  },
+  "engineer": "The style's mix engineer profile (bestFor) can shift amounts: e.g. a profile that favours parallel compression moves drums to Crush on the smart knob and lowers the insert amount.",
+  "today": "Parts have no compressor of their own yet (only the master's Polish). Add one per part in the page and port it to Source/SynthFx.h, reusing the Compressor class in Synth.h."
+ }
 }

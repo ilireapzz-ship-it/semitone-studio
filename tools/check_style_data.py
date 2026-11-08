@@ -167,6 +167,26 @@ for k in pids:
     if k not in MM['bestFor']: W(f"mix-master: profile {k} has no best engineers (uses the house profile)")
 for r_ in MM['calibrate']['coachRules']:
     if r_ not in rid: I(f"mix-master calibrate: coach rule {r_} unknown")
+SK=MM['smartKnob']; roles_=set(json.load(open('data/part-roles.json'))['roles'])
+prod_moves={p['id']:{m['id'] for m in p.get('pass',{}).get('moves',[])} for p in json.load(open('data/style-library.json'))['producers']}
+for r_ in roles_:
+    if r_ not in SK['roles']: I(f"mix-master smartKnob: role {r_} has no pick")
+    if r_ not in MM['comp']['roles']: I(f"mix-master comp: role {r_} has no style")
+for r_,v in SK['roles'].items():
+    for o in [v['pick']]+v['useful']+v.get('rare',[]):
+        if o not in SK['options']: I(f"mix-master smartKnob {r_}: option {o} unknown")
+    if v['pick'] in v.get('rare',[]): I(f"mix-master smartKnob {r_}: the pick is marked rare")
+for pid,m in SK['producer'].items():
+    if pid not in prod_moves: I(f"mix-master smartKnob: producer {pid} unknown")
+    for r_,(o,mv) in m.items():
+        if o not in SK['options']: I(f"mix-master smartKnob {pid}/{r_}: option {o} unknown")
+        if mv not in prod_moves.get(pid,()): I(f"mix-master smartKnob {pid}/{r_}: move {mv} not in that producer's pass")
+for e in SK['exceptions']:
+    if not e.get('src'): I("mix-master smartKnob exception without a source")
+    for s_ in e['when'].get('styles',[]):
+        if s_ not in pids: I(f"mix-master smartKnob exception: style {s_} not a profile")
+for r_,(st_,a_) in MM['comp']['roles'].items():
+    if st_ not in MM['comp']['styles']: I(f"mix-master comp {r_}: style {st_} unknown")
 print('ISSUES',len(issues)); [print(' -',x) for x in issues]
 print('WARNINGS',len(warn)); [print(' -',x) for x in warn]
 sys.exit(1 if issues else 0)

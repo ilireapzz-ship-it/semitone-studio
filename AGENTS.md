@@ -45,6 +45,10 @@ Exact look: `docs/design/merged/reference.dc.html` (a design-canvas file: copy i
 17. **Smart EQ, Calibrate, Fix what I hear** (8 Nov): `docs/design/mixing/README.md` and `data/mix-master.json` (12 sourced mix and mastering
     engineer profiles, best per style, spectrum by role, interactions, 22 problems, destinations). Also: numbered channels, auto-routing to buses
     and returns, and level zones on strips (`docs/design/panels/README.md` sections 3–4).
+18. **Smart knob and real per-part compressor** (8 Nov): each strip has Pan, Width and one smart knob whose target follows `smartKnob` in
+    `data/mix-master.json` (producer > style exception > role; changeable, Back to smart), and the Comp bar becomes a real one-amount compressor
+    (`comp` in the same file, port to `Source/SynthFx.h`). Spec: `docs/design/panels/README.md`, strip layout. Test: bass never gets a reverb pick
+    unless a sourced exception applies.
 Rules that always hold: suggest and accept (never surprise changes), one undo step per change, learning about Jamie stays on his
 computer, no copied melodies, lyrics or recordings, no imitating or cloning a real singer's voice. Producers and artists are described
 as "X-style, based on how they're known to work". Ask Jamie before anything that needs hosting, accounts or money.

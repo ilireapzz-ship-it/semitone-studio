@@ -99,11 +99,19 @@ The desktop app records natively (TakeRecorder). Inside a DAW, recording stays w
 - **Strip layout (no wasted width):**
   - Top to bottom: plays through, four insert slots (empty ones dashed), then a small **EQ curve** in the part colour (click to open the EQ).
   - At the bottom, a two-column **fader area**. The left column is one small rounded **knob panel** (slightly darker than the strip, 8 px corners)
-    filled top to bottom with no even-spaced gaps: **Pan** and **Width** (30 px LED-ring knobs, label and value under each, 4 px apart), a tiny
-    "SENDS" label, **Plate** and **Echo** send knobs (lilac ring, "off" when 0), then a "COMP" label and a thin **gain-reduction meter** (8 px wide,
-    brass fill growing down from the top, value like "−3 dB" under it) that stretches to fill whatever height is left, so the panel always ends
-    level with the fader. Parts mixed in your DAW show "—". (Replaces the earlier Pan / Room / Width column, whose three knobs were spread
-    with large gaps; Room is now the Plate send.) The right column has a **dB scale** (+6, 0, −6, −12, −18, −24, −36, −60, with 0 in
+    filled top to bottom: **Pan**, **Width**, and one **smart knob** (30 px LED-ring knobs, 4 px apart), then the **Comp** control filling the rest.
+    - **Smart knob:** its label is the effect it controls with ✦ and ▾ ("✦ Drive ▾"), lilac ring for sends (Plate, Echo, Slap, Room, Hall),
+      brass for inserts (Drive, Crush, Duck, Tone…). Clicking the label opens **"this knob controls"**: *Useful on <role>* (radio list, the smart
+      pick first, each with a one-line reason), *Rare on <role>* (dimmed, with why, e.g. reverb on bass), **Any plug-in control…**, **◎ Learn
+      controller**, and **✦ Back to smart**. A manual choice sticks for that part. The brain is `smartKnob` in `data/mix-master.json`: producer
+      entry for the role (sourced move in that producer's pass, e.g. Antonoff-style: vocal → Slap, drums → Room), then a sourced style exception
+      (film/orchestral may add reverb to bass, high-passed at 600 Hz), then the role pick (bass → Drive, sub → Duck from kick, lead → Echo,
+      chords → Plate, pad → Hall, drums → Crush…). Smart never puts reverb or echo on bass unless one of those says so.
+    - **Comp:** label, amount ("35%"), then a 16 px bar that stretches to the bottom. A metal cap marks the **amount** (drag up for more, scroll
+      for fine steps, double-click = smart amount, right-click = Style Smooth/Steady/Punchy/Glue/Squash, Sidechain from…, Full view); a faint
+      brass tint fills below the cap; the live **gain reduction** draws from the top in brass, with the dB under the bar. Style and amount per
+      role come from `comp` in `data/mix-master.json`; Amount is an automation target and controller-learnable. Parts mixed in your DAW show "—".
+      Today parts have no compressor of their own (only the master's Polish): add one per part in the page and port it to `Source/SynthFx.h`. The right column has a **dB scale** (+6, 0, −6, −12, −18, −24, −36, −60, with 0 in
     the text colour and +6 in red), the fader with a metal cap, and a full-width stereo meter.
 - **The meter:**
   - Green → yellow → red gradient that reaches red only near 0 dB.

@@ -44,3 +44,4 @@ Claude does a design check after each step against the boards and adds any fixes
 | 15 | Volume knob on every part | ☐ | | |
 | 16 | Song settings, Record, mixer with your DAW (+ theme rules) | ☐ | | |
 | 17 | Smart EQ, Calibrate (mix/master profiles), Fix what I hear, routing, level zones | ☐ | | |
+| 18 | Smart knob per strip + real per-part compressor | ☐ | | |
