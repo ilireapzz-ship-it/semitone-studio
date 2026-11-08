@@ -181,6 +181,8 @@ group buses or separate effect returns, and nothing can be rerouted. Add:
 - **Soft inks:** the pale accent text colours (part-colour tints like the pink take names, green "good level", red "recording") are unreadable on Riso
   and Daylight paper (`problem-soft-inks-Riso.png`). Add `inkSoft` per part and status colour to themes.json. Dark themes keep the pale tints, and
   light themes use deeper versions that reach 4.5:1.
+- **One exception, on purpose:** device windows (the luxe compressor, `docs/design/mixing/README.md` 4c) keep their dark hardware finish in
+  every theme and use their own inks inside, never theme tokens, so nothing inside them can turn dark-on-dark.
 - Unlit knob segments, chord-rhythm hits and structure blocks use alpha tints of the part colour, so they work on any background.
 - Tests: `themes.test.js` renders Automation, the macro panel, the part knobs, Song settings, Record and the mixer in every theme and checks text
   contrast ≥ 4.5:1 on every visible label.
