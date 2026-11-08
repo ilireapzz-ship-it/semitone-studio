@@ -199,10 +199,13 @@ knobs) still ugly; this refined look replaces it. Principles: restraint, one acc
   ground (#18202B → #0B0F15, 10 px corners) inside the panel. One dB scale for everything (0 at the top, −60 at the bottom; labels on the right).
   - **Knee column** on the left (about 150 px): the in → out curve in white with a soft glow, the 1:1 diagonal dotted, a red dot for the
     current level, sharing the graph's y scale; a hairline separates it from the graph.
-  - **Input:** a blue-silver gradient (#E6EEFF → #AFC3E6 → #7D8FC4 → transparent violet), with a crisp 1 px edge drawn on top of everything
-    that shifts silver-blue → white → lavender across the graph, so wherever the compressor takes level off, the silver shows above the output.
-  - **Output:** a rich gradient from the part colour: pale peach at the peaks → coral → rose → plum → transparent at the bottom (5 stops), a faint
-    white sheen across the middle of the graph, and a 1.3 px glowing edge that shifts peach → near-white → pink.
+  - **Colours chosen so before and after are easy to tell apart (Jamie, 8 Nov):** cool blue for before, warm coral for after, red for turned
+    down. A small key sits in the graph's quiet top-right corner: BEFORE / AFTER / TURNED DOWN with a short colour bar each.
+  - **Input (before):** an ice-blue to cobalt gradient (#8FE0FF → #4FB4F0 → #3A6FD0 → transparent indigo), with a 1.3 px glowing edge
+    shifting cyan → pale blue → periwinkle, drawn on top of everything. Wherever the compressor takes level off, a clear blue band shows above
+    the coral.
+  - **Output (after):** a warm gradient from the part colour: peach at the peaks → coral → rose → plum → transparent (5 stops), a faint white
+    sheen across the middle, and a 1.3 px glowing edge shifting peach → light apricot → pink.
   - **Gain reduction:** a red line hanging from 0 dB at the top, shifting orange-red → red → pink-red
     across the graph, with a soft glow and a fill that fades red → magenta → transparent, on the same dB scale; the
     biggest reduction gets a red dot and label ("“home” −9 dB").
