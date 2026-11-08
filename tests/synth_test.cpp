@@ -571,6 +571,34 @@ int main()
         else printf ("ok: audio tracks: own channel, level, pan, stereo sides and Mono\n");
     }
 
+    // Smart EQ: the engine's bands answer like the page's BiquadFilterNodes (getFrequencyResponse values from the page, 48 kHz)
+    {
+        const double sr = 48000; const double F[] = { 50, 100, 200, 400, 1000, 2500, 5000, 8000, 12000 };
+        struct Set { const char* name; std::vector<std::pair<std::string, float>> p; double want[9]; };
+        const std::vector<Set> sets = {
+            { "bell", { { "n", 1 }, { "t0", 0 }, { "f0", 1000 }, { "g0", 6 }, { "q0", 2 } }, { 0, .02, .07, .34, 6, .34, .06, .02, .01 } },
+            { "shelves", { { "n", 2 }, { "t0", 1 }, { "f0", 200 }, { "g0", -4 }, { "t1", 2 }, { "f1", 6000 }, { "g1", 3 } }, { -3.98, -3.76, -2, -.24, 0, .08, .94, 2.37, 2.91 } },
+            { "cuts 24/48", { { "n", 2 }, { "t0", 3 }, { "f0", 150 }, { "s0", 24 }, { "t1", 4 }, { "f1", 7000 }, { "s1", 48 } }, { -38.17, -14.25, -.41, 0, 0, 0, -.01, -11.29, -49.12 } },
+            { "tilt", { { "n", 1 }, { "t0", 6 }, { "f0", 1000 }, { "g0", 6 } }, { -3, -3, -2.99, -2.85, 0, 2.85, 2.99, 3, 3 } },
+            { "band pass", { { "n", 1 }, { "t0", 7 }, { "f0", 1000 }, { "q0", 1.5f } }, { -29.54, -23.47, -17.24, -10.4, 0, -10.47, -17.55, -22.33, -27.16 } },
+            { "cut 12", { { "n", 1 }, { "t0", 3 }, { "f0", 300 }, { "s0", 12 } }, { -31.13, -19.14, -7.83, -1.19, -.03, 0, 0, 0, 0 } } };
+        for (auto& s : sets)
+        {
+            FxDesc d; d.type = "peq"; for (auto& kv : s.p) d.p[kv.first] = kv.second;
+            for (int k = 0; k < 9; ++k)
+            {
+                PeqFx eq (d, sr); const int n = (int) sr; double in2 = 0, out2 = 0;
+                for (int i = 0; i < n; ++i) { float l = (float) std::sin (2 * synthPi * F[k] * i / sr), r = l; const float x = l; eq.run (l, r); if (i > n / 2) { in2 += x * x; out2 += l * l; } }
+                const double db = 10 * std::log10 (std::max (1e-14, out2 / in2));
+                CHECK (std::abs (db - s.want[k]) < (s.want[k] < -30 ? 1.5 : .15), "smart EQ %s at %g Hz: engine %.2f dB, page %.2f dB", s.name, F[k], db, s.want[k]);
+            }
+        }
+        FxDesc d; d.type = "peq"; d.ch = 3; d.p = { { "n", 1 }, { "t0", 5 }, { "f0", 2500 }, { "q0", 4 } };
+        auto bank = makeFxBank ({ d }, sr); CHECK (bank->eq[3] && bank->any[3] && ! bank->eq[2], "smart EQ lands on its strip");
+        float l = 0, r = 0, peakOut = 0; for (int i = 0; i < 48000; ++i) { l = r = (float) std::sin (2 * synthPi * 2500 * i / sr); bank->run (3, l, r); if (i > 24000) peakOut = std::max (peakOut, std::abs (l)); }
+        CHECK (peakOut < .01f, "smart EQ notch removes 2.5 kHz (peak %.4f)", peakOut);
+    }
+
     printf (failures ? "%d synth tests FAILED\n" : "all synth tests passed\n", failures);
     return failures ? 1 : 0;
 }

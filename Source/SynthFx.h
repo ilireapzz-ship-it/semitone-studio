@@ -1,5 +1,5 @@
 #pragma once
-// Part effects for the native engine: the page's filter, saturator, tube warmth, EQ, echo, plate, chorus and tremolo.
+// Part effects for the native engine: the page's filter, saturator, tube warmth, EQ, Smart EQ, echo, plate, chorus and tremolo.
 // Included by Synth.h after Biquad and Room. The plate is a feedback network here, not the page's convolver.
 #include <map>
 #include <memory>
@@ -151,6 +151,46 @@ public:
     void run (float& l, float& r) override { l = hs.run (pk.run (ls.run (l, 0), 0), 0); r = hs.run (pk.run (ls.run (r, 1), 1), 1); }
 private:
     double sr; float midF, mid; Biquad ls, pk, hs;
+};
+
+// Smart EQ (docs/design/mixing §1): up to 24 bands per strip, run before the inserts. Same maths as the page's BiquadFilterNodes:
+// bell/shelves/notch/band-pass are RBJ with linear Q, cuts are Butterworth cascades (12/24/48 dB/oct), tilt is a low and a high shelf at the pivot.
+// p: n = band count; per band i: t<i> type (0 bell, 1 low shelf, 2 high shelf, 3 low cut, 4 high cut, 5 notch, 6 tilt, 7 band pass), f<i>, g<i>, q<i>, s<i> slope.
+inline void peqNotch (Biquad& b, double f, double q, double sr)
+{
+    const double w = 2 * synthPi * std::min (f, sr * .49) / sr, c = std::cos (w), al = std::sin (w) / (2 * q);
+    b.set (1, -2 * c, 1, 1 + al, -2 * c, 1 - al);
+}
+inline int peqStages (float slope) { return slope >= 47 ? 4 : slope >= 23 ? 2 : 1; }
+inline const double* peqQs (int n)
+{
+    static const double one[] = { .7071 }, two[] = { .5412, 1.3066 }, four[] = { .5098, .6013, .9000, 2.5629 };
+    return n == 4 ? four : n == 2 ? two : one;
+}
+class PeqFx : public Fx
+{
+public:
+    PeqFx (const FxDesc& d, double rate) : sr (rate)
+    {
+        const int n = std::clamp ((int) d.get ("n", 0), 0, 24);
+        for (int i = 0; i < n; ++i)
+        {
+            const std::string k = std::to_string (i);
+            const int t = (int) d.get (("t" + k).c_str(), 0); const double f = std::clamp ((double) d.get (("f" + k).c_str(), 1000), 10.0, 22000.0), g = d.get (("g" + k).c_str(), 0), q = std::max (.05, (double) d.get (("q" + k).c_str(), .9));
+            if (t == 3 || t == 4)
+            {
+                const int st = peqStages (d.get (("s" + k).c_str(), 12)); const double* qs = peqQs (st);
+                for (int j = 0; j < st; ++j) { Biquad b; if (t == 3) b.highpass (f, 20 * std::log10 (qs[j]), sr); else b.lowpass (f, 20 * std::log10 (qs[j]), sr); bq.push_back (b); }
+            }
+            else if (t == 6) { Biquad a, b; shelfLow (a, f, -g / 2, sr); shelfHigh (b, f, g / 2, sr); bq.push_back (a); bq.push_back (b); }
+            else { Biquad b; if (t == 1) shelfLow (b, f, g, sr); else if (t == 2) shelfHigh (b, f, g, sr); else if (t == 5) peqNotch (b, f, q, sr); else if (t == 7) b.bandpass (f, q, sr); else peak (b, f, q, g, sr); bq.push_back (b); }
+        }
+        out = std::pow (10.0f, d.get ("out", 0) / 20);
+    }
+    void run (float& l, float& r) override { for (auto& b : bq) { l = b.run (l, 0); r = b.run (r, 1); } l *= out; r *= out; }
+    size_t stages() const { return bq.size(); }
+private:
+    double sr; std::vector<Biquad> bq; float out = 1;
 };
 
 class EchoFx : public Fx
@@ -385,10 +425,11 @@ class FxBank
 public:
     static constexpr int master = 16;
     std::array<std::array<std::unique_ptr<Fx>, 3>, 17> slots;
+    std::array<std::unique_ptr<Fx>, 17> eq;   // the strip's Smart EQ, before its inserts
     std::array<bool, 17> any {};
 
     Fx* at (int ch, int slot) const { return ch >= 0 && ch < 17 && slot >= 0 && slot < 3 ? slots[(size_t) ch][(size_t) slot].get() : nullptr; }
-    void run (int ch, float& l, float& r) { for (auto& f : slots[(size_t) ch]) if (f) f->run (l, r); }
+    void run (int ch, float& l, float& r) { if (auto& e = eq[(size_t) ch]) e->run (l, r); for (auto& f : slots[(size_t) ch]) if (f) f->run (l, r); }
 };
 
 inline std::shared_ptr<FxBank> makeFxBank (const std::vector<FxDesc>& list, double sr)
@@ -410,6 +451,7 @@ inline std::shared_ptr<FxBank> makeFxBank (const std::vector<FxDesc>& list, doub
         else if (d.type == "autopan") f = std::make_unique<AutopanFx> (d, sr);
         else if (d.type == "phaser") f = std::make_unique<PhaserFx> (d, sr);
         else if (d.type == "wide") f = std::make_unique<WideFx> (d, sr);
+        else if (d.type == "peq") { if (d.ch >= 0 && d.ch < 17) { b->eq[(size_t) d.ch] = std::make_unique<PeqFx> (d, sr); b->any[(size_t) d.ch] = true; } continue; }
         if (f && d.ch >= 0 && d.ch < 17 && d.slot >= 0 && d.slot < 3) { b->slots[(size_t) d.ch][(size_t) d.slot] = std::move (f); b->any[(size_t) d.ch] = true; }
     }
     return b;
