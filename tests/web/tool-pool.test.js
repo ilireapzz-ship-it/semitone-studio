@@ -6,8 +6,8 @@ let fails=0; const ok=(c,m,x)=>{ if(!c){ fails++; console.log('FAIL',m,x===undef
  const prep=()=>p.evaluate(()=>{ const v=document.querySelector('.startview'); if(v) v.hidden=true; shellDock('roll'); setLayer('melody'); S.ctxOn=false; partHear=()=>{}; }); await prep(); await p.waitForTimeout(300);
  const order=()=>p.evaluate(()=>[...new Set([...document.querySelectorAll('#rollRail [data-rid]')].map(e=>e.dataset.ri+':'+e.dataset.rid))].map(x=>x.split(':')[1]));
  // default order: Select, Slice, Articulation mode first; the rest as before
- const o=await order(); ok(o.slice(0,5).join()==='select,slice,art,draw,erase','default order starts Select, Slice, Articulation',o);
- ok(o.join()==='select,slice,art,draw,erase,|,snap,quant,|,up,down,legato,dup,all,|,fit','rest of the default kept',o);
+ const o=await order(); ok(o.slice(0,6).join()==='select,slice,art,marks,draw,erase','default order starts Select, Slice, Articulation mode, Show articulations',o);
+ ok(o.join()==='select,slice,art,marks,draw,erase,|,snap,quant,|,up,down,legato,dup,all,|,fit','rest of the default kept',o);
  // drag Fit to the top of the bar
  const pt=sel=>p.evaluate(s=>{ const r=document.querySelector(s).getBoundingClientRect(); return {x:r.left+r.width/2,y:r.top+r.height/2,t:r.top}; },sel);
  let a=await pt('#rollRail [data-rid="fit"]'), z=await pt('#rollRail [data-rid="select"]');
@@ -22,7 +22,7 @@ let fails=0; const ok=(c,m,x)=>{ if(!c){ fails++; console.log('FAIL',m,x===undef
  const items=await p.evaluate(()=>[...document.querySelectorAll('#ctxMenu [data-ci]')].map(b=>b.textContent.trim()));
  ok(items[0]==='Tool Pool…'&&items.some(t=>/Put Quantize back/.test(t)),'right-click offers Tool Pool',items);
  await p.evaluate(()=>[...document.querySelectorAll('#ctxMenu [data-ci]')].find(b=>b.textContent.trim()==='Tool Pool…').click()); await p.waitForTimeout(100);
- ok(await p.evaluate(()=>!$('#toolPool').hidden&&document.querySelectorAll('#tpBar .tp-card').length===16),'Tool Pool opens with the bar listed');
+ ok(await p.evaluate(()=>!$('#toolPool').hidden&&document.querySelectorAll('#tpBar .tp-card').length===17),'Tool Pool opens with the bar listed');
  // pool lists the extra tools; click + adds Copy at the end
  ok(await p.evaluate(()=>['copy','paste','del','semiUp','left','undo'].every(id=>$(`#tpPool [data-pid="${id}"]`))),'pool holds tools not on the bar');
  await p.evaluate(()=>$('#tpPool [data-pid="copy"] [data-tp="add"]').click()); await p.waitForTimeout(60);
