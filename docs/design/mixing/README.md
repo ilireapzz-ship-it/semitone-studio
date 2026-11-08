@@ -199,10 +199,12 @@ knobs) still ugly; this refined look replaces it. Principles: restraint, one acc
   ground (#18202B → #0B0F15, 10 px corners) inside the panel. One dB scale for everything (0 at the top, −60 at the bottom; labels on the right).
   - **Knee column** on the left (about 150 px): the in → out curve in white with a soft glow, the 1:1 diagonal dotted, a red dot for the
     current level, sharing the graph's y scale; a hairline separates it from the graph.
-  - **Input:** pale blue-silver fill fading to nothing at the bottom, with a crisp 1 px edge drawn on top of everything, so wherever the
-    compressor takes level off, the silver shows above the output.
-  - **Output:** the part colour, light at the top and fading out, with a 1.2 px glowing edge.
-  - **Gain reduction:** a red line (#FF5A4E) hanging from 0 dB at the top with a soft glow and a fading red fill, on the same dB scale; the
+  - **Input:** a blue-silver gradient (#E6EEFF → #AFC3E6 → #7D8FC4 → transparent violet), with a crisp 1 px edge drawn on top of everything
+    that shifts silver-blue → white → lavender across the graph, so wherever the compressor takes level off, the silver shows above the output.
+  - **Output:** a rich gradient from the part colour: pale peach at the peaks → coral → rose → plum → transparent at the bottom (5 stops), a faint
+    white sheen across the middle of the graph, and a 1.3 px glowing edge that shifts peach → near-white → pink.
+  - **Gain reduction:** a red line hanging from 0 dB at the top, shifting orange-red → red → pink-red
+    across the graph, with a soft glow and a fill that fades red → magenta → transparent, on the same dB scale; the
     biggest reduction gets a red dot and label ("“home” −9 dB").
   - Shapes: instant rise, smooth fall (an envelope follower), with the room tone as a floor, so words read as smooth peaks, never boxes.
   - **Threshold:** a dashed white line across the graph with a white value pill at the right end (drag either).
