@@ -57,6 +57,50 @@ Pictures: `1-Smart-EQ.png`, `2-Calibrate.png`, `3-Fix-what-I-hear.png`. Exact va
 - A/B with **level matching** on (louder never wins by accident), and Presets per role.
 - Everything is one undo step. The native engine and export run the same EQ (port to `Source/SynthFx.h`, including dynamic bands and M/S).
 
+### Multi-select, band groups and pro features (`4-Smart-EQ-multi-select-and-pro.png`, values in `reference-EQ2.dc.html`)
+Checked against FabFilter Pro-Q 4's published feature list (Dec 2024). We take the ideas only, with our own design and names.
+- **Select several bands:** ⇧-click nodes, drag a box on the display, or ⌘-click band cards.
+  - Selected nodes fill in the part colour, and a dotted line links them.
+  - The band panel becomes "**2 bands selected** · Low cut + De-ess" with ◉ solo-listen, B, 🔒 and ⌫ for all of them.
+  - **Relative** knobs: Shift freq (semitones), Gain (dB), Width (×Q). They move each band by the same amount, and dragging any selected node
+    moves them all.
+  - Stereo/Mid/Side/L/R applies to all. ⌘A selects all bands, Esc clears.
+- **Band groups:** "Save as group" names the selection (e.g. "Vocal clean-up"). The group shows as a tag on its band cards. Toggle it on or off as one,
+  copy it to another part (bands keep their relative positions), or save it as a preset. Smart and Calibrate create groups too ("Elmhirst-style
+  vocal" = HP + notch + air).
+- **Toolbar row** above the display:
+  - **Tools:** ↖ Edit, ✎ **Sketch** (draw a curve with the mouse and bands are created to follow it, at most 6), ⌖ **Grab** (drag a peak in the
+    live spectrum to cut or boost it; a band appears there).
+  - **Character:** Clean, Subtle (transformer-style), Warm (tube-style). It's light saturation, and the native engine must match it.
+  - **Phase:** Zero latency (default while recording), Natural, Linear (default when mastering). The latency shows in the strip, and `LineUp`
+    compensates.
+  - **Scale:** Hz, **Notes** (frequency axis in note names, e.g. C4, so a songwriter can read it; the analyser shows the song's key notes as
+    ticks), and ±6 dB (mastering zoom; the normal range is ±18 dB).
+- **More filters:** Bell, Shelf (low/high), Cut (6–96 dB/oct, plus **fractional slopes** and **brickwall**), Notch, Band pass, Tilt, **All pass** (phase
+  alignment, e.g. kick vs bass), and **Flat tilt**. Up to 24 bands.
+- **Dynamic bands:** Range, Threshold, **Attack/Release** (shown on the card: "A5 R80"), and **sidechain filter**.
+  - **Spectral** mode only acts on the frequencies inside the band that exceed the threshold. It's the default for de-ess and harshness
+    fixes, and its card says "spectral".
+- **Triggered by another part** (external sidechain): a dynamic band keyed from another part, e.g. on Chords "dip 3 dB at 1.2–4 kHz only while
+  the Melody sings". Set it with "Key: Melody ▾". "Fix in Chords" from Checks creates exactly this. The panel on the Melody EQ links to it with
+  Open on Chords.
+- **All EQs in the song:**
+  - A list of every EQ (parts, buses, returns, master), each with a mini curve and its overlaps with the open EQ tinted red.
+  - Click one to jump to it, ⌘-click to overlay it on this display.
+  - Copy curve / Paste to… (with a choice: replace or add bands), and Open all (a grid of all EQs).
+- **Workflow:**
+  - Drag or scroll on any value, and double-click to type it.
+  - MIDI Learn on every knob (uses the Controller map).
+  - Undo/redo inside the EQ, sample-accurate automation of every band parameter (shows up in the Automation tab), and resizable/full screen.
+  - Surround is out of scope, since Semitone is stereo.
+- Tests:
+  - Multi-select relative moves keep spacing.
+  - A group copies to another part with relative positions.
+  - Sketch creates ≤ 6 bands within 1 dB of the drawn curve; Grab adds a band at the grabbed peak.
+  - Spectral and dynamic bands are inactive below threshold; an external key triggers the band.
+  - Linear phase latency is compensated, and the Notes scale is accurate to the cent.
+  - The native engine matches the page for every filter type, character mode and phase mode.
+
 ## 2. Calibrate (Mix tab → Calibrate; only when the user presses it)
 - Header pickers:
   - **Mix like** (default from `bestFor`, e.g. Tom Elmhirst-style for the Ultraviolence era).
