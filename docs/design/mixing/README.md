@@ -185,7 +185,7 @@ Checked 8 Nov 2026; details and sources in `comp.benchmark` and `comp.pro` (`dat
 - **Not covered:** external audio sidechain from outside Semitone, surround. Limiting stays on the master, de-essing in the EQ (or "Focus on
   esses" + a high band here).
 
-### 4c. The finish: how the window looks by default (`7-Compressor.png`, values in `reference-Comp4.dc.html`)
+### 4c. The finish: how the window looks by default (`7-Compressor.png`, values in `reference-Comp5.dc.html`)
 Sections 4 and 4b say *what* is in the window; this says how it looks. Jamie found the first luxe try (brown waveform, cream VU meter, small
 knobs) still ugly; this refined look replaces it. Principles: restraint, one accent colour, real data drawn well, no boxes.
 - **Panel:** 16 px corners, graphite gradient (#141518 → #0F1012), 1 px hairline border rgba(255,255,255,.07), faint top highlight, soft
@@ -195,25 +195,19 @@ knobs) still ugly; this refined look replaces it. Principles: restraint, one acc
   the chosen one is in the text colour with a 1.5 px champagne underline. Right: A / B, Hear removed, Presets, × as quiet text.
 - **Smart line:** a small ✦ in a thin champagne circle, one sentence ("Smooth, about 3 dB — evens out the loud words…"), "2 notes", and the
   only filled button, **Listen & set** (champagne pill).
-- **Display (FabFilter Pro-C style, asked for by Jamie 8 Nov):** a scrolling **level graph**, not a mirrored waveform. Its own deep blue-slate
-  ground (#18202B → #0B0F15, 10 px corners) inside the panel. One dB scale for everything (0 at the top, −60 at the bottom; labels on the right).
-  - **Knee column** on the left (about 150 px): the in → out curve in white with a soft glow, the 1:1 diagonal dotted, a red dot for the
-    current level, sharing the graph's y scale; a hairline separates it from the graph.
-  - **Colours (revised with Jamie, 8 Nov): three separate colour families, never two warm ones side by side.** Green for the sound you hear
-    (after), champagne gold for what the compressor took off, red for how much it is turning down. The key in the graph's quiet top-right corner reads
-    AFTER / TAKEN OFF / TURNED DOWN. Background: deep navy (#131A24 → #090C11) with a faint cool glow from the top.
-  - **After (what you hear):** green, as Jamie asked (8 Nov): pale mint → spring green → emerald, fading to nothing by two-thirds down
-    (#E6FFF1 → #8EF0B8 → #3FC98A → transparent). Fine vertical grain inside (1 px lines every 3 px at 4.5% white) for texture. Edge: a crisp
-    1.2 px mint-white line (#DFFFEE) over a soft 3 px blurred green glow (#7DF0B0). Key swatch and the knee's current-level dot: #6EE7A6.
-  - **Before:** a faint champagne fill (#E3C58E at 22% → transparent) and a 1 px champagne edge (#F0D9A8), no glow.
-  - **Taken off (compressed areas):** the band between the before edge and the after edge, in tan → champagne gold (#F6E3BC → #E3C58E →
-    #C9A46A, fading as it goes down into the green) with a fine light 45° hatch, so compressed peaks fade into the window's champagne accent.
-  - **Gain reduction:** a crisp 1.4 px red line (#FF6170) over a soft blurred red glow, with a single-hue red fill fading down. The biggest
-    reduction gets a red dot and a dark pill label ("“home” −9.1 dB"). The knee's current-level dot is green, and the Amount knob's inner ring
-    is red, so red always means turning down.
-  - Shapes: instant rise, smooth fall (an envelope follower), with the room tone as a floor, so words read as smooth peaks, never boxes.
-  - **Threshold:** a dashed white line across the graph with a white value pill at the right end (drag either).
-  - Bar numbers and section names in small caps under the graph.
+- **Display: calm, not flashy (Jamie found the glowing, striped, three-colour version cheap, 8 Nov).** Rule: one background, one thin fill,
+  one crisp line, colour only where it means something. No glows, no grain, no hatching, no boxes inside the panel, no colour key needed.
+  - The graph sits straight on the panel (same background, no inner box), full width. Five faint grid lines (0, −12, −24, −36, −48 dB) at
+    3.5% white, labels on the right in grey mono; bar numbers and section names under it in plain text ("Bar 33 … Chorus 2 … 36").
+  - **What you hear:** a single 1.1 px pale-mint line (#BFF0D6) with a very light mint fill under it (30% at the top → 8% → nothing).
+  - **What was turned down:** only where the compressor worked, the gap between the original level and what you hear is filled in solid
+    champagne (#E9CF9C, 90% → 45%). Nothing else is drawn for the original, so gold means "compressed here" and nothing else.
+  - **How much:** a 1 px soft-red line (#F07272) hanging from 0 dB with a 16% red fill fading down, same dB scale.
+  - **Threshold:** a fine dotted champagne line with a small gold "−18" where the scale is.
+  - The biggest moment gets one quiet label in the clear space beside it: “home” in the text colour and −9.1 dB in gold, with a hairline
+    to the peak.
+  - The **knee** moves out of the graph to the right column: a 108 px outlined square with the curve and a gold dot, labelled "Knee", next to
+    the IN / OUT meters.
 - **Hero column (320 px):** one **Amount knob** (220 px): matte graphite body, champagne pointer, the value in the serif inside ("45") with
   "AMOUNT" under it; an outer thin champagne arc for the amount, a small cream ✦ sparkle on the ring for the smart amount (hover label "Smart: 35"; click it to jump there), and an inner part-colour arc showing the live
   gain reduction. Under it two readouts split by a hairline: "−3.4 dB REDUCING" and "35 ✦ SMART"; then thin IN and OUT meters with a peak tick.
