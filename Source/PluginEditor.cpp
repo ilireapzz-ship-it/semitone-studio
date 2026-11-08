@@ -679,17 +679,34 @@ void SemitoneEditor::takeOpenInput (bool granted)
     auto* h = juce::StandalonePluginHolder::getInstance();
     if (granted && h != nullptr && proc.isStandalone())
     {
-        if (proc.getTotalNumInputChannels() == 0)
+        auto liveInputs = [h]
+        {
+            auto* dev = h->deviceManager.getCurrentAudioDevice();
+            return dev != nullptr ? dev->getActiveInputChannels().countNumberOfSetBits() : 0;
+        };
+        // The app starts with no input device at all (its input bus is off until the first take), so
+        // "use the default input channels" alone opens nothing: name the Mac's default input device too.
+        if (proc.getTotalNumInputChannels() == 0 || liveInputs() == 0)
         {
             h->stopPlaying();
             if (auto* bus = proc.getBus (true, 0)) bus->enable (true);
             auto setup = h->deviceManager.getAudioDeviceSetup();
+            if (setup.inputDeviceName.isEmpty())
+                if (auto* type = h->deviceManager.getCurrentDeviceTypeObject())
+                {
+                    type->scanForDevices();
+                    const auto names = type->getDeviceNames (true);
+                    if (! names.isEmpty())
+                        setup.inputDeviceName = names[juce::jlimit (0, names.size() - 1, type->getDefaultDeviceIndex (true))];
+                }
             setup.useDefaultInputChannels = true;
-            h->deviceManager.setAudioDeviceSetup (setup, true);
+            const auto err = h->deviceManager.setAudioDeviceSetup (setup, true);
+            if (err.isNotEmpty()) o->setProperty ("err", err);
             h->startPlaying();
         }
         h->getMuteInputValue().setValue (false);    // the input only goes to the file: nothing reaches the speakers
-        ok = proc.getTotalNumInputChannels() > 0;
+        ok = proc.getTotalNumInputChannels() > 0 && liveInputs() > 0;
+        o->setProperty ("inputDevice", h->deviceManager.getAudioDeviceSetup().inputDeviceName);
     }
    #endif
     if (ok)
