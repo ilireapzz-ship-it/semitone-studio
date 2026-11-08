@@ -106,11 +106,25 @@ and the style-data check (ISSUES 0) pass after these fixes.
   and stems go through their bus.
 - Not done: removing an added bus, automation lanes on bus faders in the plug-in, and bus compressor meters inside the plug-in.
 
+**Jamie's fixes (8 Nov 2026):**
+- **Compressor beside the meters:** each strip's whole Comp control (amount bar, what it's turning down right now, bypass, open) now sits
+  in the fader row right next to the level meters, instead of above them.
+- **Home button** (top bar, left): back to the start page. It shows the song you're in ("Back to …", Save, ＋ New song) and your saved
+  songs. New song is one undo step; Esc goes back. Also in ⌘K.
+- **Right-click a track** in the timeline: "Fill in <part> for this section / the whole song" (one undo step), "Fill in other parts…",
+  and "Change the instrument or plug-in (VST/AU)…" (in the app; in FL your VSTs stay in FL). Fixed a bug where a picker opened from a
+  right-click menu closed straight away.
+- **Playing the whole song:** Space now plays the whole song from the playhead to the end (it used to play only the selected section).
+  Shift+Space plays just the section.
+- **Editor tabs by job:** Song (Settings, Emotion) · Notes (Piano roll, Beat, Lyrics) · Sound (Instruments, Record, Loops) · Mix (Mixer,
+  Automation, Calibrate, Fix what I hear) · Ideas. Style & settings is no longer hidden in Sound, and the one-page Words and Automation
+  tabs are folded into Notes and Mix.
+
 **Still missing (found in the review, not yet built):**
 - **Strip layout details:** four insert slots (the engine uses slot 4 for the smart knob), the ● record-arm button, the EQ curve below the
   inserts, and a hatched red zone above 0 dB.
 - **Record** (panels §2): input device and gain, Hear myself / Low-cut / Mono / Pre-roll, Loop record, Tuning, Make melody from comp.
-- **Song settings:** the Project row still at the top (spec: logo menu), the new section colour key on timeline pills, and "Use this shape".
+- **Song settings:** the Project row still at the top (Home now has Save, New song and saved songs too), the new section colour key on timeline pills, and "Use this shape".
 - **Smart EQ:** Compare with should default to the biggest masker, 6–96 dB/oct slopes, presets per role, and solo-listening to several bands.
 - **Fix what I hear:** Listen to just this band, and Compare with ideal.
 - **Compressor:** the Peak/RMS/Auto detector, presets, a draggable threshold line, bars and section names under the graph, 4 of the 6

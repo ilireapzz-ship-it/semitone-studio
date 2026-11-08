@@ -7,7 +7,7 @@ const {chromium}=require('playwright'); const url='file://'+require('path').reso
  ok(t0.cards===7,'seven cards: style, structure, key, time, feel, performance, energy ('+t0.cards+')');
  ok(t0.structs.join()==='loop,radio,prechorus,pop,hook,ballad,aaba,epic','eight structure cards: '+t0.structs.join(', '));
  ok(t0.on===t0.cur,'the current structure is ringed ('+t0.on+')');
- ok(t0.tabs.join()==='Library,Emotion,Style & settings,Record,Loop','sound tabs: '+t0.tabs.join(' · ')+' (DAW & MIDI is gone)');
+ ok(t0.tabs.join()==='Instruments,Record,Loops','sound tabs: '+t0.tabs.join(' · ')+' (DAW & MIDI is gone)');
  ok(t0.old,'the old controls stay under “All settings”');
  const step=async(fn)=>p.evaluate(async src=>{ const h0=H.past.length; await eval(src)(); await new Promise(r=>setTimeout(r,60)); return {n:H.past.length-h0,label:H.past.length?H.past[H.past.length-1].label:''}; },fn);
  let r=await step("()=>document.querySelector('[data-setstruct=\"prechorus\"]').click()");

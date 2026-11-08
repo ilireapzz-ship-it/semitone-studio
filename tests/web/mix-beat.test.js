@@ -8,7 +8,7 @@ let fails=0; const ok=(c,m,x)=>{ if(!c){ fails++; console.log('FAIL',m,x===undef
  // Piano roll, Beat, Automation stay reachable from the piano roll
  const tabs=await p.evaluate(()=>[...document.querySelectorAll('#drSubs [data-subpane]')].filter(b=>b.getClientRects().length).map(b=>b.dataset.subpane));
  ok(['roll','beat'].every(t=>tabs.includes(t))&&!tabs.includes('auto'),'Piano roll and Beat tabs show on the piano roll (Automation has its own drawer tab)',tabs);
- await p.click('[data-drawer="auto"]'); await p.waitForTimeout(100); ok(await p.evaluate(()=>!document.querySelector('.dock-pane[data-pane="auto"]').hidden&&!!$('#autCv').getClientRects().length),'Automation opens from its own drawer tab');
+ await p.click('[data-drawer="mix"]'); await p.waitForTimeout(100); await p.click('#drSubs [data-subpane="auto"]'); await p.waitForTimeout(100); ok(await p.evaluate(()=>!document.querySelector('.dock-pane[data-pane="auto"]').hidden&&!!$('#autCv').getClientRects().length),'Automation opens from the Mix tab');
  await p.evaluate(()=>shellDock('beat')); await p.waitForTimeout(150);
  // the beat grid: drum names readable, compact header, one hint line
  const bt=await p.evaluate(()=>{ const r=document.querySelector('.seq-row[data-row="hat"] .rl, .seq-row[data-row] .rl'), n=[...document.querySelectorAll('.seq-row[data-row] .rl-n')]; return {w:r.getBoundingClientRect().width,cut:n.filter(x=>x.scrollWidth>x.clientWidth+1).map(x=>x.textContent),hint:$('.beat-hint').getBoundingClientRect().height,about:!!$('.beat-about'),roll:!!$('#beatRollBtn')}; });

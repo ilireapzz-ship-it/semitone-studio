@@ -2,7 +2,7 @@
 const {chromium}=require('playwright'); const url='file://'+require('path').resolve(__dirname,'../../web/semitone-studio.html');
 (async()=>{ const b=await chromium.launch(), p=await b.newPage({viewport:{width:1440,height:900}}); const errs=[], fails=[]; p.on('pageerror',e=>errs.push(e.message)); const ok=(c,m)=>{ if(!c) fails.push(m); console.log((c?'ok  ':'FAIL')+' '+m); };
  await p.addInitScript(()=>{ window.__noStart=1; }); await p.goto(url); await p.waitForTimeout(1800);
- const tabs=await p.evaluate(()=>[...document.querySelectorAll('.dock-tabs [data-drawer]')].map(x=>x.textContent)); ok(tabs.join()==='Notes,Words,Sound,Mix,Automation,Ideas','drawer tabs '+tabs);
+ const tabs=await p.evaluate(()=>[...document.querySelectorAll('.dock-tabs [data-drawer]')].map(x=>x.textContent)); ok(tabs.join()==='Song,Notes,Sound,Mix,Ideas','drawer tabs '+tabs);
  ok(await p.evaluate(()=>{ const a=[...document.querySelectorAll('#timeline .sec')].map(x=>x.getBoundingClientRect().left), c=[...document.querySelectorAll('#arrRows .arr-row.track')][0].querySelectorAll('.arr-cell'); return [...c].every((x,i)=>Math.abs(x.getBoundingClientRect().left-a[i])<=3); }),'sections and clips line up');
  ok(await p.evaluate(()=>{ S.lyrics[1]='a test line'; arrRender(); return $('#arrRows').textContent.includes('a test line'); }),'lyrics go inside the Melody clips');
  // click selects: drawer follows

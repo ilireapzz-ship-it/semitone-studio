@@ -5,8 +5,8 @@ const {chromium}=require('playwright'); const url='file://'+require('path').reso
  await p.addInitScript(()=>{ window.__noStart=1; }); await p.goto(url); await p.waitForTimeout(1500);
  await p.evaluate(()=>{ S.demo=false; S.auto={}; S.autoGen={}; S.emoGen={}; S.smart=false; S.macros=[]; S.autoObj=[]; histCheck(true); shellDock('auto'); });
  await p.waitForTimeout(300);
- const t1=await p.evaluate(()=>({tab:!!document.querySelector('[data-drawer="auto"]'), tabs:[...document.querySelectorAll('[data-drawer]')].map(b=>b.textContent), pane:!!$('#autPane')&&!$('#autPane').closest('[hidden]'), empty:!!document.querySelector('.aut-empty')}));
- ok(t1.tab&&t1.pane&&t1.tabs.includes('Automation'),'Automation is its own drawer tab: '+t1.tabs.join(' · '));
+ const t1=await p.evaluate(()=>({tab:!!document.querySelector('#drSubs [data-subpane="auto"]'), tabs:[...document.querySelectorAll('#drSubs [data-subpane]')].map(b=>b.textContent), pane:!!$('#autPane')&&!$('#autPane').closest('[hidden]'), empty:!!document.querySelector('.aut-empty')}));
+ ok(t1.tab&&t1.pane&&t1.tabs.includes('Automation')&&t1.tabs.includes('Mixer'),'Automation sits in the Mix tab, beside the Mixer: '+t1.tabs.join(' · '));
  // add a lane in plain words
  const t2=await p.evaluate(()=>{ const h0=H.past.length; autAddLane('chords','filter.cutoff'); return {sel:AUT.sel, name:autName(AUT.sel.ch,AUT.sel.tg), steps:H.past.length-h0, who:autWho(AUT.sel.ch,AUT.sel.tg).n}; });
  ok(t2.name==='Brightness'&&t2.steps===1&&t2.who==='You','Add a lane → "Brightness" on Chords, one undo step, made by You');
