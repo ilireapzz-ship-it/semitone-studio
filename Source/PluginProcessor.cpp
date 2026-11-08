@@ -415,6 +415,8 @@ void SemitoneProcessor::setSynthSound (const juce::var& sound, const st::Timelin
             }
             std::stable_sort (t->trans->begin(), t->trans->end(), [] (const st::TransEv& a, const st::TransEv& b) { return a.at < b.at; });
             t->transLevel = num (sound, "transLevel", 1);
+            t->transPan = num (sound, "transPan", 0);
+            { const int c = (int) num (sound, "transCh", -1); t->transCh = c >= 0 && c < 16 && c != 9 ? c : -1; }
             if (t->trans->empty()) t->trans.reset();
         }
         if (auto* list = sound.getProperty ("takes", juce::var()).getArray())

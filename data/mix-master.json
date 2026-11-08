@@ -940,6 +940,16 @@
     "translation"
    ],
    "mono": "below 100–120 Hz"
+  },
+  "fx": {
+   "fund": "broadband, 200 Hz–12 kHz",
+   "highpass": "150–250 Hz (keep the low end of impacts only)",
+   "presence": "4–10 kHz",
+   "watch": [
+    "risers mask the vocal 2–5 kHz",
+    "impact thumps fight the kick 40–80 Hz"
+   ],
+   "tip": "high-pass the risers and sweeps; dip 2–4 kHz a little if they cover the vocal"
   }
  },
  "interactions": [
@@ -1781,6 +1791,17 @@
      "echo"
     ],
     "why": "a plate is the standard vocal reverb"
+   },
+   "fx": {
+    "pick": "tone",
+    "amount": 0.5,
+    "useful": [
+     "tone",
+     "hall",
+     "echo",
+     "width"
+    ],
+    "why": "risers and hits sit best a little darker or a little further back"
    }
   },
   "producer": {
@@ -1928,6 +1949,10 @@
    "audio": [
     "smooth",
     0.45
+   ],
+   "fx": [
+    "clean",
+    0
    ]
   },
   "engineer": "The style's mix engineer profile (bestFor) can shift amounts: e.g. a profile that favours parallel compression moves drums to Crush on the smart knob and lowers the insert amount.",

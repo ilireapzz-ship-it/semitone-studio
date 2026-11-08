@@ -153,7 +153,8 @@ struct SynthPatch
     std::vector<std::string> takeFiles;
     std::array<float, 16> takeChLevel = [] { std::array<float, 16> v; v.fill (1); return v; }(), takeChPan {};   // each audio track's fader and pan, by channel
     uint32_t monoMask = 0;                                 // channels summed to mono before their pan (one bit each); bit 16: the whole mix
-    float transLevel = 1;
+    float transLevel = 1, transPan = 0;
+    int transCh = -1;                                      // the transitions' own channel (fader, pan, effects, EQ, comp, meter); -1: straight to the mix
     std::array<float, 16> extLevel {}, extPan {};    // your plug-ins' strips, by channel
     bool hasExt = false;
     std::vector<PartPatch> parts;
@@ -942,6 +943,7 @@ public:
         // audio tracks and mono channels always mix through their channel bus, like a part with effects
         uint32_t takeMask = 0;
         if (current->takes) for (const auto& seg : *current->takes) takeMask |= 1u << (seg.ch & 15);
+        if (current->trans && current->transCh >= 0) takeMask |= 1u << current->transCh;   // the transitions mix through their own channel strip
         const uint32_t forced = takeMask | (current->monoMask & 0xffffu) | current->routeMask;   // routed parts mix through their channel bus too
         const int nb = (int) std::min (current->rbus.size(), (size_t) FxBank::buses);
         const bool busMode = fxBus != nullptr || pfx || forced != 0;
@@ -1012,7 +1014,12 @@ public:
             };
             float tr = 0;
             for (auto& t : transVoices) if (t.active) tr += t.run (rng);
-            if (tr != 0) { float pl, pr; panGains (0, false, pl, pr); l += tr * current->transLevel * pl; r += tr * current->transLevel * pr; }
+            if (tr != 0)
+            {
+                const int tc = current->transCh;
+                if (tc >= 0) { busL[(size_t) tc] += tr; busR[(size_t) tc] += tr; busLevel[(size_t) tc] = current->transLevel; busPan[(size_t) tc] = current->transPan; busStereo[(size_t) tc] = false; }
+                else { float pl, pr; panGains (0, false, pl, pr); l += tr * current->transLevel * pl; r += tr * current->transLevel * pr; }
+            }
             if (beat >= 0 && current->takes)
             {
                 const double now = beat + i * beatInc, secPerBeat = beatInc > 0 ? 1 / (beatInc * sr) : 0;
