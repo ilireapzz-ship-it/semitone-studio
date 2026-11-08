@@ -1,6 +1,6 @@
 # Automation, redesigned (agreed with Jamie 8 Nov 2026)
 
-Before: `before.png`. One lane for one section, chosen from two dropdowns, a third for shapes, an 80px strip, a loose
+Pictures: 1–4 and `5-Record-with-a-controller.png`. Before: `before.png`. One lane for one section, chosen from two dropdowns, a third for shapes, an 80px strip, a loose
 "Smart mix" box, and empty space. After: `1-Whole-song.png`, `2-Add-a-lane.png`, `3-Editing-details.png`, `4-Macro.png`.
 Exact values: `reference.dc.html` (a design-canvas file: copy its values, not its markup). Same look tokens as the rest (themes.json).
 
@@ -114,6 +114,54 @@ holds an "In FL Studio as 'Macro 1'" switch, Save to ⌘K and ×.
   Expose a fixed set of 8 host parameters ("Macro 1–8"), mapped to the song's macros by name. FL automation then drives them (the host value wins
   while FL automates; Semitone's own lane is shown greyed with "FL is automating this").
 - Macros save with the song. Saved macros (a name, controls by role and ranges) also live in ⌘K, so "Energy" can be reused in another song.
+
+## Record with your controller (`5-Record-with-a-controller.png`, values in `reference-record.dc.html`)
+Gap found: `nativeMidiIn` (and the browser MIDI path) only reads notes for Capture. Mod wheel, knobs, faders, pedals and pitch bend are ignored
+today. Goal: press Record, play, move the mod wheel or a knob, and the lane writes itself, with no setup for the common cases.
+
+**Seamless by default**
+- Any MIDI input works: the desktop app (CoreMIDI/WinMM through JUCE), the plug-in (MIDI routed from FL to Semitone, which already reaches
+  `st_midiin`), and Chrome/Edge on the web (Web MIDI). Forward every message to the page, not just notes.
+- **Defaults with nothing to set up:**
+  - **Mod wheel (CC1) → the selected lane.** It follows whatever lane is selected, so pick a lane and play.
+  - CC11 (expression) → the part's volume.
+  - Pitch bend and sustain (CC64) stay with the notes as expression.
+  - Any other moved control → offer "Link Knob 2 to Melody · Reverb send?" once.
+- **Pressing Record arms the selected lane** (a red "● armed" tag in its header), and any lane with a linked control can be armed with its own
+  "○ arm". Then:
+  - Record captures notes and the moves on armed lanes together, and the lane draws live in red, ahead of the old line (shown faint).
+  - The red head follows the playhead.
+  - "Writing from the mod wheel · Touch" shows above the lane.
+- **Write / Touch / Latch** (the existing ● menu) decide what happens when you let go: replace, glide back, or hold.
+- Pressing **Capture** after playing also keeps the controller moves from the last 2 minutes, not only the notes.
+
+**A live indicator in the transport** shows which controller is talking and where it's going: device · control → part · lane, a 10-step meter
+and the value. It fades out after 3 seconds of no movement.
+
+**The ◎ Controller panel (in the Automation toolbar and in Settings):**
+- The device name, with a layout menu ("Semitone default", plus saved layouts and built-in starting layouts for common keyboards that send
+  standard CCs).
+- The map, one row per control: an icon (wheel, knob, fader, pedal, bend, pads), the name and CC, the target and why ("follows what you select",
+  "learned", "Energy macro"), and a live value bar. Rows can be retargeted from a menu or by dragging a lane onto them.
+- **Pads** can trigger macro **Snapshots A/B** and other one-shot actions (Drop for the last bar, Back to rest).
+- Options:
+  - **Soft takeover**, on by default: a knob only takes over when it reaches the line's current value, so nothing jumps.
+  - **Tidy after recording**, on by default: thin the take to the points that matter, with **Keep raw** one click away, and say how many
+    moves became how many points.
+  - **Loop record**: each pass over a loop replaces only where you moved.
+- **Learn**: move any knob, fader or pad and it links to the selected lane (or macro, or snapshot).
+- The map is saved per device in app settings (shared by the app and the plug-in, like the theme), and a song can override it.
+
+**Expression vs lanes:** the mod wheel on a part whose sound uses it (e.g. vibrato on a synth patch, or a plug-in mapped to CC1) asks once: "Record
+the mod wheel into the notes (expression, follows the notes if you move them) or into a lane (shapes the whole part)?" The answer is remembered per
+part. Pitch bend and sustain are always expression.
+
+**In FL Studio:** the plug-in gets FL's MIDI when the channel's MIDI input port routes to Semitone, as for notes. The 8 host macro parameters
+also mean FL's own controller links can drive Semitone macros (FL → Semitone), and recording in FL writes FL automation clips for them.
+
+**Tests:** fake CC1 while recording writes the selected lane; CC11 → volume; soft takeover never jumps; tidy keeps the shape within 2% and
+Keep raw restores every point; loop record replaces only moved regions; Touch glides back; pads fire snapshots; one undo step per take;
+the indicator shows and fades; the map saves per device; the plug-in path (`st_midiin` with 0xB0) and Web MIDI both work.
 
 ## Gaps this design closes (found checking the old tab against pro DAWs and Semitone itself)
 1. **Whole-song view:** automation is about arcs across sections; the old tab showed one section only.
