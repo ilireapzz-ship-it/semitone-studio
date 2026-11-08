@@ -1,0 +1,29 @@
+// Every design in every theme (docs/design/panels "Every design in every theme"): Song settings, Record, the click menu, the mixer with its
+// Your DAW card, the part knobs, the automation toolbar and the macro panel, in all five themes; every visible label reaches 4.5:1.
+const {chromium}=require('playwright'); const url='file://'+require('path').resolve(__dirname,'../../web/semitone-studio.html');
+(async()=>{ const b=await chromium.launch(); const p=await b.newPage({viewport:{width:1440,height:900}}); const errs=[], fails=[]; p.on('pageerror',e=>errs.push(e.message)); const ok=(c,m)=>{ console.log((c?'ok   ':'FAIL ')+m); if(!c) fails.push(m); };
+ await p.addInitScript(()=>{ window.__noStart=1; }); await p.goto(url); await p.waitForTimeout(1500);
+ await p.evaluate(()=>{ S.demo=false; spPut({big:true,fold:false});
+  window.__con=(sel)=>{ const cv=document.createElement('canvas').getContext('2d'), rgba=c=>{ cv.clearRect(0,0,1,1); cv.fillStyle='#000'; cv.fillStyle=c; cv.fillRect(0,0,1,1); const d=cv.getImageData(0,0,1,1).data; return [d[0],d[1],d[2],d[3]/255]; };
+    const parse=c=>{ if(!c||c==='transparent') return [0,0,0,0]; const m=c.match(/^rgba?\(([^)]+)\)/); if(m){ const v=m[1].split(/[ ,/]+/).filter(Boolean).map(Number); return [v[0],v[1],v[2],v[3]==null?1:v[3]]; } const s=c.match(/^color\(srgb ([^)]+)\)/); if(s){ const v=s[1].split(/[ /]+/).filter(Boolean).map(Number); return [v[0]*255,v[1]*255,v[2]*255,v[3]==null?1:v[3]]; } return rgba(c); };
+    const over=(a,b)=>{ const al=a[3]+b[3]*(1-a[3]); if(!al) return [0,0,0,0]; return [0,1,2].map(i=>(a[i]*a[3]+b[i]*b[3]*(1-a[3]))/al).concat(al); };
+    const bgOf=el=>{ const L=[]; for(let e=el;e&&e.nodeType===1;e=e.parentElement){ const cs=getComputedStyle(e); L.push(parse(cs.backgroundColor)); if(cs.backgroundImage&&cs.backgroundImage!=='none'&&/gradient/.test(cs.backgroundImage)){} } let c=parse(getComputedStyle(document.body).backgroundColor); if(c[3]<1) c=over(c,[255,255,255,1]); for(let i=L.length-1;i>=0;i--) c=over(L[i],c); return c; };
+    const lum=c=>{ const f=x=>{ x/=255; return x<=.03928?x/12.92:Math.pow((x+.055)/1.055,2.4); }; return .2126*f(c[0])+.7152*f(c[1])+.0722*f(c[2]); };
+    const out=[]; document.querySelectorAll(sel).forEach(root=>{ const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT); let n; while((n=w.nextNode())){ const t=n.textContent.trim(); if(!t) continue; const el=n.parentElement; if(!el.getClientRects().length) continue; const cs=getComputedStyle(el); if(cs.visibility==='hidden'||+cs.opacity<.99) continue; let op=1; for(let e=el;e;e=e.parentElement){ op*=+getComputedStyle(e).opacity; } if(op<.99) continue; if(el.closest('[disabled],[aria-disabled="true"],.dim,.dis,option,select,svg')) continue;
+      const bg=bgOf(el), fg=over(parse(cs.color),bg), a=lum(fg), bb=lum(bg), r=(Math.max(a,bb)+.05)/(Math.min(a,bb)+.05); if(r<4.5) out.push(`${t.slice(0,24)} ${r.toFixed(2)} (${el.className||el.tagName})`); } }); return out; }; });
+ const themes=await p.evaluate(()=>Object.keys(JSON.parse($('#stThemes')?'{}':'{}'))||[]);
+ const ids=await p.evaluate(()=>[...document.querySelectorAll('#stThemes')].length?['studio-black','console','warm-studio','daylight','riso-zine']:[]);
+ const views=[['Song settings',"shellDock('style')",'#setPane'],['Record',"shellDock('record')",'#recPane'],['Click menu',"shellDock('record'); CLK.open=true; clkMenuRender()",'#clkMenu'],['Mixer + Your DAW',"CLK.open=false; clkMenuRender(); MOUT.on=true; MOUT.map.song.bass.on=true; MOUT.mute=true; shellDock('mix'); renderStrips('song')",'#mixSide, #cMix .pt, #cMix .st-top'],['Part knobs',"shellDock('roll'); spPut({big:false,fold:true}); spFit(); arrRender()",'#arr .tr-kn output'],['Automation',"spPut({big:true,fold:false}); shellDock('auto'); autRender&&autRender()",'#autAct:not([hidden]), .aut-head, #autTools']];
+ for(const id of ids){ await p.evaluate(id=>themeUse(id),id); await p.waitForTimeout(100); const bad=[];
+  for(const [n,js,sel] of views){ const r=await p.evaluate(([js,sel])=>{ eval(js); return new Promise(res=>setTimeout(()=>res(__con(sel)),120)); },[js,sel]); if(r.length) bad.push(n+': '+r.slice(0,4).join(' · ')); }
+  ok(!bad.length,`${id}: every label ≥ 4.5:1 ${bad.join(' | ')}`);
+  if(id==='daylight'||id==='riso-zine'){ await p.evaluate(()=>{ shellDock('style'); spPut({big:true,fold:false}); spFit(); }); await p.waitForTimeout(150); await p.screenshot({path:`themes-${id}.png`}); } }
+ ok(ids.length===5,'all five themes checked');
+ // the hatched DAW overlay uses tokens, so it is light in light themes
+ await p.evaluate(()=>{ themeUse('daylight'); shellDock('mix'); renderStrips('song'); }); await p.waitForTimeout(100);
+ const ov=await p.evaluate(()=>{ const f=document.querySelector('#cMix .strip.pt-out .st-fadsec'); if(!f) return null; const c=getComputedStyle(f,'::after').backgroundColor, m=c.match(/[\d.]+/g).map(Number), v=/srgb/.test(c)?m.slice(0,3).map(x=>x*255):m.slice(0,3); return v.reduce((a,x)=>a+x,0)/3; });
+ ok(ov>200,'(average '+Math.round(ov)+' of 255) '+'the “mix this part in your DAW” overlay is drawn from theme tokens, not a fixed dark colour');
+ const ink=await p.evaluate(()=>{ const r={}; ['studio-black','daylight','riso-zine'].forEach(t=>{ themeUse(t); r[t]=getComputedStyle(document.documentElement).getPropertyValue('--st-ink-soft-melody').trim()+' '+getComputedStyle(document.documentElement).getPropertyValue('--st-section-colors-chorus').trim(); }); themeUse('studio-black'); return r; });
+ ok(Object.values(ink).every(v=>/^#[0-9A-F]{6} rgba\(/i.test(v))&&new Set(Object.values(ink)).size===3,'inkSoft and sectionColors tokens differ per theme: '+JSON.stringify(ink));
+ ok(!errs.length,'no page errors '+errs.slice(0,3).join(' | '));
+ await b.close(); if(fails.length){ console.log(fails.length+' failed'); process.exit(1); } })();

@@ -23,7 +23,7 @@ const {chromium}=require('playwright'); const url='file://'+require('path').reso
  ok(await p.evaluate(()=>strip('song','bass').duck.depth===0.9&&strip('song','chords').duck.depth===0.9&&/depth/.test(H.past[H.past.length-1].label)),'depth sets every ticked part, one undo');
  ok(await p.evaluate(()=>{ histUndo(); histUndo(); histUndo(); return !strip('song','chords').duck&&strip('song','bass').duck.row==='kick'; }),'undo steps back one change at a time');
  await p.keyboard.press('Escape'); await p.evaluate(()=>{ $('#recipePop').hidden=true; renderStrips('song'); });
- const h=await p.locator('#cMix .strip[data-ch="lead"] .st-top b').boundingBox(); await p.mouse.move(h.x+10,h.y+8); await p.mouse.down(); await p.mouse.move(h.x+420,h.y+60,{steps:8});
+ const h=await p.locator('#cMix .strip[data-ch="lead"] .st-top b').boundingBox(); await p.mouse.move(h.x+10,h.y+8); await p.mouse.down(); const cb=await p.locator('#cMix .strip[data-ch="chords"]').boundingBox(); await p.mouse.move(cb.x+cb.width*.8,h.y+60,{steps:8});
  const d=await p.evaluate(()=>({sel:getSelection().toString().length, lift:!!document.querySelector('#cMix .strip.st-drag'), mark:!!document.querySelector('#cMix .strip.drop-l,#cMix .strip.drop-r')}));
  await p.mouse.up(); const order=await p.evaluate(()=>[...document.querySelectorAll('#cMix .mix-row .strip')].map(s=>s.dataset.ch).slice(0,3).join(','));
  ok(d.sel===0&&d.lift&&d.mark,'dragging a strip selects no text, lifts the strip and marks where it lands');

@@ -8,12 +8,14 @@ const lum=h=>{ const c=[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)/255).map(v=>v<
  ok(await p.evaluate(()=>document.characterSet)==='UTF-8','the page reads as UTF-8 even with fonts in the head');
  ok(await p.evaluate(()=>document.documentElement.getAttribute('data-theme'))==='studio-black','Studio Black is the default');
  const kebab=k=>k.replace(/[A-Z]/g,c=>'-'+c.toLowerCase());
- const skip=new Set(['button','light','fontUi','fontDisplay','fontMono']);
+ const skip=new Set(['button','light','fontUi','fontDisplay','fontMono','inkSoft','sectionColors']);  // the two groups become one variable per entry, checked below
  for(const id of Object.keys(T.themes)){ const t=T.themes[id];
   await p.evaluate(()=>{ if($('#themeCard').hidden) $('#themeBtn').click(); }); await p.click(`[data-theme-id="${id}"]`); await p.waitForTimeout(120);
   const v=await p.evaluate(ks=>{ const c=getComputedStyle(document.documentElement); return {attr:document.documentElement.getAttribute('data-theme'),vals:Object.fromEntries(ks.map(k=>[k,c.getPropertyValue('--st-'+k).trim()])),paper:c.getPropertyValue('--paper').trim(),bodyFont:getComputedStyle(document.body).fontFamily}; },T.tokens.filter(k=>!skip.has(k)).map(kebab));
   ok(v.attr===id,id+': applied with no reload');
   const miss=T.tokens.filter(k=>!skip.has(k)&&!v.vals[kebab(k)]&&k!=='bgExtra'); ok(!miss.length,id+': every token set '+miss); ok(v.vals.bg.toLowerCase()===t.bg.toLowerCase(),id+': background is the token');
+  const grp=await p.evaluate(t=>{ const c=getComputedStyle(document.documentElement); return Object.entries(t.inkSoft).every(([k,x])=>c.getPropertyValue('--st-ink-soft-'+k).trim().toLowerCase()===x.toLowerCase())&&Object.keys(t.sectionColors).every(k=>!!c.getPropertyValue('--st-section-colors-'+k).trim()); },t);
+  ok(grp,id+': inkSoft and sectionColors groups set');
   ok(v.bodyFont.includes(t.fontUi.split(' (')[0])||id==='daylight',id+': interface font');
   for(const [fg,bg,n] of [[t.text,t.panel,'text on panel'],[t.text2,t.panel,'secondary on panel'],[t.text,t.bg,'text on background'],[t.lcdInk,t.lcdBg,'display'],[t.accentInk,t.accent,'accent button']]){ const r=ratio(fg,bg); ok(r>=(n==='accent button'?3:4.5),`${id}: ${n} ${r.toFixed(2)}:1`); }
   if(shots){ await p.evaluate(()=>themeToggle(false)); await p.waitForTimeout(150); await p.screenshot({path:path.join(shots,id+'.png')}); } }

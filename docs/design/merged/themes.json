@@ -1,7 +1,7 @@
 {
-  "_about": "Theme tokens for the merged design (agreed with Jamie 6 Nov 2026). Each theme sets the same token names; the interface uses only CSS variables named --st-<token>. Pictures: theme-*.png in this folder.",
+  "_about": "Theme tokens for the merged design (agreed with Jamie 6 Nov 2026). Each theme sets the same token names; the interface uses only CSS variables named --st-<token>. Pictures: theme-*.png in this folder. inkSoft (added 8 Nov): readable versions (≥5:1 on bg, panel, raised and the well between bg and panel) of the part and status colours for small text, pale in dark themes and deeper in light ones. sectionColors: alpha tints of theme tokens for the section colour key, structure cards and section pills.",
   "default": "studio-black",
-  "tokens": ["bg", "panel", "raised", "inset", "line", "lineStrong", "text", "text2", "text3", "accent", "accentInk", "accentSoft", "doc", "emo", "snd", "loop", "melody", "chords", "bass", "drums", "fx", "secEdge", "secVerse", "secChorus", "secInk", "clipAlpha", "noteOnClip", "lcdBg", "lcdInk", "radius", "radiusLg", "fontUi", "fontDisplay", "fontMono", "button", "shadowPop", "bgExtra", "light"],
+  "tokens": ["bg", "panel", "raised", "inset", "line", "lineStrong", "text", "text2", "text3", "accent", "accentInk", "accentSoft", "doc", "emo", "snd", "loop", "melody", "chords", "bass", "drums", "fx", "secEdge", "secVerse", "secChorus", "secInk", "clipAlpha", "noteOnClip", "lcdBg", "lcdInk", "radius", "radiusLg", "fontUi", "fontDisplay", "fontMono", "inkSoft", "sectionColors", "button", "shadowPop", "bgExtra", "light"],
   "themes": {
     "studio-black": {
       "name": "Studio Black",
@@ -16,7 +16,9 @@
       "radius": 6, "radiusLg": 12,
       "fontUi": "Inter Tight", "fontDisplay": "Instrument Serif", "fontMono": "JetBrains Mono",
       "button": "ghost hairline; one filled light button per area",
-      "shadowPop": "0 30px 80px rgba(0,0,0,.65)", "bgExtra": "", "light": false
+      "shadowPop": "0 30px 80px rgba(0,0,0,.65)", "bgExtra": "", "light": false,
+      "inkSoft": {"melody": "#DF8D86", "chords": "#889FDD", "bass": "#DFB986", "drums": "#9ACBAD", "good": "#93D2B1", "warn": "#DDBB88", "bad": "#E28383"},
+      "sectionColors": {"intro": "rgba(107,112,121,0.45)", "verse": "rgba(124,149,217,0.38)", "pre": "rgba(124,149,217,0.62)", "chorus": "rgba(124,149,217,0.95)", "refrain": "rgba(217,179,122,0.8)", "bridge": "rgba(185,163,227,0.75)"}
     },
     "console": {
       "name": "Console",
@@ -32,7 +34,9 @@
       "radius": 2, "radiusLg": 3,
       "fontUi": "Inter", "fontDisplay": "Inter 600", "fontMono": "JetBrains Mono",
       "button": "bevelled grey (gradient #4A4A4A→#3A3A3A, 1px #111 border); primary orange",
-      "shadowPop": "0 12px 30px rgba(0,0,0,.6)", "bgExtra": "", "light": false
+      "shadowPop": "0 12px 30px rgba(0,0,0,.6)", "bgExtra": "", "light": false,
+      "inkSoft": {"melody": "#FF776B", "chords": "#6AA6FF", "bass": "#F8C76D", "drums": "#87DEA4", "good": "#93D2B1", "warn": "#FFBC66", "bad": "#FF7575"},
+      "sectionColors": {"intro": "rgba(142,142,142,0.45)", "verse": "rgba(106,166,255,0.38)", "pre": "rgba(106,166,255,0.62)", "chorus": "rgba(106,166,255,0.95)", "refrain": "rgba(255,162,43,0.8)", "bridge": "rgba(185,163,227,0.75)"}
     },
     "warm-studio": {
       "name": "Warm studio",
@@ -48,7 +52,9 @@
       "fontUi": "Inter Tight", "fontDisplay": "Fraunces", "fontMono": "IBM Plex Mono",
       "button": "pill ghost; primary copper gradient with a soft glow",
       "shadowPop": "0 30px 80px rgba(0,0,0,.65)",
-      "bgExtra": "radial-gradient(900px 420px at 18% -8%, rgba(224,145,90,.13), transparent 70%)", "light": false
+      "bgExtra": "radial-gradient(900px 420px at 18% -8%, rgba(224,145,90,.13), transparent 70%)", "light": false,
+      "inkSoft": {"melody": "#E09785", "chords": "#A0B2C5", "bass": "#E2C083", "drums": "#B2C79E", "good": "#93D2B1", "warn": "#E7A97E", "bad": "#E88D7D"},
+      "sectionColors": {"intro": "rgba(134,117,95,0.45)", "verse": "rgba(147,168,189,0.38)", "pre": "rgba(147,168,189,0.62)", "chorus": "rgba(147,168,189,0.95)", "refrain": "rgba(224,145,90,0.8)", "bridge": "rgba(185,163,227,0.75)"}
     },
     "daylight": {
       "name": "Daylight",
@@ -64,7 +70,9 @@
       "radius": 10, "radiusLg": 19,
       "fontUi": "Inter (SF Pro on Mac)", "fontDisplay": "Inter 700", "fontMono": "JetBrains Mono (SF Mono on Mac)",
       "button": "pill, tinted grey fill with blue text; primary solid blue",
-      "shadowPop": "0 30px 80px rgba(0,0,0,.16)", "bgExtra": "", "light": true
+      "shadowPop": "0 30px 80px rgba(0,0,0,.16)", "bgExtra": "", "light": true,
+      "inkSoft": {"melody": "#CE0B00", "chords": "#5452D5", "bass": "#945600", "drums": "#1E7233", "good": "#1E7233", "warn": "#0063C7", "bad": "#CE0B00"},
+      "sectionColors": {"intro": "rgba(142,142,147,0.45)", "verse": "rgba(88,86,214,0.47)", "pre": "rgba(88,86,214,0.78)", "chorus": "rgba(88,86,214,0.95)", "refrain": "rgba(10,132,255,0.8)", "bridge": "rgba(175,82,222,0.94)"}
     },
     "riso-zine": {
       "name": "Riso zine",
@@ -81,7 +89,9 @@
       "fontUi": "Space Grotesk", "fontDisplay": "DM Serif Display", "fontMono": "Space Mono",
       "button": "1.5px ink border, paper fill, 2px hard shadow; primary yellow",
       "shadowPop": "6px 6px 0 #1A1A1A",
-      "bgExtra": "radial-gradient(rgba(26,26,26,.08) 1px, transparent 1.2px) 0 0/7px 7px", "light": true
+      "bgExtra": "radial-gradient(rgba(26,26,26,.08) 1px, transparent 1.2px) 0 0/7px 7px", "light": true,
+      "inkSoft": {"melody": "#BF0041", "chords": "#1647FF", "bass": "#7F5800", "drums": "#006B44", "good": "#006B44", "warn": "#BF0041", "bad": "#BC1B20"},
+      "sectionColors": {"intro": "rgba(110,102,88,0.45)", "verse": "rgba(47,91,255,0.47)", "pre": "rgba(47,91,255,0.78)", "chorus": "rgba(47,91,255,0.95)", "refrain": "rgba(255,79,139,0.8)", "bridge": "rgba(185,163,227,0.94)"}
     }
   }
 }

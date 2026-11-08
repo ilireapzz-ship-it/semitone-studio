@@ -46,6 +46,9 @@ def theme_css():
             if k in ("radius", "radiusLg"): x = f"{x}px"
             if k == "noteOnClip" and x == "track": x = "var(--c,currentColor)"
             if k == "bgExtra" and not x: x = "none"
+            if isinstance(x, dict):  # inkSoft, sectionColors: one variable per entry, e.g. --st-ink-soft-melody, --st-section-colors-verse
+                for sub, y in x.items(): v[kebab(k) + "-" + sub] = y
+                continue
             v[kebab(k)] = x
         v["clip-pct"] = f"{round(t['clipAlpha'] * 100, 1)}%"
         v["switch-on"] = t.get("switchOn", t["accent"])
