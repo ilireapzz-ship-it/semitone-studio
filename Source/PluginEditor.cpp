@@ -406,6 +406,7 @@ void SemitoneEditor::timerCallback()
         {
             auto* o = new juce::DynamicObject(); o->setProperty ("l", (double) l); o->setProperty ("r", (double) r); o->setProperty ("ch", chs);
             if (proc.takeRecorder.active()) o->setProperty ("in", (double) inPeak);
+            { const float k = proc.takeLoudness(); if (k >= 0) o->setProperty ("k", (double) k); }
             browser.emitEventIfBrowserIsVisible ("st_peak", juce::var (o));
         }
         meterWas = most;

@@ -53,6 +53,7 @@ void SemitoneProcessor::prepareToPlay (double sampleRate, int maxBlock)
     blockNow = maxBlock;
     if (changed) { synth.setPatch (nullptr); listenWasLo = listenWasHi = -1; }   // -1: the Listen filters are worked out again for the new rate   // notes rendered for the old rate would play out of tune until the rebuild lands
     synth.prepare (sr);
+    st::shelfHigh (kShelf, 1681.97, 4, sr); kHp.highpass (38.13, -6.0206, sr); kShelf.z1[0] = kShelf.z1[1] = kShelf.z2[0] = kShelf.z2[1] = 0; kHp.z1[0] = kHp.z1[1] = kHp.z2[0] = kHp.z2[1] = 0; kAcc = 0; kN = 0;
     synth.plugFx = [this] (int ch, float* l, float* r, int k) { if (host) host->processChannelFx (ch, l, r, k); };
     if (host) host->prepare (sr, maxBlock);
     if (changed) buildSynthPatch();   // the piano and plucked notes are rendered for one sample rate
@@ -200,6 +201,14 @@ void SemitoneProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
         {
             const float pl = buffer.getMagnitude (0, 0, n), pr = buffer.getNumChannels() > 1 ? buffer.getMagnitude (1, 0, n) : pl;
             peakL.store (juce::jmax (peakL.load(), pl)); peakR.store (juce::jmax (peakR.load(), pr));
+            // loudness for the master card: K-weighted mean square, both sides summed, published every ~100 ms
+            for (int c = 0; c < juce::jmin (2, buffer.getNumChannels()); ++c)
+            {
+                const float* x = buffer.getReadPointer (c);
+                for (int i = 0; i < n; ++i) { const float y = kHp.run (kShelf.run (x[i], c), c); kAcc += (double) y * y; }
+            }
+            kN += n;
+            if (kN >= (int) (sr * .1)) { kMs.store ((float) (kAcc / kN)); kAcc = 0; kN = 0; }
         }
     }
 

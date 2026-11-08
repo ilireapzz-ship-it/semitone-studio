@@ -51,6 +51,8 @@ public:
     void setMasterOut (float v) { masterOut = juce::jlimit (0.0f, 2.0f, v); }
     float takePeakL() { return peakL.exchange (0); }
     float takePeakR() { return peakR.exchange (0); }
+    // the master's K-weighted loudness (BS.1770 weighting, summed over both sides) for the last ~100 ms; -1 = nothing new
+    float takeLoudness() { return kMs.exchange (-1); }
     float takeChannelPeak (int ch) { return synth.takeChannelPeak (ch); }
     // ---- Semitone's own sounds inside the DAW (message thread) ----
     // soundMode: 0 = Semitone's sounds + MIDI, 1 = Semitone's sounds only, 2 = MIDI only,
@@ -103,7 +105,8 @@ private:
     std::vector<Waiting> waiting;
     std::vector<st::Event> soon;
     juce::int64 sampleClock = 0;
-    std::atomic<float> masterOut { 1 }, peakL { 0 }, peakR { 0 };
+    std::atomic<float> masterOut { 1 }, peakL { 0 }, peakR { 0 }, kMs { -1 };
+    st::Biquad kShelf, kHp; double kAcc = 0; int kN = 0;
     float masterWas = 1;
     int blockNow = 512;
     std::atomic<float> listenLo { 0 }, listenHi { 0 };   // Listen on: what you hear, never what's exported

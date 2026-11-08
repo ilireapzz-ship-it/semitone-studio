@@ -74,9 +74,19 @@ and the style-data check (ISSUES 0) pass after these fixes.
   - Listen & set overwrote your own threshold and left the song playing.
 - Wording: Calibrate's note about compressors, and "Master brightness" in Add a lane (it was the master volume).
 
+**Built after the review — the mixer's master card** (panels §3 "Master" and "Master card", Jamie chose it first):
+- At the top of the mixer's right-hand column, above Your DAW: the big master knob (drag, arrows or double-click for 0 dB; it moves the
+  master strip and the top bar with it, one undo step), then **Polish** (Off / Gentle / Radio), **Limiter −1 dBTP** (says "off" when Polish
+  is off), **Listen on** and **For** (the seven destinations from the mixing data: Streaming, Competitive pop, Club, Film, Broadcast,
+  Podcast, Vinyl).
+- **Loudness** (the last 3 seconds, LUFS) with the green zone for the destination, and **Peak** with the red zone above its ceiling.
+  The header says "−10.5 LUFS · on target", or how many dB under or over, or that the peaks are too high. The key line says what green and
+  red mean for that destination.
+- The destination saves with the song. Calibrate's "Then master it →" now opens this card set for its destination.
+- Inside the app or FL the plug-in measures its own output the same way and sends it to the page, so the card works there too.
+- Kept: the master strip (its effects and EQ) and the Finishing box (reference track), whose Polish menu follows the card.
+
 **Still missing (found in the review, not yet built):**
-- **Mixer master section** (panels §3): Loudness/Peak bars with the target zone, the master card (knob, LUFS, Polish, Limiter, Listen on).
-  Calibrate's "Then master it" has nowhere to go yet.
 - **Routing** (panels §4, step 17): buses, Plate/Echo returns, sends. Until then the smart knob's sends (Plate, Echo…) are inserts on the strip.
 - **Strip layout details:** four insert slots (the engine uses slot 4 for the smart knob), the ● record-arm button, the EQ curve below the
   inserts, and a hatched red zone above 0 dB.
