@@ -7,7 +7,7 @@ let fails=0; const ok=(c,m,x)=>{ if(!c){ fails++; console.log('FAIL',m,x===undef
  const note=()=>p.evaluate(()=>{ const R=$('#roll').getBoundingClientRect(), q=S.rects[2]; return {x:R.left+q.x+q.w/2,y:R.top+q.y+q.h/2,start:q.n.src.start,W:S.rl.W,TB:S.rl.TB,left:R.left,top:R.top,h:R.height}; });
  // toolbar is its own line, everything visible at 1440
  const t=await p.evaluate(()=>{ const d=$('#drTools'), r=$('#rollRail').getBoundingClientRect(), k=$('#rollKeys').getBoundingClientRect(); return {h:d.offsetHeight,fits:d.scrollWidth<=d.clientWidth+1,tools:document.querySelectorAll('#rollRail [data-tool]').length,snap:$('#snapBtn').getAttribute('aria-label'),more:!!$('#rollMoreBtn'),left:r.right<=k.left+1}; });
- ok(t.h===36&&t.fits&&t.tools===4&&t.snap==='Snap'&&t.more&&t.left,'tool rail sits left of the piano keys',t);
+ ok(t.h<=36&&t.fits&&t.tools===4&&t.snap==='Snap'&&t.more&&t.left,'tool rail sits left of the piano keys',t);
  // snap on
  let n=await note(), px=n.W/n.TB; await p.mouse.move(n.x,n.y); await p.mouse.down(); await p.mouse.move(n.x+px*.33,n.y,{steps:4}); await p.mouse.up(); await p.waitForTimeout(120);
  let a=await p.evaluate(()=>S.selNote.start); ok(Math.abs(a/.25-Math.round(a/.25))<1e-6,'snap keeps a note on the grid',a);

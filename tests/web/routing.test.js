@@ -5,7 +5,7 @@ const {chromium}=require('playwright'); const url='file://'+require('path').reso
  await p.addInitScript(()=>{ window.__noStart=1; }); await p.goto(url); await p.waitForTimeout(1500);
  await p.evaluate(()=>{ S.demo=false; spPut({big:true,fold:false}); shellDock('mix'); spFit(); });
  // every role goes to its bus, with the reason shown
- const roles=await p.evaluate(()=>{ ['counter','harmony','double','pad','arp','bass2','texture'].forEach(r=>xAdd(r)); const v=auAdd('lead'), g=auAdd('guitar'); shellDock('mix'); renderStrips('song');
+ const roles=await p.evaluate(()=>{ RTF.on=false; /* plain role routing; family buses are in timeline-tools.test.js */ ['counter','harmony','double','pad','arp','bass2','texture'].forEach(r=>xAdd(r)); const v=auAdd('lead'), g=auAdd('guitar'); shellDock('mix'); renderStrips('song');
    const o={}; mixChans().forEach(c=>{ const r=rtOf(c); o[rtRole(c)]=[r.out,Object.keys(r.sends).join('+'),r.why]; }); return {o,vox:v&&rtOf(v.id).out,gtr:g&&rtOf(g.id).out}; });
  const R=roles.o, want={lead:'bus-vox',harmony:'bus-vox',double:'bus-vox',vocal:'bus-vox',counter:'bus-music',chords:'bus-music',pad:'bus-music',arp:'bus-music',bass:'bus-music',bass2:'bus-music',texture:'bus-music',audio:'bus-music',drums:'bus-drums'};
  ok(Object.entries(want).every(([k,v])=>R[k]&&R[k][0]===v)&&roles.vox==='bus-vox'&&roles.gtr==='bus-music','every role is linked to its bus: vocals, music or drums '+JSON.stringify(R));
