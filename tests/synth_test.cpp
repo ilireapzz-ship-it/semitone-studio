@@ -169,7 +169,7 @@ int main()
         KitPatch lofi; lofi.lp = 3200; lofi.kick = { 95, 48, .35f, .2f }; lofi.snare = { 190, .7f, .2f, 900 }; lofi.hat = { .06f, 5000 }; lofi.open = { .25f, 4500 }; lofi.rim = { 900, .05f }; lofi.crash = { 1, 2500 }; lofi.clap = .2f;
         KitPatch el; el.kick = { 220, 48, .42f, .8f }; el.snare = { 230, .8f, .18f, 2200 }; el.hat = { .035f, 9500 }; el.open = { .22f, 8500 }; el.rim = { 2200, .03f }; el.crash = { 1.2f, 6000 }; el.clap = .24f;
         for (const KitPatch* kit : { &k808, &ac, &lofi, &el })
-            for (int key : { 36, 38, 39, 42, 46, 37, 49 })
+            for (int key : { 36, 38, 39, 42, 46, 37, 49, 50, 47, 43 })
             {
                 {   // a plug-in plays the drums: the built-in kit stays quiet
                     auto q = std::make_shared<SynthPatch>(); q->drumCh = 9; q->kit = *kit; q->drumExt = true;
@@ -189,7 +189,7 @@ int main()
                 if (kit == &k808 && key == 36) CHECK (zc < 30, "kick is not low: %d crossings", zc);
                 if (kit == &k808 && key == 42) CHECK (zc > 100, "hat is not high: %d crossings", zc);
             }
-        printf ("ok: 7 drums x 4 kits\n");
+        printf ("ok: 10 drums (with toms) x 4 kits\n");
     }
 
     // 5. the mixer strip: level scales the part, pan moves it

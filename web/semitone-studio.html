@@ -3165,7 +3165,7 @@ function refArrange(){ const P=S.refPlan; S.refPending=false; if(!P||!S.song) re
   if(!P.drums&&(P.sound||[]).includes('no drums')){ S.secMute=S.secMute||{}; S.secMute.drums=Object.fromEntries(secs.map((_,i)=>[i,true])); }
   if(any) S.energyOn=true;
   /* a section whose feel differs from the song's: half-time chorus, straight verse in a half-time song, a swung bridge */
-  const G=GROOVES[S.meter]||{}, gOf=f=>({'half-time':'halftime',straight:['halftime','swing','shuffle','train'].includes(S.groove)?'backbeat':null,swung:'swing',shuffle:'shuffle'})[f];
+  const G=GROOVES[S.meter]||{}, gOf0=f=>({'half-time':'halftime',straight:['half','swing','shuffle','train'].includes(GCLS[S.groove])?'backbeat':null,swung:'swing',shuffle:'shuffle'})[f], gOf=f=>{ const g=gOf0(f); if(!g||GCLS[g]===GCLS[S.groove]) return null; return groovePick(S.style,GCLS[g])||g; }; /* already that feel: keep the song's own groove */
   try{ const sg=gOf(P.feel); if(sg&&G[sg]&&sg!==S.groove) buildBeats(sg); }catch(e){} /* the song's own feel first (a straight song in a half-time style) */
   try{ if(S.beats&&typeof roleBeat==='function') Object.entries(P.byType).forEach(([t,x])=>{ if(!x.feel||x.feel===P.feel||!S.beats[t]) return; const g=gOf(x.feel); if(g&&G[g]) S.beats[t]=roleBeat(parseGroove(g),t); }); }catch(e){}
   const pt=S.refSong&&S.refSong.patch; if(pt&&S.parts.chords&&!/^h:/.test(S.parts.chords.sound||'')) S.parts.chords.sound=pt; }
@@ -3228,7 +3228,7 @@ function loadStyle(st,newSeed){
   S.style=st; S.key=st.key; S.mode=st.mode; S.bpm=st.bpm; S.sevenths=st.sevenths; S.density=st.density; S.leap=st.leap;
   S.meter=METERS[st.meter]?st.meter:'4/4'; S.comp=COMPS[st.comp]?st.comp:'pulse'; S.swing=st.swing||50;
   S.tags=[]; S.tagChoices={}; S.matrix=st.matrix?st.matrix.map(r=>r.slice()):toArr(st.m); S.edited=false; if(newSeed){ tagFamily(st); styleRoll(st); } if(st.structure&&TEMPLATES.some(t=>t[0]===st.structure)&&newSeed) S.structure=st.structure;
-  S.parts.drums.on=!!st.drums; if(STYLE_KIT[st.id]) S.kit=STYLE_KIT[st.id]; applyStyleInstr(st); if(typeof perfUI==='function') perfUI(); buildBeats(st.groove||STYLE_GROOVE[st.id]); renderMixer();
+  S.parts.drums.on=!!st.drums; if(STYLE_KIT[st.id]) S.kit=STYLE_KIT[st.id]; applyStyleInstr(st); if(typeof perfUI==='function') perfUI(); buildBeats((newSeed&&groovePick(st))||st.groove||STYLE_GROOVE[st.id]); renderMixer();
   applyQuirkDefaults(st.id); if($('#qSliders')) renderQuirks();
   renderStyles(); $('#saveMx').hidden=true;
   syncControls(); stopPlay();
@@ -3564,18 +3564,20 @@ function partHear(p,m,vel=.8,dur=.32){ const snd=(S.parts[p]||{}).sound||''; if(
 let noiseLong=null;
 function noiseSrc(){ if(!noiseLong){ noiseLong=ac.createBuffer(1,ac.sampleRate*2,ac.sampleRate); const d=noiseLong.getChannelData(0); for(let i=0;i<d.length;i++) d[i]=Math.random()*2-1; } const s=ac.createBufferSource(); s.buffer=noiseLong; return s; }
 const KITS={
- '808':{name:'808 (trap, R&B)',lp:16000,kick:[160,42,.6,0],snare:[185,.5,.2,1800],hat:[.045,8000],open:[.3,7000],rim:[1700,.035],crash:[1.3,5000],clap:.22},
- acoustic:{name:'Acoustic-style (pop, rock)',lp:12000,kick:[110,50,.28,.5],snare:[210,.9,.24,1100],hat:[.05,7000],open:[.35,6000],rim:[1200,.05],crash:[1.6,3500],clap:.18},
- lofi:{name:'Lo-fi (bedroom, boom bap)',lp:3200,kick:[95,48,.35,.2],snare:[190,.7,.2,900],hat:[.06,5000],open:[.25,4500],rim:[900,.05],crash:[1,2500],clap:.2},
- electro:{name:'Electronic (house, synthwave)',lp:16000,kick:[220,48,.42,.8],snare:[230,.8,.18,2200],hat:[.035,9500],open:[.22,8500],rim:[2200,.03],crash:[1.2,6000],clap:.24},
+ '808':{name:'808 (trap, R&B)',lp:16000,kick:[160,42,.6,0],snare:[185,.5,.2,1800],hat:[.045,8000],open:[.3,7000],rim:[1700,.035],crash:[1.3,5000],clap:.22,tom:[150,.45]},
+ acoustic:{name:'Acoustic-style (pop, rock)',lp:12000,kick:[110,50,.28,.5],snare:[210,.9,.24,1100],hat:[.05,7000],open:[.35,6000],rim:[1200,.05],crash:[1.6,3500],clap:.18,tom:[180,.32]},
+ lofi:{name:'Lo-fi (bedroom, boom bap)',lp:3200,kick:[95,48,.35,.2],snare:[190,.7,.2,900],hat:[.06,5000],open:[.25,4500],rim:[900,.05],crash:[1,2500],clap:.2,tom:[140,.3]},
+ electro:{name:'Electronic (house, synthwave)',lp:16000,kick:[220,48,.42,.8],snare:[230,.8,.18,2200],hat:[.035,9500],open:[.22,8500],rim:[2200,.03],crash:[1.2,6000],clap:.24,tom:[200,.28]},
 };
+/* toms (10 Nov): fills only, not rows in the beat grid. Ported to Synth.h startDrum (GM 50, 47, 43). */
+const TOMS=['tomH','tomM','tomL'], TOM_M={tomH:1,tomM:.78,tomL:.6};
 const RIDE=[.42,4600]; /* swing plays the hat row as a ride: longer, lower and quieter */
 function drumHit(kind,t,vel,opt={}){
   if(!opt.bus&&!opt.raw&&typeof moutDrum==='function'&&moutDrum(kind,t,vel)) return;
   if(!opt.raw&&!OUT) return withBus('song','drums',()=>drumHit(kind,t,vel,{...opt,raw:false,bus:1}));
   const v=vel, smp=!opt.raw&&drumSmp(kind);
   if(smp) return playSample(smp.buf,t,null,v*.9,1);
-  if(!BASE_ROWS.includes(kind)) return;
+  if(!BASE_ROWS.includes(kind)&&!TOMS.includes(kind)) return;
   const K=KITS[opt.kit||S.kit]||KITS['808'], out=ac.createBiquadFilter(); out.type='lowpass'; out.frequency.value=K.lp; out.connect(OUT||master);
   const env=(g,a,d,at)=>{g.gain.setValueAtTime(0,at);g.gain.linearRampToValueAtTime(a,at+.002);g.gain.exponentialRampToValueAtTime(.0008,at+d);};
   const noise=(d,f,a,type='highpass',at=t,q=.7)=>{const s=noiseSrc(),fl=ac.createBiquadFilter(),g=ac.createGain();fl.type=type;fl.frequency.value=f;fl.Q.value=q;env(g,a,d,at);s.connect(fl);fl.connect(g);g.connect(out);s.start(at,Math.random()*.5);s.stop(at+d+.05);};
@@ -3587,6 +3589,7 @@ function drumHit(kind,t,vel,opt={}){
   else if(kind==='open'){const[d,hp]=K.open;noise(d,hp,.22*v);}
   else if(kind==='rim'){const[f,d]=K.rim;tone(f,f,d,.3*v,'square');noise(.01,2000,.15*v);}
   else if(kind==='crash'){const[d,hp]=K.crash;noise(d,hp,.22*v);}
+  else if(TOMS.includes(kind)){const[f0,d0]=K.tom||[170,.3],m=TOM_M[kind],f=f0*m;tone(f,f*.72,d0*(1.6-.6*m),.75*v);noise(.02,2500,.12*v);}
 }
 
 /* ---------- grooves & beat composer ---------- */
@@ -3594,8 +3597,8 @@ const BASE_ROWS=['kick','snare','clap','hat','open','rim','crash'];
 Object.defineProperty(window,'ROWS',{configurable:true,get(){ return S.drumRows||BASE_ROWS; }});
 function allRows(){ return [...BASE_ROWS,...ROWS.filter(r=>!BASE_ROWS.includes(r))]; }
 const ROW_INFO={kick:['Kick','The low anchor, usually on the strong beats.'],snare:['Snare','The backbeat crack, often on 2 and 4.'],clap:['Clap','Layered with or instead of the snare.'],hat:['Closed hat','Keeps time between the big hits.'],open:['Open hat','A longer hiss that lifts the offbeats.'],rim:['Rim / perc','Small accents and ghost notes.'],crash:['Crash','Marks a new section. Plays on its first bar only.']};
-const GM_DRUM={kick:36,snare:38,clap:39,hat:42,open:46,rim:37,crash:49};
-function gmOf(r){ if(GM_DRUM[r]) return GM_DRUM[r]; const c=ROWS.filter(x=>!GM_DRUM[x]), F=[41,43,45,47,48,50,51,52,53,54,55,56,57,58,59]; return F[Math.max(0,c.indexOf(r))%F.length]; }
+const GM_DRUM={kick:36,snare:38,clap:39,hat:42,open:46,rim:37,crash:49,tomH:50,tomM:47,tomL:43};
+function gmOf(r){ if(GM_DRUM[r]) return GM_DRUM[r]; const c=ROWS.filter(x=>!GM_DRUM[x]), F=[41,45,48,51,52,53,54,55,56,57,58,59,44,40,35]; /* 43, 47 and 50 are the toms */ return F[Math.max(0,c.indexOf(r))%F.length]; }
 function rowInfo(r){ return ROW_INFO[r]||[(S.rowNames||{})[r]||'Sample','Your own sound. Click the steps to place it.']; }
 const GROOVES={
  '4/4':{
@@ -3609,10 +3612,23 @@ const GROOVES={
   swing:{name:'Swing (ride pattern)',kick:'o---o---o---o---',hat:'x---x-o-x---x-o-',rim:'----o-------o---'},
   shuffle:{name:'Shuffle',kick:'x-----o-x-----o-',snare:'----x-------x---',hat:'o-o-o-o-o-o-o-o-'},
   train:{name:'Train beat',kick:'x-------x-------',snare:'o-o-x-o-o-o-x-o-'},
+  /* 10 Nov (Jamie: "how many patterns do we have?"): more of each feel, so a style has a few to choose from. Half-time ones keep the snare on 3 only, straight ones on 2 and 4 */
+  halfBrush:{name:'Half-time, soft sixteenths',kick:'x---------o-----',snare:'--------x-------',hat:'o-oo-o-oo-oo-o-o'},
+  halfHop:{name:'Half-time hip-hop',kick:'x------x--x-----',snare:'--------x-------',hat:'o-o-o-o-o-o-o-o-',open:'--------------o-'},
+  halfSparse:{name:'Half-time, kick and snare only',kick:'x---------------',snare:'--------x-------',hat:'o---o---o---o---'},
+  halfTrap:{name:'Half-time trap, rolling hats',kick:'x-------o-x-----',snare:'--------x-------',hat:'o-o-o-o-o-ooo-o-'},
+  pop2:{name:'Pop, kick on the and of 3',kick:'x-----o-x-o-----',snare:'----x-------x---',hat:'o-o-o-o-o-o-o-o-'},
+  rock8:{name:'Straight rock eighths',kick:'x-------x-x-----',snare:'----x-------x---',hat:'x-o-x-o-x-o-x-o-'},
+  motown:{name:'Four-on-the-floor backbeat',kick:'x---x---x---x---',snare:'----x-------x---',hat:'o-o-o-o-o-o-o-o-'},
+  funk16:{name:'Funk sixteenths',kick:'x-----o---x--o--',snare:'----x--o-o--x---',hat:'oooooooooooooooo'},
+  house2:{name:'House, open offbeats',kick:'x---x---x---x---',clap:'----x-------x---',hat:'o-oo-o-oo-oo-o-o',open:'--o---o---o---o-'},
+  disco2:{name:'Disco, snare and open hats',kick:'x---x---x---x---',snare:'----x-------x---',hat:'o-o-o-o-o-o-o-o-',open:'--x---x---x---x-'},
+  electro4:{name:'Electro, driving sixteenths',kick:'x---x---x---x-o-',clap:'----x-------x---',hat:'oooooooooooooooo'},
  },
  '3/4':{
   waltz:{name:'Waltz',kick:'x-----------',snare:'----o---o---',hat:'o-o-o-o-o-o-'},
   folk34:{name:'Folk 3/4',kick:'x-------o---',rim:'----o---o---',hat:'o---o---o---'},
+  waltzBrush:{name:'Waltz, soft eighths',kick:'x-------o---',snare:'----o---o---',hat:'o-oo-oo-oo-o'},
  },
  '6/8':{
   ballad68:{name:'6/8 ballad',kick:'x---------o-',snare:'------x-----',hat:'o-o-o-o-o-o-'},
@@ -3623,6 +3639,16 @@ const GROOVES={
   slow128:{name:'12/8 slow soul',kick:'x-----------x-----------',rim:'------o-----------o-----',hat:'o-----o-----o-----o-----'},
  },
 };
+/* each groove's feel, and the grooves a style can use (10 Nov). A new song picks one of the style's grooves with the same feel as its own; a reference song's
+   feel switch (a half-time chorus) picks one of that feel. Nothing here changes a groove you edited: the pick happens only for a new song. */
+const GCLS={halftime:'half',trap:'half',halfBrush:'half',halfHop:'half',halfSparse:'half',halfTrap:'half',backbeat:'straight',drive:'straight',boombap:'straight',pop2:'straight',rock8:'straight',motown:'straight',funk16:'straight',fourfloor:'four',house2:'four',disco2:'four',electro4:'four',dembow:'dembow',swing:'swing',shuffle:'shuffle',train:'train',waltz:'waltz',folk34:'waltz',waltzBrush:'waltz',ballad68:'68',gallop68:'68',blues128:'128',slow128:'128'};
+const GPAL_SAD=['halftime','halfBrush','halfHop','halfSparse','backbeat','pop2'], GPAL_POP=['backbeat','pop2','rock8','motown','halftime','halfBrush'], GPAL_ROCK=['backbeat','rock8','pop2','drive','halftime','halfSparse'], GPAL_DANCE=['fourfloor','house2','disco2','electro4','halftime','halfHop'], GPAL_HOP=['trap','halfTrap','halfHop','boombap','pop2'];
+const GPAL={lana:GPAL_SAD,sadcore:GPAL_SAD,folk:['halftime','halfBrush','halfSparse','train','backbeat'],cinematic:['halftime','halfSparse','halfBrush','drive'],strangerthings:['halftime','halfSparse','drive','electro4'],
+  darkpop:GPAL_HOP,rnb:GPAL_HOP,anthem:GPAL_POP,soul:['backbeat','motown','pop2','halftime','halfBrush'],chappell:GPAL_POP,country:['backbeat','pop2','train','rock8','halftime'],gaga:GPAL_DANCE,charli:GPAL_DANCE,edm:GPAL_DANCE,disco:GPAL_DANCE,
+  fleetwood:GPAL_ROCK,rhcp:['backbeat','rock8','funk16','pop2','halftime'],psych:GPAL_ROCK,synth:['drive','rock8','backbeat','electro4','halftime'],tiersen:['waltz','waltzBrush','folk34'],jazz:['swing'],'gaga-joanne':GPAL_POP,'gaga-mayhem':['drive','rock8','backbeat','electro4','fourfloor','halftime'],'fleetwood-blues':['shuffle','backbeat']};
+function gPal(st){ const id=(st&&st.id)||'', base=(st&&st.groove)||STYLE_GROOVE[id]; return (GPAL[id]||GPAL[keyFam(id)]||[]).concat(base?[base]:[]).filter((g,i,a)=>a.indexOf(g)===i); }
+/* a groove of this feel from the style's set: a new song's own, or a section's switch */
+function groovePick(st,cls,rnd){ rnd=rnd||Math.random; const G=GROOVES[S.meter]||{}, base=(st&&st.groove)||STYLE_GROOVE[(st||{}).id], want=cls||GCLS[base]; const L=gPal(st).filter(g=>G[g]&&(!want||GCLS[g]===want)); return L.length?L[Math.floor(rnd()*L.length)]:(G[base]?base:null); }
 const STYLE_GROOVE={sadcore:'halftime',anthem:'backbeat',rnb:'boombap',folk:'halftime',darkpop:'trap',synth:'drive',disco:'fourfloor',soul:'backbeat'};
 const STYLE_KIT={sadcore:'lofi',anthem:'acoustic',rnb:'808',folk:'acoustic',darkpop:'808',synth:'electro',disco:'electro',soul:'acoustic'};
 const SEC_TIPS={intro:'Intros hold back: hats and a light kick hint at the groove before everything arrives.',verse:'Verses keep the groove steady and leave room for the vocal.',pre:'Pre-choruses build tension: the snare gets busier in the second half to push into the chorus.',chorus:'Choruses hit hardest: a crash on the first bar and open hats on the offbeats lift the energy.',bridge:'Bridges change the feel. Half-time drums make the song breathe before the last chorus.',outro:'Outros thin out and let the song land, with a crash to mark the ending.'};
@@ -7598,7 +7624,7 @@ function songSoundHints(){ const out=new Set(), lib=typeof FEEL!=='undefined'&&F
 function freshSong(seed){ const r=mulberry(((seed>>>0)^0xa11ce)>>>0), st=S.style; if(!styleRoll(st,r)){ S.key=Math.floor(r()*12); S.bpm=Math.max(50,Math.min(200,Math.round((st.bpm||S.bpm)*(.92+r()*.16)))); } if(typeof syncControls==='function') try{ syncControls(); }catch(e){}
   S.lyrics={}; S.secEmotion={}; S.emoGen={}; S.secNotes={}; S.versions={}; S.alts=null; S.takeComp={}; if(typeof NATIVE!=='undefined'&&NATIVE.on) takesSync([]); S.audio=[]; S.loops=undefined; S.snaps=undefined; S.credits=undefined; S.pitchFor=undefined; S.trans={}; S.transOwn={}; S.transOn=true; S.transMuted=false; if($('#transOn')) $('#transOn').checked=true;
   S.bassOwn=undefined; S.beatVel=undefined; S.beatOff=undefined; S.drumRows=undefined; S.rowNames=undefined; S.drumSmp=undefined; S.rowLvl={}; S.hostState={}; S.hostLearn={}; S.hostFx={}; S.macros=[]; S.autoBy={}; S.autoMac={}; S.game=undefined; S.lift=0; S.energyOn=true; S.sel=0;
-  try{ if(STYLE_KIT[st.id]) S.kit=STYLE_KIT[st.id]; buildBeats(st.groove||STYLE_GROOVE[st.id]); }catch(e){} try{ drumSmpLoaded(); }catch(e){} try{ loopsLoaded(); }catch(e){} }
+  try{ if(STYLE_KIT[st.id]) S.kit=STYLE_KIT[st.id]; buildBeats(groovePick(st,null,r)||st.groove||STYLE_GROOVE[st.id]); }catch(e){} try{ drumSmpLoaded(); }catch(e){} try{ loopsLoaded(); }catch(e){} }
 function freshBand(seed){ const st=S.style, P=stylePool(st), r=mulberry(((seed>>>0)^0x5eed5)>>>0), hint=songSoundHints(), pick=L=>{ const w=L.map(x=>hint.has(x)?3:1), t=w.reduce((a,b)=>a+b,0); let u=r()*t; for(let i=0;i<L.length;i++){ u-=w[i]; if(u<=0) return L[i]; } return L[L.length-1]; };
   S.styleSound=S.styleSound||{}; ['lead','chords','bass'].forEach(p=>{ const L=(P[p]||[(STYLE_INSTR[st.id]||{})[p]||'style']).filter(x=>x==='style'||INSTR[x.slice(2)]), v=L.length?pick(L):'style'; S.parts[p].sound=v; S.styleSound[p]=v; }); if(S.parts.lead.sound!=='style'&&S.parts.lead.sound===S.parts.chords.sound){ S.parts.lead.sound='style'; S.styleSound.lead='style'; }
   // the old song's extra parts, mixer and moves don't come along
@@ -7724,26 +7750,71 @@ function bassGen(bar){
 }
 
 /* 4. drums: micro-timing, velocity jitter, accents, ghost notes, varied fills */
+/* ---------- drum fills (10 Nov, Jamie: "is there a way we can improve drums? … what about fills?"). A fill is sized to the moment: a big one (two beats
+   or a whole bar) where the energy jumps, as into a chorus; one beat between similar sections; a stop or a crash where it falls; with the human
+   drummer, a small one now and then at the end of a 4- or 8-bar phrase. The kinds suit the groove (tom runs for rock, pickups and swells for
+   ballads, hat rolls for hip-hop, builds for dance), never the same one twice in a row, and the next section opens with a crash after a big one.
+   Each kind lists its hits from the fill's first step (k), loudness (m), and an offset in beats for rolls between the steps (dx). ---------- */
+function fRamp(L,every,f){ const o=[]; for(let k=0;k<L;k+=every) o.push(...f(k,(k+1)/L)); return o; }
+const FILLS=[
+ {id:'roll',name:'Snare roll',fl:'rock dance light ballad',sz:[1,2,3],rows:['snare'],make:L=>fRamp(L,1,(k,p)=>[{r:'snare',k,m:.6+.6*p}])},
+ {id:'rim',name:'Snare and rim',fl:'rock light ballad',sz:[1,2],rows:['snare','rim'],make:L=>fRamp(L,1,(k,p)=>[{r:k%2?'rim':'snare',k,m:.55+.55*p}]).concat([{r:'kick',k:L-1,v:2}])},
+ {id:'toms',name:'Tom run',fl:'rock ballad light',sz:[1,2,3],rows:['snare'],make:L=>fRamp(L,1,(k,p)=>k<L/2&&L>=8&&k%2?[]:[{r:['snare','tomH','tomM','tomL'][Math.min(3,Math.floor(k*4/L))],k,m:.7+.4*p}]).concat([{r:'kick',k:L-1,v:2,m:.9}])},
+ {id:'snaretom',name:'Snare and toms',fl:'rock',sz:[1,2],rows:['snare'],make:L=>fRamp(L,1,(k,p)=>[{r:k%2===0?'snare':k<L/2?'tomH':'tomL',k,m:.65+.45*p}])},
+ {id:'floor',name:'Floor tom pickup',fl:'ballad light rock',sz:[.5,1,-1],rows:[],make:L=>[{r:'tomL',k:Math.max(0,L-4),m:.7},{r:'tomL',k:Math.max(1,L-2),m:.95}].filter((h,i,a)=>a.findIndex(x=>x.k===h.k)===i)},
+ {id:'pick',name:'Snare pickup',fl:'ballad hop light rock dance',sz:[.5,1,-1],rows:['snare'],make:L=>[{r:'snare',k:L-1,m:.55}].concat(L>=2?[{r:'snare',k:L-2,m:.35}]:[])},
+ {id:'swell',name:'Open-hat swell',fl:'ballad dance',sz:[1,2],rows:['open'],make:L=>fRamp(L,2,(k,p)=>[{r:'open',k,m:.3+.6*p}])},
+ {id:'hatroll',name:'Hat roll',fl:'hop',sz:[.5,1,2,3],rows:['hat'],make:L=>fRamp(L,1,(k,p)=>[{r:'hat',k,m:.35+.45*p}].concat(k>=L-4?[{r:'hat',k,m:.3+.45*p,dx:.125}]:[])).concat(L>=4?[{r:'kick',k:L-2,m:.9}]:[])},
+ {id:'build',name:'Snare build',fl:'dance rock',sz:[2,3],rows:['snare'],make:L=>fRamp(L,1,(k,p)=>k<L/2&&k%2?[]:[{r:'snare',k,m:.4+.65*p}])},
+ {id:'claproll',name:'Clap roll',fl:'dance hop',sz:[1,2],rows:['clap'],make:L=>fRamp(L,1,(k,p)=>[{r:'clap',k,m:.5+.5*p}])},
+ {id:'lift',name:'Open-hat lift',fl:'dance',sz:[.5,1],rows:['open','snare'],make:L=>[{r:'open',k:Math.max(0,L-2),m:.9},{r:'snare',k:L-1,m:.5}]},
+ {id:'stop',name:'Stop',fl:'rock dance light ballad hop',sz:[-1,2,3],rows:['snare'],noKick:1,keep:['hat'],make:L=>[{r:'kick',k:0,v:2,m:.8},{r:'snare',k:L-1,v:2,m:.9}]},
+ {id:'unison',name:'Kick and snare together',fl:'rock',sz:[2,3],rows:['snare','kick'],make:L=>fRamp(L,2,(k,p)=>[{r:'snare',k,m:.7+.4*p},{r:'kick',k,m:.7+.3*p}])},
+ {id:'trip',name:'Triplet roll',fl:'light ballad rock',sz:[1,2],rows:['snare'],make:L=>fRamp(L,4,(k,p)=>[0,1/3,2/3].map((dx,j)=>({r:k>=L-4&&j===2?'tomL':'snare',k,dx,m:.55+.5*p})))},
+ {id:'choke',name:'Crash and stop',fl:'rock dance light ballad hop',sz:[-1],rows:['crash'],noKick:1,keep:[],make:L=>[{r:'crash',k:0,v:2,m:.8}]},
+];
+function fillFlav(){ const g=S.groove, c=GCLS[g]; if(['trap','halfTrap','halfHop','boombap'].includes(g)) return 'hop'; return c==='four'?'dance':c==='half'?'ballad':c==='straight'?'rock':'light'; }
+/* each bar's fill is worked out once per version of the song, so 'the fill before' is the one that really played */
+const FILLC={sig:'',m:new Map()};
+function fillSig(){ return [S.seed,S.moveSalt,S.groove,S.fill,perfOn('human'),S.meter,S.energyOn,ROWS.join(),S.song.sections.map(x=>x.type+x.bars+':'+(x.energy==null?'':x.energy)+(x.name||'')).join('|')].join(';'); }
+function fillPlan(bar,core){ if(core||!S.fill||!S.song) return fillPlan0(bar,core); const g=fillSig(); if(g!==FILLC.sig){ FILLC.sig=g; FILLC.m.clear(); } const k=bar.si+','+bar.b; if(FILLC.m.has(k)) return FILLC.m.get(k); FILLC.m.set(k,null); const p=fillPlan0(bar,false); FILLC.m.set(k,p); return p; }
+function fillPlan0(bar,core){ if(!S.fill||!S.song) return null; const secs=S.song.sections, sec=secs[bar.si]; if(!sec) return null;
+  const hum=perfOn('human'), M=METERS[S.meter], n=stepsFor(S.meter), beat=Math.max(2,Math.round((M.B-M.felt[M.felt.length-1])/.25)), EN=energyOf(bar.si), seed=(S.seed||0)+(S.moveSalt||0); let size=0;
+  if(bar.last){ const nx=secs[bar.si+1]; if(!nx||secCont(bar.si+1)) return null; /* a split section's halves are one section: no fill between them */
+    if(!hum){ const L=beat; return {id:'roll',name:'Snare roll',size:1,len:L,noKick:false,keep:[],hits:FILLS[0].make(L).map(h=>({...h,i:n-L+h.k}))}; }
+    const J=energyOf(bar.si+1)-EN; size=J>.22||(nx.type==='chorus'&&J>.08)?3:J<-.2?-1:J>.05?2:1; if(size===3&&prand(seed,bar.si,93)<.4) size=2; if(size===-1&&prand(seed,bar.si,94)<.3) return null; }
+  else if(hum&&!(S.energyOn&&EN<.4)){ const b1=bar.b+1; if(b1%8===0&&prand(seed,bar.si,bar.b,81)<.7) size=1; else if(b1%4===0&&prand(seed,bar.si,bar.b,82)<.3) size=.5; }
+  if(!size) return null;
+  const fl=fillFlav(), can=x=>x.sz.includes(size)&&x.rows.every(r=>ROWS.includes(r))&&!(x.id==='trip'&&M.compound); let L=FILLS.filter(x=>can(x)&&x.fl.includes(fl)); if(!L.length) L=FILLS.filter(can); if(!L.length) return null;
+  if(!core){ const prev=fillPrevId(bar); if(prev){ const L2=L.filter(x=>x.id!==prev); L=L2.length?L2:FILLS.filter(x=>can(x)&&x.id!==prev); if(!L.length) L=FILLS.filter(can); } } /* never the same one twice: borrow from the whole library before repeating */
+  const x=L[Math.floor(prand(seed,bar.si,bar.b,91)*L.length)], len=size===.5?Math.max(2,Math.round(beat/2)):size===2?Math.min(n,2*beat):size===3?n:beat;
+  return {id:x.id,name:x.name,size,len,noKick:!!x.noKick,keep:x.keep||[],hits:x.make(len).map(h=>({...h,i:n-len+h.k})).filter(h=>h.i>=0&&h.i<n)}; }
+/* the fill before this one (up to 16 bars back), so the same kind never comes twice in a row */
+function fillPrevId(bar){ const secs=S.song.sections; let si=bar.si, b=bar.b; for(let k=0;k<16;k++){ b--; if(b<0){ si--; if(si<0) return null; b=secs[si].bars-1; } const p=fillPlan({si,b,last:b===secs[si].bars-1,type:secs[si].type}); if(p) return p.id; } return null; }
+/* the groove's small turnarounds: at the end of a 4-bar phrase (every 2 bars when the energy is high) a kick pickup, an open hat or a ghost snare */
+function barVary(bar,pat,n,EN,push){ if(n<8||bar.last||!(bar.b%4===3||(EN>.8&&bar.b%2===1))) return; const r=prand((S.seed||0)+(S.moveSalt||0),bar.si,bar.b,71), k=n-2, has=row=>ROWS.includes(row)&&pat[row];
+  if(r<.3&&has('kick')&&!pat.kick[k]&&!pat.kick[k+1]) push('kick',k,1,{mul:.8,fill:1});
+  else if(r<.5&&has('open')&&!pat.open.some(v=>v)) push('open',k,1,{mul:.75,fill:1});
+  else if(r<.65&&has('snare')&&!pat.snare[n-1]&&!pat.snare[n-2]) push('snare',n-1,1,{mul:.3,fill:1}); }
 function drumPerf(bar){
   const pat=S.beats&&S.beats[bar.type]; const ev=[]; if(!pat) return ev;
   const M=METERS[S.meter], n=stepsFor(S.meter), hum=perfOn('human'), F=STYLE_FEEL[S.style.id]||STYLE_FEEL.anthem, EN=energyOf(bar.si), lowE=S.energyOn&&EN<.5;
   if(S.energyOn&&EN<.25) return ev;
-  const fillOn=S.fill&&bar.last&&ROWS.some(r=>(pat[r]||[]).some(v=>v)), fType=!fillOn?-1:hum?(bar.si*7+(S.moveSalt||0))%4:0;
-  const fillLen=Math.round((M.B-M.felt[M.felt.length-1])/.25), fillFrom=fillOn?n-(fType===3?Math.min(n,fillLen*2):fillLen):n;
-  const BV=(S.beatVel||{})[bar.type]||{}, OF=(S.beatOff||{})[bar.type]||{}, push=(r,i,v,extra={})=>{ const x=swingT(i*.25)+((OF[r]||{})[i]||0), own=(BV[r]||{})[i]; let vel=own!=null?own:v===2?1:.65, dt=0;
+  const has=ROWS.some(r=>(pat[r]||[]).some(v=>v)), FP=has?fillPlan(bar):null, fillFrom=FP?n-FP.len:n;
+  const BV=(S.beatVel||{})[bar.type]||{}, OF=(S.beatOff||{})[bar.type]||{}, push=(r,i,v,extra={})=>{ const x=swingT(i*.25)+((OF[r]||{})[i]||0)+(extra.dx||0), own=extra.fill?null:(BV[r]||{})[i]; let vel=own!=null?own:v===2?1:.65, dt=0;
     if(hum){ if(r==='hat'||r==='open'){ const onb=near((i*.25)%1,0); vel*=onb?1:1-F.acc*.6; }
-      vel*=1-F.vj/2+F.vj*prand(bar.si,bar.b,i,r.length); dt=(F[r==='clap'||r==='rim'?'snare':r==='open'?'hat':r]||0)+(prand(bar.b,i,bar.si,r.charCodeAt(0))-.5)*2*F.jit; }
-    if(S.energyOn) vel*=.8+.3*EN; const lv=rowLvl(r); if(lv<=.001) return; ev.push({r,x,v,vel:Math.max(.08,Math.min(1.2,vel*(extra.mul||1)))*lv,dt,i}); };
-  ROWS.forEach(r=>(pat[r]||[]).forEach((v,i)=>{ if(!v) return; if(r==='crash'&&bar.b!==0) return; if(lowE&&(r==='crash'||r==='open'||(r==='hat'&&i%2))) return; if(i>=fillFrom&&r!=='kick'&&r!=='crash'&&!(fType===2&&r==='hat')) return; if(fType===2&&i>=fillFrom&&r==='kick') return; push(r,i,v); }));
+      vel*=1-F.vj/2+F.vj*prand(bar.si,bar.b,i,r.length,(extra.dx||0)*3); dt=(F[r==='clap'||r==='rim'?'snare':r==='open'?'hat':r]||0)+(prand(bar.b,i,bar.si,r.charCodeAt(0))-.5)*2*F.jit; }
+    if(S.energyOn) vel*=.8+.3*EN; const lv=rowLvl(TOMS.includes(r)?'snare':r); if(lv<=.001) return; ev.push({r,x,v,vel:Math.max(.08,Math.min(1.2,vel*(extra.mul||1)))*lv,dt,i}); };
+  ROWS.forEach(r=>(pat[r]||[]).forEach((v,i)=>{ if(!v) return; if(r==='crash'&&bar.b!==0) return; if(lowE&&(r==='crash'||r==='open'||(r==='hat'&&i%2))) return; if(FP&&i>=fillFrom&&r!=='crash'&&!(r==='kick'&&!FP.noKick)&&!FP.keep.includes(r)) return; push(r,i,v); }));
   if(hum&&F.ghost>0&&pat.snare){ for(let i=1;i<Math.min(n,fillFrom);i++){ if(pat.snare[i]||pat.clap&&pat.clap[i]) continue; const nextBack=pat.snare[i+1]||pat.snare[i+2]; if(!nextBack||i%2===0) continue; if(prand(bar.si,bar.b,i,77)<F.ghost) push('snare',i,1,{mul:.28}); } }
-  if(fillOn){ const L=n-fillFrom;
-    if(fType===0) for(let i=fillFrom;i<n;i++) push('snare',i,1,{mul:.6+.6*(i-fillFrom+1)/L});
-    else if(fType===1) for(let i=fillFrom;i<n;i++){ push(i%2?'rim':'snare',i,1,{mul:.55+.55*(i-fillFrom+1)/L}); if(i===n-1) push('kick',i,2); }
-    else if(fType===2){ push('snare',n-1,2,{mul:.9}); push('kick',fillFrom,2,{mul:.8}); }
-    else for(let i=fillFrom;i<n;i+=2) push('snare',i,1,{mul:.5+.5*(i-fillFrom+1)/L}); }
-  const DF=typeof dropFrom==='function'?dropFrom(bar):null, kept=ev.filter(e=>ROWS.includes(e.r)); return DF==null?kept:kept.filter(e=>e.i*.25<DF-1e-6||e.r==='crash');
+  if(FP) FP.hits.forEach(h=>{ if(!ROWS.includes(h.r)&&!TOMS.includes(h.r)) return; push(h.r,h.i,h.v||1,{mul:h.m||1,dx:h.dx,fill:1}); });
+  else if(hum&&has&&!lowE) barVary(bar,pat,n,EN,push);
+  /* after a big fill the next section opens with a crash */
+  if(hum&&bar.b===0&&bar.si>0&&!lowE&&ROWS.includes('crash')&&!(pat.crash||[])[0]&&has){ const p=S.song.sections[bar.si-1], pf=p&&fillPlan({si:bar.si-1,b:p.bars-1,last:true,type:p.type},true); if(pf&&pf.size>=2) push('crash',0,2,{fill:1}); }
+  const KO=bar.last&&typeof transOf==='function'&&transOf(bar.si+1).kickOut; /* the transition "Kick out": the kick sits out the bar before */
+  const DF=typeof dropFrom==='function'?dropFrom(bar):null, kept=ev.filter(e=>(ROWS.includes(e.r)||TOMS.includes(e.r))&&!(KO&&e.r==='kick')); return DF==null?kept:kept.filter(e=>e.i*.25<DF-1e-6||e.r==='crash');
 }
-function drumFillName(bar){ const t=S.fill&&bar.last?(perfOn('human')?(bar.si*7+(S.moveSalt||0))%4:0):-1; return ['roll','snare & rim','stop','half-time build'][t]||''; }
+function drumFillName(bar){ const p=bar.last||perfOn('human')?fillPlan(bar):null; return p?p.name:''; }
 
 /* 5. chord performance: strums for guitars, pedal for piano */
 function chordPerfKind(){ const s=S.parts.chords.sound||''; if(s==='i:nylon'||s==='i:steel') return 'strum'; if(s==='i:piano'||s==='i:epiano') return 'pedal'; if(s.startsWith('x:')&&SLIB[s.slice(2)]&&SLIB[s.slice(2)].type==='oneshot') return 'pedal'; return ''; }
@@ -8762,21 +8833,42 @@ function renderAR(){ const box=$('#arOut'); if(!box||!S.song) return; if(!$('#ar
 S.transOn=true; S.trans={}; S.transOwn={};
 const TRANS_T={riser:['↗','Riser','A noise-and-synth sweep that builds over the last bar'],rev:['◁','Reverse cymbal','A swell that sucks into the downbeat'],drop:['⏸','Drop','Everything but the voice stops for the last beat'],impact:['✸','Impact','A deep boom on the first beat'],sweep:['≈','Filter sweep','The whole mix gets muffled, then opens on the downbeat'],down:['↘','Downlifter','A falling whoosh after the downbeat'],snareRoll:['⁝','Snare roll','The snare speeds up through the last bar'],silence:['▯','Silence','Everything stops, voice too, for the last beat']};
 const TRANS_STYLE={sadcore:{chorus:['rev','sweep'],verse:[],bridge:['sweep'],pre:['rev'],outro:['down']},anthem:{chorus:['riser','rev','impact','drop'],verse:['down'],bridge:['sweep','rev'],pre:['rev'],outro:['down']},rnb:{chorus:['rev','drop'],verse:[],bridge:['sweep'],pre:['rev']},folk:{chorus:['rev'],bridge:[],pre:[]},darkpop:{chorus:['riser','impact','drop'],verse:['down'],bridge:['sweep'],pre:['rev'],outro:['down']},synth:{chorus:['riser','rev','impact'],verse:['down'],bridge:['sweep','rev'],pre:['rev'],outro:['down']},disco:{chorus:['riser','rev','drop'],verse:['down'],bridge:['sweep'],pre:['rev']},soul:{chorus:['rev','impact'],bridge:['sweep'],pre:['rev']}};
-function transOf(si){ if(!S.transOn||si<1||!S.song.sections[si]) return {}; if(S.transOwn[si]) return S.trans[si]||{}; const t=S.song.sections[si].type, prev=S.song.sections[si-1].type, P=(TRANS_STYLE[S.style.id]||TRANS_STYLE.anthem)[t]||[], o={}; P.forEach(k=>o[k]=true); if(t==='verse'&&prev!=='chorus') delete o.down; if(prev==='intro'&&t==='verse'){ return {}; } return o; }
+/* transitions (10 Nov, Jamie: "transitions seem pretty basic and repetitive"). They used to be one fixed set per section type, so every chorus came in
+   the same way. Now the move fits the change: where the energy jumps (into a chorus) one or two big moves, a smaller step gets one, a section at the
+   same level usually gets nothing (restraint is the point), and where it falls a downlifter, sweep or drop. Moves come from the style's own set (a
+   sadcore song never gets a riser), its usual choice for that section is twice as likely, and a section never comes in the same way as last time.
+   "Kick out" is a drum move: the kick sits out the bar before. Your own choices (S.transOwn) are kept as they are. */
+TRANS_T.kickOut=['⊘','Kick out','The kick sits out the bar before, so the next section lands harder'];
+const TRANS_SIZE={big:['riser','rev','snareRoll','impact','drop','kickOut','silence'],mid:['rev','sweep','snareRoll','impact','kickOut'],small:['rev','sweep'],down:['down','sweep','drop']};
+function transPal(){ const P=TRANS_STYLE[S.style.id]||TRANS_STYLE.anthem, u=new Set(), dr=!!(S.parts.drums&&S.parts.drums.on); Object.values(P).forEach(a=>(a||[]).forEach(k=>u.add(k))); if(dr&&['riser','snareRoll','impact','drop'].some(k=>u.has(k))) u.add('kickOut'); if(!dr){ u.delete('snareRoll'); u.delete('kickOut'); } return u; }
+function transCore(si,salt){ const secs=S.song.sections, t=secs[si].type, prev=secs[si-1].type, own=(TRANS_STYLE[S.style.id]||TRANS_STYLE.anthem)[t]||[], U=transPal(), R=k=>prand(S.seed||0,si,salt,k), o={};
+  if(prev==='intro'&&t==='verse') return o;
+  const d=energyOf(si)-energyOf(si-1), size=!S.energyOn?(t==='chorus'?'big':t==='verse'?'small':'mid'):d>.22||(t==='chorus'&&d>.08)?'big':d<-.15?'down':Math.abs(d)>.05?'mid':'small';
+  if(size==='small'&&R(1)<.6||size==='mid'&&R(1)<.2||size==='down'&&R(1)<.35) return o;
+  let pool=TRANS_SIZE[size].filter(k=>U.has(k)); if(size==='big'&&pool.length<2) pool=[...new Set(pool.concat(TRANS_SIZE.mid.filter(k=>U.has(k))))]; /* a soft style with one big move: its medium ones too, so choruses differ */ if(!pool.length){ own.forEach(k=>o[k]=true); if(t==='verse'&&prev!=='chorus') delete o.down; return o; }
+  pool=pool.map((k,i)=>[k,R(10+i)*(own.includes(k)?2:1)]).sort((a,b)=>b[1]-a[1]).map(x=>x[0]);
+  const want=size==='big'&&pool.length>1&&R(2)<.55?2:1; for(const k of pool){ if(Object.keys(o).length>=want) break; if((k==='drop'||k==='silence'||k==='kickOut')&&(o.drop||o.silence||o.kickOut)) continue; o[k]=true; }
+  return o; }
+function transOf(si){ if(!S.transOn||si<1||!S.song||!S.song.sections[si]) return {}; if(S.transOwn[si]) return S.trans[si]||{}; if(typeof secCont==='function'&&secCont(si)) return {};
+  const o=transCore(si,0), t=S.song.sections[si].type, key=x=>Object.keys(x).sort().join(); let j=si-1; while(j>0&&(S.song.sections[j].type!==t||secCont(j))) j--;
+  if(j>0&&S.song.sections[j].type===t){ const w=transOf(j); if(key(o)&&key(w)===key(o)) for(let salt=1;salt<8;salt++){ const q=transCore(si,salt); if(key(q)!==key(w)) return q; } } /* the last time this section came in */
+  return o; }
+/* a little variety in the sounds themselves: the riser's pitch, the reverse swell's and the downlifter's length */
+function transVar(si){ const r=prand(S.seed||0,si,5); return {p:r<.33?.84:r<.66?1:1.19,len:.8+.4*prand(S.seed||0,si,6)}; }
 function dropFrom(bar){ const si=bar.si, sec=S.song.sections[si]; if(!bar.last||!sec||RENDER_ONLY==='vox') return null; const T=transOf(si+1); return T.drop||T.silence?METERS[S.meter].B-1:null; }
 function silentFrom(bar){ const sec=S.song.sections[bar.si]; return sec&&bar.last&&transOf(bar.si+1).silence?METERS[S.meter].B-1:null; }
 function fxNoise(t,dur,f0,f1,g0,g1,q=1.4,type='bandpass'){ const n=noiseSrc(), bp=ac.createBiquadFilter(), g=ac.createGain(); bp.type=type; bp.Q.value=q; bp.frequency.setValueAtTime(f0,t); bp.frequency.exponentialRampToValueAtTime(f1,t+dur); g.gain.setValueAtTime(Math.max(.0001,g0),t); g.gain.exponentialRampToValueAtTime(Math.max(.0001,g1),t+dur); n.connect(bp); bp.connect(g); g.connect(OUT||master); n.start(t); n.stop(t+dur+.05); return g; }
 function scheduleTransitions(bar,t,spb){ if(!S.transOn||(S.solo&&S.solo!=='fx')||(RENDER_ONLY&&RENDER_ONLY!=='fx')||t<ac.currentTime-.01) return; const B=METERS[S.meter].B, sec=S.song.sections[bar.si], nxt=S.song.sections[bar.si+1], tm=B*spb;
   withBus('song','fx',()=>{
     if(nxt&&bar.b===sec.bars-1){ const T=transOf(bar.si+1), end=t+tm;
-      if(T.riser){ const len=tm<1.7&&sec.bars>1?2*tm:tm, st=end-len; if(st>=ac.currentTime-.01){ fxNoise(st,len,500,9000,.002,.35,1.6); const o=ac.createOscillator(), g=ac.createGain(), f=110*Math.pow(2,mod(S.key-9,12)/12); o.type='sawtooth'; o.frequency.setValueAtTime(f,st); o.frequency.exponentialRampToValueAtTime(f*2.8,end); g.gain.setValueAtTime(.0001,st); g.gain.exponentialRampToValueAtTime(.06,end-.02); g.gain.linearRampToValueAtTime(0,end); const lp=ac.createBiquadFilter(); lp.frequency.value=3000; o.connect(lp); lp.connect(g); g.connect(OUT||master); o.start(st); o.stop(end+.02); } }
+      if(T.riser){ const len=tm<1.7&&sec.bars>1?2*tm:tm, st=end-len; if(st>=ac.currentTime-.01){ fxNoise(st,len,500,9000,.002,.35,1.6); const o=ac.createOscillator(), g=ac.createGain(), f=110*Math.pow(2,mod(S.key-9,12)/12)*transVar(bar.si+1).p; o.type='sawtooth'; o.frequency.setValueAtTime(f,st); o.frequency.exponentialRampToValueAtTime(f*2.8,end); g.gain.setValueAtTime(.0001,st); g.gain.exponentialRampToValueAtTime(.06,end-.02); g.gain.linearRampToValueAtTime(0,end); const lp=ac.createBiquadFilter(); lp.frequency.value=3000; o.connect(lp); lp.connect(g); g.connect(OUT||master); o.start(st); o.stop(end+.02); } }
       if(T.snareRoll){ const stop=T.silence?B-1:B; [[0,.5],[B/2,.25],[B*3/4,.125]].forEach(([from,step],i,L)=>{ const to=i<2?L[i+1][0]:stop; for(let x=from;x<Math.min(to,stop)-1e-6;x+=step) drumHit('snare',t+x*spb,.28+.5*x/B); }); }
-      if(T.rev){ const len=Math.min(1.5*spb,1.4), st=end-len, g=fxNoise(st,len,6000,9000,.001,.5,.7,'highpass'); g.gain.cancelScheduledValues(st); g.gain.setValueAtTime(.0001,st); g.gain.exponentialRampToValueAtTime(.45,end-.005); g.gain.linearRampToValueAtTime(0,end+.01); }
+      if(T.rev){ const len=Math.min(tm*.9,Math.min(1.5*spb,1.4)*transVar(bar.si+1).len), st=end-len, g=fxNoise(st,len,6000,9000,.001,.5,.7,'highpass'); g.gain.cancelScheduledValues(st); g.gain.setValueAtTime(.0001,st); g.gain.exponentialRampToValueAtTime(.45,end-.005); g.gain.linearRampToValueAtTime(0,end+.01); }
       if(T.sweep&&master.sweep){ const f=master.sweep.frequency; f.setValueAtTime(18000,t); f.exponentialRampToValueAtTime(700,end-.02); f.setValueAtTime(18000,end); }
     }
     if(bar.b===0&&bar.si>0){ const T=transOf(bar.si);
       if(T.impact){ const o=ac.createOscillator(), g=ac.createGain(); o.frequency.setValueAtTime(72,t); o.frequency.exponentialRampToValueAtTime(34,t+1.2); g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(.7,t+.008); g.gain.exponentialRampToValueAtTime(.0001,t+1.6); o.connect(g); g.connect(OUT||master); o.start(t); o.stop(t+1.7); fxNoise(t,.5,2500,400,.25,.001,.7,'lowpass'); }
-      if(T.down) fxNoise(t,Math.min(tm,2.4),7000,250,.3,.002,1.2); } }); }
+      if(T.down) fxNoise(t,Math.min(tm,2.4)*transVar(bar.si).len,7000,250,.3,.002,1.2); } }); }
 function renderTransRow(){ const row=$('#transRow'); if(!row||!S.song) return; const secs=S.song.sections;
   row.innerHTML=secs.map((s,i)=>{ const T=transOf(i), ks=Object.keys(T).filter(k=>T[k]); return `<button class="trn-col${S.transOwn[i]?' own':''}" data-tri="${i}" style="flex:${s.bars} 1 0" ${i===0?'disabled':''} title="${i===0?'':'Transition into '+esc(s.name)+(ks.length?': '+ks.map(k=>TRANS_T[k][1]).join(', '):': none')+'. Click to change.'}">${i===0?'':ks.map(k=>TRANS_T[k][0]).join(' ')||'<span class="muted">+</span>'}</button>`; }).join(''); }
 function openTransMenu(i,anchor){ closeTransMenu(); const T={...transOf(i)}, s=S.song.sections[i], m=document.createElement('div'); m.className='tr-menu'; m.id='trMenu';
@@ -8986,7 +9078,7 @@ function nativeLayerPatch(id,ch,velRef){ const I=INSTR[id], RV=ROLEVOL.pad||.15,
 function nativeFxCh(p){ if(p==='master') return 16; if(p==='fx') return transCh(); if(rtIs(p)){ const i=rtList().findIndex(b=>b.id===p); return i<0?null:17+i; } { const a=auGet(p); if(a) return a.ch; } if(p==='vox') return 15; const r=MOUT.map.song[p], x=xList().find(q=>q.id===p); return p==='drums'?(MOUT.map.song.drums?MOUT.map.song.drums.ch:9):(r?r.ch:x?x.ch:{lead:0,chords:1,bass:2}[p]); }
 function nativeFx(){ const out=[], ok=['filter','sat','warm','eq','echo','plate','chorus','trem','crush','lofi','autopan','phaser','wide']; ['lead','chords','bass','drums','master','fx',...xList().map(x=>x.id),...auTracks().map(a=>a.id),...rtList().map(b=>b.id)].forEach(p=>strip('song',p).fx.forEach((f,slot)=>{ if(!f||!f.on||!ok.includes(f.type)) return; const q={...f.p}; if(typeof q.time==='string') q.sec=divSec(q.time,S.bpm); if(typeof q.rate==='string') q.sec=q.rate==='off'?0:divSec(q.rate,S.bpm); const style=q.style||q.type||q.mode||q.shape||q.amt||''; ['style','type','mode','shape','time','amt'].forEach(k=>delete q[k]); ['bits','stages'].forEach(k=>{ if(q[k]!=null) q[k]=+q[k]; }); if(typeof q.rate==='string') delete q.rate; out.push({ch:nativeFxCh(p),slot,type:f.type,style,p:q}); })); return out.filter(q=>q.ch!=null).concat(eqNative(),pcNative()); }
 function nativeFxLanes(){ const B=METERS[S.meter].B, out=[], seen={}; for(let si=0;si<S.song.sections.length;si++) Object.entries(S.auto[si]||{}).forEach(([p,T])=>Object.keys(T||{}).forEach(tg=>{ if(/^fx\d\./.test(tg)) (seen[p]=seen[p]||new Set()).add(tg); })); Object.entries(seen).forEach(([p,set])=>set.forEach(tg=>{ const m=/^fx(\d)\.(\w+)$/.exec(tg), d=tdef('song',p,tg); if(!d||autSkip(p,tg)) return; const stat=+staticVal('song',p,tg), pts=[]; S.song.sections.forEach((sc,si)=>{ const L=((S.auto[si]||{})[p]||{})[tg]; if(!L||!L.length) return; const a=sc.startBar*B, b=(sc.startBar+sc.bars)*B; pts.push(a-.001,stat); L.forEach(q=>pts.push(+(a+q.t).toFixed(4),+tV(d,q.v).toFixed(4))); pts.push(b-.002,+tV(d,L[L.length-1].v).toFixed(4),b,stat); }); const ch=p==='master'?-1:nativeFxCh(p); if(pts.length&&ch!=null) out.push({ch,slot:+m[1],k:m[2],pts}); })); return out; }
-function nativeTrans(){ const out=[]; if(!S.transOn||(S.solo&&S.solo!=='fx')) return out; const B=METERS[S.meter].B, spb=60/S.bpm, tm=B*spb, secs=S.song.sections, noise=(at,dur,f0,f1,g0,g1,q,filter='bandpass')=>out.push({k:'noise',at:+at.toFixed(4),dur,f0,f1,g0:Math.max(.0001,g0),g1:Math.max(.0001,g1),q,filter}); secs.forEach((sec,si)=>{ const a=sec.startBar*B, end=(sec.startBar+sec.bars)*B, T=transOf(si+1); if(secs[si+1]){ if(T.riser){ const len=tm<1.7&&sec.bars>1?2*tm:tm, st=end-len/spb, f=110*Math.pow(2,mod(S.key-9,12)/12); noise(st,len,500,9000,.002,.35,1.6); out.push({k:'riser',at:+st.toFixed(4),dur:len,f0:f,f1:f*2.8,g0:.0001,g1:.06}); } if(T.snareRoll){ const stop=T.silence?B-1:B, t=end-B; [[0,.5],[B/2,.25],[B*3/4,.125]].forEach(([from,step],i,L)=>{ const to=i<2?L[i+1][0]:stop; for(let x=from;x<Math.min(to,stop)-1e-6;x+=step) out.push({k:'snare',at:+(t+x).toFixed(4),g0:.28+.5*x/B}); }); } if(T.rev){ const len=Math.min(1.5*spb,1.4); noise(end-len/spb,len,6000,9000,.0001,.45,.7,'highpass'); } if(T.sweep) out.push({k:'sweep',at:end-B,dur:tm}); } if(si>0&&a>0){ const Q=transOf(si); if(Q.impact){ out.push({k:'impact',at:a,dur:1.7}); noise(a,.5,2500,400,.25,.001,.7,'lowpass'); } if(Q.down) noise(a,Math.min(tm,2.4),7000,250,.3,.002,1.2); } }); return out; }
+function nativeTrans(){ const out=[]; if(!S.transOn||(S.solo&&S.solo!=='fx')) return out; const B=METERS[S.meter].B, spb=60/S.bpm, tm=B*spb, secs=S.song.sections, noise=(at,dur,f0,f1,g0,g1,q,filter='bandpass')=>out.push({k:'noise',at:+at.toFixed(4),dur,f0,f1,g0:Math.max(.0001,g0),g1:Math.max(.0001,g1),q,filter}); secs.forEach((sec,si)=>{ const a=sec.startBar*B, end=(sec.startBar+sec.bars)*B, T=transOf(si+1); if(secs[si+1]){ if(T.riser){ const len=tm<1.7&&sec.bars>1?2*tm:tm, st=end-len/spb, f=110*Math.pow(2,mod(S.key-9,12)/12)*transVar(si+1).p; noise(st,len,500,9000,.002,.35,1.6); out.push({k:'riser',at:+st.toFixed(4),dur:len,f0:f,f1:f*2.8,g0:.0001,g1:.06}); } if(T.snareRoll){ const stop=T.silence?B-1:B, t=end-B; [[0,.5],[B/2,.25],[B*3/4,.125]].forEach(([from,step],i,L)=>{ const to=i<2?L[i+1][0]:stop; for(let x=from;x<Math.min(to,stop)-1e-6;x+=step) out.push({k:'snare',at:+(t+x).toFixed(4),g0:.28+.5*x/B}); }); } if(T.rev){ const len=Math.min(tm*.9,Math.min(1.5*spb,1.4)*transVar(si+1).len); noise(end-len/spb,len,6000,9000,.0001,.45,.7,'highpass'); } if(T.sweep) out.push({k:'sweep',at:end-B,dur:tm}); } if(si>0&&a>0){ const Q=transOf(si); if(Q.impact){ out.push({k:'impact',at:a,dur:1.7}); noise(a,.5,2500,400,.25,.001,.7,'lowpass'); } if(Q.down) noise(a,Math.min(tm,2.4)*transVar(si).len,7000,250,.3,.002,1.2); } }); return out; }
 function nativeTakes(){ const out=[], B=METERS[S.meter].B, spb=60/S.bpm; S.song.sections.forEach((sec,si)=>{ const a=sec.startBar*B, all=TAKES.filter(t=>t.file&&takeSi(t)===si&&auAudible(takeTr(t))&&!(S.secMute&&S.secMute[takeTr(t)]&&S.secMute[takeTr(t)][si])); [...new Set(all.map(takeTr))].forEach(tr=>{ const ch=auCh(tr); if(ch==null) return; const list=all.filter(t=>takeTr(t)===tr), C=auComp(si,tr); if(C&&Object.keys(C).length){ for(let b=0;b<sec.bars;b++){ const t=list.find(x=>x.id===C[b]); if(t) out.push({file:t.file,ch,beat:a+b*B,beats:B,start:+(t.off+(b*B-t.beat0)*spb).toFixed(5)}); } return; } list.filter(t=>t.on).forEach(t=>out.push({file:t.file,ch,beat:a+t.beat0,beats:sec.bars*B-t.beat0,start:t.off})); }); }); return out; }
 function nativeTakeCh(){ return auTracks().map(a=>({ch:a.ch,level:stripVol('song',a.id),pan:strip('song',a.id).pan||0})); }
 function nativeMono(){ return [...mixChans().filter(c=>strip('song',c).mono).map(c=>{ try{ return nativeFxCh(c); }catch(e){ return null; } }).filter(c=>c!=null),...(AU.monoCheck?[16]:[])]; }

@@ -63,6 +63,7 @@ struct KitPatch
     std::array<float, 4> kick { 160, 42, .6f, 0 }, snare { 185, .5f, .2f, 1800 };
     std::array<float, 2> hat { .045f, 8000 }, open { .3f, 7000 }, rim { 1700, .035f }, crash { 1.3f, 5000 };
     float clap = .22f;
+    std::array<float, 2> tom { 150, .45f };   // high tom pitch and decay; mid and low are .78 and .6 of it (fills only)
 };
 
 struct PolishPatch
@@ -492,6 +493,7 @@ public:
         else if (k == 46) nz (K.open[0], K.open[1], .22f * v, 0, 0, .7f);
         else if (k == 37) { tn (K.rim[0], K.rim[0], K.rim[1], .3f * v, Wave::square); nz (.01f, 2000, .15f * v, 0, 0, .7f); }
         else if (k == 49) nz (K.crash[0], K.crash[1], .22f * v, 0, 0, .7f);
+        else if (k == 50 || k == 47 || k == 43) { const float m = k == 50 ? 1.0f : k == 47 ? .78f : .6f, f = K.tom[0] * m; tn (f, f * .72f, K.tom[1] * (1.6f - .6f * m), .75f * v, Wave::sine); nz (.02f, 2500, .12f * v, 0, 0, .7f); }
         else active = false;
     }
 

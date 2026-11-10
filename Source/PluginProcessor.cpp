@@ -365,7 +365,7 @@ void SemitoneProcessor::setSynthSound (const juce::var& sound, const st::Timelin
             const auto k = d.getProperty ("kit", juce::var());
             t->kit.lp = num (k, "lp", 16000); t->kit.clap = num (k, "clap", .22f);
             numsInto (k, "kick", t->kit.kick); numsInto (k, "snare", t->kit.snare); numsInto (k, "hat", t->kit.hat);
-            numsInto (k, "open", t->kit.open); numsInto (k, "rim", t->kit.rim); numsInto (k, "crash", t->kit.crash);
+            numsInto (k, "open", t->kit.open); numsInto (k, "rim", t->kit.rim); numsInto (k, "crash", t->kit.crash); numsInto (k, "tom", t->kit.tom);
         }
         t->bendRange = (float) juce::jlimit (1, 48, tl.bendRange > 0 ? tl.bendRange : 12);
         if (auto* ducks = sound.getProperty ("duck", juce::var()).getArray())
