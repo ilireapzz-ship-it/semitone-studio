@@ -23,4 +23,10 @@ const {chromium}=require('playwright'), path=require('path'); const url='file://
  ok(w.tracks===83&&w['lana-btd'].songs===24&&w['lana-nfr'].songs===14,'every track on the five Lana albums is in the data (83), each counted once '+JSON.stringify(w));
  ok(['lana-btd','lana-uv','lana-honeymoon','lana-nfr','lana-bb'].every(id=>w[id].ton>=10),'with keys borrowed now and then from her other eras, each Lana era reaches 10+ of the 12 keys');
  ok(['lana-btd','lana-uv','lana-honeymoon','lana-nfr','lana-bb'].every(id=>w[id].rep===0),'picking a style again never gives the same key twice in a row');
+ // 10 Nov (Jamie: "the same keys are still being landed"): the key is picked before the song, and an artist's last few keys sit out, as they sound
+ // (a minor-only style hears E flat major and minor as one key), remembered after the app closes
+ const near=await p.evaluate(()=>{ const o={}; STYLES.forEach(st=>{ let rep=0; const prev=[]; for(let i=0;i<40;i++){ S.style=st; S.tags=[]; styleRoll(st); const n=S.key+(MINORISH.includes(S.mode)?'m':''); if(prev.slice(-3).includes(n)) rep++; prev.push(n); } if(rep) o[st.id]=rep; }); return o; });
+ ok(!Object.keys(near).length,'no style lands on one of its last three keys in 40 new songs '+JSON.stringify(near));
+ const kept=await p.evaluate(()=>{ try{ return (JSON.parse(localStorage.getItem('ss_keymem')||'{}').lana||[]).length; }catch(e){ return 0; } });
+ ok(kept>=3,'the recent keys are saved, so they survive closing the app ('+kept+')');
  console.log(fails.length?`${fails.length} failed`:'all passed'); console.log(JSON.stringify(errs)); await b.close(); process.exit(fails.length?1:0); })();
