@@ -45,6 +45,13 @@ struct Event
 class Sequencer
 {
 public:
+    static bool sameNotes (const Timeline* a, const Timeline* b)
+    {
+        if (a == nullptr || b == nullptr || a->length != b->length || a->bendRange != b->bendRange || a->notes.size() != b->notes.size() || a->ctls.size() != b->ctls.size()) return false;
+        for (size_t i = 0; i < a->notes.size(); ++i) { const auto& x = a->notes[i]; const auto& y = b->notes[i]; if (x.start != y.start || x.end != y.end || x.ch != y.ch || x.key != y.key || x.vel != y.vel) return false; }
+        for (size_t i = 0; i < a->ctls.size(); ++i) { const auto& x = a->ctls[i]; const auto& y = b->ctls[i]; if (x.at != y.at || x.status != y.status || x.d1 != y.d1 || x.d2 != y.d2) return false; }
+        return true;
+    }
     Sequencer() { active.reserve (1024); }
 
     // Message thread: hand over a new song. The audio thread picks it up on its next block.
@@ -54,7 +61,15 @@ public:
     void process (bool playing, double ppqStart, double bpm, double sampleRate, int numSamples, std::vector<Event>& out)
     {
         auto t = std::atomic_load (&pending);
-        if (t != current) { allNotesOff (out, 0); current = std::move (t); needSetup = true; }
+        if (t != current)
+        {
+            // Jamie, 11 Nov: moving a volume while playing cut the sound in and out. The page resends the song for any change (a level
+            // lives in the same message), and every resend released every held note. Same notes: keep playing. Changed notes while
+            // playing: release, then sound again whatever should be held right here, so a chord doesn't go silent until its next note.
+            const bool same = sameNotes (current.get(), t.get());
+            if (! same) { allNotesOff (out, 0); needSetup = true; if (wasPlaying) chaseNext = true; }
+            current = std::move (t);
+        }
 
         if (! playing || ! current || current->length <= 0 || bpm <= 0 || sampleRate <= 0 || numSamples <= 0)
         {

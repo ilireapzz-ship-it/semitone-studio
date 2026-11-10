@@ -27,7 +27,7 @@ const {chromium}=require('playwright'); const url='file://'+require('path').reso
  const cv=await p.evaluate(()=>{ const r=$('#eqCv').getBoundingClientRect(); return {x:r.left,y:r.top,w:r.width,h:r.height}; });
  const was=await p.evaluate(()=>H.past.length);
  await p.mouse.click(cv.x+cv.w*.5,cv.y+cv.h*.3); await p.waitForTimeout(60);
- const a1=await p.evaluate(()=>{ const B=S.mix.chords.eq.bands; return {n:B.length,b:B[0],sel:EQ.sel.size}; });
+ const a1=await p.evaluate(()=>{ const B=S.mix.chords.eq.bands; return {n:B.filter(b=>b.who!=='Start').length,start:B.filter(b=>b.who==='Start').length,b:B.find(b=>b.who!=='Start'),sel:EQ.sel.size}; }); ok(a1.start===5,'a new EQ starts flat with five points at 0 dB, like FL Studio (11 Nov)');
  ok(a1.n===1&&a1.b.t==='bell'&&a1.b.g>3&&a1.b.f>500&&a1.b.f<1500&&a1.sel===1,'clicking the curve adds a bell where you click '+JSON.stringify(a1.b));
  await p.evaluate(()=>{ document.querySelector('[data-eqx="suggest"]').click(); const q=[...document.querySelectorAll('[data-eqkeep]')].find(x=>x.dataset.eqkeep==='all'); q.click(); });
  const a2=await p.evaluate(()=>({n:S.mix.chords.eq.bands.length,who:S.mix.chords.eq.bands.map(b=>b.who),sug:document.querySelectorAll('.eq-g').length,steps:H.past.length}));
@@ -49,7 +49,7 @@ const {chromium}=require('playwright'); const url='file://'+require('path').reso
  // A/B is level-matched and adds no history
  const ab=await p.evaluate(()=>{ const was=H.past.length; document.querySelector('[data-eqx="ab"]').click(); const on=EQ.bypass; histCheck(true); document.querySelector('[data-eqx="ab"]').click(); return {on,off:EQ.bypass,steps:H.past.length-was,avg:eqAvgGain(S.mix.chords.eq)}; });
  ok(ab.on&&!ab.off&&ab.steps===0,'A/B switches the EQ out and back without an undo step');
- const und=await p.evaluate(()=>{ histUndo(); const a=!S.mix.chords.eq.bands[0].lock&&!/🔒/.test(document.querySelector('#eqPanel .eq-card').textContent); const n=S.mix.chords.eq.bands.length; histUndo(); histUndo(); histUndo(); return [a,n,S.mix.chords.eq.bands.length,document.querySelectorAll('#eqPanel .eq-card').length]; });
+ const und=await p.evaluate(()=>{ histUndo(); const a=!S.mix.chords.eq.bands[0].lock&&!/🔒/.test(document.querySelector('#eqPanel .eq-card').textContent); const mine=()=>S.mix.chords.eq.bands.filter(x=>x.who!=='Start').length, n=mine(); histUndo(); histUndo(); histUndo(); return [a,n,mine(),document.querySelectorAll('#eqPanel .eq-card').length===S.mix.chords.eq.bands.length?mine():-1]; }); /* 11 Nov: counts leave out the flat starting points */
  ok(und[0]&&und[2]<und[1]&&und[3]===und[2],'undo takes EQ changes back one at a time and the open panel follows '+JSON.stringify(und));
  await p.keyboard.press('Escape'); await p.keyboard.press('Escape'); ok(await p.evaluate(()=>$('#eqPanel').hidden),'Esc closes the Smart EQ');
  // Calibrate respects locks, is one undo step, and switching rows works

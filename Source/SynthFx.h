@@ -64,6 +64,9 @@ public:
     virtual void run (float& l, float& r) = 0;
     virtual int param (const std::string&) const { return -1; }
     virtual void set (int, float) {}
+    // New settings while it runs, keeping its state (tails, envelopes, filter memory). Audio thread; must not allocate.
+    // fxRetunable (below) decides on the patch-building thread that this will work, so the default only uses param()/set().
+    virtual void retune (const FxDesc& d) { for (const auto& kv : d.p) { const int i = param (kv.first); if (i >= 0) set (i, kv.second); } }
 protected:
     float mix = 1;
     static double two() { return 2 * synthPi; }
@@ -170,8 +173,13 @@ inline const double* peqQs (int n)
 class PeqFx : public Fx
 {
 public:
-    PeqFx (const FxDesc& d, double rate) : sr (rate)
+    PeqFx (const FxDesc& d, double rate) : sr (rate) { fill (d, false); }
+    void retune (const FxDesc& d) override { fill (d, true); }
+    // inPlace: the same number of stages (checked by fxRetunable), so only the coefficients change
+    void fill (const FxDesc& d, bool inPlace)
     {
+        size_t at = 0;
+        const auto push = [&] (const Biquad& b) { if (! inPlace) bq.push_back (b); else if (at < bq.size()) { auto& x = bq[at]; x.b0 = b.b0; x.b1 = b.b1; x.b2 = b.b2; x.a1 = b.a1; x.a2 = b.a2; } ++at; };
         const int n = std::clamp ((int) d.get ("n", 0), 0, 24);
         for (int i = 0; i < n; ++i)
         {
@@ -180,10 +188,10 @@ public:
             if (t == 3 || t == 4)
             {
                 const int st = peqStages (d.get (("s" + k).c_str(), 12)); const double* qs = peqQs (st);
-                for (int j = 0; j < st; ++j) { Biquad b; if (t == 3) b.highpass (f, 20 * std::log10 (qs[j]), sr); else b.lowpass (f, 20 * std::log10 (qs[j]), sr); bq.push_back (b); }
+                for (int j = 0; j < st; ++j) { Biquad b; if (t == 3) b.highpass (f, 20 * std::log10 (qs[j]), sr); else b.lowpass (f, 20 * std::log10 (qs[j]), sr); push (b); }
             }
-            else if (t == 6) { Biquad a, b; shelfLow (a, f, -g / 2, sr); shelfHigh (b, f, g / 2, sr); bq.push_back (a); bq.push_back (b); }
-            else { Biquad b; if (t == 1) shelfLow (b, f, g, sr); else if (t == 2) shelfHigh (b, f, g, sr); else if (t == 5) peqNotch (b, f, q, sr); else if (t == 7) b.bandpass (f, q, sr); else peak (b, f, q, g, sr); bq.push_back (b); }
+            else if (t == 6) { Biquad a, b; shelfLow (a, f, -g / 2, sr); shelfHigh (b, f, g / 2, sr); push (a); push (b); }
+            else { Biquad b; if (t == 1) shelfLow (b, f, g, sr); else if (t == 2) shelfHigh (b, f, g, sr); else if (t == 5) peqNotch (b, f, q, sr); else if (t == 7) b.bandpass (f, q, sr); else peak (b, f, q, g, sr); push (b); }
         }
         out = std::pow (10.0f, d.get ("out", 0) / 20);
     }
@@ -210,7 +218,11 @@ inline const PcChar& pcChar (int c)
 class PcompFx : public Fx
 {
 public:
-    PcompFx (const FxDesc& d, double rate) : sr (rate)
+    PcompFx (const FxDesc& d, double rate) : sr (rate) { configure (d); fade = on ? 1 : 0; }
+    void retune (const FxDesc& d) override { configure (d); }   // fade carries on from where it is, so On/Off still crossfades
+    // what it did since the page last asked: most reduction (dB) and the peak levels in and out (linear)
+    void takeMeter (float& gr0, float& in0, float& out0) { gr0 = (float) gmax; in0 = (float) pin; out0 = (float) pout; gmax = 0; pin = 0; pout = 0; }
+    void configure (const FxDesc& d)
     {
         const double a = std::clamp ((double) d.get ("amt", 0), 0.0, 1.0); ch = pcChar ((int) d.get ("c", 0));
         const double beat = 60.0 / std::max (20.0, (double) d.get ("bpm", 120));
@@ -220,7 +232,7 @@ public:
         kA = std::exp (-1 / (att * sr)); kR = std::exp (-1 / (rel * sr)); kRf = std::exp (-1 / (rel * .3 * sr)); kRs = std::exp (-1 / (rel * 1.5 * sr));
         cR = ch.rmsT > 0 ? 1 - std::exp (-1 / (ch.rmsT * sr)) : 1;
         const auto o = d.p.find ("out"); mk = std::exp ((o != d.p.end() ? (double) o->second : .5 * curve (-10, ratio)) * .1151292546497);
-        on = d.get ("on", 1) > .5; fade = on ? 1 : 0; step = 1 / (.015 * sr); kk = 1 / sr;
+        on = d.get ("on", 1) > .5; step = 1 / (.015 * sr); kk = 1 / sr;
     }
     // bypass is level-matched like the page: the dry part times the running out/in loudness ratio, with a 15 ms fade
     void setOn (bool v) { on = v; }
@@ -247,17 +259,20 @@ public:
         if (md > 1e-9) avg = std::clamp (std::sqrt (mw / md), .25, 4.0);
         const double bl = dl * avg, br = dr * avg;
         l = (float) (bl + (wl - bl) * fade); r = (float) (br + (wr - br) * fade);
+        if (on && gr > gmax) gmax = gr;
+        pin = std::max (pin, std::max (std::abs (dl), std::abs (dr))); pout = std::max (pout, (double) std::max (std::abs (l), std::abs (r)));
     }
     double reduction() const { return on ? gr : 0; }
 private:
     double sr; PcChar ch; double thr = -18, ratio = 2, knee = 6, mix = 1, kA = 0, kR = 0, kRf = 0, kRs = 0, cR = 1, mk = 1, ms = 0, gr = 0, pk = 0, g = 1;
-    bool on = true; double fade = 1, step = 0, kk = 0, mw = 0, md = 0, avg = 1;
+    bool on = true; double fade = 1, step = 0, kk = 0, mw = 0, md = 0, avg = 1, gmax = 0, pin = 0, pout = 0;
 };
 // Width: mid/side balance for a strip (1 = as is, 0 = mono, 2 = twice the sides)
 class WidthFx : public Fx
 {
 public:
     WidthFx (const FxDesc& d, double) : w (std::clamp ((double) d.get ("w", 1), 0.0, 2.0)) {}
+    void retune (const FxDesc& d) override { w = std::clamp ((double) d.get ("w", 1), 0.0, 2.0); }
     void run (float& l, float& r) override { const double m = (l + r) * .5, s = (l - r) * .5 * w; l = (float) (m + s); r = (float) (m - s); }
 private:
     double w;
@@ -498,11 +513,44 @@ public:
     std::array<std::unique_ptr<Fx>, count> comp, width;   // the strip's compressor (after its EQ) and its Width (last)
     std::array<std::unique_ptr<Fx>, count> eq;   // the strip's Smart EQ, before its inserts
     std::array<bool, count> any {};
+    std::array<int, count> compAt {};   // how many insert slots run before the compressor (0: straight after the EQ); the page's st.compAt
 
     Fx* at (int ch, int slot) const { return ch >= 0 && ch < count && slot >= 0 && slot < 4 ? slots[(size_t) ch][(size_t) slot].get() : nullptr; }
-    void run (int ch, float& l, float& r) { if (auto& e = eq[(size_t) ch]) e->run (l, r); if (auto& c = comp[(size_t) ch]) c->run (l, r); for (auto& f : slots[(size_t) ch]) if (f) f->run (l, r); if (auto& w = width[(size_t) ch]) w->run (l, r); }
+    Fx* find (const FxDesc& d) const
+    {
+        if (d.ch < 0 || d.ch >= count) return nullptr;
+        if (d.type == "width") return width[(size_t) d.ch].get();
+        if (d.type == "peq") return eq[(size_t) d.ch].get();
+        if (d.type == "pcomp" && d.slot < 0) return comp[(size_t) d.ch].get();
+        return at (d.ch, d.slot);
+    }
+    void run (int ch, float& l, float& r)
+    {
+        const auto c = (size_t) ch; if (auto& e = eq[c]) e->run (l, r);
+        const int at = compAt[c]; auto& cp = comp[c];
+        for (int k = 0; k < 4; ++k) { if (k == at && cp) cp->run (l, r); if (auto& f = slots[c][(size_t) k]) f->run (l, r); }
+        if (at >= 4 && cp) cp->run (l, r);
+        if (auto& w = width[c]) w->run (l, r);
+    }
 };
 
+inline std::shared_ptr<FxBank> makeFxBank (const std::vector<FxDesc>& list, double sr);
+inline bool sameFxDesc (const FxDesc& a, const FxDesc& b) { return a.ch == b.ch && a.slot == b.slot && a.type == b.type && a.style == b.style && a.p == b.p; }
+// Can the running effect built from 'was' take 'now' in place? Same place, type and character; for the EQ the same number of filter
+// stages; for the inserts every setting must be one the effect can change live (a delay time, say, may need a new effect).
+inline bool fxRetunable (const FxDesc& was, const FxDesc& now, double sr)
+{
+    if (was.ch != now.ch || was.slot != now.slot || was.type != now.type || was.style != now.style) return false;
+    if (now.type == "width") return true;
+    if (now.type == "pcomp" && now.slot < 0) return was.get ("at", 0) == now.get ("at", 0);   // a new place in the chain needs a new set
+    if (now.type == "peq") return PeqFx (was, sr).stages() == PeqFx (now, sr).stages();
+    for (const auto& kv : was.p) if (now.p.find (kv.first) == now.p.end()) return false;
+    const auto one = makeFxBank ({ now }, sr);
+    const Fx* f = one ? one->find (now) : nullptr;
+    if (f == nullptr) return false;
+    for (const auto& kv : now.p) if (f->param (kv.first) < 0) return false;
+    return true;
+}
 inline std::shared_ptr<FxBank> makeFxBank (const std::vector<FxDesc>& list, double sr)
 {
     auto b = std::make_shared<FxBank>();
@@ -522,7 +570,7 @@ inline std::shared_ptr<FxBank> makeFxBank (const std::vector<FxDesc>& list, doub
         else if (d.type == "autopan") f = std::make_unique<AutopanFx> (d, sr);
         else if (d.type == "phaser") f = std::make_unique<PhaserFx> (d, sr);
         else if (d.type == "wide") f = std::make_unique<WideFx> (d, sr);
-        else if ((d.type == "pcomp" && d.slot < 0) || d.type == "width") { if (d.ch >= 0 && d.ch < FxBank::count) { auto& dst = d.type == "width" ? b->width : b->comp; if (d.type == "width") dst[(size_t) d.ch] = std::make_unique<WidthFx> (d, sr); else dst[(size_t) d.ch] = std::make_unique<PcompFx> (d, sr); b->any[(size_t) d.ch] = true; } continue; }
+        else if ((d.type == "pcomp" && d.slot < 0) || d.type == "width") { if (d.ch >= 0 && d.ch < FxBank::count) { auto& dst = d.type == "width" ? b->width : b->comp; if (d.type == "width") dst[(size_t) d.ch] = std::make_unique<WidthFx> (d, sr); else { dst[(size_t) d.ch] = std::make_unique<PcompFx> (d, sr); b->compAt[(size_t) d.ch] = std::clamp ((int) d.get ("at", 0), 0, 3); } b->any[(size_t) d.ch] = true; } continue; }
         else if (d.type == "pcomp") f = std::make_unique<PcompFx> (d, sr);
         else if (d.type == "peq") { if (d.ch >= 0 && d.ch < FxBank::count) { b->eq[(size_t) d.ch] = std::make_unique<PeqFx> (d, sr); b->any[(size_t) d.ch] = true; } continue; }
         if (f && d.ch >= 0 && d.ch < FxBank::count && d.slot >= 0 && d.slot < 4) { b->slots[(size_t) d.ch][(size_t) d.slot] = std::move (f); b->any[(size_t) d.ch] = true; }

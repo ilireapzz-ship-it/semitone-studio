@@ -406,6 +406,11 @@ void SemitoneEditor::timerCallback()
         {
             auto* o = new juce::DynamicObject(); o->setProperty ("l", (double) l); o->setProperty ("r", (double) r); o->setProperty ("ch", chs);
             if (proc.takeRecorder.active()) o->setProperty ("in", (double) inPeak);
+            {   // strip compressors: [channel, reduction dB, peak in, peak out]
+                juce::Array<juce::var> pcs;
+                for (int c = 0; c < 25; ++c) { float g, a, b; if (proc.takeCompMeter (c, g, a, b)) pcs.add (juce::Array<juce::var> { c, (double) g, (double) a, (double) b }); }
+                if (! pcs.isEmpty()) o->setProperty ("pc", pcs);
+            }
             { const float k = proc.takeLoudness(); if (k >= 0) o->setProperty ("k", (double) k); }
             browser.emitEventIfBrowserIsVisible ("st_peak", juce::var (o));
         }

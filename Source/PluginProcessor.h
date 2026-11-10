@@ -54,6 +54,7 @@ public:
     // the master's K-weighted loudness (BS.1770 weighting, summed over both sides) for the last ~100 ms; -1 = nothing new
     float takeLoudness() { return kMs.exchange (-1); }
     float takeChannelPeak (int ch) { return synth.takeChannelPeak (ch); }
+    bool takeCompMeter (int ch, float& gr, float& in, float& out) { return synth.takeCompMeter (ch, gr, in, out); }
     // ---- Semitone's own sounds inside the DAW (message thread) ----
     // soundMode: 0 = Semitone's sounds + MIDI, 1 = Semitone's sounds only, 2 = MIDI only,
     // 3 = the built-in engine alone (ignores rendered sections, no MIDI out)
@@ -95,6 +96,7 @@ private:
     std::atomic<float> takeGain { 1 };
     std::atomic<double> songBpm { 0 };
     std::map<std::string, std::shared_ptr<st::TakeAudio>> takeCache;   // only touched on the patch-building job
+    std::shared_ptr<std::vector<st::FxDesc>> lastFxList; std::shared_ptr<st::FxBank> lastFx; double lastFxRate = 0;   // the running effects, reused while unchanged
     std::atomic<uint32_t> midiMute { 0 };   // channels that only exist for the built-in engine (section layers)
 public:
     std::unique_ptr<st::PartHost> host;   // desktop app only

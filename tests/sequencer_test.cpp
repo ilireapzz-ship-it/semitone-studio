@@ -69,6 +69,18 @@ int main()
         if (! off) { std::printf ("FAIL chase end\n"); return 1; }
         std::printf ("ok: held notes sound when starting mid-song\n");
     }
+    // the same song sent again while playing (a volume moved): nothing is released; a changed song: released, then held notes sound again
+    {
+        auto mk = [] (int key) { auto t = std::make_shared<st::Timeline>(); t->length = 16; t->notes.push_back ({ 0, 8, 1, key, 90 }); t->sort(); return t; };
+        st::Sequencer s; s.setTimeline (mk (60)); std::vector<st::Event> e; s.process (true, 0.0, 120.0, 48000.0, 512, e);
+        e.clear(); s.setTimeline (mk (60)); s.process (true, 512 * 2.0 / 48000.0, 120.0, 48000.0, 512, e);
+        int offs = 0; for (auto& x : e) if ((x.status & 0xF0) == 0x80) ++offs;
+        if (offs != 0 || s.activeCount() != 1) { std::printf ("FAIL same song resent: offs=%d active=%d\n", offs, (int) s.activeCount()); return 1; }
+        e.clear(); s.setTimeline (mk (64)); s.process (true, 1024 * 2.0 / 48000.0, 120.0, 48000.0, 512, e);
+        int off60 = 0, on64 = 0; for (auto& x : e) { if ((x.status & 0xF0) == 0x80 && x.d1 == 60) ++off60; if ((x.status & 0xF0) == 0x90 && x.d1 == 64) ++on64; }
+        if (off60 != 1 || on64 != 1) { std::printf ("FAIL changed song: off60=%d on64=%d\n", off60, on64); return 1; }
+        std::printf ("ok: resending the same song keeps notes; a changed one re-sounds held notes\n");
+    }
     // clips play locked to PPQ: section at beat 4, clip has a click at beat 0 of the section (0.1 s pre-roll)
     {
         auto c = std::make_shared<st::Clip>();

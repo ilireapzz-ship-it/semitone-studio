@@ -582,7 +582,22 @@ void SemitoneProcessor::buildSynthPatch()
             }
             if (built->fxList)
             {
-                built->fx = st::makeFxBank (*built->fxList, rate);
+                // Jamie, 11 Nov: moving any control while playing cut the sound in and out, because every change rebuilt every effect
+                // (tails, compressor envelopes and filter memory gone). Now the running effects stay: unchanged ones as they are, changed
+                // ones take their new settings in place on the audio thread (fxTune). Only adding, removing or moving an effect, or a
+                // setting that can't change live, builds a new set.
+                bool reuse = lastFx != nullptr && lastFxList != nullptr && lastFxRate == rate && lastFxList->size() == built->fxList->size(), changed = false;
+                if (reuse)
+                    for (size_t i = 0; i < built->fxList->size(); ++i)
+                    {
+                        const auto& was = (*lastFxList)[i]; const auto& now = (*built->fxList)[i];
+                        if (st::sameFxDesc (was, now)) continue;
+                        if (! st::fxRetunable (was, now, rate)) { reuse = false; break; }
+                        changed = true;
+                    }
+                if (reuse) { built->fx = lastFx; built->fxTune = built->fxList; (void) changed; }   // always: a patch the audio thread skipped may have carried changes
+                else built->fx = st::makeFxBank (*built->fxList, rate);
+                lastFxList = built->fxList; lastFx = built->fx; lastFxRate = rate;
                 for (auto& k : built->lanes)
                     if (k.fxSlot >= 0)
                         if (auto* f = built->fx->at (k.ch < 0 ? st::FxBank::master : k.ch, k.fxSlot)) k.fxParam = f->param (k.fxName);

@@ -38,9 +38,39 @@ public:
         if (auto* ed = p.createEditorIfNeeded()) setContentOwned (ed, true);
         centreWithSize (juce::jmax (300, getWidth()), juce::jmax (200, getHeight()));
         setVisible (true);
+        keepAboveApp();
+        raise();
+        // the click that opened it came from the web view, which can take the focus back: raise it again a moment later
+        juce::Component::SafePointer<HostWindow> safe (this);
+        juce::Timer::callAfterDelay (150, [safe] { if (safe != nullptr) safe->raise(); });
     }
     void closeButtonPressed() override { if (onClosed) onClosed(); }
+    // Jamie, 11 Nov: a plug-in opened behind the app, and clicking its name again did nothing. Now it comes to the front every time.
+    void raise() { if (isMinimised()) setMinimised (false); setVisible (true); toFront (true); }
 private:
+    // Windows: make the plug-in window owned by Semitone's own window, like FL Studio's plug-in windows: it stays above the app
+    // (never hidden behind it) and minimises with it, without floating over other programs. Plug-in builds inside a DAW have no
+    // Semitone top-level window, so this does nothing there.
+    void keepAboveApp()
+    {
+       #if JUCE_WINDOWS
+        auto* peer = getPeer();
+        if (peer == nullptr) return;
+        for (int i = 0; i < juce::TopLevelWindow::getNumTopLevelWindows(); ++i)
+        {
+            auto* w = juce::TopLevelWindow::getTopLevelWindow (i);
+            if (w == nullptr || w == this || dynamic_cast<HostWindow*> (w) != nullptr || ! w->isShowing()) continue;
+            if (auto* mp = w->getPeer())
+            {
+                static juce::DynamicLibrary user32 ("user32.dll");
+                using SetLong = intptr_t (__stdcall*) (void*, int, intptr_t);
+                if (auto fn = (SetLong) user32.getFunction ("SetWindowLongPtrW"))
+                    fn (peer->getNativeHandle(), -8 /* GWLP_HWNDPARENT: the owner window */, (intptr_t) mp->getNativeHandle());
+            }
+            break;
+        }
+       #endif
+    }
     std::function<void()> onClosed;
 };
 
@@ -150,7 +180,7 @@ public:
     }
     void bridgeOpen()
     {
-        if (bridgeWin) { bridgeWin->toFront (true); return; }
+        if (bridgeWin) { bridgeWin->raise(); return; }
         if (audition == nullptr || ! audition->hasEditor()) return;
         bridgeWin = std::make_unique<HostWindow> (*audition, [this] { juce::MessageManager::callAsync ([this] { bridgeWin.reset(); }); });
     }
@@ -182,7 +212,8 @@ public:
     {
         if (ch < 0 || ch > 15) return;
         auto* p = inst[(size_t) ch].get();
-        if (p == nullptr || ! p->hasEditor() || windows[(size_t) ch]) return;
+        if (windows[(size_t) ch]) { windows[(size_t) ch]->raise(); return; }   // already open: bring it to the front
+        if (p == nullptr || ! p->hasEditor()) return;
         windows[(size_t) ch] = std::make_unique<HostWindow> (*p, [this, ch] { juce::MessageManager::callAsync ([this, ch] { windows[(size_t) ch].reset(); }); });
     }
 
@@ -258,7 +289,8 @@ public:
         if (t < 0 || t > masterFx || slot < 0 || slot >= fxSlots) return;
         auto* p = fx[(size_t) t][(size_t) slot].get();
         auto& w = fxWin[(size_t) t][(size_t) slot];
-        if (p == nullptr || ! p->hasEditor() || w) return;
+        if (w) { w->raise(); return; }
+        if (p == nullptr || ! p->hasEditor()) return;
         w = std::make_unique<HostWindow> (*p, [this, t, slot] { juce::MessageManager::callAsync ([this, t, slot] { fxWin[(size_t) t][(size_t) slot].reset(); }); });
     }
 

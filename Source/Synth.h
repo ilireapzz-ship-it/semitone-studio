@@ -170,6 +170,7 @@ struct SynthPatch
     uint32_t routeMask = 0;
     std::shared_ptr<std::vector<FxDesc>> fxList;   // what the page asked for
     std::shared_ptr<FxBank> fx;                    // built off the audio thread by the caller; running state lives here
+    std::shared_ptr<std::vector<FxDesc>> fxTune;   // when fx is the running bank reused: every effect's settings, put in place on the audio thread
     std::vector<NoteBuffers> buffers;   // one per part (the buffers are owned by the caller's cache)
     int drumCh = -1;
     bool drumExt = false;    // a plug-in plays the drum notes, so the built-in kit stays quiet
@@ -844,6 +845,10 @@ class Polish
 public:
     void set (const PolishPatch& p, double sr)
     {
+        // the same settings sent again (a volume moved): keep the compressor and filters running instead of resetting them
+        if (setOnce && sr == setSr && p.on == patch.on && p.shelfLo == patch.shelfLo && p.shelfHi == patch.shelfHi && p.hp == patch.hp && p.thr == patch.thr && p.ratio == patch.ratio
+            && p.att == patch.att && p.rel == patch.rel && p.make == patch.make && p.lim == patch.lim && p.drive == patch.drive) return;
+        setOnce = true; setSr = sr;
         patch = p;
         hp.highpass (p.on ? p.hp : 20, .7, sr);
         if (p.on) { glue.set (sr, p.thr, p.ratio, p.att, p.rel); lim.set (sr, p.lim, 20, .002f, .09f); }
@@ -875,7 +880,7 @@ private:
         const float o = t + (1 - t) * std::tanh ((a - t) / (1 - t));
         return x < 0 ? -o : o;
     }
-    PolishPatch patch;
+    PolishPatch patch; bool setOnce = false; double setSr = 0;
     Biquad hp, shelfL, shelfH;
     Compressor glue, lim;
     float make = 1;
@@ -930,6 +935,7 @@ public:
         {
             current = std::move (next);
             fxBus = current ? current->fx.get() : nullptr;
+            if (fxBus != nullptr && current->fxTune) for (const auto& d : *current->fxTune) if (auto* f = fxBus->find (d)) f->retune (d);
             transAt = 0; lastBeat = -1;
             busL.fill (0); busR.fill (0); chorusCh.fill (-1); busLevel.fill (1); busPan.fill (0); busStereo.fill (false);
             if (current)
@@ -1139,6 +1145,22 @@ public:
         gate = audible;
         for (size_t c = 0; c < chMax.size(); ++c)
             if (chMax[c] > 0) { chPeak[c].store (std::max (chPeak[c].load(), chMax[c])); chMax[c] = 0; }
+        // the strip compressors' meters (Jamie, 11 Nov: "the compressor isn't working? it looks paused": in the app the page is silent,
+        // so its compressor display had nothing to show)
+        if (fxBus != nullptr)
+            for (size_t c = 0; c < pcGr.size(); ++c)
+                if (auto* pc = dynamic_cast<PcompFx*> (fxBus->comp[c].get()))
+                {
+                    float g = 0, a = 0, b = 0; pc->takeMeter (g, a, b);
+                    pcGr[c].store (std::max (pcGr[c].load(), g)); pcIn[c].store (std::max (pcIn[c].load(), a)); pcOut[c].store (std::max (pcOut[c].load(), b));
+                }
+    }
+    // Any thread: a strip compressor's most reduction (dB) and peak levels in and out since the last call; false when it has none.
+    bool takeCompMeter (int ch, float& gr, float& in, float& out)
+    {
+        if (ch < 0 || ch >= (int) pcGr.size()) return false;
+        gr = pcGr[(size_t) ch].exchange (0); in = pcIn[(size_t) ch].exchange (0); out = pcOut[(size_t) ch].exchange (0);
+        return in > 0 || gr > 0;
     }
 
     // Any thread: the loudest this channel has been since the last call, for its meter (17 and up: the buses and returns).
@@ -1280,6 +1302,7 @@ private:
     std::array<float, 16> chSum {};
     std::array<float, FxBank::count> chMax {};
     std::array<std::atomic<float>, FxBank::count> chPeak {};
+    std::array<std::atomic<float>, FxBank::count> pcGr {}, pcIn {}, pcOut {};
     std::vector<float> rbufL, rbufR;   // the buses' input for a block, while your plug-ins' second pass runs
     // the buses and returns: their own EQ, compressor and inserts, then fader and pan, into the mix (same order as the page)
     void runBuses (int nb, const float* inL, const float* inR, float& l, float& r)
