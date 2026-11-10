@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1D1E23"/><stop offset="1" stop-color="#0A0B0D"/>
+    </linearGradient>
+    <radialGradient id="orb" cx="0.35" cy="0.30" r="0.75">
+      <stop offset="0" stop-color="#F6E2B4"/><stop offset="0.55" stop-color="#D9B37A"/><stop offset="1" stop-color="#7A5A2C"/>
+    </radialGradient>
+    <linearGradient id="edge" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#D9B37A" stop-opacity=".55"/><stop offset="1" stop-color="#D9B37A" stop-opacity=".12"/>
+    </linearGradient>
+  </defs>
+  <rect x="64" y="64" width="896" height="896" rx="200" fill="url(#tile)"/>
+  <rect x="68" y="68" width="888" height="888" rx="196" fill="none" stroke="url(#edge)" stroke-width="8"/>
+  <circle cx="512" cy="512" r="300" fill="none" stroke="#D9B37A" stroke-opacity=".35" stroke-width="18"/>
+  <circle cx="512" cy="512" r="232" fill="url(#orb)"/>
+  <ellipse cx="440" cy="420" rx="90" ry="55" fill="#fff" fill-opacity=".18" transform="rotate(-30 440 420)"/>
+</svg>

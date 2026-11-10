@@ -49,6 +49,8 @@ juce_add_plugin(SemitoneStudio
     PLUGIN_CODE Smt1
     FORMATS ${ST_FORMATS}
     PRODUCT_NAME "Semitone Studio"
+    ICON_BIG "${CMAKE_CURRENT_SOURCE_DIR}/resources/icon-1024.png"
+    ICON_SMALL "${CMAKE_CURRENT_SOURCE_DIR}/resources/icon-256.png"
     IS_SYNTH TRUE
     NEEDS_MIDI_INPUT TRUE
     NEEDS_MIDI_OUTPUT TRUE
