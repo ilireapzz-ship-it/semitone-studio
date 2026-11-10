@@ -29,4 +29,7 @@ const {chromium}=require('playwright'), path=require('path'); const url='file://
  ok(!Object.keys(near).length,'no style lands on one of its last three keys in 40 new songs '+JSON.stringify(near));
  const kept=await p.evaluate(()=>{ try{ return (JSON.parse(localStorage.getItem('ss_keymem')||'{}').lana||[]).length; }catch(e){ return 0; } });
  ok(kept>=3,'the recent keys are saved, so they survive closing the app ('+kept+')');
+ // 10 Nov: Surprise me loaded the style with its one stored key (Lana always in E); it now picks a key like any new song
+ await p.evaluate(()=>startShow()); let same=0; const N=30; for(let i=0;i<N;i++){ await p.click('#stSurprise'); if(await p.evaluate(()=>S.key===S.style.key&&MINORISH.includes(S.mode)===MINORISH.includes(S.style.mode))) same++; } await p.evaluate(()=>{ $('#startView').hidden=true; });
+ ok(same<N*.4,'Surprise me no longer always uses the style’s stored key ('+same+' of '+N+' did)');
  console.log(fails.length?`${fails.length} failed`:'all passed'); console.log(JSON.stringify(errs)); await b.close(); process.exit(fails.length?1:0); })();
