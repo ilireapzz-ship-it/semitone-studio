@@ -314,6 +314,18 @@ std::optional<juce::WebBrowserComponent::Resource> SemitoneEditor::getResource (
     const auto path = url.fromFirstOccurrenceOf ("/", false, false).upToFirstOccurrenceOf ("?", false, false);
     if (path.isEmpty() || path == "index.html")
     {
+        // 12 Nov: a newer page in <app data>/Page/index.html is used instead of the built-in one, so the interface can be updated on this
+        // computer without a build. One older than this app or plug-in is ignored, so an installed update always wins.
+        {
+            const auto local = st::files::appData().getChildFile ("Page").getChildFile ("index.html");
+            const auto self = juce::File::getSpecialLocation (juce::File::currentExecutableFile);
+            juce::MemoryBlock mb;
+            if (local.existsAsFile() && local.getLastModificationTime() > self.getLastModificationTime() && local.loadFileAsData (mb) && mb.getSize() > 100000)
+            {
+                const auto* p = static_cast<const std::byte*> (mb.getData());
+                return juce::WebBrowserComponent::Resource { std::vector<std::byte> (p, p + mb.getSize()), "text/html" };
+            }
+        }
         const auto* d = reinterpret_cast<const std::byte*> (BinaryData::index_html);
         return juce::WebBrowserComponent::Resource { std::vector<std::byte> (d, d + BinaryData::index_htmlSize), "text/html" };
     }
