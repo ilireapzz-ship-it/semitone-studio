@@ -80,6 +80,8 @@ In the HTML, the bridge is the `NATIVE` / `nativeInit()` / `NSND` code (only act
 - No compiler on that PC: push, let GitHub Actions build, download the "Semitone-Studio-Windows" artifact (signed in, through the browser pane) into a new folder.
 - Copy `Semitone Studio.exe` over `%LOCALAPPDATA%\Programs\Semitone Studio\` (the desktop and Start menu shortcuts point there, so he always opens the newest) and the `.vst3` folder into `C:\Program Files\Common Files\VST3\` (admin prompt). He must reopen the app and restart FL Studio to get it.
 - Never call `setTitleBarButtonsRequired`, `setResizable` or other title-bar/style changes on the standalone window after the page loads: JUCE rebuilds the native window and the WebView2 page is lost (a white window). The editor maximises it once with `ShowWindow(SW_MAXIMIZE)` from the timer instead.
+- Look inside the real app: start it with `$env:WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS="--remote-debugging-port=9333"` (PowerShell), then Playwright `chromium.connectOverCDP('http://127.0.0.1:9333')` gives the live page (state, DOM, errors). It found the double click listeners and the empty pitch pack. Never press Save on Jamie's songs while testing.
+- The page sends standard base64; JUCE's `MemoryBlock::fromBase64Encoding` only reads JUCE's own format. Decode with `juce::Base64::convertFromBase64` (`SemitoneEditor::decode`).
 - Computer use's "open by name" can launch an old copy; start the app from `%LOCALAPPDATA%\Programs\Semitone Studio` and check the running path. Old downloads go in `C:\Users\Public\Downloads\_to_delete`.
 
 ## Things learned the hard way (FL Studio on Mac)
