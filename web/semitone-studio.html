@@ -12713,7 +12713,7 @@ function keysCommit(p,notes,si){ const sec=S.song.sections[si], B=METERS[S.meter
     const arr=notes.map(n=>({m:n.m-oc,start:+Math.max(0,Q(n.beat)).toFixed(4),dur:+Math.max(q||.1,Q(n.dur)||q||.1).toFixed(4),vel:+(n.v!=null?n.v:.8).toFixed(2)})).filter(n=>n.start<len-1e-6&&!seen.has(n.start+':'+n.m)&&seen.add(n.start+':'+n.m)).sort((a,b)=>a.start-b.start).map(n=>({...n,dur:+Math.min(n.dur,len-n.start).toFixed(4)}));
     const lo=arr.length?arr[0].start:0, hi=arr.reduce((a,n)=>Math.max(a,n.start+n.dur),0), keepOut=L=>(L||[]).filter(n=>n.start+n.dur<=lo+1e-6||n.start>=hi-1e-6), merge=L=>[...keepOut(L),...arr].sort((a,b)=>a.start-b.start); /* only the stretch you played is replaced */
     if(x){ x.notes=x.notes||{}; x.notes[k]=merge(x.notes[k]); if(Array.isArray(x.sections)&&!x.sections.includes(si)) x.sections=[...x.sections,si].sort((a,b)=>a-b); }
-    else { S.bassOwn=S.bassOwn||{}; S.bassOwn[k]=merge(S.bassOwn[k]); if(S.parts.bass) S.parts.bass.on=true; }
+    else { S.bassOwn=S.bassOwn||{}; S.bassOwn[k]=merge(S.bassOwn[k]||(typeof bassGenSec==="function"?bassGenSec(si).map(n=>({m:n.m,start:n.start,dur:n.dur,vel:n.vel!=null?n.vel:.8})):[])); /* 11 Nov: bass that was following the chords keeps the rest of its pattern; only the stretch you played changes */ if(S.parts.bass) S.parts.bass.on=true; }
     msg=`${arr.length} notes`; }
   H.nextLabel=`Played ${trName(p)||p} into ${sec.name}`; histCheck(true); if(typeof invalidateViews==='function') invalidateViews(); if(typeof ROLLP!=='undefined'){ ROLLP.key=null; ROLLP.d=null; } renderAll(); if(typeof nativeRefresh==='function') nativeRefresh();
   if(!LIVE.recQuiet) toast(`Recorded ${msg} into ${trName(p)||p} · ${sec.name}. Undo puts it back.`); }

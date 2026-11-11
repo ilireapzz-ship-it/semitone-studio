@@ -21,10 +21,10 @@ const {chromium}=require('playwright'), path=require('path'); const url='file://
  ok(res.steps===undo0+1&&res.label===`Played Melody into ${secs[1][0]} and ${secs[2][0]}`&&!res.marks&&res.blocks>0,'one undo step for the whole take, the marks clear and the blocks show the notes '+JSON.stringify({undo0,steps:res.steps,labels:res.labels}));
  await p.evaluate(()=>histUndo()); await p.waitForTimeout(200); const un=await p.evaluate(()=>[matOf(S.song.sections[1]).melody.length,matOf(S.song.sections[2]).melody.length]); ok(un.join()==='0,0','Undo takes the whole take back '+un);
  // bass across sections
- await p.evaluate(()=>{ selectSection(1); trPick('bass',true); renderRoll(); }); await p.click('#recOpen'); await p.waitForTimeout(150); await tap('a');
+ await p.evaluate(()=>{ LIVE.recQuiet=true; const N=(m,beat)=>({m,beat,dur:.3,v:.8}); keysCommit('chords',[0,1,2,3].flatMap(b=>[N(60,b*4),N(64,b*4+.1),N(67,b*4+.2)]),2); LIVE.recQuiet=false; selectSection(1); trPick('bass',true); renderRoll(); }); await p.click('#recOpen'); await p.waitForTimeout(150); await tap('a');
  await p.waitForFunction(()=>S.playing&&S.sel===2,null,{timeout:secs[1][1]*barMs+4000}); await p.waitForTimeout(150); await tap('f'); await p.keyboard.press(' '); await p.waitForTimeout(500);
- const bs=await p.evaluate(()=>({v:((S.bassOwn||{})[secKey(1)]||[]).length,pc:((S.bassOwn||{})[secKey(2)]||[]).map(n=>n.m),label:H.past[H.past.length-1].label}));
- ok(bs.v>=1&&bs.pc.length===1&&bs.label===`Played Bass into ${secs[1][0]} and ${secs[2][0]}`,'bass records across sections too '+JSON.stringify(bs));
+ const bs=await p.evaluate(()=>({v:((S.bassOwn||{})[secKey(1)]||[]).length,pc:((S.bassOwn||{})[secKey(2)]||[]).filter(n=>n.start<1.5).map(n=>n.m),rest:((S.bassOwn||{})[secKey(2)]||[]).length,label:H.past[H.past.length-1].label}));
+ ok(bs.v>=1&&bs.pc.includes(41)&&bs.rest>2&&bs.label===`Played Bass into ${secs[1][0]} and ${secs[2][0]}`,'bass records across sections too, and the rest of its pattern stays '+JSON.stringify(bs));
  // Loop on: the section loops, nothing goes into the next one
  await p.evaluate(()=>{ S.loopOn=true; selectSection(1); trPick(null); setLayer('melody'); renderRoll(); }); await p.click('#recOpen'); await p.waitForTimeout(150);
  const lp=await p.evaluate(()=>({mode:S.playMode,across:LIVE.recAcross})); await p.keyboard.press(' '); await p.waitForTimeout(300); await p.evaluate(()=>{ S.loopOn=false; });
