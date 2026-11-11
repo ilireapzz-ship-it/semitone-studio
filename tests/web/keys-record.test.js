@@ -4,12 +4,12 @@
 const {chromium}=require('playwright'), path=require('path'); const url='file://'+path.resolve(__dirname,'../../web/semitone-studio.html');
 (async()=>{ const b=await chromium.launch(); const p=await b.newPage({viewport:{width:1456,height:819}}); const errs=[], fails=[]; p.on('pageerror',e=>errs.push(e.message)); const ok=(c,m)=>{ console.log((c?'ok   ':'FAIL ')+m); if(!c) fails.push(m); };
  await p.addInitScript(()=>{ window.__noStart=1; try{ localStorage.clear(); }catch(e){} }); await p.goto(url); await p.waitForTimeout(1500);
- await p.evaluate(()=>{ S.demo=false; const r=$('#restoreBar'); if(r) r.hidden=true; blankSong(); S.bpm=150; selectSection(1); LIVE.countIn=false; recPress(); REC.mode='keys'; recRender(); });
+ await p.evaluate(()=>{ S.demo=false; const r=$('#restoreBar'); if(r) r.hidden=true; blankSong(); S.bpm=150; selectSection(1); LIVE.countIn=false; recShow(); REC.mode='keys'; recRender(); });
  const take=async(into,keys,hold=180,gap=60)=>{ await p.evaluate(i=>{ document.querySelector(`[data-krinto="${i}"]`).click(); },into); await p.click('#rvGo'); await p.waitForTimeout(250);
    for(const k of keys){ if(Array.isArray(k)){ for(const x of k) await p.keyboard.down(x); await p.waitForTimeout(hold*3); for(const x of k) await p.keyboard.up(x); } else { await p.keyboard.down(k); await p.waitForTimeout(hold); await p.keyboard.up(k); } await p.waitForTimeout(gap); }
    const live=await p.evaluate(()=>({say:($('#krSay')||{}).textContent||'',dots:document.querySelectorAll('.kr-roll i').length})); await p.click('#rvGo'); await p.waitForTimeout(300); return live; };
  // a blank song's piano roll still shows its keys and rows (11 Nov: the range was NaN, so it drew nothing)
- const er=await p.evaluate(()=>{ const o={}; for(const l of ['melody','chords']){ shellDock('roll'); trPick(null); setLayer(l); selectSection(1); renderRoll(); o[l]=[S.rl&&S.rl.lo,S.rl&&S.rl.hi]; } recPress(); REC.mode='keys'; recRender(); return o; });
+ const er=await p.evaluate(()=>{ const o={}; for(const l of ['melody','chords']){ shellDock('roll'); trPick(null); setLayer(l); selectSection(1); renderRoll(); o[l]=[S.rl&&S.rl.lo,S.rl&&S.rl.hi]; } recShow(); REC.mode='keys'; recRender(); return o; });
  ok(Object.values(er).every(([lo,hi])=>Number.isFinite(lo)&&Number.isFinite(hi)&&hi-lo>=12),'an empty piano roll shows its keys and rows '+JSON.stringify(er));
  // the panel
  const ui=await p.evaluate(()=>({into:[...document.querySelectorAll('[data-krinto]')].map(b=>b.textContent),map:document.querySelectorAll('.kr-map .kr-k').length}));
@@ -46,4 +46,7 @@ const {chromium}=require('playwright'), path=require('path'); const url='file://
  await p.evaluate(()=>{ document.querySelector('[data-krinto="lead"]').click(); }); await p.click('#rvGo'); await p.waitForTimeout(3600); for(const k of ['k','j','h']){ await p.keyboard.down(k); await p.waitForTimeout(180); await p.keyboard.up(k); await p.waitForTimeout(60); } await p.click('#rvGo'); await p.waitForTimeout(300);
  const pin=await p.evaluate(()=>{ const M=matOf(S.song.sections[1]).melody; return {early:M.filter(n=>n.start<4).length,late:M.filter(n=>n.start>=8).map(n=>n.m)}; });
  ok(pin.early===before&&pin.early>0&&pin.late.includes(72),'a second take in bar 3 keeps the notes you played in bar 1 '+JSON.stringify({before,...pin}));
+ // no false alarm: a C major melody in a C major song (in the app it was called E minor)
+ const fa=await p.evaluate(()=>{ blankSong(); S.key=0; S.mode='ionian'; const m=matOf(S.song.sections[1]); m.melody=[60,64,67,69,67,65,64,62,60,64,67,72].map((v,i)=>({m:v,start:i,dur:1})); return keyAdvice(); });
+ ok(fa===null,'a C major melody in a C major song gets no key suggestion '+JSON.stringify(fa));
  console.log(fails.length?`${fails.length} failed`:'all passed'); console.log(JSON.stringify(errs)); await b.close(); process.exit(fails.length?1:0); })();

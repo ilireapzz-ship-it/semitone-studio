@@ -1,0 +1,26 @@
+// 11 Nov (Jamie: "why would it be like this instead of just recording using the piano roll? recording voice or real audio would require the screen we
+// designed for vocal stacking and comping"): Record with the piano roll open records notes into the roll's part, drawing them live; Space keeps the
+// take; anywhere else Record opens the designed Record tab (not the old full-screen page).
+const {chromium}=require('playwright'), path=require('path'); const url='file://'+path.resolve(__dirname,'../../web/semitone-studio.html');
+(async()=>{ const b=await chromium.launch(); const p=await b.newPage({viewport:{width:1440,height:900}}); const errs=[], fails=[]; p.on('pageerror',e=>errs.push(e.message)); const ok=(c,m)=>{ console.log((c?'ok   ':'FAIL ')+m); if(!c) fails.push(m); };
+ await p.addInitScript(()=>{ window.__noStart=1; try{ localStorage.clear(); }catch(e){} }); await p.goto(url); await p.waitForTimeout(1500);
+ await p.evaluate(()=>{ S.demo=false; const r=$('#restoreBar'); if(r) r.hidden=true; blankSong(); S.bpm=150; LIVE.countIn=false; selectSection(1); shellDock('roll'); trPick('bass',true); renderRoll(); });
+ await p.waitForTimeout(200);
+ await p.click('#recOpen'); await p.waitForTimeout(250);
+ const st=await p.evaluate(()=>({rec:LIVE.rec,into:LIVE.recInto,overlay:!$('#recView').hidden,pill:(($('#rollRec')||{}).textContent||'')}));
+ ok(st.rec&&st.into==='bass'&&!st.overlay&&/Recording Bass/.test(st.pill),'Record with the piano roll open records into its part (Bass), no separate page '+JSON.stringify(st));
+ for(const k of ['a','g','h','f']){ await p.keyboard.down(k); await p.waitForTimeout(250); await p.keyboard.up(k); await p.waitForTimeout(60); }
+ const live=await p.evaluate(()=>{ const cv=$('#rollRecCv'); if(!cv) return {cv:false}; const g=cv.getContext('2d'), d=g.getImageData(0,0,cv.width,cv.height).data; let n=0; for(let i=3;i<d.length;i+=16) if(d[i]>0) n++; return {cv:true,inked:n,notes:LIVE.recNotes.length,pill:$('#rollRec').textContent}; });
+ ok(live.cv&&live.inked>20&&live.notes===4&&/4 notes/.test(live.pill),'the notes draw into the roll in red as you play, and the pill counts them '+JSON.stringify(live));
+ await p.keyboard.press(' '); await p.waitForTimeout(400);
+ const kept=await p.evaluate(()=>({rec:LIVE.rec,bass:((S.bassOwn||{})[secKey(1)]||[]).map(n=>n.m),pill:!!($('#rollRec')&&!$('#rollRec').hidden),label:H.past[H.past.length-1].label}));
+ ok(!kept.rec&&kept.bass.join()==='36,43,45,41'&&!kept.pill&&/Played Bass into Verse 1/.test(kept.label),'Space keeps the take: the bass line is in Verse 1, one undo step '+JSON.stringify(kept));
+ // the chords layer records chords
+ await p.evaluate(()=>{ trPick(null); setLayer('chords'); renderRoll(); }); await p.click('#recOpen'); await p.waitForTimeout(250);
+ const ci=await p.evaluate(()=>LIVE.recInto); for(const k of ['a','d','g']) await p.keyboard.down(k); await p.waitForTimeout(500); for(const k of ['a','d','g']) await p.keyboard.up(k); await p.keyboard.press(' '); await p.waitForTimeout(400);
+ const ch=await p.evaluate(()=>matOf(S.song.sections[1]).chords[0]); ok(ci==='chords'&&ch&&(ch.pad||[]).length===3,'with Chords showing, Record plays chords into the bar '+JSON.stringify({ci,sym:ch&&ch.sym}));
+ // elsewhere Record opens the designed Record tab
+ await p.evaluate(()=>shellDock('mix')); await p.click('#recOpen'); await p.waitForTimeout(250);
+ const tab=await p.evaluate(()=>({pane:!document.querySelector('#ss_dock .dock-pane[data-pane="record"]').hidden,overlay:!$('#recView').hidden,rec:LIVE.rec}));
+ ok(tab.pane&&!tab.overlay&&!tab.rec,'from the mixer, Record opens the Record tab for voice and instruments '+JSON.stringify(tab));
+ console.log(fails.length?`${fails.length} failed`:'all passed'); console.log(JSON.stringify(errs)); await b.close(); process.exit(fails.length?1:0); })();
