@@ -19,6 +19,18 @@ const {chromium}=require('playwright'), path=require('path'); const url='file://
  await p.evaluate(()=>{ trPick(null); setLayer('chords'); renderRoll(); }); await p.click('#recOpen'); await p.waitForTimeout(250);
  const ci=await p.evaluate(()=>LIVE.recInto); for(const k of ['a','d','g']) await p.keyboard.down(k); await p.waitForTimeout(500); for(const k of ['a','d','g']) await p.keyboard.up(k); await p.keyboard.press(' '); await p.waitForTimeout(400);
  const ch=await p.evaluate(()=>matOf(S.song.sections[1]).chords[0]); ok(ci==='chords'&&ch&&(ch.pad||[]).length===3,'with Chords showing, Record plays chords into the bar '+JSON.stringify({ci,sym:ch&&ch.sym}));
+ // a note pressed a moment before the count-in ends lands on the first beat (in the app the first note of a take was lost)
+ await p.evaluate(()=>{ setLayer('melody'); trPick(null); LIVE.countIn=true; renderRoll(); }); await p.click('#recOpen'); const cin=await p.evaluate(()=>({count:LIVE.recCount,ms:Math.round(4*60/S.bpm*1000)})); await p.waitForTimeout(cin.ms-250); await p.keyboard.down('k'); await p.waitForTimeout(500); await p.keyboard.up('k'); await p.waitForTimeout(100); await p.keyboard.press(' '); await p.waitForTimeout(400); await p.evaluate(()=>{ LIVE.countIn=false; });
+ const early=await p.evaluate(()=>matOf(S.song.sections[1]).melody.map(n=>[n.m,n.start]));
+ ok(cin.count&&early.some(([m,st])=>m===72&&st===0),'a note played just before the count-in ends is kept, on beat 1 '+JSON.stringify({cin,early}));
+ // with the drum step grid open, Record records drums there (in the app it jumped to the Record tab)
+ await p.evaluate(()=>{ S.beats[S.song.sections[1].type]={}; selectSection(1); SHELL.part='drums'; shellDock('beat'); }); await p.waitForTimeout(200); await p.click('#recOpen'); await p.waitForTimeout(250);
+ const dr0=await p.evaluate(()=>({rec:LIVE.rec,into:LIVE.recInto,beat:!document.querySelector('#ss_dock .dock-pane[data-pane="beat"]').hidden,pill:(($('#rollRec')||{}).textContent||'')}));
+ for(const k of ['a','d','s','d']){ await p.keyboard.down(k); await p.waitForTimeout(120); await p.keyboard.up(k); await p.waitForTimeout(80); }
+ const lit=await p.evaluate(()=>document.querySelectorAll('#ss_dock .step.rec-hit').length);
+ await p.keyboard.press(' '); await p.waitForTimeout(400);
+ const dr=await p.evaluate(()=>{ const b=S.beats[S.song.sections[1].type]||{}; return {kick:(b.kick||[]).filter(Boolean).length,snare:(b.snare||[]).filter(Boolean).length,hat:(b.hat||[]).filter(Boolean).length,lit:document.querySelectorAll('#ss_dock .step.on,#ss_dock .step.acc').length}; });
+ ok(dr0.rec&&dr0.into==='drums'&&dr0.beat&&/Recording Drums/.test(dr0.pill)&&lit>=3&&dr.kick>=1&&dr.snare>=1&&dr.hat>=1&&dr.lit>=3,'with the step grid open, Record plays drums into the grid, lit as you hit '+JSON.stringify({dr0,lit,dr}));
  // elsewhere Record opens the designed Record tab
  await p.evaluate(()=>shellDock('mix')); await p.click('#recOpen'); await p.waitForTimeout(250);
  const tab=await p.evaluate(()=>({pane:!document.querySelector('#ss_dock .dock-pane[data-pane="record"]').hidden,overlay:!$('#recView').hidden,rec:LIVE.rec}));
