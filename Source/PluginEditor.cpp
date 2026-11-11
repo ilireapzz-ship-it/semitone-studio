@@ -80,7 +80,8 @@ void SemitoneEditor::loopPut (const juce::var& v)
 {
     const auto f = loopFile (v.getProperty ("id", "").toString());
     if ((int) v.getProperty ("i", 0) == 0) f.deleteFile();
-    juce::MemoryBlock mb; if (! mb.fromBase64Encoding (v.getProperty ("b64", "").toString())) return;
+    // 11 Nov: the page sends standard base64; MemoryBlock::fromBase64Encoding only reads JUCE's own format, so nothing was ever written
+    const auto mb = decode (v.getProperty ("b64", "").toString()); if (mb.getSize() == 0) return;
     f.appendData (mb.getData(), mb.getSize());
 }
 
@@ -230,11 +231,18 @@ juce::WebBrowserComponent::Options SemitoneEditor::makeOptions()
             const auto f = root.getChildFile (v.getProperty ("name", "file").toString());
             f.getParentDirectory().createDirectory();
             if ((int) v.getProperty ("i", 0) == 0) f.deleteFile();
-            juce::MemoryBlock mb; if (mb.fromBase64Encoding (v.getProperty ("b64", "").toString())) f.appendData (mb.getData(), mb.getSize());
+            // 11 Nov: standard base64 from the page (fromBase64Encoding read none of it: the pack folder stayed empty)
+            juce::MemoryOutputStream mo; if (juce::Base64::convertFromBase64 (mo, v.getProperty ("b64", "").toString()) && mo.getDataSize() > 0) f.appendData (mo.getData(), mo.getDataSize());
         })
-        .withEventListener ("st_pack_show", [] (const juce::var& v) {
-            juce::File::getSpecialLocation (juce::File::userDocumentsDirectory).getChildFile ("Semitone Studio").getChildFile ("Exports")
-                .getChildFile (juce::File::createLegalFileName (v.getProperty ("folder", "").toString())).revealToUser();
+        .withEventListener ("st_pack_show", [this] (const juce::var& v) {
+            const auto dir = juce::File::getSpecialLocation (juce::File::userDocumentsDirectory).getChildFile ("Semitone Studio").getChildFile ("Exports")
+                .getChildFile (juce::File::createLegalFileName (v.getProperty ("folder", "").toString()));
+            // tell the page how many files really landed, so it never says Saved when nothing was written
+            auto* o = new juce::DynamicObject();
+            o->setProperty ("folder", v.getProperty ("folder", ""));
+            o->setProperty ("files", dir.getNumberOfChildFiles (juce::File::findFiles, "*") + dir.getChildFile ("stems").getNumberOfChildFiles (juce::File::findFiles, "*"));
+            browser.emitEventIfBrowserIsVisible ("st_pack_done", juce::var (o));
+            if (dir.isDirectory()) dir.revealToUser();
         })
         .withEventListener ("st_loop_put", [this] (const juce::var& v) { loopPut (v); })
         .withEventListener ("st_loop_get", [this] (const juce::var& v) { loopGet (v.getProperty ("id", "").toString()); })
