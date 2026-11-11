@@ -17,7 +17,7 @@ const {chromium}=require('playwright'); const url='file://'+require('path').reso
  // level zones and the verdict line
  const lz=await p.evaluate(()=>{ const s=document.querySelector('#cMix .strip[data-ch="chords"]'), z=s.querySelector('.lz'); MT['song:chords']=MT['song:chords']||{p:[-100,-100],r:[-100,-100],h:[-100,-100],ht:[0,0],max:-100,clip:false}; LZ['song:chords']={avg:-30,n:40}; lzPaint(); const v=s.querySelector('.st-verdict'), t=v.textContent, vol=S.parts.chords.vol, was=H.past.length; v.click(); return {zone:!!z,range:lzRange('chords'),lead:lzRange('lead'),t,cls:v.className,vol0:vol,vol1:S.parts.chords.vol,steps:H.past.length-was}; });
  ok(lz.zone&&lz.lead[0]===-12&&lz.range[0]===-18,'each part strip shows its ideal zone from the role (melody −12…−6, chords −18…−12)');
- ok(/A little quiet: \+15 dB/.test(lz.t)&&lz.vol1>lz.vol0&&lz.steps===1,'the verdict says how far off and clicking it fixes the level in one undo step: '+lz.t);
+ ok(/A uiet: \+15 dB/.test(lz.t)&&lz.vol1>lz.vol0&&lz.steps===1,'the verdict says how far off and clicking it fixes the level in one undo step: '+lz.t);
  const clip=await p.evaluate(()=>{ MT['song:bass']={p:[0,0],r:[-3,-3],h:[0,0],ht:[0,0],max:2.2,clip:true}; lzPaint(); const s=document.querySelector('#cMix .strip[data-ch="bass"]'); return [s.querySelector('.st-verdict').textContent,s.classList.contains('lz-clip')]; });
  ok(/Clipping: lower 4 dB/.test(clip[0])&&clip[1],'a clipping part says “Clipping: lower …” and gets a red hairline: '+clip[0]);
  await p.evaluate(()=>{ delete MT['song:bass']; delete LZ['song:chords']; });

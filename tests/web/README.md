@@ -94,3 +94,5 @@ node tests/web/regression.test.js
 - `eq-picture.test.js`: the EQ picture: the measured shape sits inside the graph (lined up by its loudest point), the masking hatch stays under the two lines, the numbers are drawn on top, the ideal band runs through the strong notes, a boost still lifts the after line as far as the curve.
 - `home-back.test.js`: Home's Back to song only closes Home: a song whose length drifted from its recipe is left exactly as it was (it used to be rewritten silently); Start the song on a new song still writes for the length.
 - `roll-steady.test.js`: the piano roll keeps its rows while you write (notes drawn down a line land on the pitch under the pointer), Undo keeps them, Fit the notes refits, a note outside the view is still shown, each section has its own view; a deleted track leaves no ghost notes.
+- `pass-words.test.js`: every part move a producer brings shows in plain words on the pass card (drop: and thin: showed their code).
+- `level-hint.test.js`: a strip's level hint is its level while it sounds (a dying note or a gap no longer reads as "+22 dB"), and big differences say Quiet / Loud, not "a little".
