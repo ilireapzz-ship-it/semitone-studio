@@ -99,3 +99,4 @@ node tests/web/regression.test.js
 - `echo-tail.test.js`: an echo's repeats always die away, at every style and feedback (they grew without end above 80% on Digital and Ping-pong, and never ended above 55% on Tape and Analog); settings that already worked are untouched.
 - `small-words.test.js`: dorian, phrygian and locrian songs are named as minor keys on Home, in Share and in the loop search words; the buses you add are numbered from Bus 1.
 - `follow.test.js`: when the song stops the editor comes back to the section you were working on, with its play marker (Follow off, the default); Follow on stays where the song stopped; a section you pick while it plays wins; the button remembers its setting.
+- `mute-truth.test.js`: a part taken out of sections shows on its mixer strip's M (hatched on that section, underlined elsewhere, with where and how to put it back); the pass's Keep button counts exactly the changes it will make.
