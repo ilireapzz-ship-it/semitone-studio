@@ -2144,6 +2144,26 @@ body.sc-dragging .sc-slot,body.rl-dragging .sc-slot{min-width:30px;min-height:24
 #cMix .mx-route.on{border-style:solid;border-color:var(--st-accent);color:var(--st-text);background:color-mix(in srgb,var(--st-accent) 16%,transparent);cursor:ns-resize}
 #cMix .mx-route.main{cursor:pointer;background:color-mix(in srgb,var(--st-accent) 28%,transparent)}
 #cMix .mx-route.sc.on{border-color:#E5484D;background:color-mix(in srgb,#E5484D 18%,transparent)}
+/* arpeggiator (12 Nov) */
+.arp-btn .arp-sum{font-weight:500;opacity:.8}
+.arp-pop{width:340px;padding:10px 12px 12px;z-index:75;color:var(--st-text);font:500 12px var(--st-font-ui,system-ui)}
+.arp-pop[hidden]{display:none}
+.arp-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}.arp-head b{flex:1;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.arp-body.off .arp-row{opacity:.5}
+.arp-row{display:flex;align-items:center;gap:6px;min-height:28px;margin:2px 0}.arp-row.dim{opacity:.5}
+.arp-row>.label{flex:none;width:58px;font-size:10.5px}
+.arp-seg{display:inline-flex;gap:2px;flex-wrap:nowrap}.arp-seg .btn.xs{width:auto;min-width:26px;padding:0 5px;height:24px;font-size:11px}
+.arp-row select{flex:1;min-width:0;height:26px}
+.arp-row input[type=range]{flex:1;min-width:0}
+.arp-val{flex:none;width:38px;text-align:right;font-variant-numeric:tabular-nums;color:var(--st-text2)}
+.arp-acc{display:flex;gap:2px;flex:1;min-width:0}
+.arp-step{flex:1 1 0;min-width:6px;max-width:22px;height:26px;padding:0;border:1px solid var(--st-line-strong);border-radius:3px;background:none;cursor:pointer;display:flex;align-items:flex-end}
+.arp-step i{display:block;width:100%;background:var(--st-accent);border-radius:1px}
+.arp-step.a0 i{height:0}.arp-step.a1 i{height:35%;opacity:.6}.arp-step.a2 i{height:65%;opacity:.8}.arp-step.a3 i{height:100%}
+.arp-chk{display:flex;align-items:center;gap:6px;cursor:pointer}
+.arp-foot{display:flex;align-items:center;gap:6px;margin-top:8px;padding-top:8px;border-top:1px solid var(--st-line)}
+.arp-pop .btn.xs{width:auto;padding:0 8px}.arp-pop .arp-x{width:24px;padding:0}
+.arp-commit{font-weight:700}
 </style>
 
 <div id="boot" role="status" aria-live="polite"><div class="boot-in"><i class="boot-logo"></i><b>Semitone</b><div class="boot-bar"><i id="bootFill"></i></div><span id="bootMsg">Opening your song…</span><button id="bootSkip" hidden>Open now, plug-ins will catch up</button></div></div>
@@ -3476,10 +3496,10 @@ const ROLLW={x0:{},w:{},rects:{},crects:{},rl:{}};
 function rollWhole(){ const p=typeof TSEL!=='undefined'&&TSEL.p; if(!p||!S.song||S.song.sections.length<2||p==='drums'||S.cue) return false; const rp=rollPart(); return rp?rp===p:p==='chords'?S.editLayer==='chords':p==='lead'&&S.editLayer!=='chords'; }
 function rollRect(){ const r=$('#roll').getBoundingClientRect(), x0=rollWhole()?(ROLLW.x0[S.sel]||0):0; return {left:r.left+x0,top:r.top,right:r.right,bottom:r.bottom}; }
 function rollWholeDown(e){ if(!rollWhole()||e.button>2) return; const r=$('#roll').getBoundingClientRect(), x=e.clientX-r.left; let si=S.song.sections.findIndex((_,i)=>x>=ROLLW.x0[i]&&x<ROLLW.x0[i]+ROLLW.w[i]); if(si<0) return; if(si!==S.sel){ S.sel=si; S.beatSel=S.song.sections[si].type; S.piece=sectionView(si); S.selNote=null; S.selSet=new Set(); S.csel=new Set(); S.playFrom=0; if(typeof selInfo==='function') selInfo(); if(!S.playing) renderRoll(); setTimeout(()=>{ if(typeof drawerTitle==='function') drawerTitle(); if(typeof fromLabel==='function') fromLabel(); },0); } S.rects=ROLLW.rects[si]||[]; S.crects=ROLLW.crects[si]||[]; if(ROLLW.rl[si]) S.rl=ROLLW.rl[si]; }
-function renderRoll(beatPos){ const wh=rollWhole(); document.body.classList.toggle('roll-whole',wh); if(!wh) return renderRollOne(beatPos);
+function renderRoll(beatPos){ ARPC.c={}; const wh=rollWhole(); document.body.classList.toggle('roll-whole',wh); if(!wh) return renderRollOne(beatPos);
   if(beatPos==null){ drawLanes('song'); renderCNoteBar(); { const nb=$('#cNoteBar'); if(nb&&nb.classList.contains('roll-float')) nb.hidden=S.selNote==null||!!rollPart()||!S.artMode; } renderLyrics(); partBarRender(); } laneHead(beatPos);
   const cv=$('#roll'), s=sizeCanvas(cv); if(!s||!S.song) return; const {g,W,H}=s, secs=S.song.sections, tot=secs.reduce((a,x)=>a+x.bars,0)||1, keep=S.sel, keepP=S.piece, all=[], RK=()=>({key:ROLLP.key,k:ROLLP.k,p:ROLLP.p,draft:ROLLP.draft,base:ROLLP.base}), keepR=RK(); /* rollArr keeps one section's draft notes; the active section's must survive drawing the others */
-  secs.forEach((_,si)=>{ S.sel=si; S.piece=sectionView(si); if(rollPart()) rollView().forEach(n=>all.push(n.m)); else { S.piece.melody.forEach(n=>all.push(n.m)); S.piece.chords.forEach(c=>c&&c.pad&&all.push(...c.pad)); } }); Object.assign(ROLLP,keepR); if(!all.filter(Number.isFinite).length) all.push(...(rollPart()==='bass'||(typeof rollX==='function'&&rollX()&&rollX().role==='bass2')?[36,55]:[48,72])); /* an empty bass shows the bass range */ for(let i=all.length-1;i>=0;i--) if(!Number.isFinite(all[i])) all.splice(i,1);
+  secs.forEach((_,si)=>{ S.sel=si; S.piece=sectionView(si); if(rollPart()) rollView().forEach(n=>all.push(n.m)); else { S.piece.melody.forEach(n=>all.push(n.m)); S.piece.chords.forEach(c=>c&&c.pad&&all.push(...c.pad)); } }); Object.assign(ROLLP,keepR); arpRange(all,true); if(!all.filter(Number.isFinite).length) all.push(...(rollPart()==='bass'||(typeof rollX==='function'&&rollX()&&rollX().role==='bass2')?[36,55]:[48,72])); /* an empty bass shows the bass range */ for(let i=all.length-1;i>=0;i--) if(!Number.isFinite(all[i])) all.splice(i,1);
   ROLLW.x0={}; ROLLW.w={}; ROLLW.rects={}; ROLLW.crects={}; ROLLW.rl={}; ROLLW.X={}; ROLLW.ch={}; let act=null; g.clearRect(0,0,W,H);
   try{ secs.forEach((sec,si)=>{ const x0=Math.round(sec.startBar/tot*W), w=Math.round((sec.startBar+sec.bars)/tot*W)-x0; ROLLW.x0[si]=x0; ROLLW.w[si]=w; S.sel=si; S.piece=sectionView(si); S.rects=[]; S.crects=[]; if(si===keep) Object.assign(ROLLP,keepR);
     g.save(); g.beginPath(); g.rect(x0,0,w,H); g.clip(); g.translate(x0,0); const O={s:{g,W:w,H},all,active:si===keep}; renderRollOne(si===keep?beatPos:null,O); g.restore(); if(si===keep) Object.assign(keepR,RK());
@@ -3493,7 +3513,7 @@ function renderRollOne(beatPos,O){
   const cv=$('#roll'), s=O?O.s:sizeCanvas(cv); if(!s||!S.piece) return; if(rollPart()==='drums'){ renderDrumRoll(beatPos,s); return; } const {g,W,H}=s;
   const P=S.piece, M=METERS[S.meter], B=M.B, TB=P.bars*B, pat=compPattern(S.comp,S.meter);
   const RP=rollPart(), PV=RP?rollView():null, all=O&&O.all?O.all:PV?(PV.length?PV.map(n=>n.m):RP==='bass'?[36,55]:[48,72]):(()=>{ const v=[...P.melody.map(n=>n.m),...P.chords.flatMap(c=>c&&c.pad||[])].filter(Number.isFinite); return v.length?v:(S.editLayer==='chords'?[48,72]:[55,79]); })(); /* 11 Nov: an empty section (a blank song) has no notes, and rest chords have no pad: the range was NaN, so the roll drew no keys and no rows */
-  const fixed=(drag||S.cdrag)&&S.rl, V=ROLLV[rollVK()]; let lo=fixed?S.rl.lo:Math.min(...all)-2, hi=fixed?S.rl.hi:Math.max(...all)+2; const top=O?34:8; if(!fixed&&V){ const rows=Math.max(6,Math.round((H-top-14)/V.rh)); hi=Math.max(rows-1,Math.min(127,Math.round(V.hi))); lo=hi-rows+1; V.hi=hi; } else if(!fixed){ const want=Math.floor((H-top-14)/(innerHeight<800?13:15)), add=want-(hi-lo+1); if(add>0){ lo=Math.max(12,lo-Math.floor(add/2)); hi=Math.min(115,lo+want-1); } } const rh=(H-top-14)/(hi-lo+1);
+  if(!O) arpRange(all); const fixed=(drag||S.cdrag)&&S.rl, V=ROLLV[rollVK()]; let lo=fixed?S.rl.lo:Math.min(...all)-2, hi=fixed?S.rl.hi:Math.max(...all)+2; const top=O?34:8; if(!fixed&&V){ const rows=Math.max(6,Math.round((H-top-14)/V.rh)); hi=Math.max(rows-1,Math.min(127,Math.round(V.hi))); lo=hi-rows+1; V.hi=hi; } else if(!fixed){ const want=Math.floor((H-top-14)/(innerHeight<800?13:15)), add=want-(hi-lo+1); if(add>0){ lo=Math.max(12,lo-Math.floor(add/2)); hi=Math.min(115,lo+want-1); } } const rh=(H-top-14)/(hi-lo+1);
   const X=b=>b/TB*W, Y=m=>top+(hi-m)*rh;
   const muted=css('--muted'), line=css('--line'), acc=css('--accent'), soft=css('--soft'), ratio=css('--ratio');
   g.clearRect(0,0,W,H);
@@ -3542,7 +3562,7 @@ function renderRollOne(beatPos,O){
     }
   });
   if(PV){ S.rects=[]; const col=partColor(RP), edit=!rollLinked(); g.globalAlpha=S.parts[RP]&&S.parts[RP].on?1:.4; PV.forEach(n=>{ const a=swingT(n.start), e=swingT(n.start+n.dur), on=beatPos!=null&&beatPos>=a&&beatPos<e, x=X(a)+1, w=Math.max(X(e)-X(a)-2,3), y=Y(n.m)+.5, h=Math.max(rh-1,3); g.fillStyle=on?lighten(col,.35):col; g.beginPath(); g.roundRect?g.roundRect(x,y,w,h,2):g.rect(x,y,w,h); g.fill(); if(n.src===S.selNote||S.selSet.has(n.src)){ g.strokeStyle=ink; g.lineWidth=2; g.strokeRect(x+1,y+1,w-2,h-2); if(S.selSet.has(n.src)&&S.selSet.size>1){ const ga=g.globalAlpha; g.fillStyle=ink; g.globalAlpha=.18; g.fillRect(x,y,w,h); g.globalAlpha=ga; } } if(w>=20&&h>=7){ g.save(); g.beginPath(); g.rect(x,y,w,h); g.clip(); g.fillStyle=inkOn(col); g.font=`600 ${Math.max(7,Math.min(10,h-1)).toFixed(1)}px ${MF()}`; g.textBaseline='middle'; g.fillText(noteName(n.m),x+3,y+h/2+.5); g.restore(); } if(edit) S.rects.push({x,y,w,h,n}); }); }
-  let keyOn=null; if(beatPos!=null){ keyOn=new Set(); (PV||P.melody).forEach(n=>{ const a=swingT(n.start), e=swingT(n.start+n.dur); if(beatPos>=a&&beatPos<e) keyOn.add(n.m); }); }
+  arpDraw(g,X,Y,rh,beatPos); let keyOn=null; if(beatPos!=null){ keyOn=new Set(); (PV||P.melody).forEach(n=>{ const a=swingT(n.start), e=swingT(n.start+n.dur); if(beatPos>=a&&beatPos<e) keyOn.add(n.m); }); }
   g.globalAlpha=1; S.rl={TB,W,H,lo,hi,top,rh,B}; if(O) O.out={X,Y,rh,lo,hi,keyOn}; else { rollKeys(lo,hi,Y,rh,keyOn); if(beatPos==null) rollLane(X,W); if(typeof renderBassRoll==='function') renderBassRoll(beatPos); }
   if(!O||O.active){ const mx=X(S.playFrom||0); g.strokeStyle=ratio; g.globalAlpha=.75; g.setLineDash([3,3]); g.lineWidth=1; g.beginPath(); g.moveTo(mx+.5,top-6); g.lineTo(mx+.5,H-12); g.stroke(); g.setLineDash([]); g.globalAlpha=1; g.fillStyle=ratio; g.beginPath(); g.moveTo(mx-5,0); g.lineTo(mx+5,0); g.lineTo(mx,8); g.closePath(); g.fill(); }
   if(S.sliceX!=null){ g.strokeStyle=css('--bad'); g.lineWidth=1.5; g.setLineDash([4,3]); g.beginPath(); g.moveTo(S.sliceX+.5,top-4); g.lineTo(S.sliceX+.5,H-12); g.stroke(); g.setLineDash([]); g.fillStyle=css('--bad'); g.font='12px system-ui'; g.fillText('✂',S.sliceX+3,top+4); }
@@ -3568,18 +3588,18 @@ function scheduleBar(bar,t,spb,skip=0){
   const secOn=p=>!(S.secMute&&S.secMute[p]&&S.secMute[p][bar.si]); const M=METERS[S.meter], B=M.B, c=bar.ch, Q=QQ(), at=x=>t+swingT(x)*spb, boost=S.comp==='sustain'?1:1.3, pa=SOUNDS[partSound('chords')].pad.attack;
   const bend=Q.cbend>0&&bar.prevCh&&bar.prevCh.d!==c.d&&skip===0, bt=.04+Q.cbend*.32, EN=energyOf(bar.si), EM=energyMul(bar.si,'chords'), EL=energyMul(bar.si,'lead');
   const artF=S.comp==='sustain'?1:Q.artic==='staccato'?.5:Q.artic==='legato'?1.25:1;
-  if(secOn('chords')) compPattern(S.comp,S.meter).forEach((h,hi)=>{
+  if(secOn('chords')&&arpPlay('chords',bar,skip,t,spb,boost*EM*ARP_PAD)){} else if(secOn('chords')) compPattern(S.comp,S.meter).forEach((h,hi)=>{
     let on=h.on, len=h.dur; { const DF=dropFrom(bar); if(DF!=null){ if(on>=DF-1e-6) return; len=Math.min(len,DF-on); } } if(on<skip-1e-6){ if(on+len<=skip+1e-6) return; len=on+len-skip; on=skip; }
     const a=at(on), d=(swingT(on+len)-swingT(on))*spb*artF, v=h.lab==='U'?.7:near(h.on,0)?1.1:.9;
     const pk=chordPerfKind(), up=h.lab==='U', nP=c.pad.length;
     c.pad.forEach((m,k)=>{ const ex={attack:Math.min(pa,d*.4)}; if(bend&&hi===0){ const pm=bar.prevCh.pad[Math.min(k,bar.prevCh.pad.length-1)]; if(pm!==m){ex.glideFrom=pm;ex.glideTime=bt;} }
       const st=pk==='strum'?a+(up?(nP-1-k):k)*.014*(up?.7:1):a, dd=pk==='pedal'?(dropFrom(bar)!=null?Math.max(.05,Math.min(d*1.3+.12,at(dropFrom(bar))-st)):d*1.3+.12):pk==='strum'?Math.max(.05,d-(st-a)):d;
       playPart('chords',m,st,dd,v*boost*(pk==='strum'&&up?.8:1)*EM,ex); if(S.parts.chords.on&&(!RENDER_ONLY||RENDER_ONLY==='chords')) ((S.secLayer&&S.secLayer[bar.si])||[]).forEach(id=>withBus('song','chords',()=>playInstr(id.slice(2),m,st,dd,(ROLEVOL.pad||.15)*v*boost*EM*.2,{attack:ex.attack}))); if(EN>=.85&&k===nP-1&&hi===0) playPart('chords',m+12,st,dd,v*boost*.3,{attack:ex.attack}); }); });
-  if(secOn('bass')) dropTrim(bassNotes(bar),bar).forEach((bn,k)=>{ let x=bn.x, du=bn.dur; if(x+du<=skip+1e-6) return; if(x<skip){ du-=skip-x; x=skip; }
+  if(secOn('bass')&&arpPlay('bass',bar,skip,t,spb,EM)){} else if(secOn('bass')) dropTrim(bassNotes(bar),bar).forEach((bn,k)=>{ let x=bn.x, du=bn.dur; if(x+du<=skip+1e-6) return; if(x<skip){ du-=skip-x; x=skip; }
     const ex={}; if(bend&&k===0&&bar.prevCh.bass!==c.bass){ex.glideFrom=bar.prevCh.bass;ex.glideTime=bt*.8;} playPart('bass',bn.m,at(x),Math.max(.05,(swingT(x+du)-swingT(x))*spb),bn.vel*EM,ex); });
   const v=viewCached(bar.si), E=exprFor(v);
   const SF=silentFrom(bar);
-  if(secOn('lead')) v.melody.forEach((n,i)=>{ if(n.start<bar.b*B-1e-6||n.start>=(bar.b+1)*B-1e-6) return; const rs=n.start-bar.b*B; if(rs<skip-1e-6||(SF!=null&&rs>=SF-1e-6)) return;
+  if(secOn('lead')&&arpPlay('lead',bar,skip,t,spb,EL)){} else if(secOn('lead')) v.melody.forEach((n,i)=>{ if(n.start<bar.b*B-1e-6||n.start>=(bar.b+1)*B-1e-6) return; const rs=n.start-bar.b*B; if(rs<skip-1e-6||(SF!=null&&rs>=SF-1e-6)) return;
     const e=E[i]||{playDur:n.dur,vel:1,tOff:0}, st=Math.max(ac.currentTime+.005,at(rs)+e.tOff), d=Math.max(.04,(swingT(SF!=null?Math.min(rs+e.playDur,SF):rs+e.playDur)-swingT(rs))*spb);
     if(e.grace!=null) playPart('lead',e.grace,Math.max(ac.currentTime+.005,st-.065),.06,e.vel*.8);
     const ex={}; if(e.glide){ex.glideFrom=e.glide.from;ex.glideTime=e.glide.time;} if(e.scoop) ex.scoop=e.scoop; if(e.vib) ex.vib=e.vib; if(e.fall) ex.fall=e.fall;
@@ -4252,7 +4272,7 @@ function mtrk(name,evs,extra=[]){
 const BEND_RANGE=12;
 function bendVal(semis){ return Math.max(0,Math.min(16383,Math.round(8192+semis/BEND_RANGE*8191))); }
 function songLeadBends(){ // [{beat, v}] across the song timeline
-  if(!S.parts.lead||!S.parts.lead.on) return [];
+  if(!S.parts.lead||!S.parts.lead.on||arpOn('lead')) return [];
   const B=METERS[S.meter].B, bars=barList('song'), out=[], spbB=S.bpm/60; let bent=false;
   const ramp=(t0,t1,s0,s1,steps)=>{ for(let k=0;k<=steps;k++){ const f=k/steps; out.push({beat:t0+(t1-t0)*f,v:bendVal(s0+(s1-s0)*f)}); } };
   bars.forEach((bar,i)=>{ const base=i*B, vv=viewCached(bar.si), E=exprFor(vv);
@@ -4270,7 +4290,7 @@ function songLeadBends(){ // [{beat, v}] across the song timeline
   return out; }
 function bendRpn(ch,tk){ return [[101,0],[100,0],[6,BEND_RANGE],[38,0],[101,127],[100,127]].map(([c,v],k)=>({t:0,o:-0.5+k*.01,b:[0xB0|ch,c,v]})); }
 var MIDI_SEC=null; // a section index: buildMidi() writes only that section, starting at beat 0
-function buildMidi(){
+function buildMidi(){ ARPC.c={};
   const Q=480, tk=b=>Math.round(b*Q), M=METERS[S.meter], B=M.B, allBars=barList('song'), bars=MIDI_SEC==null?allBars:allBars.filter(b=>b.si===MIDI_SEC), secOff=MIDI_SEC==null?0:allBars.findIndex(b=>b.si===MIDI_SEC)*B;
   const note=(arr,ch,m,start,dur,vel)=>{arr.push({t:tk(start),o:1,b:[0x90|ch,m,vel]});arr.push({t:tk(start+Math.max(dur,.05)),o:0,b:[0x80|ch,m,0]});};
   const mel=[],pad=[],bass=[],drm=[],marks=[], pat=compPattern(S.comp,S.meter), on=p=>S.parts[p].on&&(typeof MIDI_ONLY==='undefined'||!MIDI_ONLY||MIDI_ONLY===p);
@@ -4278,9 +4298,9 @@ function buildMidi(){
     const base=i*B;
     if(bar.b===0){ const nm=ascii(S.song.sections[bar.si].name); marks.push({t:tk(base),o:2,b:[0xFF,0x06,...vlq(nm.length),...nm]}); }
     const son=p=>on(p)&&!(S.secMute&&S.secMute[p]&&S.secMute[p][bar.si]);
-    if(son('chords')){ const DF=dropFrom(bar); pat.forEach(h=>{ if(DF!=null&&h.on>=DF-1e-6) return; const a=swingT(h.on), e=swingT(DF!=null?Math.min(h.on+h.dur,DF):h.on+h.dur); bar.ch.pad.forEach(m=>note(pad,1,m,base+a,e-a,Math.round((h.lab==='U'?60:74)*energyMul(bar.si,'chords')))); }); }
-    if(son('bass')) dropTrim(bassNotes(bar),bar).forEach(bn=>note(bass,2,bn.m,base+swingT(bn.x),swingT(bn.x+bn.dur)-swingT(bn.x),Math.min(127,Math.round(92*bn.vel*energyMul(bar.si,'bass')))));
-    if(son('lead')){ const vv=viewCached(bar.si), E=exprFor(vv); vv.melody.forEach((n,i)=>{ if(n.start<bar.b*B-1e-6||n.start>=(bar.b+1)*B-1e-6) return; const ex=E[i]||{playDur:n.dur,vel:1}, rs=n.start-bar.b*B; const SF=silentFrom(bar); if(SF!=null&&rs>=SF-1e-6) return; const a=swingT(rs), e=swingT(SF!=null?Math.min(rs+ex.playDur,SF):rs+ex.playDur); if(ex.grace!=null) note(mel,0,ex.grace,Math.max(0,base+a-.125),.1,70); note(mel,0,n.m,base+a,e-a,Math.max(30,Math.min(127,Math.round(92*ex.vel*energyMul(bar.si,'lead'))))); }); }
+    if(son('chords')&&arpMidi('chords',bar,base,pad,1,note,74,energyMul(bar.si,'chords')*ARP_PAD)){} else if(son('chords')){ const DF=dropFrom(bar); pat.forEach(h=>{ if(DF!=null&&h.on>=DF-1e-6) return; const a=swingT(h.on), e=swingT(DF!=null?Math.min(h.on+h.dur,DF):h.on+h.dur); bar.ch.pad.forEach(m=>note(pad,1,m,base+a,e-a,Math.round((h.lab==='U'?60:74)*energyMul(bar.si,'chords')))); }); }
+    if(son('bass')&&arpMidi('bass',bar,base,bass,2,note,92,energyMul(bar.si,'bass'))){} else if(son('bass')) dropTrim(bassNotes(bar),bar).forEach(bn=>note(bass,2,bn.m,base+swingT(bn.x),swingT(bn.x+bn.dur)-swingT(bn.x),Math.min(127,Math.round(92*bn.vel*energyMul(bar.si,'bass')))));
+    if(son('lead')&&arpMidi('lead',bar,base,mel,0,note,92,energyMul(bar.si,'lead'))){} else if(son('lead')){ const vv=viewCached(bar.si), E=exprFor(vv); vv.melody.forEach((n,i)=>{ if(n.start<bar.b*B-1e-6||n.start>=(bar.b+1)*B-1e-6) return; const ex=E[i]||{playDur:n.dur,vel:1}, rs=n.start-bar.b*B; const SF=silentFrom(bar); if(SF!=null&&rs>=SF-1e-6) return; const a=swingT(rs), e=swingT(SF!=null?Math.min(rs+ex.playDur,SF):rs+ex.playDur); if(ex.grace!=null) note(mel,0,ex.grace,Math.max(0,base+a-.125),.1,70); note(mel,0,n.m,base+a,e-a,Math.max(30,Math.min(127,Math.round(92*ex.vel*energyMul(bar.si,'lead'))))); }); }
     if(son('drums')) drumEventsForBar(bar).forEach(d=>note(drm,9,gmOf(d.r),base+d.x,.1,Math.max(1,Math.min(127,Math.round(100*d.vel)))));
   });
   if(mel.length){ const lb=songLeadBends().filter(x=>MIDI_SEC==null||(x.beat>=secOff-1e-6&&x.beat<secOff+bars.length*B-1e-6)).map(x=>({...x,beat:x.beat-secOff})); if(lb.length){ mel.push(...bendRpn(0,tk)); lb.forEach(x=>mel.push({t:tk(x.beat),o:.5,b:[0xE0,x.v&127,(x.v>>7)&127]})); mel.push({t:tk(bars.length*B),o:.5,b:[0xE0,0,64]}); } }
@@ -5403,7 +5423,7 @@ function projectData(){ if(typeof verSync==='function') verSync();
   const parts={}; Object.entries(S.parts).forEach(([k,p])=>parts[k]={on:p.on,vol:p.vol,sound:p.sound==='sample'?'style':p.sound});
   return {v:1,extra:S.extra&&S.extra.length?JSON.parse(JSON.stringify(S.extra)):undefined,style:S.style.id,key:S.key,mode:S.mode,bpm:S.bpm,sevenths:S.sevenths,density:S.density,leap:S.leap,meter:S.meter,comp:S.comp,swing:S.swing,
     structure:S.structure,structSeed:S.structSeed,seed:S.seed,matrix:S.matrix,mats,sections:S.song.sections.map(s=>s.mat?[s.type,s.bars,s.name,s.mat]:[s.type,s.bars,s.name]),beats:S.beats,beatVel:S.beatVel,beatOff:S.beatOff,bassOwn:S.bassOwn,trackMin:S.trackMin,trackOrder:S.trackOrder,trackGone:S.trackGone,trackColor:S.trackColor,drumRows:S.drumRows,rowNames:S.rowNames,drumSmp:S.drumSmp,groove:S.groove,kit:S.kit,fill:S.fill,parts,
-    vers:S.vers&&S.vers.length?S.vers:undefined,credits:S.credits,pitchFor:S.pitchFor,game:S.game,recipe:S.recipe,loops:S.loops&&S.loops.length?S.loops:undefined,rowLvl:S.rowLvl&&Object.keys(S.rowLvl).length?S.rowLvl:undefined,audio:S.audio&&S.audio.length?S.audio:undefined,snaps:S.snaps,snapOn:S.snapOn,scaleLock:S.scaleLock,ghost:S.ghost,qOn:S.qOn,q:S.q,qPreset:S.qPreset,sel:S.sel,mix:S.mix,auto:S.auto,smart:S.smart,autoGen:S.autoGen,mixGen:S.mixGen,mixOwn:S.mixOwn,autoNotes:S.autoNotes,moveSalt:S.moveSalt,smartArt:S.smartArt,artSalt:S.artSalt,lyrics:S.lyrics,showLyrics:S.showLyrics,perf:S.perf,energy:S.song.sections.map(s=>s.energy==null?null:s.energy),lift:S.lift,energyOn:S.energyOn,polish:S.polish,polishTrim:S.polishTrim,mixDest:S.mixDest||'stream',busAdd:S.busAdd&&S.busAdd.length?S.busAdd:undefined,busGone:S.busGone&&Object.keys(S.busGone).length?S.busGone:undefined,versions:S.versions,transOn:S.transOn,trans:S.trans,transOwn:S.transOwn,transLen:S.transLen||{},trSmp:S.trSmp||[],trLanes:S.trLanes|0,trLaneOff:S.trLaneOff||{},secNotes:S.secNotes||{},room:S.room,roomMix:S.roomMix,tags:S.tags||[],tagChoices:S.tagChoices||{},secMute:S.secMute||{},emotion:S.emotion||'',secEmotion:S.secEmotion||{},vibes:S.vibes||[],emoGen:S.emoGen||{},takes:takesData(),takeComp:S.takeComp||{},alts:S.alts||null,hostState:S.hostState||{},hostLearn:S.hostLearn||{},hostFx:S.hostFx||{},secLayer:S.secLayer||{},macros:S.macros&&S.macros.length?S.macros:undefined,autoObj:S.autoObj&&S.autoObj.length?S.autoObj.map(o=>{ const c={...o}; delete c._hit; return c; }):undefined,autoBy:S.autoBy&&Object.keys(S.autoBy).length?S.autoBy:undefined,autoMac:S.autoMac&&Object.keys(S.autoMac).length?S.autoMac:undefined,volTrim:S.volTrim&&Object.keys(S.volTrim).length?S.volTrim:undefined,velH:S.velH||undefined,secKey:S.secKey&&Object.keys(S.secKey).length?S.secKey:undefined,refSong:S.refSong||undefined,reg:S.reg||undefined};
+    vers:S.vers&&S.vers.length?S.vers:undefined,credits:S.credits,pitchFor:S.pitchFor,game:S.game,recipe:S.recipe,loops:S.loops&&S.loops.length?S.loops:undefined,rowLvl:S.rowLvl&&Object.keys(S.rowLvl).length?S.rowLvl:undefined,audio:S.audio&&S.audio.length?S.audio:undefined,snaps:S.snaps,snapOn:S.snapOn,scaleLock:S.scaleLock,ghost:S.ghost,qOn:S.qOn,q:S.q,qPreset:S.qPreset,sel:S.sel,mix:S.mix,auto:S.auto,smart:S.smart,autoGen:S.autoGen,mixGen:S.mixGen,mixOwn:S.mixOwn,autoNotes:S.autoNotes,moveSalt:S.moveSalt,smartArt:S.smartArt,artSalt:S.artSalt,lyrics:S.lyrics,showLyrics:S.showLyrics,perf:S.perf,energy:S.song.sections.map(s=>s.energy==null?null:s.energy),lift:S.lift,energyOn:S.energyOn,polish:S.polish,polishTrim:S.polishTrim,mixDest:S.mixDest||'stream',busAdd:S.busAdd&&S.busAdd.length?S.busAdd:undefined,busGone:S.busGone&&Object.keys(S.busGone).length?S.busGone:undefined,versions:S.versions,transOn:S.transOn,trans:S.trans,transOwn:S.transOwn,transLen:S.transLen||{},trSmp:S.trSmp||[],trLanes:S.trLanes|0,trLaneOff:S.trLaneOff||{},secNotes:S.secNotes||{},room:S.room,roomMix:S.roomMix,tags:S.tags||[],tagChoices:S.tagChoices||{},secMute:S.secMute||{},emotion:S.emotion||'',secEmotion:S.secEmotion||{},vibes:S.vibes||[],emoGen:S.emoGen||{},takes:takesData(),takeComp:S.takeComp||{},alts:S.alts||null,hostState:S.hostState||{},hostLearn:S.hostLearn||{},hostFx:S.hostFx||{},secLayer:S.secLayer||{},arp:S.arp&&Object.keys(S.arp).length?S.arp:undefined,macros:S.macros&&S.macros.length?S.macros:undefined,autoObj:S.autoObj&&S.autoObj.length?S.autoObj.map(o=>{ const c={...o}; delete c._hit; return c; }):undefined,autoBy:S.autoBy&&Object.keys(S.autoBy).length?S.autoBy:undefined,autoMac:S.autoMac&&Object.keys(S.autoMac).length?S.autoMac:undefined,volTrim:S.volTrim&&Object.keys(S.volTrim).length?S.volTrim:undefined,velH:S.velH||undefined,secKey:S.secKey&&Object.keys(S.secKey).length?S.secKey:undefined,refSong:S.refSong||undefined,reg:S.reg||undefined};
 }
 function applyMats(mats){ KX.gen=true; try{
   Object.entries(mats).forEach(([t,m])=>{ const mat=S.song.mats[t]; if(!mat) return; if(m.kIv) mat.kIv={...m.kIv}; else delete mat.kIv; keyIv(mat.kIv,()=>{ mat.loop=m.loop; if(m.blockBars) mat.blockBars=m.blockBars; if(Array.isArray(m.prog)&&m.prog.length===mat.blockBars){ mat.chords=m.prog.map(chordOf); if(Array.isArray(m.cv)) mat.chords=mat.chords.map((c,i)=>m.cv[i]?customChord(c,m.cv[i]):c); } else { const c4=m.loop.map(c=>chordOf(c)); mat.chords=Array.from({length:mat.blockBars},(_,b)=>c4[b%4]); if(t==='outro') mat.chords[mat.blockBars-1]=makeChord(0); } mat.melody=m.melody.map(n=>({...n})); }); });
@@ -5425,7 +5445,7 @@ function applyProject(d){ if(typeof AUT!=='undefined'){ AUT.off=false; AUT.byp={
   applyMats(d.mats);
   S.versions=d.versions?JSON.parse(JSON.stringify(d.versions)):{}; S.transOn=d.transOn!==false; S.trans=d.trans||{}; S.transOwn=d.transOwn||{}; S.transLen=d.transLen||{}; S.trSmp=Array.isArray(d.trSmp)?d.trSmp:[]; S.trLanes=d.trLanes|0; S.trLaneOff=d.trLaneOff||{}; setTimeout(()=>{ try{ trSmpLoaded(); }catch(e){} },0); if($('#transOn')) $('#transOn').checked=S.transOn;
   S.lift=d.lift||0; S.energyOn=d.energyOn!==false; S.polish=POLISH[d.polish]?d.polish:'gentle'; S.polishTrim=d.polishTrim||0; S.mixDest=d.mixDest||'stream'; S.busAdd=Array.isArray(d.busAdd)?d.busAdd.filter(b=>b&&rtIs(b.id)):[]; S.busGone=d.busGone&&typeof d.busGone==='object'?d.busGone:{}; RTG.open=null; RTG.w=null; if(typeof finishUI==='function') finishUI(); if(Array.isArray(d.energy)) S.song.sections.forEach((s,i)=>{ if(d.energy[i]!=null) s.energy=d.energy[i]; }); if($('#liftSel')){ $('#liftSel').value=String(S.lift); $('#energyOn').checked=S.energyOn; }
-  if(d.vers) S.vers=JSON.parse(JSON.stringify(d.vers)); else if(!H.restoring) S.vers=[]; S.game=d.game; S.credits=d.credits?JSON.parse(JSON.stringify(d.credits)):undefined; S.pitchFor=d.pitchFor; S.recipe=d.recipe?JSON.parse(JSON.stringify(d.recipe)):null; S.loops=d.loops?JSON.parse(JSON.stringify(d.loops)):undefined; S.rowLvl=d.rowLvl?{...d.rowLvl}:{}; S.audio=Array.isArray(d.audio)?JSON.parse(JSON.stringify(d.audio)):[]; loopsLoaded(); S.snaps=d.snaps?JSON.parse(JSON.stringify(d.snaps)):undefined; S.snapOn=d.snapOn; S.scaleLock=d.scaleLock; S.ghost=d.ghost; S.hostState=JSON.parse(JSON.stringify(d.hostState||{})); S.hostLearn=JSON.parse(JSON.stringify(d.hostLearn||{})); S.hostFx=JSON.parse(JSON.stringify(d.hostFx||{})); S.secLayer=JSON.parse(JSON.stringify(d.secLayer||{})); S.alts=d.alts?JSON.parse(JSON.stringify(d.alts)):null; S.secNotes=JSON.parse(JSON.stringify(d.secNotes||{})); S.takeComp=JSON.parse(JSON.stringify(d.takeComp||{})); takesSync(d.takes||[]); S.secMute=JSON.parse(JSON.stringify(d.secMute||{})); S.emotion=d.emotion||''; S.secEmotion=JSON.parse(JSON.stringify(d.secEmotion||{})); S.vibes=(d.vibes||[]).slice(); S.emoGen=JSON.parse(JSON.stringify(d.emoGen||{}));
+  if(d.vers) S.vers=JSON.parse(JSON.stringify(d.vers)); else if(!H.restoring) S.vers=[]; S.game=d.game; S.credits=d.credits?JSON.parse(JSON.stringify(d.credits)):undefined; S.pitchFor=d.pitchFor; S.recipe=d.recipe?JSON.parse(JSON.stringify(d.recipe)):null; S.loops=d.loops?JSON.parse(JSON.stringify(d.loops)):undefined; S.rowLvl=d.rowLvl?{...d.rowLvl}:{}; S.audio=Array.isArray(d.audio)?JSON.parse(JSON.stringify(d.audio)):[]; loopsLoaded(); S.snaps=d.snaps?JSON.parse(JSON.stringify(d.snaps)):undefined; S.snapOn=d.snapOn; S.scaleLock=d.scaleLock; S.ghost=d.ghost; S.hostState=JSON.parse(JSON.stringify(d.hostState||{})); S.hostLearn=JSON.parse(JSON.stringify(d.hostLearn||{})); S.hostFx=JSON.parse(JSON.stringify(d.hostFx||{})); S.secLayer=JSON.parse(JSON.stringify(d.secLayer||{})); S.arp=JSON.parse(JSON.stringify(d.arp||{})); S.alts=d.alts?JSON.parse(JSON.stringify(d.alts)):null; S.secNotes=JSON.parse(JSON.stringify(d.secNotes||{})); S.takeComp=JSON.parse(JSON.stringify(d.takeComp||{})); takesSync(d.takes||[]); S.secMute=JSON.parse(JSON.stringify(d.secMute||{})); S.emotion=d.emotion||''; S.secEmotion=JSON.parse(JSON.stringify(d.secEmotion||{})); S.vibes=(d.vibes||[]).slice(); S.emoGen=JSON.parse(JSON.stringify(d.emoGen||{}));
   if(ROOMS[d.room]){ S.room=d.room; S.roomMix=d.roomMix!=null?d.roomMix:ROOMS[d.room].mix; syncRoom(); } else if(d.room==null&&S.room!=='off'){ S.room='off'; S.roomMix=0; syncRoom(); }
   invalidateViews(); S.sel=Math.min(d.sel||0,S.song.sections.length-1);
   renderStyles(); syncControls(); renderMixer(); renderQuirks(); selectSection(S.sel);
@@ -7755,7 +7775,7 @@ function freshSong(seed){ const r=mulberry(((seed>>>0)^0xa11ce)>>>0), st=S.style
 function freshBand(seed){ const st=S.style, P=stylePool(st), r=mulberry(((seed>>>0)^0x5eed5)>>>0), hint=songSoundHints(), pick=L=>{ const w=L.map(x=>hint.has(x)?3:1), t=w.reduce((a,b)=>a+b,0); let u=r()*t; for(let i=0;i<L.length;i++){ u-=w[i]; if(u<=0) return L[i]; } return L[L.length-1]; };
   S.styleSound=S.styleSound||{}; ['lead','chords','bass'].forEach(p=>{ const L=(P[p]||[(STYLE_INSTR[st.id]||{})[p]||'style']).filter(x=>x==='style'||INSTR[x.slice(2)]), v=L.length?pick(L):'style'; S.parts[p].sound=v; S.styleSound[p]=v; }); if(S.parts.lead.sound!=='style'&&S.parts.lead.sound===S.parts.chords.sound){ S.parts.lead.sound='style'; S.styleSound.lead='style'; }
   // the old song's extra parts, mixer and moves don't come along
-  S.extra=[]; xSync(); S.mix={}; S.mixGen={}; S.mixOwn={}; S.auto={}; S.autoGen={}; S.autoNotes=[]; S.autoObj=[]; S.secLayer={}; S.secMute={}; S.busAdd=[]; S.busGone={}; S.trackOrder=undefined; S.trackGone=undefined; S.trackMin=undefined; S.trackColor=undefined; S.volTrim={};
+  S.extra=[]; xSync(); S.mix={}; S.mixGen={}; S.mixOwn={}; S.auto={}; S.autoGen={}; S.autoNotes=[]; S.autoObj=[]; S.secLayer={}; S.arp={}; S.secMute={}; S.busAdd=[]; S.busGone={}; S.trackOrder=undefined; S.trackGone=undefined; S.trackMin=undefined; S.trackColor=undefined; S.volTrim={};
   const prof=XP.roles&&XP.roles.styleParts&&XP.roles.styleParts[st.id], pool=[...new Set([...((prof&&prof.extras)||[]),...(P.extras||[])])].filter(x=>XP.name[x]), n=pool.length?1+(r()<.45?1:0):0, chosen=[];
   for(let i=0;i<n&&pool.length;i++){ const j=Math.floor(r()*pool.length); chosen.push(pool.splice(j,1)[0]); }
   chosen.forEach(role=>{ const x=xMake(role,''); if(x){ x.isNew=false; S.extra=[...xList(),x]; xSync(); } }); xSync();
@@ -9928,7 +9948,7 @@ function partBarRender(){ const b=$('#partBar'), lp=$('#layPart'), p=rollPart();
   else if(x&&x.pair) extra=`<label class="inline-sel"><span class="label">Style</span><select id="pbPiano" aria-label="Piano style"><option value="">Fits the song${x.variant?'':` (${esc(PN_STYLES[pnAuto()])})`}</option>${Object.entries(PN_STYLES).map(([k,v])=>`<option value="${k}"${x.variant===k?' selected':''}>${esc(v)}</option>`).join('')}</select></label>`;
   const on=i=>x?(!x.sections||x.sections.includes(i)):!(S.secMute&&S.secMute[q]&&S.secMute[q][i]);
   const plays=`<button type="button" class="btn xs rb-plays-c" data-rbplays title="Which sections ${esc(nm)} plays in">Plays in ▾</button><span class="rb-plays"><span class="label rb-pl">Plays in</span>${secs.map((s,i)=>`<button class="btn xs tog" ${x?`data-xsec="${i}"`:`data-rbsec="${i}"`} aria-pressed="${on(i)}" title="${on(i)?`${esc(nm)} plays in ${esc(s.name)}: click to leave it out`:`${esc(nm)} is left out of ${esc(s.name)}: click to bring it back`}">${esc(s.name)}</button>`).join('')}</span>`;
-  pbSet(b,`${dice}${extra}<span class="pb-gap"></span>${plays}`); }
+  pbSet(b,`${dice}${extra}${arpBtnHTML(q)}<span class="pb-gap"></span>${plays}`); }
 function rbInit(){ if(typeof nOn==='function'&&window.__JUCE__) nOn('st_key',d=>{ if(d&&d.k==='space'){ if(S.playing) stopPlay(); else songPlay(); } }); /* 12 Nov: Space while a plug-in window is in front (the app watches the key; the plug-in keeps it otherwise) */ document.addEventListener('click',e=>{ const t=e.target.closest('[data-rb="take"]'); if(t){ e.stopPropagation(); const p=rollPart()||(S.editLayer==='chords'?'chords':'lead'), x=xList().find(q=>q.id===p); if(x){ xRegen(x.id); return; } if(typeof wtCan==='function'&&wtCan(p)){ wtStart(p,'sec'); return; } toast('No other takes for this part yet'); return; }
   const pm=e.target.closest('[data-rbplays]'); if(pm){ e.stopPropagation(); const r=pm.getBoundingClientRect(), btns=[...document.querySelectorAll('#partBar .rb-plays [data-rbsec],#partBar .rb-plays [data-xsec]')]; ctxOpen(r.left,r.bottom+4,btns.map(bt=>[(bt.getAttribute('aria-pressed')==='true'?'✓ ':'   ')+bt.textContent,()=>bt.click()])); return; } const s=e.target.closest('[data-rbsec]'); if(s){ e.stopPropagation(); const p=rollPart()||(S.editLayer==='chords'?'chords':'lead'); clipRemove(p,+s.dataset.rbsec); setTimeout(partBarRender,0); } },true); }
 const RAIL_I={select:'<path d="M4 2l9 7-4 .6L11.5 14l-2 1L7 10.6 4 13z" fill="currentColor" stroke="none"/>',draw:'<path d="M3 13l.6-3L11 2.6 13.4 5 6 12.4zM9.6 4l2.4 2.4"/>',erase:'<path d="M6.5 13.5L2.8 9.8 9.3 3.3l4 4-5.9 6.2zM5 7.6l4 4M6.5 13.5H14"/>',slice:'<rect x="6.6" y="1" width="2.8" height="3" rx=".6" fill="currentColor" stroke="none"/><path d="M6.6 4.4h2.8V8L8 11.6 6.6 8z"/><rect x="1.2" y="10" width="4.6" height="3.6" rx="1"/><rect x="10.2" y="10" width="4.6" height="3.6" rx="1"/>',snap:'<path d="M3.5 2.5v6a4.5 4.5 0 009 0v-6h-3v6a1.5 1.5 0 01-3 0v-6zM3.5 5h3M9.5 5h3"/>',quant:'<path d="M2.5 2.5v11M8 2.5v11M13.5 2.5v11" opacity=".55"/><rect x="5" y="6.5" width="6" height="3" fill="currentColor" stroke="none"/>',up:'<path d="M8 13V3M4 7l4-4 4 4"/><path d="M3 14h10" opacity=".55"/>',down:'<path d="M8 3v10M4 9l4 4 4-4"/><path d="M3 2h10" opacity=".55"/>',art:'<path d="M1.5 10c1.5-4 3-4 4.5 0s3 4 4.5 0 3-4 4.5 0"/><path d="M3 4h4" opacity=".6"/>',fit:'<path d="M2.5 6V2.5H6M10 2.5h3.5V6M13.5 10v3.5H10M6 13.5H2.5V10"/><path d="M8 5v6M6 7l2-2 2 2M6 9l2 2 2-2" opacity=".7"/>',legato:'<rect x="1.5" y="4" width="6" height="3" fill="currentColor" stroke="none"/><rect x="8.5" y="9" width="6" height="3" fill="currentColor" stroke="none"/><path d="M7.5 5.5h1v5"/>',dup:'<rect x="2.5" y="2.5" width="8" height="8" rx="1"/><rect x="5.5" y="5.5" width="8" height="8" rx="1" fill="var(--st-panel)"/>',all:'<rect x="2.5" y="2.5" width="11" height="11" stroke-dasharray="2.4 1.8"/><rect x="5.5" y="6.5" width="5" height="3" fill="currentColor" stroke="none"/>'};
@@ -10233,6 +10253,7 @@ function histLabel(a,b){ const same=k=>JSON.stringify(a[k])===JSON.stringify(b[k
   if(!same('mode')) return {key:'mode',label:`Changed mode to ${b.mode}`};
   if(!same('meter')) return {key:'meter',label:`Changed time signature to ${b.meter}`};
   if(!same('bpm')) return {key:'bpm',merge:1500,label:`Changed tempo to ${b.bpm} BPM`};
+  if(!same('arp')) return {key:'arp',merge:1500,label:'Changed the arpeggiator'};
   if(!same('velH')) return {key:'velH',merge:1500,label:'Resized the velocity lane'};
   if(!same('bassOwn')) return {key:'bassOwn',label:'Edited the bass'};
   if(!same('structure')||!same('sections')) return {key:'sections',label:'Changed the structure'};
@@ -10469,8 +10490,8 @@ function xGenSection(role,variant,si,take){ if(role==='pianoR'||role==='pianoL')
 function xWhere(role){ const secs=S.song.sections, firstV=secs.findIndex(x=>x.type==='verse'); return secs.map((x,i)=>i).filter(i=>{ const t=secs[i].type; if(role==='pianoR'||role==='pianoL') return true; if(t==='intro'||t==='outro') return role==='pad'; if(role==='harmony'||role==='perc'||role==='bass2'||role==='double') return t==='chorus'; if(role==='counter') return i!==firstV; return true; }); }
 function xMake(role,variant,sis,opts={}){ const ch=xFreeCh(); if(ch==null) return null; const id='x'+(++XP.seq), n=xList().filter(q=>q.role===role).length, name=XP.name[role]+(n?` ${n+1}`:''), x={id,name,role,variant:variant||'',ch:role==='perc'?9:ch,take:0,isNew:true,sections:sis||xWhere(role),notes:{},...opts}; if(!x.linkTo) x.sections.forEach(si=>{ x.notes[secKey(si)]=xGenSection(role,variant,si,0); }); return x; }
 function xNotes(x,si){ if(x.sections&&!x.sections.includes(si)) return []; const oc=(x.octave||0)*12, B=METERS[S.meter].B; if(x.linkTo==='lead') return (sectionView(si).melody||[]).map(n=>({m:n.m+oc,start:n.start,dur:n.dur,vel:.7})); if(x.linkTo==='chords'){ const out=[]; (sectionView(si).chords||[]).forEach((c,b)=>{ if(c&&c.pad) c.pad.forEach(m=>out.push({m:m+oc,start:b*B,dur:B,vel:.6})); }); return out; } if(x.linkTo==='bass'){ const out=[]; barList('song').forEach(bar=>{ if(bar.si===si) bassNotes(bar).forEach(n=>out.push({m:n.m+oc,start:bar.b*B+n.x,dur:n.dur,vel:.7})); }); return out; } const P=xList().find(q=>q.id===x.linkTo), own=P?xNotes(P,si):(x.notes[secKey(si)]||[]); return own.map(n=>oc?{...n,m:n.m+oc}:n); }
-function xSchedule(bar,skip,at,spb,EM,secOn){ const B=METERS[S.meter].B; xList().forEach(x=>{ if(!S.parts[x.id]||!S.parts[x.id].on||!secOn(x.id)) return; xNotes(x,bar.si).forEach(n=>{ if(n.start<bar.b*B-1e-6||n.start>=(bar.b+1)*B-1e-6) return; const rs=n.start-bar.b*B; if(rs<skip-1e-6) return; if(x.role==='perc'){ if(!RENDER_ONLY||RENDER_ONLY===x.id) withBus('song',x.id,()=>drumHit(n.kind||'hat',at(rs),(n.vel||.3)*S.parts[x.id].vol)); return; } playPart(x.id,n.m,at(rs),Math.max(.05,(swingT(rs+n.dur)-swingT(rs))*spb),(n.vel||.7)*EM); }); }); }
-function xMidi(bars,secOff,B,note,on){ const out=[], start={}; bars.forEach((bar,i)=>{ if(start[bar.si]==null) start[bar.si]=i*B-bar.b*B; }); xList().forEach(x=>{ if(!on(x.id)) return; const a=[], ch=typeof MIDI_CH1!=='undefined'&&MIDI_CH1?(x.role==='perc'?9:0):x.ch, muted=S.secMute&&S.secMute[x.id]; Object.keys(start).forEach(si=>{ if(muted&&muted[si]) return; xNotes(x,+si).forEach(n=>note(a,ch,n.m,start[si]+n.start,n.dur,Math.round((n.vel||.7)*110))); }); if(a.length) out.push([x.name,a]); }); return out; }
+function xSchedule(bar,skip,at,spb,EM,secOn){ const B=METERS[S.meter].B; xList().forEach(x=>{ if(!S.parts[x.id]||!S.parts[x.id].on||!secOn(x.id)) return; if(x.role!=='perc'&&arpPlay(x.id,bar,skip,at(0),spb,EM)) return; xNotes(x,bar.si).forEach(n=>{ if(n.start<bar.b*B-1e-6||n.start>=(bar.b+1)*B-1e-6) return; const rs=n.start-bar.b*B; if(rs<skip-1e-6) return; if(x.role==='perc'){ if(!RENDER_ONLY||RENDER_ONLY===x.id) withBus('song',x.id,()=>drumHit(n.kind||'hat',at(rs),(n.vel||.3)*S.parts[x.id].vol)); return; } playPart(x.id,n.m,at(rs),Math.max(.05,(swingT(rs+n.dur)-swingT(rs))*spb),(n.vel||.7)*EM); }); }); }
+function xMidi(bars,secOff,B,note,on){ const out=[], start={}; bars.forEach((bar,i)=>{ if(start[bar.si]==null) start[bar.si]=i*B-bar.b*B; }); xList().forEach(x=>{ if(!on(x.id)) return; const a=[], ch=typeof MIDI_CH1!=='undefined'&&MIDI_CH1?(x.role==='perc'?9:0):x.ch, muted=S.secMute&&S.secMute[x.id]; Object.keys(start).forEach(si=>{ if(muted&&muted[si]) return; (x.role!=='perc'&&arpOn(x.id)?arpNotes(x.id,+si):xNotes(x,+si)).forEach(n=>note(a,ch,n.m,start[si]+n.start,n.dur,Math.round((n.vel||.7)*110))); }); if(a.length) out.push([x.name,a]); }); return out; }
 function xChange(label,fn){ histCheck(true); H.quietUntil=0; const had=new Set(xList().map(x=>x.id)); fn(); try{ const nw=xList().filter(x=>!had.has(x.id)).map(x=>x.id); mixPlaceNew(nw); rtFamEnsure(nw); rtFamTidy(); }catch(e){} xSync(); H.nextLabel=label; histCheck(true); renderStrips('song'); arrRender(); sessRender(); nativeRefresh(); }
 function nativeRefresh(){ if(typeof nativeSync==='function') try{ nativeSync(); }catch(e){} }
 function xAdd(role,variant){ if(role==='piano') return pianoAdd(variant); if(!gameAllowsPart()) return; if(xFreeCh()==null){ toast('That’s every channel in use. Remove a part or a section layer first.'); return; } let x=null; xChange(`Add ${XP.name[role].toLowerCase()}`,()=>{ x=xMake(role,variant); S.extra=[...xList(),x]; }); if(x){ SHELL.part=x.id; arrRender(); shellDock('xroll'); } return x; }
@@ -10504,7 +10525,7 @@ function xKeep(id){ xChange('Keep the part',()=>{ const x=xList().find(q=>q.id==
 function xRegen(id){ xChange('Another take of the part',()=>{ const x=xList().find(q=>q.id===id); if(!x||x.linkTo) return; const t=x.take+1; (x.pair?xList().filter(q=>q.pair===x.pair):[x]).forEach(q=>{ q.take=t; q.imported=false; q.sections.forEach(si=>{ q.notes[secKey(si)]=xGenSection(q.role,q.variant,si,q.take); }); }); }); xPaneRender(); }
 function pianoStyle(id,v){ const x=xList().find(q=>q.id===id); if(!x||!x.pair) return; xChange(`Piano style: ${v?PN_STYLES[v]:'fits the song'}`,()=>{ xList().filter(q=>q.pair===x.pair).forEach(q=>{ q.variant=v; q.take=0; q.imported=false; q.sections.forEach(si=>{ q.notes[secKey(si)]=xGenSection(q.role,v,si,0); }); }); }); xPaneRender(); }
 /* a removed part takes its mixer settings, automation, plug-in effects and open editor with it, so a later part never inherits them */
-function chanForget(ids){ ids.forEach(id=>{ if(S.mix) delete S.mix[id]; Object.values(S.auto||{}).forEach(A=>{ if(A) delete A[id]; }); if(S.hostFx) delete S.hostFx[id]; if(FXED.song&&FXED.song.ch===id) FXED.song=null; }); }
+function chanForget(ids){ ids.forEach(id=>{ if(S.arp) delete S.arp[id]; if(S.mix) delete S.mix[id]; Object.values(S.auto||{}).forEach(A=>{ if(A) delete A[id]; }); if(S.hostFx) delete S.hostFx[id]; if(FXED.song&&FXED.song.ch===id) FXED.song=null; }); }
 function xRemove(id){ const x=xList().find(q=>q.id===id); if(!x) return; xChange(`Remove ${x.name}`,()=>{ const gone=xList().filter(q=>q.id===id||q.linkTo===id).map(q=>q.id); S.extra=xList().filter(q=>q.id!==id&&q.linkTo!==id); chanForget(gone); }); if(SHELL.part===id){ SHELL.part='lead'; shellDock('roll'); } }
 function xUnlink(id){ xChange('Unlink the layer',()=>{ const x=xList().find(q=>q.id===id); if(!x) return; const k={}; S.song.sections.forEach((_,si)=>{ if(!x.sections||x.sections.includes(si)) k[secKey(si)]=xNotes(x,si).map(n=>({...n})); }); x.notes=k; x.linkTo=null; x.octave=0; x.role='double'; }); xPaneRender(); }
 function xSession(){ return xList().filter(x=>x.isNew).map(x=>({kind:'part',t:`New: ${x.name}`,sub:x.linkTo?'Linked layer':'Written for this song',text:(XP.roles.roles[x.role]||{}).does||'',act:'Keep',go:()=>xKeep(x.id),more:[...(x.linkTo?[]:[['Another take',()=>xRegen(x.id)]]),['Remove',()=>xRemove(x.id)]]})); }
@@ -13090,6 +13111,135 @@ function pwTick(){ if(!S.playing||typeof engineOwns!=='function'||!engineOwns()|
     PW.last[p]=now; delete PW.quiet[p]; const name=(HOSTS.names||{})[ch]||'The plug-in'; try{ nEmit('st_host_load',{ch,id:snd.slice(2),state:(S.hostState||{})[p]||''}); }catch(e){}
     toast(`${name} on ${trName(p)} went quiet, so Semitone reloaded it with its settings (trial versions often stop after a while). If it stays quiet, open it and pick a sound: some plug-ins start empty.`); }); }
 function pwInit(){ setInterval(pwTick,500); }
+
+/* ---------- arpeggiator (12 Nov): any note part can turn the notes it holds into a running pattern ----------
+   Settings live in S.arp[part] and are saved with the song (projectData), so Undo covers them.
+   One generator (arpGen) feeds everything: the page's scheduler (arpPlay, from scheduleBar and xSchedule), the MIDI file
+   (arpMidi in buildMidi, xMidi) and through that the timeline sent to the app's engine and MIDI out. Positions already
+   carry the arp's own swing, so none of those paths adds the song's swing on top. */
+const ARP_RATES={'1/4':1,'1/8':.5,'1/8T':1/3,'1/16':.25,'1/16T':1/6,'1/32':.125};
+const ARP_PATS={up:'Up',down:'Down',updown:'Up and down',downup:'Down and up',random:'Random',played:'As played',chord:'Whole chord, repeated'};
+const ARP_ACC=[0,.55,.8,1.05]; /* a step is silent, soft, normal or accented */
+const ARP_PAD=1.5; /* the chord sound is voiced for whole chords: one note at a time needs a lift to be heard */
+const ARP_ACC_NAME=['silent','soft','normal','accent'];
+var ARPC={c:{},live:false}, ARPUI={p:null};
+function arpCan(p){ if(!p||p==='drums'||!S.parts||!S.parts[p]) return false; const x=xList().find(q=>q.id===p); return x?x.role!=='perc':['lead','chords','bass'].includes(p); }
+function arpOf(p){ return (S.arp||{})[p]||null; }
+function arpOn(p){ const a=arpOf(p); return !!(a&&a.on); }
+/* a starting point that fits the song's style: quick and rising for synth and dance music, a gentle rise and fall for ballads */
+function arpStyleWords(){ const st=S.style||{}; let w=[st.id,st.name,st.lane,st.desc,(S.tags||[]).join(' ')].join(' '); try{ w+=' '+hostStyleWords(); }catch(e){} return w.toLowerCase(); }
+function arpDefault(p){ const w=arpStyleWords(), M=METERS[S.meter]||{}, role=(PARTS[p]||{}).role;
+  const soft=/ballad|lullab|hymn|waltz|folk|acoustic|singer|torch|slow|sad|dream|ambient|soul|piano/.test(w), fast=/synth|electr|house|trance|techno|edm|dance|disco|hyperpop|chip|8-?bit|arcade|rave|club/.test(w);
+  let d, why;
+  if(fast&&!/ballad|lullab/.test(w)){ d={rate:'1/16',pat:'up',oct:2,gate:60,acc:[3,1,2,1]}; why='quick and rising, for a synth or dance song'; }
+  else if(soft||S.bpm<=84){ d={rate:'1/8',pat:'updown',oct:1,gate:90,acc:[3,2,2,2]}; why='a gentle rise and fall, for a slower song'; }
+  else { d={rate:'1/8',pat:'up',oct:1,gate:80,acc:[3,2,2,2]}; why='steady rising eighths'; }
+  if(M.compound) d.acc=d.rate==='1/16'?[3,1,2,1,2,1]:[3,2,2];
+  if(role&&role!=='pad') d.oct=Math.max(2,d.oct); /* one note at a time needs the octaves to move */
+  return {on:false,swing:50,hold:false,...d,why}; }
+function arpCfg(p){ const d=arpDefault(p); delete d.why; return {...d,...(arpOf(p)||{})}; }
+function arpHash(s){ s=String(s); let h=2166136261; for(let i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,16777619); } return h>>>0; }
+function arpRnd(seed,k){ let h=(seed^Math.imul(k+1,0x9E3779B1))>>>0; h=Math.imul(h^(h>>>15),0x85EBCA6B); h=Math.imul(h^(h>>>13),0xC2B2AE35); return (h^(h>>>16))>>>0; }
+/* held: [{m,start,dur}] in beats, len: beats to fill. Returns [{m,start,dur,vel}]. Random uses the seed, so every player gets the same notes. */
+function arpGen(held,len,c,seed){
+  const r=ARP_RATES[c.rate]||.5, trip=/T$/.test(c.rate), sw=trip?.5:Math.max(.5,Math.min(.75,(+c.swing||50)/100)), gate=Math.max(.1,Math.min(1,(+c.gate||80)/100)), oct=Math.max(1,Math.min(4,Math.round(+c.oct)||1));
+  const acc=Array.isArray(c.acc)&&c.acc.length?c.acc:[2], out=[], N=Math.round(len/r-1e-6), H=held.map((n,i)=>({...n,i})).sort((a,b)=>a.start-b.start||a.i-b.i);
+  let lastKey='', last=null, idx=0, prevM=null;
+  for(let k=0;k<N;k++){ const t=k*r; let now=H.filter(n=>n.start<=t+1e-6&&n.start+n.dur>t+1e-6);
+    if(!now.length){ if(c.hold&&last) now=last; else { lastKey=''; idx=0; last=null; continue; } }
+    const base=[]; now.forEach(n=>{ if(!base.includes(n.m)) base.push(n.m); });
+    const key=base.join(','); if(key!==lastKey){ idx=0; lastKey=key; } last=now;
+    const a=Math.max(0,Math.min(3,acc[k%acc.length]|0)), i=idx++; if(!a) continue;
+    const srt=c.pat==='played'?base:[...base].sort((x,y)=>x-y), L=[]; for(let o=0;o<oct;o++) srt.forEach(m=>L.push(m+12*o));
+    const bounce=A=>A.length>2?[...A,...A.slice(1,-1).reverse()]:A; let ms;
+    if(c.pat==='down') ms=[L[L.length-1-i%L.length]];
+    else if(c.pat==='updown'){ const C=bounce(L); ms=[C[i%C.length]]; }
+    else if(c.pat==='downup'){ const C=bounce([...L].reverse()); ms=[C[i%C.length]]; }
+    else if(c.pat==='random'){ let j=arpRnd(seed,k)%L.length; if(L.length>1&&L[j]===prevM) j=(j+1)%L.length; ms=[L[j]]; }
+    else if(c.pat==='chord') ms=srt.map(m=>m+12*(i%oct));
+    else ms=[L[i%L.length]];
+    const odd=k%2, st=trip?t:(k-odd)*r+(odd?2*r*sw:0), slot=trip?r:(odd?2*r*(1-sw):2*r*sw); if(st>=len-1e-6) continue;
+    const du=Math.max(.02,Math.min(slot*gate,len-st));
+    ms.forEach(m=>{ while(m>120) m-=12; while(m<0) m+=12; out.push({m,start:+st.toFixed(4),dur:+du.toFixed(4),vel:ARP_ACC[a]}); }); prevM=ms[ms.length-1]; }
+  return out; }
+/* the notes a part holds in one section, before the arp, and where they must stop (a drop or a silence before the next section) */
+function arpSrc(p,si){ const B=METERS[S.meter].B, sec=S.song.sections[si], out=[]; if(!sec) return {notes:out,end:0};
+  const x=xList().find(q=>q.id===p), nb=sec.bars, lastBar={si,b:nb-1,last:true}, full=nb*B;
+  if(x) return {notes:xNotes(x,si).map(n=>({m:n.m,start:n.start,dur:n.dur})),end:full};
+  if(p==='chords'){ const DF=dropFrom(lastBar), end=DF!=null?(nb-1)*B+DF:full; sectionView(si).chords.forEach((c,b)=>{ if(!c||!c.pad) return; const d=Math.min(B,end-b*B); if(d>0) c.pad.forEach(m=>out.push({m,start:b*B,dur:d})); }); return {notes:out,end}; }
+  if(p==='bass'){ const DF=dropFrom(lastBar), end=DF!=null?(nb-1)*B+DF:full; barList('song').forEach(bar=>{ if(bar.si!==si) return; dropTrim(bassNotes(bar),bar).forEach(n=>out.push({m:n.m,start:bar.b*B+n.x,dur:n.dur})); }); return {notes:out,end}; }
+  if(p==='lead'){ const SF=silentFrom(lastBar), end=SF!=null?(nb-1)*B+SF:full; viewCached(si).melody.forEach(n=>{ if(n.start>=end-1e-6) return; out.push({m:n.m,start:n.start,dur:Math.min(n.dur,end-n.start)}); }); return {notes:out,end}; }
+  return {notes:out,end:full}; }
+function arpSeed(p,si){ return arpHash(S.seed+'|'+p+'|'+si); }
+function arpNotes(p,si){ const c=arpCfg(p), k=p+'|'+si+'|'+JSON.stringify(c); if(ARPC.c[k]) return ARPC.c[k]; if(!ARPC.live){ ARPC.live=true; Promise.resolve().then(()=>{ ARPC.c={}; ARPC.live=false; }); } const s=arpSrc(p,si); return ARPC.c[k]=arpGen(s.notes,s.end,c,arpSeed(p,si)); }
+function arpBar(p,bar){ const B=METERS[S.meter].B, a=bar.b*B, out=[]; arpNotes(p,bar.si).forEach(n=>{ if(n.start>=a-1e-6&&n.start<a+B-1e-6) out.push({m:n.m,x:n.start-a,dur:n.dur,vel:n.vel}); }); return out; }
+/* the page's own playback: true when the arp played this bar, so the part's usual notes are skipped */
+function arpPlay(p,bar,skip,t,spb,mul){ if(!arpOn(p)) return false; ARPC.c={}; const pad=(PARTS[p]||{}).role==='pad', snd=SOUNDS[partSound(p)], pa=pad&&snd&&snd.pad?snd.pad.attack:null, lay=p==='chords'&&S.parts.chords.on&&(!RENDER_ONLY||RENDER_ONLY==='chords')?((S.secLayer&&S.secLayer[bar.si])||[]):[];
+  arpBar(p,bar).forEach(n=>{ if(n.x<skip-1e-6) return; const st=t+n.x*spb, d=Math.max(.04,n.dur*spb), ex=pa!=null?{attack:Math.min(pa,d*.4)}:{};
+    playPart(p,n.m,st,d,n.vel*mul,ex); lay.forEach(id=>withBus('song','chords',()=>playInstr(id.slice(2),n.m,st,d,(ROLEVOL.pad||.15)*n.vel*mul*.2,ex))); });
+  return true; }
+/* the same notes into the MIDI file, which is also what the app's engine and MIDI out are given */
+function arpMidi(p,bar,base,arr,ch,note,velRef,mul){ if(!arpOn(p)) return false; arpBar(p,bar).forEach(n=>note(arr,ch,n.m,base+n.x,n.dur,Math.max(1,Math.min(127,Math.round(velRef*n.vel*mul))))); return true; }
+/* ---- the piano roll: a light preview over the held notes ---- */
+function arpRollPart(){ const p=rollPart()||(S.editLayer==='chords'?'chords':'lead'); return arpCan(p)?p:null; }
+function arpRange(all,whole){ const p=arpRollPart(); if(!p||!arpOn(p)) return; try{ (whole?S.song.sections.map((_,i)=>i):[S.sel]).forEach(si=>arpNotes(p,si).forEach(n=>all.push(n.m))); }catch(e){} }
+function arpDraw(g,X,Y,rh,beatPos){ const p=arpRollPart(); if(!p||!arpOn(p)) return; let ns; try{ ns=arpNotes(p,S.sel); }catch(e){ return; } const col=partColor(p), hi=lighten(col,.55), ink=css('--ink'), ga=g.globalAlpha; g.save(); g.lineWidth=1;
+  ns.forEach(n=>{ const x=X(n.start)+.5, w=Math.max(X(n.start+n.dur)-X(n.start)-1,2), h=Math.max(Math.min(rh-3,rh*.62),2), y=Y(n.m)+(rh-h)/2, on=beatPos!=null&&beatPos>=n.start&&beatPos<n.start+n.dur;
+    g.globalAlpha=on?1:.35+.45*Math.min(1,n.vel); g.fillStyle=hi; g.fillRect(x,y,w,h); g.globalAlpha=on?1:.75; g.strokeStyle=on?ink:col; g.strokeRect(x+.5,y+.5,Math.max(w-1,1),Math.max(h-1,1)); });
+  g.restore(); g.globalAlpha=ga; }
+/* ---- settings ---- */
+function arpChanged(quiet){ ARPC.c={}; try{ partBarRender(); }catch(e){} if(!S.playing) try{ renderRoll(); }catch(e){} if(typeof arrRender==='function'&&!quiet) try{ arrRender(); }catch(e){} nativeRefresh(); if(!quiet) arpPopRender(); }
+function arpSet(p,patch,quiet){ if(!arpCan(p)) return; S.arp={...(S.arp||{}),[p]:{...arpCfg(p),...patch}}; arpChanged(quiet); }
+function arpToggle(p,on){ const was=arpOn(p), to=on==null?!was:!!on; if(was===to) return; histCheck(true); H.quietUntil=0; arpSet(p,{on:to}); H.nextLabel=`${to?'Turned on':'Turned off'} the arp on ${trName(p)||p}`; histCheck(true); }
+const ARP_SIGN={up:'↑',down:'↓',updown:'↑↓',downup:'↓↑',random:'?',played:'→',chord:'≡'};
+function arpLabel(p,long){ const c=arpCfg(p); return long?`${c.rate}, ${(ARP_PATS[c.pat]||'').toLowerCase()}, ${c.oct} octave${c.oct>1?'s':''}`:`${c.rate} ${ARP_SIGN[c.pat]||''}`; }
+function arpBtnHTML(p){ if(!arpCan(p)) return ''; const on=arpOn(p), nm=esc(trName(p)||p); return `<button type="button" class="btn xs tog arp-btn" id="arpBtn" data-arp="${esc(p)}" aria-pressed="${on}" aria-haspopup="dialog" title="${on?`Arpeggiator on ${nm}: ${esc(arpLabel(p,true))}. Click to change it.`:`Arpeggiator: play the notes ${nm} holds one after another`}">Arp${on?` <span class="arp-sum">${esc(arpLabel(p))}</span>`:''}</button>`; }
+function arpPopClose(){ const m=$('#arpPop'); if(m) m.hidden=true; ARPUI.p=null; }
+function arpPopOpen(p,anchor){ if(!arpCan(p)) return; let m=$('#arpPop'); if(!m){ m=document.createElement('div'); m.id='arpPop'; m.className='th-card arp-pop'; m.setAttribute('role','dialog'); m.setAttribute('aria-label','Arpeggiator'); document.body.append(m); arpPopWire(m); }
+  ARPUI.p=p; m.hidden=false; arpPopRender(); const r=((anchor&&anchor.isConnected?anchor:null)||$('#arpBtn')||document.body).getBoundingClientRect(), h=m.offsetHeight, w=m.offsetWidth; let top=r.bottom+6; if(top+h>innerHeight-8) top=Math.max(8,r.top-6-h); m.style.top=top+'px'; m.style.left=Math.max(8,Math.min(innerWidth-w-8,r.left))+'px'; }
+function arpPopRender(){ const m=$('#arpPop'), p=ARPUI.p; if(!m||m.hidden||!p) return; if(!arpCan(p)){ arpPopClose(); return; } const c=arpCfg(p), on=arpOn(p), d=arpDefault(p), nm=esc(trName(p)||p), trip=/T$/.test(c.rate);
+  const seg=(k,opts)=>`<span class="arp-seg" role="group">${opts.map(([v,t])=>`<button type="button" class="btn xs tog" data-arpk="${k}" data-v="${v}" aria-pressed="${String(c[k])===String(v)}">${t}</button>`).join('')}</span>`;
+  m.innerHTML=`<div class="arp-head"><b>Arp · ${nm}</b><button type="button" class="btn xs tog arp-on" data-arpon aria-pressed="${on}">${on?'On':'Off'}</button><button type="button" class="btn xs arp-x" data-arpclose aria-label="Close">×</button></div>
+<div class="arp-body${on?'':' off'}">
+<div class="arp-row"><span class="label">Speed</span>${seg('rate',Object.keys(ARP_RATES).map(k=>[k,k]))}</div>
+<div class="arp-row"><span class="label">Order</span><select id="arpPat" aria-label="Order of the notes">${Object.entries(ARP_PATS).map(([k,v])=>`<option value="${k}"${c.pat===k?' selected':''}>${v}</option>`).join('')}</select></div>
+<div class="arp-row"><span class="label">Octaves</span>${seg('oct',[1,2,3,4].map(n=>[n,n]))}</div>
+<div class="arp-row"><span class="label">Length</span><input type="range" id="arpGate" min="10" max="100" step="5" value="${c.gate}" aria-label="Note length, percent of a step"><span class="arp-val" id="arpGateV">${c.gate}%</span></div>
+<div class="arp-row${trip?' dim':''}" title="${trip?'Triplets don’t swing':'Delays every second note'}"><span class="label">Swing</span><input type="range" id="arpSwing" min="50" max="75" step="1" value="${c.swing}"${trip?' disabled':''} aria-label="Swing, percent"><span class="arp-val" id="arpSwingV">${c.swing}%</span></div>
+<div class="arp-row"><span class="label">Accents</span><span class="arp-acc">${c.acc.map((a,i)=>`<button type="button" class="arp-step a${a|0}" data-arpacc="${i}" title="Step ${i+1}: ${ARP_ACC_NAME[a|0]}. Click to change." aria-label="Step ${i+1}: ${ARP_ACC_NAME[a|0]}"><i></i></button>`).join('')}</span><button type="button" class="btn xs" data-arplen="-1" title="One step fewer" aria-label="One step fewer"${c.acc.length<=1?' disabled':''}>−</button><button type="button" class="btn xs" data-arplen="1" title="One step more" aria-label="One step more"${c.acc.length>=16?' disabled':''}>+</button></div>
+<div class="arp-row"><label class="arp-chk" title="When the notes stop, keep playing the last ones until new notes arrive"><input type="checkbox" id="arpHold"${c.hold?' checked':''}> Hold through gaps</label></div>
+<div class="arp-foot"><button type="button" class="btn xs" data-arpsug title="Suggested for this song: ${esc(d.why)}">Suggest for this song</button><span class="pb-gap"></span><button type="button" class="btn xs arp-commit" data-arpcommit title="Write the arp’s notes into ${nm} as real notes you can edit. One Undo brings the arp back."${on?'':' disabled'}>Commit to notes</button></div>
+</div>`; }
+function arpPopWire(m){ const P=()=>ARPUI.p;
+  m.addEventListener('click',e=>{ const p=P(); if(!p) return; const t=e.target.closest('button'); if(!t) return; e.stopPropagation();
+    if(t.dataset.arpclose!=null) return arpPopClose(); if(t.dataset.arpon!=null) return arpToggle(p);
+    if(t.dataset.arpk){ const k=t.dataset.arpk, v=k==='oct'?+t.dataset.v:t.dataset.v, patch={[k]:v}; if(k==='rate'){ const was=/T$/.test(arpCfg(p).rate), now=/T$/.test(v), a=arpCfg(p).acc; if(was!==now&&JSON.stringify(a)===JSON.stringify(arpDefault(p).acc)) patch.acc=now?[3,2,2]:arpDefault(p).acc; } return arpSet(p,patch); }
+    if(t.dataset.arpacc!=null){ const a=arpCfg(p).acc.slice(), i=+t.dataset.arpacc; a[i]=((a[i]|0)+1)%4; return arpSet(p,{acc:a}); }
+    if(t.dataset.arplen){ const a=arpCfg(p).acc.slice(); if(+t.dataset.arplen>0){ if(a.length<16) a.push(2); } else if(a.length>1) a.pop(); return arpSet(p,{acc:a}); }
+    if(t.dataset.arpsug!=null){ const d=arpDefault(p); delete d.why; delete d.on; toast('Arp: '+arpDefault(p).why); return arpSet(p,d); }
+    if(t.dataset.arpcommit!=null) return arpCommit(p); });
+  m.addEventListener('change',e=>{ const p=P(); if(!p) return; if(e.target.id==='arpPat') arpSet(p,{pat:e.target.value}); if(e.target.id==='arpHold') arpSet(p,{hold:e.target.checked}); });
+  m.addEventListener('input',e=>{ const p=P(); if(!p) return; const id=e.target.id; if(id==='arpGate'){ $('#arpGateV').textContent=e.target.value+'%'; arpSet(p,{gate:+e.target.value},true); } if(id==='arpSwing'){ $('#arpSwingV').textContent=e.target.value+'%'; arpSet(p,{swing:+e.target.value},true); } });
+  ['pointerdown','keydown','keyup','wheel'].forEach(ev=>m.addEventListener(ev,e=>{ if(ev==='keydown'&&e.key==='Escape'){ arpPopClose(); } e.stopPropagation(); })); }
+/* accents go soft → normal → accent → silent → soft */
+/* Commit: the arp's notes become the part's own notes, in every section it plays, as one undo step */
+function arpCommit(p){ if(!arpOn(p)) return; const nm=trName(p)||p, secs=S.song.sections, x=xList().find(q=>q.id===p), cfg=arpCfg(p); let made=null, count=0;
+  if(p==='chords'&&xFreeCh()==null){ toast('Chords need a new part for their notes, and every channel is in use. Remove a part first.'); return; }
+  const keep=(n,mul=1)=>({m:n.m,start:n.start,dur:n.dur,vel:+Math.min(1.15,n.vel*mul).toFixed(3)});
+  const label=`Arp on ${nm} written as notes`; /* a new part's mixer strip settles a moment later: histGroup keeps all of it in the one step */
+  histGroup(label,()=>{ xChange(label,()=>{ ARPC.c={};
+    if(x){ const k={}; secs.forEach((_,si)=>{ if(!x.sections||x.sections.includes(si)){ k[secKey(si)]=arpNotes(p,si).map(n=>keep(n)); count+=k[secKey(si)].length; } }); x.notes=k; x.octave=0; if(x.linkTo){ x.linkTo=null; x.role='double'; } }
+    else if(p==='bass'){ const o={...(S.bassOwn||{})}; secs.forEach((_,si)=>{ o[secKey(si)]=arpNotes('bass',si).map(n=>keep(n)); count+=o[secKey(si)].length; }); S.bassOwn=o; }
+    else if(p==='lead'){ const B=METERS[S.meter].B, done=new Set(); secs.forEach((sec,si)=>{ const mat=matOf(sec); if(!mat||done.has(mat)) return; done.add(mat); mat.melody=arpGen(mat.melody.map(n=>({m:n.m,start:n.start,dur:n.dur})),mat.blockBars*B,cfg,arpSeed('lead',si)).map(n=>keep(n)); count+=mat.melody.length; }); }
+    else if(p==='chords'){ const boost=S.comp==='sustain'?1:1.3, all=secs.map((_,i)=>i).filter(i=>!(S.secMute&&S.secMute.chords&&S.secMute.chords[i])); made=xMake('arp','',all,{name:'Chords arp',sound:S.parts.chords.sound==='sample'?'style':S.parts.chords.sound}); if(!made) return; made.notes={}; all.forEach(si=>{ made.notes[secKey(si)]=arpNotes('chords',si).map(n=>keep(n,boost)); count+=made.notes[secKey(si)].length; }); S.extra=[...xList(),made]; S.parts.chords.on=false; }
+    if(made){ xSync(); if(S.parts[made.id]) S.parts[made.id].vol=1; }
+    const A={...(S.arp||{})}; A[p]={...cfg,on:false}; S.arp=A; });
+  S.selNote=null; S.selSet=new Set(); if(typeof ROLLP!=='undefined'){ ROLLP.key=null; ROLLP.draft=null; } ARPC.c={}; refreshAfterEdit(true); arpPopClose(); if(made){ SHELL.part=made.id; arrRender(); try{ shellDock('xroll'); }catch(e){} try{ renderMixer(); }catch(e){} } });
+  if(made){ const msg=(`${count} notes written to a new part, “Chords arp”. The block chords are muted; unmute Chords to hear both. Undo puts it back.`); setTimeout(()=>toast(msg),40); }
+  else toast(`${count} notes written into ${nm}. The arp is off now; Undo brings it back.`); }
+document.addEventListener('click',e=>{ const t=e.target.closest&&e.target.closest('[data-arp]'); if(!t) return; e.stopPropagation(); e.preventDefault(); const p=t.dataset.arp, m=$('#arpPop'); if(m&&!m.hidden&&ARPUI.p===p){ arpPopClose(); return; } if(!arpOn(p)) arpToggle(p,true); arpPopOpen(p,t); },true);
+document.addEventListener('pointerdown',e=>{ const m=$('#arpPop'); if(!m||m.hidden) return; if(e.target.closest&&e.target.closest('#arpPop,[data-arp]')) return; arpPopClose(); },true);
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ const m=$('#arpPop'); if(m&&!m.hidden) arpPopClose(); } });
 
 /* ---------- routing + boot ---------- */
 function route(){
