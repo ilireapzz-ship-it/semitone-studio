@@ -814,9 +814,12 @@ void SemitoneEditor::saveSong (const juce::var& v)
         browser.emitEventIfBrowserIsVisible ("st_song_saved", juce::var (o));
     };
 
-    if (! saveAs && current.existsAsFile()) { write (current); return; }
+    // 11 Nov: Save after starting a new song wrote over the last file opened ("meh"). Only write straight to the file when it has the
+    // song's own name; otherwise ask, starting from the song's name.
+    const bool sameName = current.existsAsFile() && current.getFileNameWithoutExtension().equalsIgnoreCase (name);
+    if (! saveAs && sameName) { write (current); return; }
 
-    const auto start = current.existsAsFile() ? current : st::files::songsFolder().getChildFile (name + ".semitone");
+    const auto start = sameName ? current : st::files::songsFolder().getChildFile (name + ".semitone");
     chooser = std::make_unique<juce::FileChooser> ("Save song", start, "*.semitone");
     chooser->launchAsync (juce::FileBrowserComponent::saveMode | juce::FileBrowserComponent::canSelectFiles | juce::FileBrowserComponent::warnAboutOverwriting,
                           [this, write] (const juce::FileChooser& fc) {
