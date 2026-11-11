@@ -12,4 +12,11 @@ const {chromium}=require('playwright'), path=require('path'); const url='file://
  await p.click(nameOf('chords')); await p.waitForTimeout(250); s=await state(); ok(s.picked==='chords'&&s.pane==='roll'&&s.layer==='chords'&&!s.pop,'clicking Chords opens its chords '+JSON.stringify(s));
  await p.click(nameOf('lead')); await p.waitForTimeout(250); s=await state(); ok(s.picked==='lead'&&s.pane==='roll'&&s.layer==='melody'&&!s.pop,'clicking Melody opens the melody '+JSON.stringify(s));
  await p.click(soundOf('chords')); await p.waitForTimeout(300); s=await state(); ok(s.pop,'clicking the sound under the name opens the sound list '+JSON.stringify(s));
+ // the sound button is easy to hit (Jamie: 'make it bigger'), and in the compact timeline a ▾ beside the name does it
+ const big=await p.evaluate(()=>{ $('#recipePop').hidden=true; const r=document.querySelector('#arrRows [data-partpop="chords"] small').getBoundingClientRect(); return {h:Math.round(r.height),w:Math.round(r.width)}; }); ok(big.h>=20&&big.w>=60,'the sound under the name is a button you can hit '+JSON.stringify(big));
+ await p.evaluate(()=>{ spPut({big:true,fold:false}); arrRender(); }); await p.waitForTimeout(300);
+ const cp=await p.evaluate(()=>{ const n=document.querySelector('#arrRows [data-partpop="bass"]'), sm=n.querySelector('small').getBoundingClientRect(), b=n.querySelector('b').getBoundingClientRect(); return {w:Math.round(sm.width),h:Math.round(sm.height),beside:sm.left>=b.right-1&&Math.abs((sm.top+sm.height/2)-(b.top+b.height/2))<6,x:sm.left+sm.width/2,y:sm.top+sm.height/2,bx:b.left+4,by:b.top+b.height/2}; });
+ ok(cp.w>=20&&cp.h>=18&&cp.beside,'compact timeline: a ▾ beside the name '+JSON.stringify(cp));
+ await p.mouse.click(cp.x,cp.y); await p.waitForTimeout(300); s=await state(); ok(s.pop,'compact: the ▾ opens the sound list '+JSON.stringify(s)); await p.evaluate(()=>{ $('#recipePop').hidden=true; });
+ await p.mouse.click(cp.bx,cp.by); await p.waitForTimeout(300); s=await state(); ok(s.picked==='bass'&&!s.pop,'compact: the name selects the part '+JSON.stringify(s));
  console.log(fails.length?`${fails.length} failed`:'all passed'); console.log(JSON.stringify(errs)); await b.close(); process.exit(fails.length?1:0); })();
