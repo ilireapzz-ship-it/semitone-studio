@@ -373,14 +373,6 @@ void SemitoneEditor::hideTitleOptions()
         for (auto* c : top->getChildren())
             if (auto* b = dynamic_cast<juce::TextButton*> (c))
                 if (b->getButtonText() == "Options") b->setVisible (false);
-    // Jamie, 11 Nov: the app opened in a small window with only minimise and close, and Windows+Up or a double-click on the title
-    // bar didn't maximise it. Give it the maximise button and open it maximised (once, on the first show).
-    if (auto* w = dynamic_cast<juce::DocumentWindow*> (getTopLevelComponent()))
-    {
-        w->setTitleBarButtonsRequired (juce::DocumentWindow::allButtons, false);
-        w->setResizable (true, false);
-        if (! openedBig) { openedBig = true; if (! w->isFullScreen()) w->setFullScreen (true); }
-    }
 }
 
 void SemitoneEditor::toggleFullScreen()
@@ -440,6 +432,23 @@ void SemitoneEditor::timerCallback()
             o->setProperty ("ch", ch); o->setProperty ("i", i); o->setProperty ("name", name); o->setProperty ("v", value);
             browser.emitEventIfBrowserIsVisible ("st_host_learned", juce::var (o));
         }
+    }
+    // standalone app: once the page shows, maximise the window (with the taskbar, not full screen), once per launch.
+    // Done from the timer because at reveal() the editor may not sit in its window yet (the first try, in hideTitleOptions, had no effect).
+    if (proc.isStandalone() && shown && ! openedBig && ticks > 30)
+    {
+        openedBig = true;
+        // No title-bar changes here: they make JUCE rebuild the native window, and the web view inside it is lost (a white window, 11 Nov build).
+       #if JUCE_WINDOWS
+        if (auto* peer = getTopLevelComponent()->getPeer())
+        {
+            static juce::DynamicLibrary user32 ("user32.dll");
+            using ShowFn = int (__stdcall*) (void*, int);
+            if (auto fn = (ShowFn) user32.getFunction ("ShowWindow")) fn (peer->getNativeHandle(), 3 /* SW_MAXIMIZE */);
+        }
+       #else
+        if (auto* w = dynamic_cast<juce::ResizableWindow*> (getTopLevelComponent())) if (! w->isFullScreen()) w->setFullScreen (true);
+       #endif
     }
     // standalone app: keep a crash-safe autosave of the song, every couple of seconds while it changes
     if (proc.isStandalone() && (ticks % 120) == 0)
