@@ -471,18 +471,28 @@ public:
         }
     }
 
-    void startDrum (const KitPatch& K, int k, float v, int channel, float lvl, float pan, double sampleRate, Noise& rng)
+    // hitPan, tune (a frequency ratio) and len (1 = the drum's natural ring) are one hit's own settings, as drumHit() in the page:
+    // the pan is equal power and as loud in the middle as an unpanned hit, the pitch scales every tone and noise filter, the length every decay.
+    void startDrum (const KitPatch& K, int k, float v, int channel, float lvl, float pan, double sampleRate, Noise& rng, float hitPan = 0, float tune = 1, float len = 1)
     {
         sr = sampleRate; key = k; ch = channel; active = true; released = false; isDrum = true; numDrum = 0; age = 0;
         p.level = lvl; p.pan = pan; p.stereo = false;
+        hitL = 1; hitR = 1;
+        if (hitPan != 0)
+        {
+            const double x = (std::clamp ((double) hitPan, -1.0, 1.0) + 1) * synthPi / 4;
+            hitL = (float) (std::sqrt (2.0) * std::cos (x)); hitR = (float) (std::sqrt (2.0) * std::sin (x));
+        }
         noise = rng; noise.s ^= (uint32_t) k * 2654435761u; if (noise.s == 0) noise.s = 1;
         fL.reset(); fL.lowpass (K.lp, 1, sr);
         const auto nz = [&] (float d, float f, float a, int type, float at, float q) {
-            auto& l = addLayer (d, a, at);
+            auto& l = addLayer (d * len, a, at);
             l.noise = true;
-            if (type == 0) l.f.highpass (f, q, sr); else l.f.bandpass (f, q, sr);
+            const float fq = std::min (18000.0f, f * tune);
+            if (type == 0) l.f.highpass (fq, q, sr); else l.f.bandpass (fq, q, sr);
         };
         const auto tn = [&] (float f0, float f1, float d, float a, Wave w) {
+            f0 *= tune; f1 *= tune; d *= len;
             auto& l = addLayer (d, a, 0);
             l.noise = false; l.wave = w; l.hz = f0; l.hzK = 1; l.rampLeft = 0;
             if (f1 > 0 && f1 != f0) { l.rampLeft = std::max (1, (int) (d * .35 * sr)); l.hzK = std::pow ((double) f1 / f0, 1.0 / l.rampLeft); }
@@ -544,6 +554,7 @@ private:
     // drums
     std::array<DrumLayer, 5> drum {};
     int numDrum = 0;
+    float hitL = 1, hitR = 1;   // this hit's own pan
 
     void setFilterFromCut()
     {
@@ -712,7 +723,8 @@ private:
             s += o * l.amp;
         }
         if (! alive) { active = false; outL = outR = 0; return; }
-        outL = outR = fL.run (s);
+        const float o = fL.run (s);
+        outL = o * hitL; outR = o * hitR;
     }
 };
 
@@ -1237,6 +1249,24 @@ private:
             for (auto& v : voices)
                 if (v.active && ! v.isDrum && ! v.released && v.ch == ch && v.key == e.d1) { v.noteOff(); break; }
         }
+        else if (type == 0xB0 && ch == current->drumCh && e.d1 >= 85 && e.d1 <= 88)
+        {
+            // one drum hit's own pan, pitch and length (drumCtl in the page): 85 names the drum, then 86 pan, 87 pitch in quarter
+            // semitones, 88 length. They arrive just before the hit's note and are used once.
+            if (e.d1 == 85)
+            {
+                hitKey = e.d2 & 127;
+                const auto k = (size_t) hitKey;
+                hitPan[k] = 0; hitTune[k] = 0; hitLen[k] = 1; hitSet[k] = true;
+            }
+            else if (hitKey >= 0)
+            {
+                const auto k = (size_t) hitKey;
+                if (e.d1 == 86) hitPan[k] = std::clamp (((int) e.d2 - 64) / 63.0f, -1.0f, 1.0f);
+                else if (e.d1 == 87) hitTune[k] = ((int) e.d2 - 64) / 4.0f;
+                else hitLen[k] = std::clamp ((int) e.d2 / 127.0f, .08f, 1.0f);
+            }
+        }
     }
 
     Voice& freeVoice()
@@ -1255,9 +1285,12 @@ private:
         if (ch == current->drumCh)
         {
             if (current->drumExt) return;
+            float hp = 0, tune = 1, len = 1;
+            const auto hk = (size_t) (key & 127);
+            if (hitSet[hk]) { hp = hitPan[hk]; tune = std::pow (2.0f, hitTune[hk] / 12.0f); len = hitLen[hk]; hitSet[hk] = false; }
             auto& v = freeVoice();
             v.order = ++counter;
-            v.startDrum (current->kit, key, (float) vel / 100.0f, ch, current->drumLevel, current->drumPan, sr, rng);
+            v.startDrum (current->kit, key, (float) vel / 100.0f, ch, current->drumLevel, current->drumPan, sr, rng, hp, tune, len);
             rng.next();
             return;
         }
@@ -1322,6 +1355,10 @@ private:
         }
     }
     std::array<double, 16> bends { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
+    // the next hit of each drum key: its own pan, pitch (semitones) and length, set by controllers 85-88 and used once
+    int hitKey = -1;
+    std::array<float, 128> hitPan {}, hitTune {}, hitLen {};
+    std::array<bool, 128> hitSet {};
     std::vector<Event> sorted;
     Room room;
     std::array<Chorus, 3> choruses;

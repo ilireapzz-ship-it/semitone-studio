@@ -192,6 +192,34 @@ int main()
         printf ("ok: 10 drums (with toms) x 4 kits\n");
     }
 
+    // 4b. one drum hit's own pan, pitch and length: controllers 85 (which drum), 86, 87, 88 on the drum channel, just before its note
+    {
+        auto cc = [] (int d1, int d2) { return Event { 0, (unsigned char) (0xB0 | 9), (unsigned char) d1, (unsigned char) d2 }; };
+        auto crossings = [] (const std::vector<float>& x, int a, int b) { int z = 0; for (int i = a + 1; i < b; ++i) z += (x[(size_t) i] < 0) != (x[(size_t) (i - 1)] < 0); return z; };
+        auto s = std::make_shared<SynthPatch>(); s->drumCh = 9;
+        const int N = (int) (SR * 1.6), head = (int) (SR * .25), second = (int) SR;
+        Synth a; a.prepare (SR); a.setPatch (s);
+        const auto plain = run (a, { { 0, on (9, 36, 40) } }, N);
+        Synth b; b.prepare (SR); b.setPatch (s);
+        const auto right = run (b, { { 0, cc (85, 36) }, { 0, cc (86, 127) }, { 0, on (9, 36, 40) }, { second, on (9, 36, 40) } }, N);
+        const float pl = rmsOf (plain.l, 0, head), rl = rmsOf (right.l, 0, head), rr = rmsOf (right.r, 0, head);
+        CHECK (std::abs (pl - rmsOf (plain.r, 0, head)) < 1e-6f && pl > .001f, "a plain hit sits in the middle (%f)", pl);
+        CHECK (rl < pl * .05f && rr > pl * 1.2f && rr < pl * 1.6f, "a hit panned hard right: left %f right %f (plain %f)", rl, rr, pl);
+        const float nl = rmsOf (right.l, second, second + head), nr = rmsOf (right.r, second, second + head);
+        CHECK (std::abs (nl - nr) < 1e-6f && nl > pl * .5f, "the next hit has no message, so it is back in the middle (%f, %f)", nl, nr);
+        Synth c; c.prepare (SR); c.setPatch (s);
+        const auto up = run (c, { { 0, cc (85, 36) }, { 0, cc (87, 112) }, { 0, on (9, 36, 40) } }, N);   // 112 = an octave up
+        CHECK (crossings (up.l, 0, head) > crossings (plain.l, 0, head) + 4, "a hit tuned up an octave is higher: %d crossings against %d", crossings (up.l, 0, head), crossings (plain.l, 0, head));
+        Synth d; d.prepare (SR); d.setPatch (s);
+        const auto cut = run (d, { { 0, cc (85, 36) }, { 0, cc (88, 32) }, { 0, on (9, 36, 40) } }, N);       // 32 = a quarter of its ring
+        CHECK (peakOf (cut.l, 0, (int) (SR * .05)) > .005f, "a short hit still sounds");
+        CHECK (rmsOf (cut.l, head, 2 * head) < rmsOf (plain.l, head, 2 * head) * .1f, "a hit cut to a quarter has no tail (%f against %f)", rmsOf (cut.l, head, 2 * head), rmsOf (plain.l, head, 2 * head));
+        Synth e; e.prepare (SR); e.setPatch (s);
+        const auto other = run (e, { { 0, cc (85, 38) }, { 0, cc (86, 0) }, { 0, on (9, 36, 40) } }, N);       // a message for the snare leaves the kick alone
+        CHECK (std::abs (rmsOf (other.l, 0, head) - rmsOf (other.r, 0, head)) < 1e-6f, "a message for another drum does not move this one");
+        printf ("ok: a drum hit's own pan, pitch and length\n");
+    }
+
     // 5. the mixer strip: level scales the part, pan moves it
     {
         auto quiet = sine; quiet.vol = .015f;                  // below the safety compressor, which is level-dependent

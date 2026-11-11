@@ -116,7 +116,8 @@ void SemitoneProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
     const int mode = soundMode.load();
     if (mode == 0 || mode == 2)
         for (const auto& e : events)
-            if (! ((midiMute.load() >> (e.status & 15)) & 1))
+            if (! ((midiMute.load() >> (e.status & 15)) & 1)
+                && ! ((e.status & 0xF0) == 0xB0 && e.d1 >= 85 && e.d1 <= 88))   // a drum hit's own pan, pitch and length are for the built-in kit only
                 midi.addEvent (juce::MidiMessage (e.status, e.d1, e.d2), e.offset);
 
     // Semitone's own instruments, rendered by the interface, played on the DAW's timeline

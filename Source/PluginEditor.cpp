@@ -167,6 +167,7 @@ juce::WebBrowserComponent::Options SemitoneEditor::makeOptions()
         .withEventListener ("st_ready", [this] (const juce::var&) { bootMark ("page ready");
             auto* o = new juce::DynamicObject();
             o->setProperty ("plugin", ! proc.isStandalone());
+            o->setProperty ("drumHit", true);   // this build's engine takes a drum hit's own pan, pitch and length (controllers 85-88, Synth::handle)
             o->setProperty ("host", juce::PluginHostType().getHostDescription());
             o->setProperty ("projectB64", forPage (proc.getProjectState()));
             o->setProperty ("recent", st::files::recentVar());
