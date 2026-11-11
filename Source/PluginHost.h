@@ -284,6 +284,27 @@ public:
         });
     }
 
+    // 12 Nov (Jamie: Space should play while a plug-in window is open): is one of our plug-in windows in front? The plug-in
+    // takes the keys inside its own view, so the editor watches Space itself while this is true.
+    bool hostWindowFront() const
+    {
+       #if JUCE_WINDOWS
+        static juce::DynamicLibrary u ("user32.dll");
+        using GetFg = void* (__stdcall*) ();
+        using GetAnc = void* (__stdcall*) (void*, unsigned);
+        auto fg = (GetFg) u.getFunction ("GetForegroundWindow");
+        auto anc = (GetAnc) u.getFunction ("GetAncestor");
+        if (fg == nullptr || anc == nullptr) return false;
+        void* f = fg();
+        if (f == nullptr) return false;
+        void* root = anc (f, 2 /* GA_ROOT */);
+        auto is = [&] (const std::unique_ptr<HostWindow>& w) { if (w == nullptr) return false; if (auto* p = w->getPeer()) { void* h = p->getNativeHandle(); return h == f || h == root; } return false; };
+        if (is (bridgeWin)) return true;
+        for (auto& w : windows) if (is (w)) return true;
+        for (auto& row : fxWin) for (auto& w : row) if (is (w)) return true;
+       #endif
+        return false;
+    }
     void fxOpen (int t, int slot)
     {
         if (t < 0 || t > masterFx || slot < 0 || slot >= fxSlots) return;

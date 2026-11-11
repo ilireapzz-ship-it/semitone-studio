@@ -412,6 +412,21 @@ void SemitoneEditor::toggleFullScreen()
 
 void SemitoneEditor::timerCallback()
 {
+   #if JUCE_WINDOWS
+    // Space while one of our plug-in windows is in front plays or stops the song, like FL (the plug-in keeps the key otherwise)
+    {
+        static juce::DynamicLibrary u32 ("user32.dll");
+        using GetKey = short (__stdcall*) (int);
+        static auto gk = (GetKey) u32.getFunction ("GetAsyncKeyState");
+        const bool down = gk != nullptr && (gk (0x20) & 0x8000) != 0;
+        if (down && ! spaceWasDown && proc.host && proc.host->hostWindowFront())
+        {
+            auto* o = new juce::DynamicObject(); o->setProperty ("k", "space");
+            browser.emitEventIfBrowserIsVisible ("st_key", juce::var (o));
+        }
+        spaceWasDown = down;
+    }
+   #endif
     if (! shown)
     {
         repaint();
