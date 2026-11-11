@@ -104,3 +104,4 @@ node tests/web/regression.test.js
 - `match-level.test.js`: after a sound swap Semitone measures the part with the old and new sound on the song's own notes and offers Match the level; nothing changes until pressed; the fader and trim stay; one undo step; saved with the song; the engine gets the same level; another sound clears it; similar sounds make no offer.
 - `scale-snap.test.js`: a Snap switch beside Scale lock: off by default (any note, as before); on, notes you draw or drag land on the nearest note of the key; saved with the song; Scale lock off turns it off.
 - `section-menu.test.js`: a section's right-click menu has Duplicate (a copy right after it with its own name, same notes) and Rename (typed in place; Space does not start the song; Escape cancels), each one undo step.
+- `lane-open.test.js`: an automation lane on the timeline opens that lane in Automation on a click or Enter, without moving the play marker or the selection.
