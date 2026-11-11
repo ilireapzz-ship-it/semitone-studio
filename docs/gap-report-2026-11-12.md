@@ -117,7 +117,7 @@ All from reading the code unless marked. None of these could be compiled or hear
 | The editor stays on what you are editing | When the song stops, the editor comes back to the section you were working on, with its play marker. A **Follow** button beside Play keeps the old behaviour. A section you pick while it plays always wins |
 | A mute is visible everywhere | A part taken out of sections shows on its mixer strip's **M** (hatched on that section, underlined elsewhere) and says where and how to put it back |
 | Counts are true | The pass's **Keep** button counts exactly the changes it will make |
-| Never changes your work by itself | In a blank song the **bass waits to be asked** (Bass follows the chords, or Fill in). Sections that share notes say so beside the section's name (**↔ Verse 2**), and one click gives a section its own notes |
+| Never changes your work by itself | In a blank song the **bass waits to be asked** (Bass follows the chords, or Fill in). Sections that share notes carry a **↔** on their name in the timeline (hover says which ones), and one click on it gives that section its own notes |
 | Presets are roughly equally loud | **Match the level**: after you swap a sound, Semitone measures the old and the new one on your own notes and offers to keep the loudness. The fader does not move; the strip shows "level +12 dB"; the engine gets the same level |
 | Scale mode can snap notes to the key | A **Snap** switch beside Scale lock. Off by default, so drawing works as before |
 | Section menu | **Duplicate** (a copy right after, with its own name) and **Rename** (typed in place) |
