@@ -100,3 +100,4 @@ node tests/web/regression.test.js
 - `small-words.test.js`: dorian, phrygian and locrian songs are named as minor keys on Home, in Share and in the loop search words; the buses you add are numbered from Bus 1.
 - `follow.test.js`: when the song stops the editor comes back to the section you were working on, with its play marker (Follow off, the default); Follow on stays where the song stopped; a section you pick while it plays wins; the button remembers its setting.
 - `mute-truth.test.js`: a part taken out of sections shows on its mixer strip's M (hatched on that section, underlined elsewhere, with where and how to put it back); the pass's Keep button counts exactly the changes it will make.
+- `say-so.test.js`: a blank song's bass stays silent until you ask (Bass follows the chords, or Fill in); the bar above the piano roll names the sections that share these notes, and one click gives a section its own (one undo step).
