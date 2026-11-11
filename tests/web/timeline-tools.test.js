@@ -11,13 +11,13 @@ const {chromium}=require('playwright'), path=require('path'); const url='file://
  const tl=await p.evaluate(async()=>{ const o={}; for(const id of ['mix','sound','style','record','auto','roll']){ shellDock(id); await new Promise(r=>setTimeout(r,120)); o[id]={tracks:document.querySelectorAll('.arr-row.track').length,rows:!!document.querySelector('#arrRows')&&getComputedStyle($('#arrRows')).display!=='none',board:document.body.classList.contains('sp-board')}; } return o; });
  ok(Object.values(tl).every(v=>v.rows&&v.tracks>=4&&!v.board),'Mix, Sound, Settings, Record and Automation keep the timeline '+JSON.stringify(tl));
  await p.evaluate(()=>{ $('#trKey').click(); }); await p.waitForTimeout(200);
- ok(await p.evaluate(()=>!document.querySelector('.dock-pane[data-pane="style"]').hidden&&getComputedStyle($('#arrRows')).display!=='none'),'clicking the key and tempo opens Settings with the timeline still there');
+ ok(await p.evaluate(()=>{ const m=$('#ctxMenu'); const r=!!m&&!m.hidden&&[...m.querySelectorAll('[data-ci]')].some(b=>/minor/.test(b.textContent))&&getComputedStyle($('#arrRows')).display!=='none'; if(m) m.hidden=true; return r; }),'clicking the key opens a menu of keys, with the timeline still there (12 Nov: Jamie asked for key and time menus like FL)');
 
  // 2. tools in the tab row, chord strip under the style row
  await p.evaluate(()=>{ xAdd('piano'); shellDock('roll'); }); await p.waitForTimeout(300);
  const rows=await p.evaluate(()=>{ const T=document.querySelector('#ss_dock .dock-tabs'), pn=document.querySelector('.dock-pane[data-pane="roll"] .panel'), kids=[...pn.children].filter(e=>e.offsetHeight>0).map(e=>e.id||e.className.split(' ')[0]); return {inTabs:!!T.querySelector('#drTools'),tabRows:[...$('#ss_dock').children].filter(e=>e.offsetHeight>0&&e.classList.contains('dr-tools')).length,mel:!!T.querySelector('#layMel'),kids,over:T.scrollWidth-T.clientWidth}; });
  ok(rows.inTabs&&rows.mel&&rows.tabRows===0,'Melody / Chords / part buttons sit in the tab row; the second row is gone '+JSON.stringify(rows));
- ok(rows.kids.indexOf('partBar')>=0&&rows.kids.indexOf('partBar')<rows.kids.indexOf('clane-wrap')&&rows.kids.indexOf('clane-wrap')<rows.kids.indexOf('roll-box'),'chord strip sits right above the roll, under the piano style row '+rows.kids.join(' > '));
+ ok(rows.kids.indexOf('clane-wrap')>=0&&rows.kids.indexOf('clane-wrap')<rows.kids.indexOf('roll-box')&&await p.evaluate(()=>!!document.querySelector('#drTools #partBar')),'chord strip sits right above the roll; the part controls are in the top row (12 Nov) '+rows.kids.join(' > '));
  ok(rows.over<=1,'the tab row does not overflow at 1440 wide');
  await p.setViewportSize({width:1024,height:680}); await p.waitForTimeout(300);
  const narrow=await p.evaluate(()=>{ const T=document.querySelector('#ss_dock .dock-tabs'), T2=$('#drTools'); return {over:T.scrollWidth-T.clientWidth, over2:T2.scrollWidth-T2.clientWidth, hidden:[...T2.querySelectorAll('.tb-g[hidden]')].length}; });

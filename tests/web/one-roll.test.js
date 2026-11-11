@@ -51,5 +51,5 @@ let fails=0; const ok=(c,m,x)=>{ if(!c){ fails++; console.log('FAIL',m,x===undef
  { const t=await p.evaluate(()=>{ const a=$('#drTools').getBoundingClientRect(), T=document.querySelector('#ss_dock .dock-tabs').getBoundingClientRect(); return {inside:a.height<=36&&a.top>=T.top-1&&a.bottom<=T.bottom+1,seg:!!$('#layPart').offsetWidth}; }); ok(t.inside&&t.seg,'the toolbar stays on its line with a long part name',t); }
  // melody still melody
  await p.evaluate(()=>setLayer('melody')); await p.waitForTimeout(150);
- ok(await p.evaluate(()=>SHELL.part==='lead'&&!rollPart()&&$('#partBar').hidden&&S.rects.length>0),'back to Melody');
+ ok(await p.evaluate(()=>SHELL.part==='lead'&&!rollPart()&&S.rects.length>0),'back to Melody (the part bar now shows for the melody too, 12 Nov)');
  ok(!errs.length,'no page errors',errs); await b.close(); console.log(fails?fails+' failed':'one-roll ok'); process.exit(fails?1:0); })();

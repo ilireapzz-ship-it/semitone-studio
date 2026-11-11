@@ -22,4 +22,10 @@ const {chromium}=require('playwright'), path=require('path'); const url='file://
  // the stopped marker shows the song position, not the selected section
  await p.click(`#arrRows [data-arrpart="lead"][data-arrsec="${last}"]`); await p.waitForTimeout(300); const mk=await p.evaluate(()=>{ const m=$('#arrMark'), c=document.querySelector('#timeline [data-i="0"]').getBoundingClientRect(), a=$('#arr').getBoundingClientRect(); return {left:parseFloat(m.style.left),start:c.left-a.left+$('#arr').scrollLeft,disp:m.style.display}; });
  ok(mk.disp!=='none'&&Math.abs(mk.left-mk.start)<3,'the marker stays at the song position while you edit elsewhere '+JSON.stringify(mk));
+ // 12 Nov (Jamie: 'when i select a place i wanna play from on the piano roll it isn't playing from there'): a click in the roll sets where Space plays from
+ await p.evaluate(()=>{ selectSection(2); shellDock('roll'); trPick(null); setLayer('melody'); S.selSet=new Set(); S.selNote=null; renderRoll(); }); await p.waitForTimeout(250);
+ const rc=await p.evaluate(()=>{ const cv=$('#roll'), r=cv.getBoundingClientRect(), L=S.rl; for(let fx=.55;fx<.95;fx+=.05){ for(let fy=.2;fy<.95;fy+=.07){ const x=r.left+L.W*fx, y=r.top+L.top+(r.height-L.top)*fy; const q=rollPos({clientX:x,clientY:y}); if(!hitNote(q.x,q.y)) return {x,y}; } } return null; });
+ await p.mouse.click(rc.x,rc.y); await p.waitForTimeout(200); const want=await p.evaluate(()=>({si:S.sel,beat:S.playFrom}));
+ await space(); const st=await p.evaluate(()=>{ const P=S.PT, B=METERS[S.meter].B, bar=P.barAt(0); return {si:bar.si,b:bar.b,mode:S.playMode}; }); await space();
+ ok(want.beat>0&&st.si===want.si&&st.b===Math.floor(want.beat/4)&&st.mode==='song','clicking a spot in the piano roll, then Space, plays from there '+JSON.stringify({want,st}));
  console.log(fails.length?`${fails.length} failed`:'all passed'); console.log(JSON.stringify(errs)); await b.close(); process.exit(fails.length?1:0); })();
