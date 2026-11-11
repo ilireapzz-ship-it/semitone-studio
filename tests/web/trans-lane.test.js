@@ -32,6 +32,7 @@ const {chromium}=require('playwright'), path=require('path'); const url='file://
  // the header (11 Nov, Jamie: the M overlapped the name; wants solo and volume): name, M, S and a knob on one line, nothing overlapping
  await p.evaluate(()=>{ S.transOn=true; arrRender(); }); await p.waitForTimeout(200);
  const hd=await p.evaluate(()=>{ const r=document.querySelector('#arrRows .trl-row'); const els=[...r.querySelectorAll('.tr-h>.tr-n,.tr-h>.tr-ms button,.tr-h>.tr-kn')].map(e=>e.getBoundingClientRect()); let o=0; for(let i=0;i<els.length;i++)for(let j=i+1;j<els.length;j++){ const a=els[i],c=els[j]; if(a.right>c.left+.5&&c.right>a.left+.5&&a.bottom>c.top+.5&&c.bottom>a.top+.5) o++; } return {o,n:els.length}; });
+ const tsm=await p.evaluate(()=>{ const e=document.querySelector('#arrRows .trl-row .tr-n small'); return !e||!e.getClientRects().length; }); ok(tsm,'the Transitions header shows no sound line (it has no sound to pick)');
  ok(hd.n===4&&hd.o===0,'the Transitions header has M, S and volume, none overlapping '+JSON.stringify(hd));
  await p.click('#arrRows .trl-row [data-trms="s"]'); await p.waitForTimeout(150); const so=await p.evaluate(()=>({solo:S.solo,parts:Object.values(S.parts).some(x=>x.on),tr:nativeTrans().length>0})); await p.click('#arrRows .trl-row [data-trms="s"]'); await p.waitForTimeout(150);
  ok(so.solo==='fx'&&!so.parts&&so.tr,'S plays only the transitions '+JSON.stringify(so));
