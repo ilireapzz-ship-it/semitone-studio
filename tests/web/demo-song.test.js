@@ -7,5 +7,7 @@ const {chromium}=require('playwright'); const url='file://'+require('path').reso
  await p.evaluate(()=>document.activeElement.blur()); await p.keyboard.press('Space'); await p.waitForTimeout(300); const c=await p.evaluate(()=>({play:S.playing,mode:S.playMode,demo:S.demo,hid:$('#restoreBar').hidden})); ok(c.play&&c.mode==='song'&&!c.demo&&c.hid,'Space plays the whole song '+JSON.stringify(c)); await p.keyboard.press('Space');
  const saved=await p.evaluate(()=>songStateJSON());
  const q=await open({plugin:false,host:'',projectB64:Buffer.from(saved).toString('base64'),recent:[]}); ok(await q.evaluate(()=>!S.demo&&$('#restoreBar').hidden),'a saved song opens instead');
+ const hm=await q.evaluate(()=>({show:!$('#startView').hidden,home:$('#startView').textContent.includes('Pick up where you left off'),back:(($('#stKeep')||{}).textContent||'')})); ok(hm.show&&hm.home&&/^Back to /.test(hm.back),'reopening the app offers Back to your song (it looked as if the song was gone) '+JSON.stringify(hm));
+ await q.click('#stKeep'); await q.waitForTimeout(300); ok(await q.evaluate(()=>$('#startView').hidden&&!S.demo),'Back to your song opens it');
  const r=await open({plugin:true,host:'FL Studio',project:'',recent:[]}); ok(await r.evaluate(()=>!S.demo&&S.project.name!=='Demo song'),'the plugin never gets the demo');
  console.log(fails.length?fails.length+' FAILED':'all passed'); console.log(errs.slice(0,6)); await b.close(); process.exit(fails.length||errs.length?1:0); })();
