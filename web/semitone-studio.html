@@ -2065,6 +2065,15 @@ body.sc-dragging .sc-slot,body.rl-dragging .sc-slot{min-width:30px;min-height:24
 .roll-rec b{color:var(--st-bad,#D9776F);font-weight:600}.roll-rec span{color:var(--st-text2)}.roll-rec kbd{font:600 11px var(--st-font-mono);border:1px solid var(--st-line-strong);border-radius:4px;padding:0 4px;background:none}
 #rollRecCv,#rollRecKeys{position:absolute;pointer-events:none;z-index:5}
 #ss_dock .step.rec-hit{background:var(--st-bad,#D9776F);box-shadow:0 0 0 1px var(--st-bad,#D9776F) inset}
+/* the Transitions header is one line: name · M S · volume (11 Nov) */
+#arr .trl-row{height:30px!important}
+#arr .trl-row>.tr-h{display:flex!important;align-items:center;gap:6px;padding-right:8px!important}
+#arr .trl-row>.tr-h>.tr-n{flex:1 1 auto;min-width:0;overflow:hidden;padding-top:0;padding-bottom:0}
+#arr .trl-row>.tr-h>.tr-n b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+#arr .trl-row>.tr-h>.tr-ms{flex:none;padding-left:0;display:flex;gap:2px}
+#arr .trl-row>.tr-h>.tr-kn{flex:none;flex-direction:row;margin:0}
+#arr .trl-row>.tr-h>.tr-kn svg{width:22px;height:22px}
+#arr .trl-row>.tr-h>.tr-kn output{display:none}
 </style>
 
 <div id="boot" role="status" aria-live="polite"><div class="boot-in"><i class="boot-logo"></i><b>Semitone</b><div class="boot-bar"><i id="bootFill"></i></div><span id="bootMsg">Opening your song…</span><button id="bootSkip" hidden>Open now, plug-ins will catch up</button></div></div>
@@ -3850,7 +3859,7 @@ const snapB=x=>{ const q=S.snapHold?(S.snap?0:S.snapVal||.25):S.snap; return q?M
 function snapshotMel(){ return fullSnap(); }
 function pushUndo(){ histNote(); }
 
-function refreshAfterEdit(full){ invalidateViews(); S.piece=sectionView(S.sel); if(!S.playing) renderRoll(); if(full){ renderCards(); renderStats(); renderQuirkInfo(); if(rollPart()){ partBarRender(); arrRender(); nativeRefresh(); } } }
+function refreshAfterEdit(full){ invalidateViews(); S.piece=sectionView(S.sel); if(!S.playing) renderRoll(); if(full){ renderCards(); renderStats(); renderQuirkInfo(); if(rollPart()) partBarRender(); arrRender(); nativeRefresh(); } } /* 11 Nov: a melody or chord edit redraws its timeline block too (a recorded melody left Verse 1 looking empty) */
 function rollPos(e){ const r=rollRect(); return {x:e.clientX-r.left,y:e.clientY-r.top}; }
 function hitNote(x,y){ for(let i=S.rects.length-1;i>=0;i--){ const q=S.rects[i]; if(x>=q.x-1&&x<=q.x+q.w+1&&y>=q.y-1&&y<=q.y+q.h+1) return q; } return null; }
 const edgeZone=q=>Math.max(5,Math.min(10,q.w*.3));
@@ -10126,7 +10135,7 @@ function histLabel(a,b){ const same=k=>JSON.stringify(a[k])===JSON.stringify(b[k
   if(!same('bassOwn')) return {key:'bassOwn',label:'Edited the bass'};
   if(!same('structure')||!same('sections')) return {key:'sections',label:'Changed the structure'};
   if(!same('seed')) return {key:'seed',label:'Made a new take of the song'};
-  if(!same('mats')){ const ts=Object.keys(b.mats).filter(t=>JSON.stringify(a.mats[t])!==JSON.stringify(b.mats[t])), t=ts[0], w=ts.length===1?` in ${SEC[t]||t}`:'';
+  if(!same('mats')){ const ts=Object.keys(b.mats).filter(t=>JSON.stringify(a.mats[t])!==JSON.stringify(b.mats[t])), t=ts[0], w=ts.length===1?` in ${SEC[String(t).split('~')[0]]||String(t).split('~')[0]}`:'';
     const m=ts.length===1&&a.mats[t]&&JSON.stringify(a.mats[t].melody)===JSON.stringify(b.mats[t].melody); return {key:'mats',label:(m?'Changed the chords':'Edited the notes')+w}; }
   if(!same('lyrics')) return {key:'lyrics',merge:2500,label:'Changed the lyrics'};
   if(!same('parts')) return {key:'parts',merge:1500,label:'Changed the sounds'};
@@ -10534,7 +10543,7 @@ function wtBar(){ let b=$('#wtBar'); if(!b){ b=document.createElement('div'); b.
 function ctxTrack(p,at,x,y){ const nm=trName(p), fam=trFam(p); return [...ctxFill(p,at),...(fam?[[`Add an empty ${FAMN[fam].toLowerCase()} track`,()=>trackAddEmpty(p)],...(fam!=='drums'?[[`Duplicate ${nm}`,()=>trackDup(p)]]:[]),'-']:[]),...(/^h:/.test((S.parts[p]||{}).sound||'')&&hostsHere()?[['Open the plug-in',()=>hostShow(p)]]:[]),...(p==='vox'||p==='loops'?[]:[[hostsHere()?'Change the instrument or plug-in (VST/AU)…':'Change the instrument…',()=>{ SHELL.part=p; soundPop(p,at); }]]),['Change the colour…',()=>colPop(p,at)],[(S.trackMin||{})[p]?'Show this track':'Fold into a tag',()=>trMin(p,!(S.trackMin||{})[p])],'-',[`Delete ${nm}`,()=>trackDelete(p),1]]; }
 /* copy a part's notes from one section and paste them into another: into an empty spot, in place of what's there, or on top of it */
 function clipKind(p){ return p==='drums'?'drums':p==='vox'||p==='loops'||!S.parts[p]?'':'notes'; }
-function clipCanTake(p){ if(p==='chords'||!clipKind(p)) return false; const x=xList().find(q=>q.id===p); return !(x&&x.linkTo); }
+function clipCanTake(p){ if(p==='chords') return !CLIP.clip||CLIP.clip.from==='chords'; if(!clipKind(p)) return false; const x=xList().find(q=>q.id===p); return !(x&&x.linkTo); }
 function clipRead(p,si){ rollAttach(); const B=METERS[S.meter].B, sc=S.song.sections[si], cl=o=>JSON.parse(JSON.stringify(o));
   if(p==='lead'){ const M=matOf(sc), bl=M.blockBars, out=[]; for(let r=0;r*bl<sc.bars;r++) M.melody.forEach(q=>{ const st=q.start+r*bl*B; if(st<sc.bars*B-1e-6){ const {src,k,...n}=q; out.push({...cl(n),start:+st.toFixed(4)}); } }); return out; }
   if(p==='chords'){ const out=[]; sectionView(si).chords.forEach((c,b)=>{ if(c&&c.pad) c.pad.forEach(m=>out.push({m,start:b*B,dur:B,vel:.6})); }); return out; }
@@ -10547,6 +10556,7 @@ function clipOwnMel(si){ const sc=S.song.sections[si], k=matKey(sc), M=S.song.ma
 function clipFit(C,si){ const T=S.song.sections[si].bars*METERS[S.meter].B, L=Math.max(1e-3,C.len), out=[]; for(let r=0;r*L<T-1e-6;r++) C.notes.forEach(n=>{ const st=+(n.start+r*L).toFixed(4); if(st<T-1e-6&&n.start<L-1e-6) out.push({...JSON.parse(JSON.stringify(n)),start:st,dur:+Math.min(n.dur,T-st).toFixed(4)}); }); return out; }
 function clipMerge(cur,add){ const seen=new Set(cur.map(n=>n.m+':'+Math.round(n.start*96))); return [...cur,...add.filter(n=>!seen.has(n.m+':'+Math.round(n.start*96)))].sort((a,b)=>a.start-b.start); }
 function clipPaste(p,si,mode){ const C=CLIP.clip; if(!C||!clipCanTake(p)||C.kind!==clipKind(p)) return; const sc=S.song.sections[si], k=secKey(si), nm=trName(p), top=mode==='top';
+  if(p==='chords'){ const B=METERS[S.meter].B, map={}; clipFit(C,si).forEach(n=>{ const b=Math.floor(n.start/B+1e-6); if(b<sc.bars) (map[b]=map[b]||[]).push(n.m); }); Object.keys(map).forEach(b=>{ map[b]=[...new Set(map[b])].sort((a,c)=>a-c); }); const keep=S.sel; histCheck(true); H.quietUntil=0; S.sel=si; S.piece=sectionView(si); writeChordPads(map,`Pasted ${C.label} into ${sc.name}`); S.sel=keep; H.nextLabel=`Pasted ${C.label} into ${sc.name}`; histCheck(true); S.piece=sectionView(S.sel); arrRender(); if(!S.playing) renderRoll(); toast(`Pasted ${C.label} into ${sc.name}${S.song.sections.some((x,i)=>i!==si&&matKey(x)===matKey(sc))?` (every ${SEC[sc.type]||sc.type} shares these chords)`:''}`); return; }
   trStep(`Paste ${C.label} ${top?'on top of':'into'} ${nm} in ${sc.name}`,()=>{ rollAttach();
     if(S.secMute&&S.secMute[p]&&S.secMute[p][si]){ S.secMute[p]={...S.secMute[p]}; delete S.secMute[p][si]; }
     if(p==='drums'){ const cur=top?drumRead(sc.type):[]; ROLLP.d={type:sc.type,notes:clipMerge(cur,C.notes.map(n=>({...n}))),base:''}; drumWrite(); ROLLP.d=null; return; }
@@ -10557,8 +10567,9 @@ function clipPaste(p,si,mode){ const C=CLIP.clip; if(!C||!clipCanTake(p)||C.kind
   ROLLP.key=null; ROLLP.d=null; S.piece=sectionView(S.sel); if(!S.playing) renderRoll();
   toast(p==='drums'?`${top?'Added':'Pasted'} the beat into every ${sc.type} (drums keep one pattern per section type)`:`${top?'Pasted on top of':'Pasted into'} ${nm} in ${sc.name}`); }
 function clipMenu(p,si){ if(!clipKind(p)) return []; const nm=S.song.sections[si].name, C=CLIP.clip, out=clipRead(p,si).length?[[`Copy ${trName(p)} in ${nm}`,()=>clipCopy(p,si),0,'⌘C']]:[];
-  if(C&&clipCanTake(p)&&C.kind===clipKind(p)){ if(clipEmpty(p,si)) out.push([`Paste ${C.label} here`,()=>clipPaste(p,si,'replace'),0,'⌘V']); else out.push(['Paste and replace',()=>clipPaste(p,si,'replace'),0,'⌘V'],['Paste on top',()=>clipPaste(p,si,'top'),0,'⇧⌘V']); }
-  else if(C&&clipKind(p)&&!clipCanTake(p)) out.push([p==='chords'?'Chords are pasted as chords in the chord strip, not here':'This layer plays its parent’s notes, so paste into the parent',()=>{}]);
+  if(C&&p==='chords'&&clipCanTake(p)) out.push([`Paste ${C.label} here`,()=>clipPaste(p,si,'replace'),0,'⌘V']);
+  else if(C&&clipCanTake(p)&&C.kind===clipKind(p)){ if(clipEmpty(p,si)) out.push([`Paste ${C.label} here`,()=>clipPaste(p,si,'replace'),0,'⌘V']); else out.push(['Paste and replace',()=>clipPaste(p,si,'replace'),0,'⌘V'],['Paste on top',()=>clipPaste(p,si,'top'),0,'⇧⌘V']); }
+  else if(C&&clipKind(p)&&!clipCanTake(p)) out.push([p==='chords'?'Only chords paste onto Chords':'This layer plays its parent’s notes, so paste into the parent',()=>{}]);
   else if(C&&C.kind!==clipKind(p)) out.push([C.kind==='drums'?'A drum beat only pastes onto Drums':'Notes don’t paste onto Drums',()=>{}]);
   out.push('-'); return out; }
 function initClipKeys(){ document.addEventListener('keydown',e=>{ if(!(e.metaKey||e.ctrlKey)||e.altKey) return; const k=e.key.toLowerCase(); if(k!=='c'&&k!=='v') return; const q=TLP.pick; if(!q||q.k!=='clip') return; const tg=e.target; if(/INPUT|TEXTAREA|SELECT/.test(tg.tagName)||tg.isContentEditable) return; e.preventDefault(); e.stopImmediatePropagation(); if(k==='c') clipCopy(q.p,q.si); else if(CLIP.clip) clipPaste(q.p,q.si,e.shiftKey?'top':'replace'); },true); }
@@ -11385,7 +11396,7 @@ const PK={drag:null};
 function pkLane(p){ return !!(S.song&&typeof autVolLane==='function'&&autVolLane(p)); }
 function pkGain(p){ if(pkLane(p)){ try{ return tV(VOLDEF,autValAt(p,'vol',autNow()))*autTrim(p); }catch(e){} } return stripVol('song',p); }
 function pkRing(g){ if(g<=.001) return 0; return Math.max(0,Math.min(1,(20*Math.log10(g)+24)/30)); }
-function pkName(p){ try{ return trName(p); }catch(e){ return (PARTS[p]||{name:p}).name; } }
+function pkName(p){ if(p==='fx') return 'Transitions'; try{ return trName(p); }catch(e){ return (PARTS[p]||{name:p}).name; } }
 function pkTitle(p,g){ const lane=pkLane(p), t=autTrim(p); return `${pkName(p)} volume ${F.db(g)}${lane?` · moves with its volume lane · trim ${F.db(t)}`:''} · drag up or down, ⇧ for fine steps, double-click for 0 dB, ⌘-click to type`; }
 function pkSVG(p,g){ let col='#9BA0A8'; try{ col=autColHex(p); }catch(e){} return ledKnob(pkRing(g),col,34,{dot:pkLane(p)?'br':false}); }
 function pkHTML(p){ const g=pkGain(p); return `<span class="tr-kn" data-pkn="${p}" role="slider" tabindex="0" aria-label="${esc(pkName(p))} volume" aria-valuemin="-60" aria-valuemax="3.5" aria-valuenow="${g>0?(20*Math.log10(g)).toFixed(1):-60}" aria-valuetext="${F.db(g)}" title="${esc(pkTitle(p,g))}">${pkSVG(p,g)}<output>${F.db(g).replace(' dB','')}</output></span>`; }
@@ -12691,7 +12702,7 @@ function keysSound(p,m,vel){ if(p==='drums'){ const r=keysDrumOf(m,LIVE.oct); if
 function keysCommit(p,notes,si){ const sec=S.song.sections[si], B=METERS[S.meter].B, len=sec.bars*B, q=LIVE.quant, Q=x=>q>0?Math.round(x/q)*q:+x.toFixed(3);
   if(!notes.length){ toast('Nothing recorded'); return; }
   histCheck(true); H.quietUntil=0; let msg='';
-  if(p==='chords'){ const map={}; notes.forEach(n=>{ const b=Math.max(0,Math.min(sec.bars-1,Math.floor((Q(n.beat)+1e-6)/B))); (map[b]=map[b]||[]).push(n.m); }); const keep=S.sel; S.sel=si; S.piece=sectionView(si); Object.keys(map).forEach(b=>{ map[b]=[...new Set(map[b])].sort((a,c)=>a-c); }); writeChordPads(map,`Played chords into ${sec.name}`); S.sel=keep; msg=`${Object.keys(map).length} bars of chords`; }
+  if(p==='chords'){ const map={}, bar=x=>Math.max(0,Math.min(sec.bars-1,Math.floor((x+1e-6)/B))); /* 11 Nov: notes played together (a rolled or slightly early chord) are one chord, in the bar most of it falls in; a chord starting just before a bar line belongs to that bar */ const G=[]; [...notes].sort((x,y)=>x.beat-y.beat).forEach(n=>{ const g=G[G.length-1]; if(g&&n.beat-g[g.length-1].beat<.75&&n.beat-g[0].beat<1.5) g.push(n); else G.push([n]); }); G.forEach(g=>{ const votes={}; g.forEach(n=>{ votes[bar(n.beat)]=(votes[bar(n.beat)]||0)+1; }); let b=+Object.keys(votes).sort((x,y)=>votes[y]-votes[x]||y-x)[0]; const nb=Math.ceil(g[0].beat/B-1e-6)*B; if(nb-g[0].beat<.5&&nb-g[0].beat>1e-6&&bar(nb)>b) b=bar(nb); (map[b]=map[b]||[]).push(...g.map(n=>n.m)); }); const keep=S.sel; S.sel=si; S.piece=sectionView(si); Object.keys(map).forEach(b=>{ map[b]=[...new Set(map[b])].sort((a,c)=>a-c); }); writeChordPads(map,`Played chords into ${sec.name}`); S.sel=keep; msg=`${Object.keys(map).length} bars of chords`; }
   else if(p==='drums'){ const n=stepsFor(S.meter), t=sec.type, pat=S.beats[t]=S.beats[t]||{}, hitRows=new Set(notes.map(x=>keysDrumOf(x.m,x.oct)).filter(Boolean)); ROWS.forEach(r=>{ if(!pat[r]||hitRows.has(r)) pat[r]=Array(n).fill(0); }); /* only the drums you hit are replaced */ let hits=0; notes.forEach(x=>{ const r=keysDrumOf(x.m,x.oct); if(!r) return; const i=Math.round(mod(Q(x.beat),B)/.25)%n; pat[r][i]=x.v>.85?2:1; hits++; }); if(S.parts.drums) S.parts.drums.on=true; msg=`a beat from ${hits} hits (every ${SEC[t]||t})`; }
   else { const x=xList().find(y=>y.id===p), oc=x&&!x.linkTo?(x.octave||0)*12:0, k=secKey(si), seen=new Set();
     const arr=notes.map(n=>({m:n.m-oc,start:+Math.max(0,Q(n.beat)).toFixed(4),dur:+Math.max(q||.1,Q(n.dur)||q||.1).toFixed(4),vel:+(n.v!=null?n.v:.8).toFixed(2)})).filter(n=>n.start<len-1e-6&&!seen.has(n.start+':'+n.m)&&seen.add(n.start+':'+n.m)).sort((a,b)=>a.start-b.start).map(n=>({...n,dur:+Math.min(n.dur,len-n.start).toFixed(4)}));
@@ -12732,7 +12743,7 @@ function trLaneRow(){ const secs=S.song.sections; if(!secs||secs.length<2) retur
     const tip=`Into ${s.name}: ${ks.length?ks.map(x=>TRANS_T[x][1]).join(' + '):'nothing'}${S.transOwn[i]?' (yours)':''}. Click to change.`;
     return ks.length?`<button type="button" class="trl-clip${S.transOwn[i]?' own':''}" data-trlane="${i}" data-pre="${pre.length?1:0}" data-post="${post.length?1:0}" title="${esc(tip)}"><span class="trl-in">${pre.map(x=>`<i title="${esc(TRANS_T[x][1])}">${TRANS_T[x][0]}</i>`).join('')}</span><span class="trl-out">${post.map(x=>`<i title="${esc(TRANS_T[x][1])}">${TRANS_T[x][0]}</i>`).join('')}</span></button>`
       :`<button type="button" class="trl-add" data-trlane="${i}" title="Add a transition into ${esc(s.name)}" aria-label="Add a transition into ${esc(s.name)}">+</button>`; }).join('');
-  return `<div class="arr-row lane trl-row" data-lane="trans" style="--c:var(--st-fx)"><span class="arr-name tr-h"><button class="tr-n" data-trlanehead title="Transitions: the moves that carry one section into the next"><b>Transitions</b><small>${on?'between sections':'off'}</small></button><span class="tr-ms"><button data-trlaneon aria-pressed="${!on}" title="${on?'Turn every transition off':'Turn transitions back on'}">M</button></span></span><div class="arr-cells trl-cells">${secs.map((_,i)=>tlBlank(i,'none')).join('')}<div class="trl-ovl">${joins}</div></div></div>`; }
+  return `<div class="arr-row lane trl-row" data-lane="trans" style="--c:var(--st-fx)"><span class="arr-name tr-h"><button class="tr-n" data-trlanehead title="Transitions: the moves that carry one section into the next"><b>Transitions</b><small>${on?'between sections':'off'}</small></button><span class="tr-ms"><button data-trlaneon aria-pressed="${!on}" aria-label="Mute transitions" title="${on?'Mute every transition':'Turn transitions back on'}">M</button><button data-trms="s" data-p="fx" aria-pressed="${S.solo==='fx'}" aria-label="Solo transitions" title="Hear only the transitions">S</button></span>${pkHTML('fx')}</span><div class="arr-cells trl-cells">${secs.map((_,i)=>tlBlank(i,'none')).join('')}<div class="trl-ovl">${joins}</div></div></div>`; }
 /* place each block across its join, measured from the section cells of the same row so it lines up whatever the zoom */
 function trLaneLayout(){ const row=document.querySelector('#arrRows .trl-row'); if(!row) return; const cells=[...row.querySelectorAll('.trl-cells > :not(.trl-ovl)')], ovl=row.querySelector('.trl-ovl'), secs=S.song.sections; if(!ovl||cells.length!==secs.length) return; const o=ovl.getBoundingClientRect();
   row.querySelectorAll('[data-trlane]').forEach(b=>{ const i=+b.dataset.trlane, c=cells[i].getBoundingClientRect(), p=cells[i-1].getBoundingClientRect(), barB=c.width/Math.max(1,secs[i].bars), barA=p.width/Math.max(1,secs[i-1].bars), x=c.left-o.left;

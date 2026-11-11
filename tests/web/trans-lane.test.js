@@ -29,4 +29,13 @@ const {chromium}=require('playwright'), path=require('path'); const url='file://
  await p.evaluate(()=>document.querySelector('#arrRows .trl-row [data-trlaneon]').click()); await p.waitForTimeout(150);
  const off=await p.evaluate(()=>({on:S.transOn,clips:document.querySelectorAll('#arrRows .trl-clip').length,label:H.past[H.past.length-1].label}));
  ok(off.on===false&&off.clips===0&&/Transitions off/.test(off.label),'M turns every transition off, one undo step '+JSON.stringify(off));
+ // the header (11 Nov, Jamie: the M overlapped the name; wants solo and volume): name, M, S and a knob on one line, nothing overlapping
+ await p.evaluate(()=>{ S.transOn=true; arrRender(); }); await p.waitForTimeout(200);
+ const hd=await p.evaluate(()=>{ const r=document.querySelector('#arrRows .trl-row'); const els=[...r.querySelectorAll('.tr-h>.tr-n,.tr-h>.tr-ms button,.tr-h>.tr-kn')].map(e=>e.getBoundingClientRect()); let o=0; for(let i=0;i<els.length;i++)for(let j=i+1;j<els.length;j++){ const a=els[i],c=els[j]; if(a.right>c.left+.5&&c.right>a.left+.5&&a.bottom>c.top+.5&&c.bottom>a.top+.5) o++; } return {o,n:els.length}; });
+ ok(hd.n===4&&hd.o===0,'the Transitions header has M, S and volume, none overlapping '+JSON.stringify(hd));
+ await p.click('#arrRows .trl-row [data-trms="s"]'); await p.waitForTimeout(150); const so=await p.evaluate(()=>({solo:S.solo,parts:Object.values(S.parts).some(x=>x.on),tr:nativeTrans().length>0})); await p.click('#arrRows .trl-row [data-trms="s"]'); await p.waitForTimeout(150);
+ ok(so.solo==='fx'&&!so.parts&&so.tr,'S plays only the transitions '+JSON.stringify(so));
+ const kb=await (await p.$('#arrRows .trl-row .tr-kn')).boundingBox(); await p.mouse.move(kb.x+kb.width/2,kb.y+kb.height/2); await p.mouse.down(); await p.mouse.move(kb.x+kb.width/2,kb.y+kb.height/2+30,{steps:4}); await p.mouse.up(); await p.waitForTimeout(250);
+ const kv=await p.evaluate(()=>({v:stripVol('song','fx'),nat:nativeSoundInfo().transLevel,label:H.past[H.past.length-1].label}));
+ ok(kv.v<.9&&Math.abs(kv.nat-kv.v)<1e-6&&/Transitions volume/.test(kv.label),'the knob turns the transitions down, in the engine too, as one undo step '+JSON.stringify(kv));
  console.log(fails.length?`${fails.length} failed`:'all passed'); console.log(JSON.stringify(errs)); await b.close(); process.exit(fails.length?1:0); })();

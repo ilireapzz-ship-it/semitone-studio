@@ -43,8 +43,15 @@ let fails=0; const ok=(c,m,x)=>{ if(!c){ fails++; console.log('FAIL',m,x===undef
  m=await p.evaluate(s=>menu(s),clip('lead',2)); ok(m.some(t=>/drum beat only/.test(t))&&!m.includes('Paste and replace'),'a beat does not paste onto melody',m);
  const dv=await p.evaluate(()=>JSON.stringify(S.beats.verse));
  await p.evaluate(s=>{ menu(s); pick('Paste and replace'); },clip('drums',2)); ok(await p.evaluate(v=>JSON.stringify(S.beats.chorus)===v,dv),'drum beat Paste and replace');
- // chords copy as notes but nothing pastes onto chords
- m=await p.evaluate(s=>menu(s),clip('chords',1)); ok(/^Copy /.test(m[0])&&!m.includes('Paste and replace'),'chords: copy only',m);
+ // chords paste onto chords, bar for bar (11 Nov: in the app it said 'Chords are pasted as chords in the chord strip, not here'); nothing else pastes onto them
+ m=await p.evaluate(s=>menu(s),clip('chords',1)); ok(/^Copy /.test(m[0])&&m.includes('Only chords paste onto Chords'),'chords: a beat does not paste onto chords',m);
+ await p.evaluate(()=>{ pick('Copy Chords in Verse 1'); });
+ const syms=si=>p.evaluate(i=>sectionView(i).chords.map(c=>c&&c.sym).join(),si); const v1=await syms(1);
+ m=await p.evaluate(s=>menu(s),clip('chords',2)); ok(m.includes('Paste Chords from Verse 1 here'),'chords: Paste offered on another chords clip',m);
+ await p.evaluate(()=>pick('Paste Chords from Verse 1 here')); await p.waitForTimeout(100);
+ const c2=await syms(2), lab=await p.evaluate(()=>H.past[H.past.length-1].label);
+ ok(c2.split(',').slice(0,4).join()===v1.split(',').slice(0,4).join()&&/Pasted Chords from Verse 1/.test(lab),'chords: the Chorus now has the Verse chords, one undo step',{v1,c2,lab});
+ await p.evaluate(()=>{ histUndo(); }); ok(await syms(2)!==c2||v1===c2,'chords: undo puts the Chorus back');
  // shortcuts: click a clip, ⌘C, click another, ⌘V
  await p.evaluate(()=>ctxClose()); await p.click(clip('lead',1)); await p.keyboard.press('Meta+c'); await p.click(clip('lead',5)); await p.keyboard.press('Meta+v'); await p.waitForTimeout(80);
  ok(await p.evaluate(()=>sig('lead',5)===JSON.stringify(JSON.parse(sig('lead',1)).filter(n=>n[1]<4*METERS[S.meter].B).sort())),'⌘C and ⌘V on clips',await p.evaluate(()=>[sig('lead',5),CLIP.clip&&CLIP.clip.label]));

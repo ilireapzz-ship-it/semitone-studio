@@ -19,9 +19,13 @@ const {chromium}=require('playwright'), path=require('path'); const url='file://
  await p.evaluate(()=>{ trPick(null); setLayer('chords'); renderRoll(); }); await p.click('#recOpen'); await p.waitForTimeout(250);
  const ci=await p.evaluate(()=>LIVE.recInto); for(const k of ['a','d','g']) await p.keyboard.down(k); await p.waitForTimeout(500); for(const k of ['a','d','g']) await p.keyboard.up(k); await p.keyboard.press(' '); await p.waitForTimeout(400);
  const ch=await p.evaluate(()=>matOf(S.song.sections[1]).chords[0]); ok(ci==='chords'&&ch&&(ch.pad||[]).length===3,'with Chords showing, Record plays chords into the bar '+JSON.stringify({ci,sym:ch&&ch.sym}));
+ // chords played one note after another, a little late or early around the bar line, stay one chord per bar (in the app C, Am, F, G came out C6, F, G, B°)
+ const rolled=await p.evaluate(()=>{ const N=(m,beat)=>({m,beat,dur:.3,v:.8}); keysCommit('chords',[N(60,.1),N(64,.5),N(67,.9), N(69,3.85),N(72,4.2),N(76,4.55), N(65,8.3),N(69,8.7),N(72,9.1), N(67,11.9),N(71,12.25),N(74,12.6)],1); return matOf(S.song.sections[1]).chords.slice(0,4).map(c=>c.sym); });
+ ok(rolled.join()==='C,Am,F,G','rolled or slightly early chords land in the right bars '+JSON.stringify(rolled));
  // a note pressed a moment before the count-in ends lands on the first beat (in the app the first note of a take was lost)
  await p.evaluate(()=>{ setLayer('melody'); trPick(null); LIVE.countIn=true; renderRoll(); }); await p.click('#recOpen'); const cin=await p.evaluate(()=>({count:LIVE.recCount,ms:Math.round(4*60/S.bpm*1000)})); await p.waitForTimeout(cin.ms-250); await p.keyboard.down('k'); await p.waitForTimeout(500); await p.keyboard.up('k'); await p.waitForTimeout(100); await p.keyboard.press(' '); await p.waitForTimeout(400); await p.evaluate(()=>{ LIVE.countIn=false; });
  const early=await p.evaluate(()=>matOf(S.song.sections[1]).melody.map(n=>[n.m,n.start]));
+ const blk=await p.evaluate(()=>document.querySelectorAll('#arrRows [data-arrpart="lead"][data-arrsec="1"] rect').length); ok(blk>0,'the recorded melody shows in its timeline block straight away (it stayed empty in the app) '+blk);
  ok(cin.count&&early.some(([m,st])=>m===72&&st===0),'a note played just before the count-in ends is kept, on beat 1 '+JSON.stringify({cin,early}));
  // with the drum step grid open, Record records drums there (in the app it jumped to the Record tab)
  await p.evaluate(()=>{ S.beats[S.song.sections[1].type]={}; selectSection(1); SHELL.part='drums'; shellDock('beat'); }); await p.waitForTimeout(200); await p.click('#recOpen'); await p.waitForTimeout(250);
