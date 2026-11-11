@@ -121,6 +121,10 @@ All from reading the code unless marked. None of these could be compiled or hear
 | Presets are roughly equally loud | **Match the level**: after you swap a sound, Semitone measures the old and the new one on your own notes and offers to keep the loudness. The fader does not move; the strip shows "level +12 dB"; the engine gets the same level |
 | Scale mode can snap notes to the key | A **Snap** switch beside Scale lock. Off by default, so drawing works as before |
 | Section menu | **Duplicate** (a copy right after, with its own name) and **Rename** (typed in place) |
+| Passes use your own plug-ins and presets (asked 12 Nov) | In the desktop app a pass offers **Use your (plug-in) on (part)** for an instrument the producer is known for, or the style is built on, when one of your plug-ins recreates it. Off until you tick it; never takes over a part that already has a plug-in. Once the plug-in lists its sounds, one that fits the part is chosen: your saved sounds for the style first; among several, the same one for a take and another on Try another take. Tested against a faked app only, not yet with your real plug-ins |
+| Better automation from passes (asked 12 Nov) | Volume rides go phrase by phrase and glide; a move drawn in several places grows through the song; a build that opens a sound up lands in the next section instead of snapping shut |
+| Click an automation on the timeline (asked 12 Nov) | A lane under a track opens that lane in Automation |
+| EQ while music plays (asked 12 Nov) | The analyser has its own 60 dB scale, a smooth line that rises fast and falls back slowly, a level "ideal" strip, and each band's own shape filled under the curve |
 
 Still open from the lists above: chords that stretch and split, the export dialog, a true empty start, the size setting, audio settings with one engine, and the engine guards (those need a build).
 
