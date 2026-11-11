@@ -9,6 +9,7 @@ const {chromium}=require('playwright'), path=require('path'); const url='file://
  // click a block in the Outro to edit it, then Space
  const last=await p.evaluate(()=>S.song.sections.length-1); await p.click(`#arrRows [data-arrpart="lead"][data-arrsec="${last}"]`); await p.waitForTimeout(200);
  await space(); let s=await startSi(); ok(s&&s.si===0&&s.mode==='song','after clicking the Outro to edit it, Space plays the song from the start '+JSON.stringify(s));
+ const view=await p.evaluate(()=>({sel:S.sel,roll:(document.querySelector('.dock-pane[data-pane="roll"] .roll-sec, #rollSecName')||{}).textContent||null,pieceIs0:JSON.stringify(S.piece)===JSON.stringify(sectionView(0))})); ok(view.sel===0&&view.pieceIs0,'the view follows the playhead from the first bar (the Outro stayed on screen) '+JSON.stringify(view));
  await space(); const after=await p.evaluate(()=>({playing:S.playing,pos:songPos()})); ok(!after.playing&&after.pos.si===0&&after.pos.beat===0,'Stop goes back to where play started '+JSON.stringify(after));
  // ⇧Space plays the selected section
  await p.click(`#arrRows [data-arrpart="lead"][data-arrsec="2"]`); await p.waitForTimeout(150); await space(true); s=await startSi(); ok(s&&s.mode==='section'&&s.si===2,'Shift+Space plays just the selected section '+JSON.stringify(s)); await space();

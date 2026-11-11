@@ -4115,7 +4115,7 @@ Object.assign(S,{playFrom:0,loopOn:false,ctxOn:true});
 function fromLabel(){ if(!S.piece) return; const B=METERS[S.meter].B, pf=S.playFrom||0, bar=Math.floor(pf/B+1e-9), beat=pf-bar*B;
   $('#fromInfo').textContent=pf>0?`Plays from bar ${S.piece.sec.startBar+bar+1}, beat ${+(beat+1).toFixed(2)}`:'Plays from the start of the section'; $('#fromReset').hidden=!(pf>0); if(typeof recRefresh==='function') recRefresh(); }
 function songPos(){ const a=S.songAt, n=S.song?S.song.sections.length:0; if(!a||a.si==null||a.si>=n) return {si:0,beat:0}; const L=S.song.sections[a.si].bars*METERS[S.meter].B; return {si:a.si,beat:Math.max(0,Math.min(L-.25,a.beat||0))}; }
-function songPlay(){ if(S.playing){ stopPlay(); return; } const a=songPos(); playAt('song',a); }
+function songPlay(){ if(S.playing){ stopPlay(); return; } const a=songPos(); if(a.si!==S.sel&&typeof selectSection==='function') selectSection(a.si); /* the view follows the playhead from the first bar */ playAt('song',a); }
 function setPlayFrom(beat){ S.cue=null; const B=METERS[S.meter].B, TB=S.piece.bars*B, st=S.snap||.25; S.playFrom=Math.max(0,Math.min(TB-st,Math.floor(beat/st+1e-9)*st)); S.songAt={si:S.sel,beat:S.playFrom}; fromLabel();
   if(S.playing&&S.playMode==='section'){ stopPlay(); play('section'); } else renderRoll(); }
 /* a click on an empty spot in the roll puts the play marker there (clicking a note leaves it). While playing, the Select tool jumps the
