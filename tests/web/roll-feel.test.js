@@ -28,7 +28,7 @@ let fails=0; const ok=(c,m,x)=>{ if(!c){ fails++; console.log('FAIL',m,x===undef
  await p.evaluate(()=>{ shellDock('bass'); }); await p.waitForTimeout(200); n=await rect(0); await heard(); await p.mouse.click(n.x,n.y); await p.waitForTimeout(80); h=await heard(); ok(h.length===1&&h[0][0]==='bass','bass notes play on bass',h);
  await p.evaluate(()=>setLayer('melody')); await p.waitForTimeout(100);
  // plug-ins open, and play previews through the plug-in
- const em=await p.evaluate(()=>{ window.__e=[]; hostsHere=()=>true; nEmit=(n,d)=>__e.push([n,d]); S.parts.lead.sound='h:Test'; arrRender(); document.querySelector('[data-partpop="lead"]').click(); return __e.filter(x=>x[0]==='st_host_open').length; });
+ const em=await p.evaluate(()=>{ window.__e=[]; hostsHere=()=>true; nEmit=(n,d)=>__e.push([n,d]); S.parts.lead.sound='h:Test'; arrRender(); document.querySelector('[data-partpop="lead"] small').click(); return __e.filter(x=>x[0]==='st_host_open').length; });
  ok(em===1&&await p.evaluate(()=>$('#recipePop').hidden),'clicking an instrument with a plug-in opens it');
  const nt=await p.evaluate(()=>{ __e.length=0; delete window.partHear; return 1; });
  ok(await p.evaluate(()=>{ __e.length=0; S.parts.bass.sound=''; soundSet('bass','h:Other'); const a=__e.filter(x=>x[0]==='st_host_open').length; HOSTS.showCh===hostCh('bass'); return a===0&&HOSTS.showCh===hostCh('bass'); }),'picking a plug-in waits for it to load');

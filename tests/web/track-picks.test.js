@@ -8,7 +8,7 @@ const {chromium}=require('playwright'); const url='file://'+require('path').reso
  const pk=await p.evaluate(()=>({p:TSEL.p,part:SHELL.part,rows:[...document.querySelectorAll('.arr-row.tr-picked')].map(r=>r.dataset.track),pop:!$('#recipePop').hidden}));
  ok(pk.p==='bass'&&pk.part==='bass'&&pk.rows.join()==='bass'&&!pk.pop,'clicking the empty part of the Bass name box picks the whole Bass track, no pop-up '+JSON.stringify(pk));
  const nm=await p.evaluate(()=>{ const r=document.querySelector('.arr-row.track[data-track="bass"] .tr-n b').getBoundingClientRect(); return {x:r.left+5,y:r.top+r.height/2}; }); await p.mouse.click(nm.x,nm.y); await p.waitForTimeout(150);
- ok(await p.evaluate(()=>!$('#recipePop').hidden),'clicking the name itself still opens the sound picker'); await p.evaluate(()=>{ $('#recipePop').hidden=true; });
+ ok(await p.evaluate(()=>$('#recipePop').hidden&&TSEL.p==='bass'),'clicking the name selects the part, no picker (11 Nov, Jamie: "Part name selects it")'); { const sm=await p.evaluate(()=>{ const r=document.querySelector('.arr-row.track[data-track="bass"] .tr-n small').getBoundingClientRect(); return {x:r.left+5,y:r.top+r.height/2,w:r.width}; }); if(sm.w>0){ await p.mouse.click(sm.x,sm.y); await p.waitForTimeout(150); ok(await p.evaluate(()=>!$('#recipePop').hidden),'the sound under the name opens the sound picker'); } } await p.evaluate(()=>{ $('#recipePop').hidden=true; });
  await p.mouse.click(pt.x,pt.y,{button:'right'}); await p.waitForTimeout(150);
  const it=await p.evaluate(()=>[...document.querySelectorAll('#ctxMenu [data-ci]')].map(x=>x.textContent));
  ok(/Fill in Bass for /.test(it[0])&&/whole song/.test(it[1]),'right-clicking the picked track offers to write it '+JSON.stringify(it.slice(0,3)));
