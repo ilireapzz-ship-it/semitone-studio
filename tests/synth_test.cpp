@@ -377,6 +377,13 @@ int main()
             if (v <= 0 || v > 2) { printf ("FAIL fx %s: %.4f\n", t, v); return 1; }
         }
         if (late < 0 || late > .5) { printf ("FAIL fx runaway %.4f\n", late); return 1; }
+        // an echo's repeats always die away, however high the feedback (12 Nov: above 80% the Digital echo grew without end)
+        for (const char* kind : { "Digital", "Ping-pong", "Tape", "Analog" })
+        {
+            FxDesc dg = ec; dg.style = kind; dg.p["fb"] = .92f; dg.p["sec"] = .25f; dg.p["tone"] = 3500; dg.p["mix"] = 1;
+            const double early = run ({ dg }, {}, 30, 1, 2), later = run ({ dg }, {}, 30, 29, 30);
+            if (early <= 0 || later < 0 || later > early * .5) { printf ("FAIL echo %s does not die away: %.5f then %.5f\n", kind, early, later); return 1; }
+        }
         printf ("ok: part effects shape the sound, follow their lanes and stay stable\n");
     }
 

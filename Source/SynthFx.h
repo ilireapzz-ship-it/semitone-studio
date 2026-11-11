@@ -278,17 +278,26 @@ private:
     double w;
 };
 
+// The page's echoFb(): the Feedback knob as the loop hears it. The loop has gain of its own (the tone filters peak at 1.25 times,
+// the tape curve passes quiet sound at 1.58 times), so the knob's value is kept while the loop stays safely under 1 and then bends
+// towards 0.98: the repeats always die away. Before, the Digital echo grew without end above 80% and the Tape tail never ended above 55%.
+inline float echoFeedback (float fb, bool clean)
+{
+    const float k = clean ? 1.26f : 2.18f, g = std::max (0.0f, fb) * k;
+    return (g <= .9f ? g : .9f + .08f * (1 - std::exp (-(g - .9f) / .5f))) / k;
+}
+
 class EchoFx : public Fx
 {
 public:
     EchoFx (const FxDesc& d, double rate) : sr (rate), style (d.style.empty() ? "Tape" : d.style)
     {
         sec = (float) (std::min (3.9f, d.get ("sec", .375f)) * sr); fb = d.get ("fb", .4f); tone = d.get ("tone", 3500); wob = d.get ("wob", .3f); send = d.get ("send", 1); mix = d.get ("mix", .3f);
-        pong = style == "Ping-pong"; a.prepare ((int) (sr * 4.1)); if (pong) b.prepare ((int) (sr * 4.1));
+        pong = style == "Ping-pong"; loop = echoFeedback (fb, pong || style == "Digital"); a.prepare ((int) (sr * 4.1)); if (pong) b.prepare ((int) (sr * 4.1));
         fA.lowpass (tone, 1, sr); fB.lowpass (tone, 1, sr); hpf.highpass (style == "Digital" ? 20 : 160, 1, sr);
     }
     int param (const std::string& k) const override { return k == "fb" ? 0 : k == "tone" ? 1 : k == "wob" ? 2 : k == "send" ? 3 : k == "mix" ? 4 : -1; }
-    void set (int i, float v) override { if (i == 0) fb = v; else if (i == 1) { tone = v; fA.lowpass (v, 1, sr); fB.lowpass (v, 1, sr); } else if (i == 2) wob = v; else if (i == 3) send = v; else if (i == 4) mix = v; }
+    void set (int i, float v) override { if (i == 0) { fb = v; loop = echoFeedback (v, pong || style == "Digital"); } else if (i == 1) { tone = v; fA.lowpass (v, 1, sr); fB.lowpass (v, 1, sr); } else if (i == 2) wob = v; else if (i == 3) send = v; else if (i == 4) mix = v; }
     void run (float& l, float& r) override
     {
         const float in = .5f * (l + r) * send;
@@ -296,7 +305,7 @@ public:
         if (pong)
         {
             const float x = fA.run (a.read (sec), 0), y = fB.run (b.read (sec), 1);
-            a.write (in + y * fb); b.write (x * fb);
+            a.write (in + y * loop); b.write (x * loop);
             wl = x; wr = y;
         }
         else
@@ -304,13 +313,13 @@ public:
             float d = sec;
             if (style == "Tape") { t1 += .6 / sr; t2 += 6.3 / sr; d += (float) ((wob * .004 * std::sin (two() * t1) + wob * .0003 * std::sin (two() * t2)) * sr); }
             const float w = hpf.run (fA.run (a.read (d), 0), 0);
-            a.write (in + (style == "Digital" ? w : shape ("Tape", w)) * fb);
+            a.write (in + (style == "Digital" ? w : shape ("Tape", w)) * loop);
             wl = wr = w;
         }
         l = l * (1 - mix) + wl * mix; r = r * (1 - mix) + wr * mix;
     }
 private:
-    double sr, t1 = 0, t2 = 0; std::string style; bool pong; float sec, fb, tone, wob, send; DelayLine a, b; Biquad fA, fB, hpf;
+    double sr, t1 = 0, t2 = 0; std::string style; bool pong; float sec, fb, tone, wob, send, loop = 0; DelayLine a, b; Biquad fA, fB, hpf;
 };
 
 class PlateFx : public Fx

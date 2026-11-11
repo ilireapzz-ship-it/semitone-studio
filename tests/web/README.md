@@ -96,3 +96,4 @@ node tests/web/regression.test.js
 - `roll-steady.test.js`: the piano roll keeps its rows while you write (notes drawn down a line land on the pitch under the pointer), Undo keeps them, Fit the notes refits, a note outside the view is still shown, each section has its own view; a deleted track leaves no ghost notes.
 - `pass-words.test.js`: every part move a producer brings shows in plain words on the pass card (drop: and thin: showed their code).
 - `level-hint.test.js`: a strip's level hint is its level while it sounds (a dying note or a gap no longer reads as "+22 dB"), and big differences say Quiet / Loud, not "a little".
+- `echo-tail.test.js`: an echo's repeats always die away, at every style and feedback (they grew without end above 80% on Digital and Ping-pong, and never ended above 55% on Tape and Analog); settings that already worked are untouched.

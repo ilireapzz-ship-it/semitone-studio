@@ -6611,6 +6611,9 @@ const DIVB={'1/32':.125,'1/16':.25,'1/8T':1/3,'1/8':.5,'1/8.':.75,'1/4T':2/3,'1/
 const DIVS=Object.keys(DIVB), divSec=(d,bpm)=>(DIVB[d]||1)*60/bpm;
 const F={pct:v=>Math.round(v*100)+'%',hz:v=>v>=1000?(v/1000).toFixed(v>=10000?0:1)+' kHz':Math.round(v)+' Hz',db:v=>(v>0?'+':'')+(+v).toFixed(1)+' dB',ms:v=>Math.round(v)+' ms',s:v=>(+v).toFixed(1)+' s',x:v=>(+v).toFixed(2)+' Hz'};
 const PMIX={k:'mix',n:'Mix',min:0,max:1,d:.3,a:1,f:'pct'};
+/* 12 Nov: an echo's repeats must always die away. The loop has gain of its own on top of the Feedback knob (the tone filters peak at 1.25 times, the tape curve passes quiet sound at 1.58 times), so above about 80% the Digital and Ping-pong echoes grew louder for ever (+150 dB in 40 seconds, measured) and above about 55% the Tape and Analog tails never ended. The knob's value is unchanged while the loop is safely under 1 (every setting that worked before sounds the same) and then bends towards 0.98, never reaching it. Ported to EchoFx in Source/SynthFx.h (echoFeedback). */
+const ECHO_K={Tape:2.18,Analog:2.18,Digital:1.26,'Ping-pong':1.26};
+function echoFb(fb,style){ const k=ECHO_K[style]||1.26, g=Math.max(0,+fb||0)*k; return (g<=.9?g:.9+.08*(1-Math.exp(-(g-.9)/.5)))/k; } /* the bend is slow, so the knob keeps lengthening the tail all the way up */
 const FX={
  echo:{name:'Echo',like:'EchoBoy',cat:'Delay & echo',info:'Tempo-synced echoes. Tape wobbles and darkens each repeat, Analog darkens, Digital stays clean, Ping-pong bounces left and right.',
   math:'Send sets how much of the sound goes into the echo; automate it to “throw” single words into the delay. Each repeat is the one before times the feedback f, so repeat n has level fⁿ. At 50% the 4th repeat is 1/16 as loud (−24 dB). Synced time = 60 ÷ BPM × beats: a dotted eighth (0.75 beats) at 120 BPM is 0.375 s.',
@@ -6618,11 +6621,11 @@ const FX={
   build(p,env){ const inp=G(), out=G(), snd=G(p.send==null?1:p.send), sec=Math.min(3.9,divSec(p.time,env.bpm)); let wet, fbP, toneP, wobP=null; inp.connect(snd);
    if(p.style==='Ping-pong'){ const dL=ac.createDelay(4), dR=ac.createDelay(4), fL=BQ('lowpass',p.tone), fR=BQ('lowpass',p.tone), gL=G(0), gR=G(0), mg=ac.createChannelMerger(2);
      dL.delayTime.value=sec; dR.delayTime.value=sec; snd.connect(dL); dL.connect(fL); fL.connect(mg,0,0); fL.connect(gR); gR.connect(dR); dR.connect(fR); fR.connect(mg,0,1); fR.connect(gL); gL.connect(dL);
-     fbP=link(p.fb,[gL.gain,gR.gain],env); toneP=link(p.tone,[fL.frequency,fR.frequency],env); wet=mg; }
-   else { const d=ac.createDelay(4), f=BQ('lowpass',p.tone), hp=BQ('highpass',p.style==='Digital'?20:160), fb=G(p.fb); d.delayTime.value=sec;
+     fbP=link(echoFb(p.fb,p.style),[gL.gain,gR.gain],env); toneP=link(p.tone,[fL.frequency,fR.frequency],env); wet=mg; }
+   else { const d=ac.createDelay(4), f=BQ('lowpass',p.tone), hp=BQ('highpass',p.style==='Digital'?20:160), fb=G(echoFb(p.fb,p.style)); d.delayTime.value=sec;
      snd.connect(d); d.connect(f); f.connect(hp); let loop=hp; if(p.style!=='Digital'){ const sh=ac.createWaveShaper(); sh.curve=curve('Tape'); hp.connect(sh); loop=sh; } loop.connect(fb); fb.connect(d); wet=hp; fbP=fb.gain; toneP=f.frequency;
      if(p.style==='Tape'){ const o=lfo(env,.6), og=G(p.wob*.004), o2=lfo(env,6.3), og2=G(p.wob*.0003); o.connect(og); og.connect(d.delayTime); o2.connect(og2); og2.connect(d.delayTime); wobP=og.gain; } }
-   return {input:inp,output:out,params:{send:[snd.gain,x=>x],fb:[fbP,x=>x],tone:[toneP,x=>x],wob:wobP&&[wobP,x=>x*.004],mix:[wetMix(inp,out,wet,p.mix,env),x=>x]}}; }},
+   return {input:inp,output:out,params:{send:[snd.gain,x=>x],fb:[fbP,x=>echoFb(x,p.style)],tone:[toneP,x=>x],wob:wobP&&[wobP,x=>x*.004],mix:[wetMix(inp,out,wet,p.mix,env),x=>x]}}; }},
  crystal:{name:'Crystal echo',like:'Crystallizer',cat:'Delay & echo',info:'Every echo is pitch-shifted before it repeats, so the tail climbs (or falls) into a glassy shimmer.',
   math:'The frequency ratio for s semitones is 2^(s/12). Because each repeat goes through the shifter again, repeat n is shifted n times: with +12 the echoes go up 1, 2, 3 octaves (×2, ×4, ×8). +7 is ×1.498, almost the pure fifth 3:2.',
   ps:[{k:'pitch',n:'Shift',opts:['-12','-7','-5','+5','+7','+12'],d:'+12'},{k:'time',n:'Time',opts:DIVS,d:'1/4'},{k:'fb',n:'Feedback',min:0,max:.85,d:.45,a:1,f:'pct'},{...PMIX,d:.35}],
