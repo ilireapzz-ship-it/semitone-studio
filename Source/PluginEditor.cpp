@@ -373,6 +373,14 @@ void SemitoneEditor::hideTitleOptions()
         for (auto* c : top->getChildren())
             if (auto* b = dynamic_cast<juce::TextButton*> (c))
                 if (b->getButtonText() == "Options") b->setVisible (false);
+    // Jamie, 11 Nov: the app opened in a small window with only minimise and close, and Windows+Up or a double-click on the title
+    // bar didn't maximise it. Give it the maximise button and open it maximised (once, on the first show).
+    if (auto* w = dynamic_cast<juce::DocumentWindow*> (getTopLevelComponent()))
+    {
+        w->setTitleBarButtonsRequired (juce::DocumentWindow::allButtons, false);
+        w->setResizable (true, false);
+        if (! openedBig) { openedBig = true; if (! w->isFullScreen()) w->setFullScreen (true); }
+    }
 }
 
 void SemitoneEditor::toggleFullScreen()

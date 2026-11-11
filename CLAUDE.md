@@ -64,6 +64,8 @@ In the HTML, the bridge is the `NATIVE` / `nativeInit()` / `NSND` code (only act
 - Your own bars: `SC_BARS` (tools, transport, head, mix) each get a `.sc-slot` of shortcuts from `SCB` (localStorage `ss_bars`, `st_pref` key `bars`). A shortcut is `rt:<rail tool>` or `el:<selector>` that clicks the real control (`scRun`); `initBars` wraps `railTarget`/`railDrop` so rail and Tool Pool drags land on bars. Customise this bar saves `SCB.order[bar]` by block key (`data-ck`). Give a new ⋯ control an id so it can become a shortcut.
 - Smooth playback in the app: the page resends `st_timeline` for any change, so the engine must not reset on a resend. `Sequencer::sameNotes` keeps held notes (a real edit re-sounds them by chase); `PluginProcessor` reuses the running `FxBank` and sends `fxTune` so effects `retune` in place (`fxRetunable` decides); `Polish::set` ignores identical settings. Don't put playhead-dependent values in `nativeSoundInfo()` (`pcNative` builds with `PCX.si=null`).
 - Mixer chain: `st.compAt` = insert slots before the compressor (page `getBus` splits `fxChain` there; engine `FxBank::compAt`, desc `at`). `chainApply` reorders and renames lanes `fx<i>.*`. A strip compressor is off until its amount is above 0 (`pcOf`). New EQs get `EQ_FLAT` bands (`who:'Start'`, ignored by suggestions until moved).
+- Playing parts in: Record › Keys (`REC.mode==='keys'`) records into `keysInto()` (melody keeps `commitMelodyRec`; chords `writeChordPads`; drums the section type's `S.beats`; bass `S.bassOwn`, added parts `x.notes`) via `keysCommit`. `liveOn` plays the target's sound (`keysSound`); the key handlers run in capture and stop the tool shortcuts while `keysOn()`. A take replaces only the stretch played. `keyAdvice`/`keyRelabel` offer the key the notes are in.
+- Transitions in the timeline: `trLaneRow`/`trLaneLayout` draw a block per join (`transOf(i)`, build-up moves `TR_PRE`, landing `TR_POST`). Lengths are `trLen(i)` = `S.transLen[i]` or `trLenAuto` (bars before/after; size from `transSizeOf`); `scheduleTransitions`, `nativeTrans` and `drumPerf`'s Kick out all read them. Section indices key `S.trans`, `S.transOwn` and `S.transLen`.
 - Undo is one song history (`H`, `histCheck`): it compares `projectData()` + `orchData()` after each settled change, so anything those save is undoable automatically. `pushUndo` / `oPushUndo` only mark a fine note edit as its own step. Give a new setting a label in `histLabel`.
 
 ## The native engine (Source/Synth.h)
@@ -71,6 +73,10 @@ In the HTML, the bridge is the `NATIVE` / `nativeInit()` / `NSND` code (only act
 - Web Audio details it must match: lowpass/highpass Q is in dB; saw starts at 0 and rises; saw, square and pulse are scaled by 1/1.179; compressors add make-up gain; a mono bus is 3 dB down in each ear through a centred panner.
 - Check sound changes against the web version, not by ear alone: render the same notes in both and compare level, brightness and level over time, with the mixer effects off (the engine has none yet).
 - The room is a feedback network: a loop gain above 1 at any frequency makes it howl by itself and the limiter hides it. `tests/synth_test.cpp` guards this.
+
+## Installing on Jamie's Windows PC
+- No compiler on that PC: push, let GitHub Actions build, download the "Semitone-Studio-Windows" artifact (signed in, through the browser pane) into a new folder.
+- Copy `Semitone Studio.exe` over `%LOCALAPPDATA%\Programs\Semitone Studio\` (the desktop and Start menu shortcuts point there, so he always opens the newest) and the `.vst3` folder into `C:\Program Files\Common Files\VST3\` (admin prompt). He must reopen the app and restart FL Studio to get it.
 
 ## Things learned the hard way (FL Studio on Mac)
 - Drag-and-drop MIDI: FL accepts it on the **Channel Rack** (Import MIDI dialog), not the Playlist.

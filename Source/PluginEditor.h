@@ -60,6 +60,7 @@ private:
     int takeInput = 0;   // which input the next take records: st::TakeRecorder::Input
     bool lastPlaying = false;
     int ticks = 0;
+    bool openedBig = false;   // the standalone window opens maximised once
     float meterWas = 0;
     bool shown = false;    // the page has drawn: until then the window shows a loading screen
     juce::Rectangle<int> sizeBeforeFull;
