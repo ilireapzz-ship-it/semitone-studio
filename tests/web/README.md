@@ -105,3 +105,4 @@ node tests/web/regression.test.js
 - `scale-snap.test.js`: a Snap switch beside Scale lock: off by default (any note, as before); on, notes you draw or drag land on the nearest note of the key; saved with the song; Scale lock off turns it off.
 - `section-menu.test.js`: a section's right-click menu has Duplicate (a copy right after it with its own name, same notes) and Rename (typed in place; Space does not start the song; Escape cancels), each one undo step.
 - `lane-open.test.js`: an automation lane on the timeline opens that lane in Automation on a click or Enter, without moving the play marker or the selection.
+- `eq-live.test.js`: the EQ while music plays: the analyser has its own 60 dB scale (overtones 40 dB under the loudest note stay in view), falls back steadily and rises fast, the ideal band is a level strip, each band's own shape is filled, the hint steps aside once a band is yours.
