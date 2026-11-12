@@ -115,3 +115,4 @@ node tests/web/regression.test.js
 - `edit-tools.test.js`: Edit menu: Quantize halfway (half the way to the grid), Humanize (small, repeatable timing and strength changes) and Ramp strength (across the selection only), each one undo step; plain Quantize still snaps exactly.
 - `mix-hints.test.js`: Mix check offers Smart pan when every part sits dead centre and Smart pan has something it may move (no empty offer for the four basic parts); the Your DAW card lists only the tracks the song has.
 - `finish-check.test.js`: Share's Finish check renders the whole song and reports silence at the start (one click removes empty opening sections, one undo step), empty sections, clipping, loudness for the song's destination, mono loss and a cut-off ending; checking changes nothing.
+- `eq-note.test.js`: the selected EQ band shows the note it sits on beside its frequency; Listen (hear only this band) is on the same panel.
