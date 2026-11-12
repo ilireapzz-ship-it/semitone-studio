@@ -125,8 +125,17 @@ All from reading the code unless marked. None of these could be compiled or hear
 | Better automation from passes (asked 12 Nov) | Volume rides go phrase by phrase and glide; a move drawn in several places grows through the song; a build that opens a sound up lands in the next section instead of snapping shut |
 | Click an automation on the timeline (asked 12 Nov) | A lane under a track opens that lane in Automation |
 | EQ while music plays (asked 12 Nov) | The analyser has its own 60 dB scale, a smooth line that rises fast and falls back slowly, a level "ideal" strip, and each band's own shape filled under the curve |
+| Chords are just notes | Drag a chord's **right edge** to carry it into the next bars; an empty chord lane says how to start |
+| Lift check | In the Mix lens Semitone measures a verse and a chorus; when the chorus does not arrive at least 1 dB louder, Session and Mix check say so and offer **Lift it** |
+| Finish checker | **Finish check** in Share: silence at the start (one click removes empty opening sections), empty sections, clipping, loudness for the destination, mono loss, a cut-off ending |
+| Blank means blank | **Start empty**: one empty 8-bar section. A section's menu adds a Verse, Pre-chorus, Chorus or Bridge after it. A blank song has no transitions at its joins |
+| Scales to the screen | **Size** in the theme card: 100, 115, 125 or 150% |
+| Quantize strength, humanize, velocity ramp | Edit menu: **Quantize halfway**, **Humanize**, **Ramp strength** |
+| A starting mix has width; lists stay true | Mix check offers Smart pan when every part sits dead centre; the Your DAW card lists only the tracks the song has |
+| Export | Under Export audio: what (song, loop region, section), 16 or 24-bit, as mixed or for the destination. In the app a plain WAV goes into Exports/Audio (tested against a faked app) |
+| EQ | The selected band shows its note beside its frequency. (Hearing one band was already there: select a band, then ◉ Listen) |
 
-Still open from the lists above: chords that stretch and split, the export dialog, a true empty start, the size setting, audio settings with one engine, and the engine guards (those need a build).
+Still open from the lists above: chords that split inside a bar, paste where you clicked in the chord lane, arp on/off per section, undo names that say what happened, more mixing tools (sidechain from any part, a gate), trim and fades for audio, the smart extras (chord-aware snap, style-aware quantize, a whole-song mix proposal), and everything that needs a build: audio settings with one engine, and the engine guards.
 
 ## Where things are
 
