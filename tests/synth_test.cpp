@@ -197,6 +197,7 @@ int main()
         auto cc = [] (int d1, int d2) { return Event { 0, (unsigned char) (0xB0 | 9), (unsigned char) d1, (unsigned char) d2 }; };
         auto crossings = [] (const std::vector<float>& x, int a, int b) { int z = 0; for (int i = a + 1; i < b; ++i) z += (x[(size_t) i] < 0) != (x[(size_t) (i - 1)] < 0); return z; };
         auto s = std::make_shared<SynthPatch>(); s->drumCh = 9;
+        s->drumLevel = .03f;                                   // below the safety compressor (-24 dB, 12:1), which would squeeze the 3 dB a hard-panned hit gains on its side down to under 1 dB
         const int N = (int) (SR * 1.6), head = (int) (SR * .25), second = (int) SR;
         Synth a; a.prepare (SR); a.setPatch (s);
         const auto plain = run (a, { { 0, on (9, 36, 40) } }, N);
