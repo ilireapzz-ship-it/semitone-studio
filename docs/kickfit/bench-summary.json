@@ -2,7 +2,7 @@
  "about": "Kick Fit test bench (tools/kickfit_bench.py): real kicks through each measured genre mode against backing cut from real songs of that genre. Counts only.",
  "made": "2026-11-21",
  "kicks": 400,
- "output_over_full_scale_when_input_was_not": 4,
+ "output_over_full_scale_when_input_was_not": 0,
  "modes": {
   "pop": {
    "kicks": 400,
