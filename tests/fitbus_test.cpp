@@ -224,6 +224,34 @@ static void testTame()
     float jump = 0; for (size_t i = (size_t) (sr * 0.2); i < (size_t) (sr * 0.9); ++i) jump = std::max (jump, std::abs (l[i] - l[i - 1])); CHECK (jump < 0.25f, "the tamed sound has a click in it (step %.3f)", jump);
 }
 
+// the tone change: each range's gain moves a tone inside it and leaves a far-away tone nearly alone; A/B keeps the loudness
+static void testToneEq()
+{
+    const double sr = 48000; const size_t n = (size_t) (sr * 3); const double inside[numBands] = { 35, 100, 250, 800, 3000, 10000 }, away[numBands] = { 3000, 3000, 6000, 60, 60, 100 };
+    auto two = [&] (double a, double b) { Buf v (n); for (size_t i = 0; i < n; ++i) { const double t = (double) i / sr; v[i] = (float) (0.2 * std::sin (2 * kf::pi * a * t) + 0.2 * std::sin (2 * kf::pi * b * t)); } return v; };
+    auto toneDb = [&] (const Buf& b, double hz) { double re = 0, im = 0; const size_t a = (size_t) (sr * 2); for (size_t i = a; i < n; ++i) { const double t = (double) i / sr; re += b[i] * std::cos (2 * kf::pi * hz * t); im += b[i] * std::sin (2 * kf::pi * hz * t); } return 20 * std::log10 (2 * std::sqrt (re * re + im * im) / (double) (n - a) + 1e-12); };
+    for (int b = 0; b < numBands; ++b) for (float dB : { -6.0f, 4.0f })
+    {
+        const Buf in = two (inside[b], away[b]); Buf l = in, r = in; Engine e; Params p; p.tone[b] = dB; e.set (p); e.prepare (sr); run (e, l, r, 512);
+        const double moved = toneDb (l, inside[b]) - toneDb (in, inside[b]), other = toneDb (l, away[b]) - toneDb (in, away[b]);
+        CHECK (moved * dB > 0 && std::abs (moved) > 0.55 * std::abs (dB) && std::abs (moved) < 1.15 * std::abs (dB), "range %d at %.0f dB: its tone moved %.2f dB", b, dB, moved);
+        CHECK (std::abs (other) < 1.0, "range %d at %.0f dB: a far tone (%.0f Hz) moved %.2f dB", b, dB, away[b], other);
+        // no click as it comes in: no step bigger than the loudest the finished sound steps anyway (a 10 kHz tone steps a lot by itself)
+        float jump = 0, usual = 0; for (size_t i = 1; i < (size_t) (sr * 0.5); ++i) jump = std::max (jump, std::abs (l[i] - l[i - 1]));
+        for (size_t i = (size_t) (sr * 2); i < n; ++i) usual = std::max ({ usual, std::abs (l[i] - l[i - 1]), std::abs (in[i] - in[i - 1]) });      // before or after the change, whichever steps more
+        CHECK (jump < 1.3f * usual + 0.01f, "range %d: a click as the tone change came in (step %.3f, usual %.3f)", b, jump, usual);
+    }
+    // A/B: "without" is flat (both tones move by the same amount) and about as loud as "with"
+    const Buf in = two (100, 3000); Params p; p.tone[1] = -6; p.tone[4] = 3;
+    Buf wl = in, wr = in; Engine ew; ew.set (p); ew.prepare (sr); run (ew, wl, wr, 512);
+    p.toneOn = false; Buf ol = in, orr = in; Engine eo; eo.set (p); eo.prepare (sr);
+    for (size_t i = 0; i < n; i += 512) { eo.set (p); eo.process (ol.data() + i, orr.data() + i, (int) std::min<size_t> (512, n - i)); }      // as a host does: settings before every block
+    const double a = toneDb (ol, 100) - toneDb (in, 100), b = toneDb (ol, 3000) - toneDb (in, 3000);
+    CHECK (std::abs (a - b) < 0.2, "A/B off should be flat: the two tones moved %.2f and %.2f dB", a, b);
+    CHECK (std::abs (levelDb (ol, sr, 2, 3) - levelDb (wl, sr, 2, 3)) < 1.0, "A/B: without is %.2f dB louder than with", levelDb (ol, sr, 2, 3) - levelDb (wl, sr, 2, 3));
+    CHECK (std::abs (a) > 0.5, "A/B off did not match the loudness at all (moved %.2f dB)", a);
+}
+
 // loudness: a 1 kHz tone on both sides at -20 dB reads -20 (the standard's own check), and quiet gaps don't drag it down
 static void testLoudness()
 {
@@ -244,7 +272,7 @@ static void testLoudness()
 
 int main()
 {
-    testUntouched(); testCeiling(); testBlocks(); testReduction(); testPicture(); testMixer(); testTransient(); testTame(); testLoudness();
+    testUntouched(); testCeiling(); testBlocks(); testReduction(); testPicture(); testMixer(); testTransient(); testTame(); testToneEq(); testLoudness();
     if (failures) { printf ("fitbus: %d failed\n", failures); return 1; }
     printf ("fitbus: all tests passed\n"); return 0;
 }

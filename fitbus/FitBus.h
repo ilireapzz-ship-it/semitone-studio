@@ -24,6 +24,7 @@ struct Params
 {
     float gainDb = 0, ceilingDb = 0, releaseMs = 120;
     float attack = 0, sustain = 0;                       // transients, -1..1: the front of each hit, and the body after it
+    float tone[numBands] {}; bool toneOn = true;         // the tone change: dB per range, and the A/B switch (off = hear it without, at the same loudness)
     int tameRange = 0; float tameThrDb = -24, tameAmount = 0; bool tameHear = false;      // one range held down when it jumps out: 0 off, 1..6 = the six ranges
 };
 
@@ -63,6 +64,55 @@ public:
     }
 private:
     Follower outline, quickUp, slowUp, slowDown, quickDown; double ease = 0.02, learn = 0, gDb = 0, gFront = 0, gBody = 0, restFront = 0, restBody = 0; float atk = 0, sus = 0;
+};
+
+// The tone change: one gentle equaliser band per colour range (a shelf at the bottom and top, bells in between), each with
+// its own gain in dB. Gains move a little at a time so nothing clicks. With every gain at 0 the sound is not touched at all.
+// A/B: switched off, the bands go flat and the whole sound is turned up or down by what the tone change did to the overall
+// level (worked out from how strong each range is), so "with" and "without" are equally loud and only the tone differs.
+class ToneEq
+{
+public:
+    void prepare (double sampleRate)
+    {
+        sr = sampleRate; for (int b = 0; b < numBands; ++b) { cur[b] = 0; want[b] = 0; shape (b); for (auto& f : eq[b]) f.reset(); }
+        match = wantMatch = 0; matchGain = 1; tick = 0;
+    }
+    // dB per range; power = how strong each range is on the way in (for the matched loudness of "without")
+    void set (const float* dB, bool on, const double* power)
+    {
+        double with = 0, all = 0;
+        for (int b = 0; b < numBands; ++b) { const double g = std::clamp ((double) dB[b], -12.0, 12.0); want[b] = on ? g : 0.0; with += std::pow (10.0, g / 10) * power[b]; all += power[b]; }
+        wantMatch = on || all <= 1e-12 ? 0.0 : std::clamp (10 * std::log10 (with / all), -8.0, 8.0);
+    }
+    void run (float& l, float& r)
+    {
+        if ((tick++ & 7) == 0)
+        {
+            for (int b = 0; b < numBands; ++b) if (cur[b] != want[b]) { cur[b] += std::clamp (want[b] - cur[b], -0.05, 0.05); shape (b); }
+            if (match != wantMatch) { match += std::clamp (wantMatch - match, -0.05, 0.05); matchGain = kf::dbToGain (match); }
+        }
+        bool flat = true; double ring = 0;
+        for (int b = 0; b < numBands; ++b) { flat = flat && cur[b] == 0; ring += std::abs (eq[b][0].z1) + std::abs (eq[b][0].z2) + std::abs (eq[b][1].z1) + std::abs (eq[b][1].z2); }
+        if (! (flat && ring < 1e-9))
+        {
+            double x = l, y = r; for (int b = 0; b < numBands; ++b) { x = eq[b][0].run (x); y = eq[b][1].run (y); }
+            l = (float) (x * post); r = (float) (y * post);
+        }
+        if (match != 0) { l = (float) (l * matchGain); r = (float) (r * matchGain); }
+    }
+private:
+    void shape (int b)
+    {
+        const double lo = b == 0 ? 0.0 : bandEdges[b - 1], hi = b == numBands - 1 ? 0.0 : bandEdges[b], g = kf::dbToGain (cur[b]);
+        for (auto& f : eq[b])
+        {
+            if (lo <= 0) f.lowShelf (hi, g, sr);
+            else if (hi <= 0) { f.lowShelf (lo, 1 / g, sr); post = g; }             // top range: lows by 1/g, everything by g
+            else f.peak (std::sqrt (lo * hi), std::sqrt (lo * hi) / (hi - lo), cur[b], sr);
+        }
+    }
+    double sr = 44100, cur[numBands] {}, want[numBands] {}, post = 1, match = 0, wantMatch = 0, matchGain = 1; int tick = 0; kf::Biquad eq[numBands][2];
 };
 
 // One range held down when it jumps out (what a de-esser does for "s" sounds; the same idea tames a boomy or harsh range).
@@ -238,10 +288,10 @@ public:
         pos = 0; n = 0; dqHead = dqTail = 0; rel = 1; boxSum = L; lowered = 0; colStep = std::max (1, (int) (0.02 * sr)); colN = 0; cur = {}; cur.gain = 1;
         for (int i = 0; i < numBands - 1; ++i) { lpA[i].lowpass (bandEdges[i], 0.5412, sr); lpB[i].lowpass (bandEdges[i], 1.3066, sr); lpA[i].reset(); lpB[i].reset(); }
         for (auto& e : bandE) e = 0;
-        inMeter.prepare (sr); outMeter.prepare (sr); transient.prepare (sr); tame.prepare (sr); loud.prepare (sr);
+        inMeter.prepare (sr); outMeter.prepare (sr); toneEq.prepare (sr); transient.prepare (sr); tame.prepare (sr); loud.prepare (sr);
         set (p);
     }
-    void set (const Params& np) { p = np; transient.set (p.attack, p.sustain); tame.set (p.tameRange, p.tameThrDb, p.tameAmount, p.tameHear); gIn = kf::dbToGain (p.gainDb); ceil = kf::dbToGain (p.ceilingDb); relCoef = 1 - std::exp (-1.0 / (std::max (5.0f, p.releaseMs) * 0.001 * sr)); }
+    void set (const Params& np) { p = np; toneEq.set (p.tone, p.toneOn, inMeter.power); transient.set (p.attack, p.sustain); tame.set (p.tameRange, p.tameThrDb, p.tameAmount, p.tameHear); gIn = kf::dbToGain (p.gainDb); ceil = kf::dbToGain (p.ceilingDb); relCoef = 1 - std::exp (-1.0 / (std::max (5.0f, p.releaseMs) * 0.001 * sr)); }
     int latency() const { return L - 1; }
     float reductionDb() const { return redNow.load(); }
     float tameDb() const { return tameNow.load(); }                           // how far the tamed range is being held down right now (0 or below)                       // how far the limiter is holding the level down right now (0 or below)
@@ -252,7 +302,7 @@ public:
         {
             if (inMeter.push (0.5 * ((double) l[i] + r[i]), std::max (std::abs (l[i]), std::abs (r[i]))))      // what arrives, measured the way each Kick Fit measures itself
             { for (int k = 0; k < fl::numBands; ++k) inPower[k].store ((float) inMeter.power[k]); inPeak.store ((float) inMeter.peak); inNow.store ((float) inMeter.stepPeak); }
-            tame.run (l[i], r[i]); transient.run (l[i], r[i]);          // then Loudness, then the limiter
+            toneEq.run (l[i], r[i]); tame.run (l[i], r[i]); transient.run (l[i], r[i]);          // then Loudness, then the limiter
             const float xl = (float) (l[i] * gIn), xr = (float) (r[i] * gIn);
             const double pk = std::max (std::abs ((double) xl), std::abs ((double) xr));
             const double need = pk > ceil ? ceil / pk : 1.0;
@@ -303,7 +353,7 @@ private:
     int L = 221, pos = 0, dqHead = 0, dqTail = 0, lowered = 0, colStep = 882, colN = 0; long long n = 0;
     std::vector<float> dl, dr; std::vector<double> box, dqV; std::vector<long long> dqI;
     kf::Biquad lpA[numBands - 1], lpB[numBands - 1];
-    fl::BandMeter inMeter, outMeter; Transient transient; Tame tame; float tameHeld = 0; std::atomic<float> tameNow { 0.0f };
+    fl::BandMeter inMeter, outMeter; ToneEq toneEq; Transient transient; Tame tame; float tameHeld = 0; std::atomic<float> tameNow { 0.0f };
 public:
     Loudness loud;
     std::atomic<float> outPower[fl::numBands] {};                          // what leaves, strength per range: the tone bars (so Tame and the rest show in them)

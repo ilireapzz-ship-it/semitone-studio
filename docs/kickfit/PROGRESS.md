@@ -122,3 +122,7 @@ A second plug-in for the bus (or master) the kick, bass and vocal meet on. First
 - Jamie spotted that taming a range did not move that range's tone bar: the bars were reading what arrives. They now read
   what leaves Fit Bus, after Tame, Transients and the limiter, and settle in about 3 s. The three plug-in names (Kick Fit,
   Bass Fit, Vocal Fit) are dropped: Jamie doesn't need them.
+- Fit Bus: Balance it. A gentle equaliser, one band per colour range. The button moves each range that sits outside the
+  measured songs to their middle (at most 6 dB down or 4 dB up; a range already inside is left alone; the range Tame is
+  holding is skipped), Amount scales it, Reset clears it. A/B switches it off at the same loudness, so only the tone
+  differs. Tested on made-up tones. Not yet tried in FL.
