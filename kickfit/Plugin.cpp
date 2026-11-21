@@ -307,13 +307,15 @@ private:
         else
         {
             line = "Boom: " + noteText (shownHz) + (std::abs (proc.engine.glideSemis()) > 0.5 ? " (drops " + juce::String (proc.engine.glideSemis(), 1) + " semitones at the start)" : juce::String()) + ". ";
-            if (haveKey)
+            const bool moving = proc.engine.noteSpreadCents() > 40;
+            if (moving) line += "Its pitch keeps moving, so it has no single note: tune by ear. ";
+            if (haveKey && ! moving)
             {
                 int pc = 0; const double move = kf::tuneToKey (shownHz, tonic, minor, &pc);
                 if (std::abs (move) < 0.15) line += "That fits " + keyText + ".";
                 else { tuneMove = tune + move; canTune = std::abs (tuneMove) <= 12; line += "Key: " + keyText + ". " + juce::String (noteNames[pc]) + " is the nearest note that fits."; tuneBtn.setButtonText (juce::String ("Tune to ") + noteNames[pc] + " (" + (move > 0 ? "+" : "") + juce::String (move, 2) + ")"); }
             }
-            else line += "Key not known yet: pick it at the top, or feed the bass or beat into the sidechain.";
+            else if (! haveKey) line += "Key not known yet: pick it at the top, or feed the bass or beat into the sidechain.";
         }
         if (! canTune) tuneBtn.setButtonText (std::abs (tune) > 0.005 ? "Tuned" : "Tune to key");
         tuneBtn.setEnabled (canTune);

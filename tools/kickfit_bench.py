@@ -76,7 +76,7 @@ def cmd_run(args):
     if args.limit: kicks = kicks[:args.limit]
     modes = sorted({b['mode'] for b in meta})
     S = {m: dict(kicks=0, could_not_measure=0, already_in_range=0, left_alone=0, moved_into_range=0, moved_closer=0, got_worse=0, changes_db=[],
-                 tune_tried=0, tune_in_key=0, tune_off_cents=[]) for m in modes}
+                 tune_tried=0, tune_in_key=0, tune_off_cents=[], steady_tune_tried=0, steady_tune_in_key=0, no_single_note=0) for m in modes}
     phone = dict(tried=0, reached=0, before=[], after=[]); peak_over = 0
     tmp = tempfile.mkdtemp(prefix='kickfit')
     kf_, of_, o2 = (os.path.join(tmp, n) for n in ('k.f32', 'o.f32', 'o2.f32'))
@@ -95,7 +95,7 @@ def cmd_run(args):
             b = [q for q in meta if q['mode'] == m]; b = b[n % len(b)]
             d = T['modes'][m]['kick_low_vs_mix_db']; lo, mid, hi = d['p25'], d['median'], d['p75']
             r = run(kf_, b['file'], of_, sit=(lo, mid, hi)); s = S[m]; s['kicks'] += 1
-            peak_over += r['peak'] > 1.0
+            peak_over += r['peak'] > max(1.0, float(np.max(np.abs(track)))) + 1e-6      # louder than full scale and louder than it came in
             if not r['measured']: s['could_not_measure'] += 1; continue
             d0, d1 = dist(r['before'], lo, hi), dist(r['after'], lo, hi)
             if d0 == 0:
@@ -113,6 +113,8 @@ def cmd_run(args):
                     if r2['note'] > 0:
                         off = abs(tune_to_key(r2['note'], b['key_pc'], b['key_mode'] == 'min')) * 100
                         s['tune_tried'] += 1; s['tune_in_key'] += off < 20; s['tune_off_cents'].append(off)
+                        if r['spread'] <= 40: s['steady_tune_tried'] += 1; s['steady_tune_in_key'] += off < 20
+                        else: s['no_single_note'] += 1
         # phone check: kicks with less above 180 Hz than nine in ten of the others, with Click all the way up
         if k['above180_db'] < p10:
             run(kf_, None, of_, click=1)
@@ -121,7 +123,7 @@ def cmd_run(args):
                 phone['tried'] += 1; phone['reached'] += r3['above180_db'] >= p10; phone['before'].append(k['above180_db']); phone['after'].append(r3['above180_db'])
         if (n + 1) % 100 == 0: print(f'  {n + 1}/{len(kicks)}', flush=True)
     out = {'about': 'Kick Fit test bench (tools/kickfit_bench.py): real kicks through each measured genre mode against backing cut from real songs of that genre. Counts only.',
-           'made': __import__('time').strftime('%Y-%m-%d'), 'kicks': len(kicks), 'output_over_full_scale': int(peak_over), 'modes': {}}
+           'made': __import__('time').strftime('%Y-%m-%d'), 'kicks': len(kicks), 'output_over_full_scale_when_input_was_not': int(peak_over), 'modes': {}}
     for m, s in S.items():
         out['modes'][m] = {**{k: v for k, v in s.items() if not isinstance(v, list)}, 'change_db': ka.stat(s['changes_db']), 'tune_off_cents': ka.stat(s['tune_off_cents'], 1)}
     out['phone'] = {'what': f'kicks with less than {p10} dB left above 180 Hz, Click at 100%: how many reach {p10} dB', 'tried': phone['tried'], 'reached': phone['reached'],

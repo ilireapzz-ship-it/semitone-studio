@@ -27,7 +27,7 @@ int main (int argc, char** argv)
     kf::Params p; p.tune = (float) std::atof (argv[5]); p.thump = (float) std::atof (argv[6]); p.punch = (float) std::atof (argv[7]);
     p.click = (float) std::atof (argv[8]); p.tail = (float) std::atof (argv[9]); p.gainDb = (float) std::atof (argv[10]);
     const bool sit = argc >= 14;
-    double before = 0, after = 0, change = 0, note = 0; bool measured = false, moved = false; int latency = 0; float peak = 0;
+    double before = 0, after = 0, change = 0, note = 0, spread = 0; bool measured = false, moved = false; int latency = 0; float peak = 0;
     std::vector<float> l, r;
     for (int pass = 0; pass < (sit ? 2 : 1); ++pass)
     {
@@ -38,7 +38,7 @@ int main (int argc, char** argv)
             const int n = (int) std::min<size_t> (512, l.size() - i);
             e.process (l.data() + i, r.data() + i, hasSide ? side.data() + i : nullptr, hasSide ? side.data() + i : nullptr, n);
         }
-        note = e.note(); latency = e.latency();
+        note = e.note(); spread = e.noteSpreadCents(); latency = e.latency();
         double now = 0; const bool ok = e.sitLevel (now);
         if (pass == 0)
         {
@@ -50,7 +50,7 @@ int main (int argc, char** argv)
     }
     for (float v : l) peak = std::max (peak, std::abs (v));
     if (FILE* f = std::fopen (argv[3], "wb")) { std::fwrite (l.data(), 4, l.size(), f); std::fclose (f); }
-    std::printf ("{\"note\": %.3f, \"latency\": %d, \"measured\": %s, \"before\": %.2f, \"after\": %.2f, \"change\": %.2f, \"peak\": %.4f}\n",
-                 note, latency, measured ? "true" : "false", before, after, change, peak);
+    std::printf ("{\"note\": %.3f, \"spread\": %.1f, \"latency\": %d, \"measured\": %s, \"before\": %.2f, \"after\": %.2f, \"change\": %.2f, \"peak\": %.4f}\n",
+                 note, spread, latency, measured ? "true" : "false", before, after, change, peak);
     return 0;
 }

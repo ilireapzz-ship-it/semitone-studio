@@ -1,0 +1,89 @@
+{
+ "about": "Kick Fit test bench (tools/kickfit_bench.py): real kicks through each measured genre mode against backing cut from real songs of that genre. Counts only.",
+ "made": "2026-11-21",
+ "kicks": 400,
+ "output_over_full_scale_when_input_was_not": 4,
+ "modes": {
+  "pop": {
+   "kicks": 400,
+   "could_not_measure": 5,
+   "already_in_range": 184,
+   "left_alone": 184,
+   "moved_into_range": 208,
+   "moved_closer": 3,
+   "got_worse": 0,
+   "tune_tried": 318,
+   "tune_in_key": 210,
+   "steady_tune_tried": 146,
+   "steady_tune_in_key": 122,
+   "no_single_note": 172,
+   "change_db": {
+    "n": 211,
+    "median": -11.09,
+    "p10": -12.0,
+    "p25": -12.0,
+    "p75": -8.56,
+    "p90": -6.95
+   },
+   "tune_off_cents": {
+    "n": 318,
+    "median": 9.7,
+    "p10": 0.5,
+    "p25": 2.0,
+    "p75": 25.6,
+    "p90": 53.9
+   }
+  },
+  "rock": {
+   "kicks": 400,
+   "could_not_measure": 5,
+   "already_in_range": 95,
+   "left_alone": 95,
+   "moved_into_range": 285,
+   "moved_closer": 12,
+   "got_worse": 3,
+   "tune_tried": 319,
+   "tune_in_key": 214,
+   "steady_tune_tried": 143,
+   "steady_tune_in_key": 120,
+   "no_single_note": 176,
+   "change_db": {
+    "n": 300,
+    "median": -5.54,
+    "p10": -9.63,
+    "p25": -8.03,
+    "p75": -3.02,
+    "p90": 9.05
+   },
+   "tune_off_cents": {
+    "n": 319,
+    "median": 9.7,
+    "p10": 0.5,
+    "p25": 2.7,
+    "p75": 25.1,
+    "p90": 48.9
+   }
+  }
+ },
+ "phone": {
+  "what": "kicks with less than -23.36 dB left above 180 Hz, Click at 100%: how many reach -23.36 dB",
+  "tried": 31,
+  "reached": 30,
+  "before_db": {
+   "n": 31,
+   "median": -26.74,
+   "p10": -36.57,
+   "p25": -29.7,
+   "p75": -25.34,
+   "p90": -24.45
+  },
+  "after_db": {
+   "n": 31,
+   "median": -18.01,
+   "p10": -21.51,
+   "p25": -19.54,
+   "p75": -16.42,
+   "p90": -15.38
+  }
+ }
+}

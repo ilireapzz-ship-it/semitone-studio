@@ -87,7 +87,7 @@ public:
         N = W + tauMax + 2; ring.assign ((size_t) N, 0.0); lin.assign ((size_t) N, 0.0); d.assign ((size_t) tauMax + 2, 0.0);
         hop = std::max (1, (int) (fs * 0.015)); w = 0; ph = 0; sinceFrame = 0; sinceOnset = 1 << 28; frames.clear(); peakRms = 0; last = 0; held = 0;
     }
-    void onset() { if (frames.size() >= 3) held = settled(); sinceOnset = 0; frames.clear(); peakRms = 0; }
+    void onset() { if (frames.size() >= 3) { held = settled(); heldSpread = spreadCents(); } sinceOnset = 0; frames.clear(); peakRms = 0; }
     double heldNote() const { return held > 0 ? held : (frames.size() >= 8 ? settled() : 0.0); }     // steady between hits: for filters
     void push (double x)
     {
@@ -106,6 +106,14 @@ public:
         for (size_t i = from; i < frames.size(); ++i) v.push_back (frames[i]);
         std::nth_element (v.begin(), v.begin() + (long) (v.size() / 2), v.end());
         return v[v.size() / 2];
+    }
+    // how far the later frames spread around that note, in cents (middle half). Big = the pitch keeps moving: no single note.
+    double spreadCents() const
+    {
+        if (frames.size() < 4) return 0;
+        std::vector<double> v (frames.begin() + (long) (frames.size() / 2), frames.end());
+        std::sort (v.begin(), v.end());
+        return 1200 * std::log2 (v[v.size() * 3 / 4] / v[v.size() / 4]);
     }
     double current() const { return frames.empty() ? 0.0 : frames.back(); }                 // the newest frame (follows a slide)
     double glideSemis() const { const double s = settled(); return frames.size() >= 3 && s > 0 ? 12 * std::log2 (frames.front() / s) : 0.0; }
@@ -142,7 +150,10 @@ private:
         last = settled();
     }
     Biquad lp1, lp2; std::vector<double> ring, lin, d, frames;
-    double fs = 4000, peakRms = 0, last = 0, held = 0; int M = 1, W = 0, N = 0, tauMin = 0, tauMax = 0, hop = 1, w = 0, ph = 0, sinceFrame = 0, sinceOnset = 0;
+    double fs = 4000, peakRms = 0, last = 0, held = 0, heldSpread = 0;
+public:
+    double lastSpread() const { return frames.size() >= 8 ? spreadCents() : heldSpread; }
+private: int M = 1, W = 0, N = 0, tauMin = 0, tauMax = 0, hop = 1, w = 0, ph = 0, sinceFrame = 0, sinceOnset = 0;
 };
 
 // ---------- retune ----------
@@ -367,6 +378,7 @@ public:
     double note() const { return pitch.settled(); }                 // Hz of the kick as it comes in; x ratioOf(tune) after tuning
     double noteNow() const { return pitch.current(); }
     double glideSemis() const { return pitch.glideSemis(); }
+    double noteSpreadCents() const { return pitch.lastSpread(); }       // above about 40: the kick has no single note
     int hitsSeen() const { return hitCount; }
     bool hasSidechain() const { return sideSeen; }
     // kick lows (30-150 Hz) against kick + sidechain, dB, middle of the last hits. Same measure as tools/kick_analyse.py.
