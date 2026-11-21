@@ -90,9 +90,57 @@ static void testPicture()
     CHECK (c[3].out == 0 && std::isfinite (c[3].band[0]), "silence draws something");
 }
 
+// three made-up parts through made-up faders: can the bus tell how much of each it holds?
+static Buf fakeKick (double sr, double secs)
+{
+    Buf b ((size_t) (sr * secs), 0.0f);
+    for (size_t i = 0; i < b.size(); ++i) { const double t = std::fmod ((double) i / sr, 0.5), f = 50 + 120 * std::exp (-t / 0.02); b[i] = (float) (0.9 * std::sin (2 * kf::pi * f * t) * std::exp (-t / 0.12)); }
+    return b;
+}
+static Buf fakeBass (double sr, double secs)
+{
+    Buf b ((size_t) (sr * secs), 0.0f);
+    for (size_t i = 0; i < b.size(); ++i) { const double t = (double) i / sr, f = std::fmod (t, 2.0) < 1.0 ? 82.4 : 61.7; double v = 0; for (int h = 1; h <= 6; ++h) v += std::sin (2 * kf::pi * f * h * t) / (h * h); b[i] = (float) (0.5 * v); }
+    return b;
+}
+static Buf fakeVoice (double sr, double secs)
+{
+    Buf b ((size_t) (sr * secs), 0.0f); std::mt19937 rng (4); std::uniform_real_distribution<double> u (-1, 1); kf::Biquad bp, bp2; bp.bandpass (900, 0.6, sr); bp2.bandpass (2500, 0.8, sr);
+    for (size_t i = 0; i < b.size(); ++i) { const double t = (double) i / sr, n = u (rng), syll = std::fmod (t, 0.37) < 0.25 && std::fmod (t, 3.0) < 2.2 ? 1.0 : 0.0; b[i] = (float) (syll * (0.8 * bp.run (n) + 0.5 * bp2.run (n))); }
+    return b;
+}
+static void testMixer()
+{
+    const double sr = 48000, secs = 12; const Buf part[3] = { fakeKick (sr, secs), fakeBass (sr, secs), fakeVoice (sr, secs) };
+    struct Case { double g[3]; bool have[3]; double extra; double tolDb; double minFit, maxFit; };
+    const Case cases[] = { { { 0.5, 0.3, 1.2 }, { true, true, true }, 0, 1.0, 0.9, 1.0 },          // all three, faders all over the place
+                           { { 1.0, 0.1, 0.4 }, { true, true, true }, 0, 2.5, 0.9, 1.0 },          // a bass 20 dB down: read to within 2.5 dB
+                           { { 0.7, 0.0, 0.9 }, { true, false, true }, 0, 1.0, 0.9, 1.0 },         // no Kick Fit on a bass, and no bass
+                           { { 0.5, 0.5, 0.5 }, { true, true, true }, 0.6, 99, 0.0, 0.9 } };       // a lot else in the bus (a loud hiss): the levels can't be trusted, and the fit must say so (under 0.9)
+    for (auto& cs : cases)
+    {
+        fl::BandMeter pm[3], bm; for (auto& m : pm) m.prepare (sr);
+        bm.prepare (sr); Mixer mix; std::mt19937 rng (11); std::uniform_real_distribution<double> u (-1, 1);
+        for (size_t i = 0; i < part[0].size(); ++i)
+        {
+            double sum = cs.extra * u (rng); for (int k = 0; k < 3; ++k) sum += cs.g[k] * part[k][i];
+            const bool step = bm.push (sum, std::abs (sum)); for (int k = 0; k < 3; ++k) pm[k].push (part[k][i], std::abs (part[k][i]));
+            if (step) { double P[3][fl::numBands]; for (int k = 0; k < 3; ++k) for (int b = 0; b < fl::numBands; ++b) P[k][b] = pm[k].power[b]; mix.add (P, cs.have, bm.power); }
+        }
+        double g2[3], fit = 0; CHECK (mix.solve (cs.have, g2, fit), "nothing solved");
+        for (int k = 0; k < 3; ++k)
+        {
+            if (! cs.have[k]) { CHECK (g2[k] == 0, "a part with no Kick Fit got a level"); continue; }
+            const double got = 10 * std::log10 (std::max (g2[k], 1e-12)), want = 20 * std::log10 (cs.g[k]);
+            CHECK (std::abs (got - want) < cs.tolDb, "part %d: fader read as %.2f dB, was %.2f dB (extra %.1f)", k, got, want, cs.extra);
+        }
+        CHECK (fit >= cs.minFit && fit <= cs.maxFit, "fit %.2f not in %.2f..%.2f (extra %.1f)", fit, cs.minFit, cs.maxFit, cs.extra);
+    }
+}
+
 int main()
 {
-    testUntouched(); testCeiling(); testBlocks(); testReduction(); testPicture();
+    testUntouched(); testCeiling(); testBlocks(); testReduction(); testPicture(); testMixer();
     if (failures) { printf ("fitbus: %d failed\n", failures); return 1; }
     printf ("fitbus: all tests passed\n"); return 0;
 }

@@ -528,7 +528,8 @@ private:
     // and at rest the shelf is exactly a wire.
     void duck (float* l, float* r, const float* sl, const float* sr_, int n)
     {
-        const double depth = 1 - dbToGain (-12.0 * std::clamp (p.room, 0.0f, 1.0f)), rel = std::exp (-1.0 / (std::max (0.01f, p.duckRelease) * sr));
+        const double depth = 1 - dbToGain (-12.0 * std::clamp (p.room, 0.0f, 1.0f)), rel = std::exp (-1.0 / (std::max (0.01f, p.duckRelease) * sr)), gTarget = dbToGain (p.gainDb);
+        const bool moving = std::abs (p.gainDb) > 1e-4f || std::abs (gainSmooth.y - 1.0) > 1e-5;        // Level: at 0 nothing is touched
         for (int i = 0; i < n; ++i)
         {
             const double s = sl ? 0.5 * ((double) sl[i] + (sr_ ? sr_[i] : sl[i])) : 0.0;
@@ -542,6 +543,7 @@ private:
             // at rest and rung out: a wire, to the last bit (a compiler may round the idle filter differently)
             const bool idle = duckSet == 1.0 && std::abs (duckShelf[0].z1) + std::abs (duckShelf[0].z2) + std::abs (duckShelf[1].z1) + std::abs (duckShelf[1].z2) < 1e-9;
             if (! idle) { l[i] = (float) duckShelf[0].run (l[i]); r[i] = (float) duckShelf[1].run (r[i]); }
+            if (moving) { const double lv = gainSmooth.run (gTarget); l[i] = (float) (l[i] * lv); r[i] = (float) (r[i] * lv); }
             meter (hit, s, 0.5 * ((double) l[i] + r[i]));          // the kick (sidechain) against the bass (this channel), as on the kick
         }
     }

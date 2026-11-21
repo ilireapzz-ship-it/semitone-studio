@@ -93,3 +93,9 @@ A second plug-in for the bus (or master) the kick, bass and vocal meet on. First
 - Built and installed on the Windows PC. Not yet opened in FL Studio.
 - Not built yet: knowing which part is the kick, bass and vocal (plan: each Kick Fit tells Fit Bus what it is on, which is
   certain, where guessing from the mixed sound is not), and the suggested fixes for common mix problems from measurements.
+- Fit Bus now knows the parts: every Kick Fit reports what it is on, how strong its output is in six ranges of pitch, and
+  its peak, through a small shared block of memory (numbers only). Fit Bus works out how much of each part is in the bus
+  after the faders, shows each part's peak against the loudest peak next to the measured range for the genre, and a
+  button asks that Kick Fit to change its Level. Tested on made-up parts: faders read to within 1 dB (2.5 dB for a part
+  20 dB down). If the bus holds much more than the parts with a Kick Fit, it says it cannot read them. Not yet tried in FL.
+- Kick Fit: Level now works on the bass too. Fixed: with no sidechain bus at all, the right channel was left unprocessed.

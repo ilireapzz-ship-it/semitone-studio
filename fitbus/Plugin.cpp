@@ -1,8 +1,11 @@
 // Fit Bus: the plug-in and its window. The sound work is in FitBus.h.
 // A limiter for the bus the kick, bass and vocal meet on. Its picture is the level over time, coloured by pitch:
 // red at the very bottom, orange for bass, through to deep blue at the top, on a plain dB scale.
+// Each Kick Fit in the song tells it what it is on (FitLink.h), so it knows the kick, bass and vocal for certain, works out
+// how tall each stands in the bus after the faders, and compares that with the measured songs of the chosen genre.
 #include <juce_audio_utils/juce_audio_utils.h>
 #include "FitBus.h"
+#include "../kickfit/KickFitTargets.h"
 
 class FitBusProcessor : public juce::AudioProcessor
 {
@@ -16,6 +19,8 @@ public:
     static juce::AudioProcessorValueTreeState::ParameterLayout layout()
     {
         using F = juce::AudioParameterFloat; juce::AudioProcessorValueTreeState::ParameterLayout l;
+        juce::StringArray modes; for (auto& m : kf::modeTargets) modes.add (m.name);
+        l.add (std::make_unique<juce::AudioParameterChoice> (juce::ParameterID { "mode", 1 }, "Genre", modes, 1));
         l.add (std::make_unique<F> (juce::ParameterID { "gain", 1 }, "Loudness", juce::NormalisableRange<float> (0, 24, 0.1f), 0.0f));
         l.add (std::make_unique<F> (juce::ParameterID { "ceiling", 1 }, "Ceiling", juce::NormalisableRange<float> (-12, 0, 0.1f), 0.0f));
         return l;
@@ -79,20 +84,37 @@ public:
             addAndMakeVisible (s); addAndMakeVisible (l); links.add (new juce::AudioProcessorValueTreeState::SliderAttachment (proc.state, id, s));
         };
         knob (gain, gainL, "gain", "Loudness"); knob (ceiling, ceilL, "ceiling", "Ceiling");
-        startTimerHz (30); setSize (860, 470);                      // last: resized() needs the knobs
+        addAndMakeVisible (mode); mode.setColour (juce::ComboBox::backgroundColourId, look::panel); mode.setColour (juce::ComboBox::textColourId, look::ink); mode.setColour (juce::ComboBox::outlineColourId, look::line);
+        if (auto* ch = dynamic_cast<juce::AudioParameterChoice*> (proc.state.getParameter ("mode"))) mode.addItemList (ch->choices, 1);
+        modeLink = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment> (proc.state, "mode", mode);
+        for (int k = 0; k < 3; ++k)
+        {
+            addAndMakeVisible (fix[k]); fix[k].setButtonText ("Fix"); fix[k].setEnabled (false);
+            fix[k].setColour (juce::TextButton::buttonColourId, look::panel); fix[k].setColour (juce::TextButton::textColourOffId, look::ink);
+            fix[k].onClick = [this, k] { doFix (k); };
+        }
+        startTimerHz (30); setSize (860, 600);                      // last: resized() needs the controls
     }
     void resized() override
     {
         auto side = getLocalBounds().reduced (14).removeFromRight (120); side.removeFromTop (40);
         gainL.setBounds (side.removeFromTop (16)); gain.setBounds (side.removeFromTop (100)); side.removeFromTop (14);
         ceilL.setBounds (side.removeFromTop (16)); ceiling.setBounds (side.removeFromTop (100));
+        auto area = getLocalBounds().reduced (14); area.removeFromRight (130);
+        mode.setBounds (area.removeFromTop (30).withTrimmedLeft (90).removeFromLeft (200).reduced (0, 3));
+        area.removeFromBottom (22); auto rows = area.removeFromBottom (rowsHeight);
+        for (int k = 0; k < 3; ++k) fix[k].setBounds (rows.removeFromTop (26).removeFromRight (84).reduced (0, 2));
     }
     void paint (juce::Graphics& g) override
     {
         g.fillAll (look::paper);
         auto area = getLocalBounds().reduced (14); area.removeFromRight (130);
         g.setColour (look::ink); g.setFont (juce::FontOptions (18.0f, juce::Font::bold)); g.drawText ("Fit Bus", area.removeFromTop (30), juce::Justification::centredLeft);
-        auto legend = area.removeFromBottom (22); auto said = area.removeFromBottom (26);
+        auto legend = area.removeFromBottom (22); auto rows = area.removeFromBottom (rowsHeight);
+        g.setFont (juce::FontOptions (13.0f));
+        for (int k = 0; k < 3; ++k) { auto row = rows.removeFromTop (26); row.removeFromRight (90); g.setColour (part[k].warn ? look::bands[1] : look::ink); g.drawText (part[k].text, row, juce::Justification::centredLeft); }
+        g.setColour (look::soft); g.setFont (juce::FontOptions (12.0f)); g.drawFittedText (note, rows.removeFromTop (34), juce::Justification::centredLeft, 2);
+        auto said = area.removeFromBottom (26);
         g.setColour (look::panel); g.fillRoundedRectangle (area.toFloat(), 4.0f); g.setColour (look::line); g.drawRoundedRectangle (area.toFloat(), 4.0f, 1.0f);
         auto pic = area.reduced (1).withTrimmedLeft (34);
         const float top = 6.0f, bottom = -42.0f;                     // dB shown, a plain scale: every 6 dB is the same distance
@@ -128,8 +150,73 @@ public:
         }
     }
 private:
-    void timerCallback() override { repaint(); }
+    struct Part { juce::String text; bool warn = false; float fixDb = 0; int slot = -1; };
+    static constexpr int rowsHeight = 26 * 3 + 34;
+
+    // 30 times a second: read what the Kick Fits say, work out how much of each is in the bus, compare with the measured songs
+    void timerCallback() override
+    {
+        static const char* const names[3] = { "Kick", "Bass", "Vocal" }; static const char* const on[3] = { "The kick", "The bass", "The vocal" };
+        const auto& t = kf::modeTargets[(size_t) juce::jlimit (0, kf::numModes - 1, (int) proc.state.getRawParameterValue ("mode")->load())];
+        auto* b = fl::shared(); bool have[3] = { false, false, false }; double P[3][fl::numBands] {}, peak[3] {}, B[fl::numBands];
+        for (auto& q : part) q.slot = -1;
+        if (b != nullptr)
+            for (int i = 0; i < fl::maxSlots; ++i)
+            {
+                const auto& sl = b->slot[i]; const int r = sl.role.load();
+                if (! fl::alive (sl) || r < 0 || r > 2 || have[r]) continue;                 // the first of each kind counts
+                have[r] = true; part[r].slot = i; peak[r] = sl.peak.load(); for (int k = 0; k < fl::numBands; ++k) P[r][k] = sl.power[k].load();
+            }
+        if (have[0] != had[0] || have[1] != had[1] || have[2] != had[2]) { mixer.reset(); for (int k = 0; k < 3; ++k) had[k] = have[k]; }
+        for (int k = 0; k < fl::numBands; ++k) B[k] = proc.engine.inPower[k].load();
+        const double song = proc.engine.inPeak.load(); const bool playing = song > 1e-4;
+        if (playing) mixer.add (P, have, B);
+        double g2[3], fit = 0; const bool solved = playing && mixer.solve (have, g2, fit), sure = solved && fit >= 0.9;
+        if (cool > 0) --cool;
+        note = b == nullptr ? "This computer would not let Fit Bus and Kick Fit talk to each other, so Fit Bus only limits and draws."
+             : ! (have[0] || have[1] || have[2]) ? "No Kick Fit found. Put Kick Fit on the kick, the bass and the vocal, set each one's \"I am on\", and send those tracks here."
+             : ! playing ? "Play the song."
+             : ! sure ? "There is more in this bus than the parts with a Kick Fit on them, so their heights can't be read. Send only the kick, bass and vocal here."
+             : said.isNotEmpty() && cool > 0 ? said
+             : "Heights are measured after the faders. The ranges come from finished songs, where other instruments share the low end: with only these parts playing, trust your ears on the bass.";
+        for (int k = 0; k < 3; ++k)
+        {
+            auto& q = part[k]; q.warn = false; q.fixDb = 0; const float* range = k == 0 ? t.kickPk : k == 1 ? t.bassPk : t.vocPk;
+            if (! have[k]) q.text = juce::String (names[k]) + ": no Kick Fit set to \"" + on[k] + "\" is running.";
+            else if (! sure) q.text = juce::String (names[k]) + ": found.";
+            else if (g2[k] <= 1e-9 || peak[k] <= 1e-6) q.text = juce::String (names[k]) + ": found, but none of it reaches this bus.";
+            else
+            {
+                const float h = (float) (20 * std::log10 (peak[k] * std::sqrt (g2[k]) / song));          // this part's peak against the bus's loudest peak
+                q.text = juce::String (names[k]) + ": peaks " + (h < -0.05f ? juce::String (-h, 1) + " dB under" : "at") + " the loudest peak. ";
+                if (! t.peaks) q.text << "Not enough " << t.name << " songs measured to compare.";
+                else
+                {
+                    q.text << "Your " << t.name << " songs: " << juce::String (-range[2], 1) << " to " << juce::String (-range[0], 1) << " under. ";
+                    if (h > range[2] + 0.5f) { q.warn = true; q.fixDb = range[1] - h; q.text << "Taller than most."; }
+                    else if (h < range[0] - 0.5f) { q.warn = true; q.fixDb = range[1] - h; q.text << "Lower than most."; }
+                    else q.text << "In range.";
+                }
+            }
+            fix[k].setEnabled (q.fixDb != 0 && cool == 0); fix[k].setButtonText (q.fixDb != 0 ? (q.fixDb > 0 ? "Up " : "Down ") + juce::String (std::abs (q.fixDb), 1) : juce::String ("Fix"));
+        }
+        repaint();
+    }
+    // ask that part's Kick Fit to change its Level so the part lands in the middle of the measured range
+    void doFix (int k)
+    {
+        static const char* const names[3] = { "kick", "bass", "vocal" };
+        auto* b = fl::shared(); const auto q = part[k]; if (b == nullptr || q.slot < 0 || q.fixDb == 0 || cool > 0) return;
+        auto& sl = b->slot[q.slot]; const float room = (q.fixDb > 0 ? 24.0f : -24.0f) - sl.level.load();          // what its Level knob has left
+        const float ask = q.fixDb > 0 ? std::min (q.fixDb, std::max (0.0f, room)) : std::max (q.fixDb, std::min (0.0f, room));
+        if (std::abs (ask) < 0.05f) { said = juce::String ("The Kick Fit on the ") + names[k] + " has its Level at the end of its range. Use the mixer fader."; cool = 150; return; }
+        sl.askDb.store (ask); sl.askSeq.fetch_add (1);
+        said = juce::String ("Asked the Kick Fit on the ") + names[k] + " to turn " + (ask > 0 ? "up " : "down ") + juce::String (std::abs (ask), 1) + " dB. Give it a few seconds to settle, then look again.";
+        cool = 150;                                                 // 5 s: the readings need time to catch up
+    }
     FitBusProcessor& proc; juce::Slider gain, ceiling; juce::Label gainL, ceilL; juce::OwnedArray<juce::AudioProcessorValueTreeState::SliderAttachment> links;
+    juce::ComboBox mode; std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> modeLink; juce::TextButton fix[3];
+    fb::Mixer mixer; Part part[3]; bool had[3] = { false, false, false }; juce::String note, said; int cool = 0;
 };
 
 juce::AudioProcessorEditor* FitBusProcessor::createEditor() { return new FitBusEditor (*this); }

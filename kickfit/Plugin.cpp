@@ -3,6 +3,8 @@
 #include <juce_audio_utils/juce_audio_utils.h>
 #include <juce_dsp/juce_dsp.h>
 #include "KickFit.h"
+#include "FitLink.h"
+#include <random>
 #include "KickFitTargets.h"
 
 namespace
@@ -32,11 +34,12 @@ juce::CriticalSection linkLock;                 // held while the window reads t
 class KickFitProcessor;
 namespace { std::atomic<KickFitProcessor*> bassOne { nullptr }, kickOne { nullptr }; }
 
-class KickFitProcessor : public juce::AudioProcessor, private juce::AsyncUpdater
+class KickFitProcessor : public juce::AudioProcessor, private juce::AsyncUpdater, private juce::Timer
 {
 public:
     ~KickFitProcessor() override
     {
+        stopTimer(); fl::release (fl::shared(), linkSlot.load(), linkId);
         const juce::ScopedLock sl (linkLock);
         KickFitProcessor* me = this; bassOne.compare_exchange_strong (me, nullptr);
         me = this; if (kickOne.compare_exchange_strong (me, nullptr)) linkedRoom.store (-1.0f);
@@ -48,6 +51,7 @@ public:
           state (*this, nullptr, "KickFit", layout())
     {
         for (auto* id : { "role", "mode", "key", "thump", "punch", "click", "tail", "room", "tune", "level" }) raw[id] = state.getRawParameterValue (id);
+        std::random_device rd; linkId = (uint32_t) rd() | 1u; startTimerHz (10);
     }
     static juce::AudioProcessorValueTreeState::ParameterLayout layout()
     {
@@ -87,7 +91,7 @@ public:
     }
     void prepareToPlay (double sr, int block) override
     {
-        rate = sr; engine.setParams (read()); engine.prepare (sr);
+        rate = sr; engine.setParams (read()); engine.prepare (sr); linkMeter.prepare (sr);
         spare.setSize (1, std::max (block, 4096)); setLatencySamples (engine.latency()); lastLatency = engine.latency();
     }
     void releaseResources() override {}
@@ -119,21 +123,48 @@ public:
         engine.setParams (p);
         float* l = main.getWritePointer (0); float* r = l;
         if (main.getNumChannels() > 1) r = main.getWritePointer (1);
+        else { if (spare.getNumSamples() < n) return; spare.copyFrom (0, 0, l, n); r = spare.getWritePointer (0); }        // mono: the same sound on both sides
         if (sl != nullptr)          // FL Studio hands an unconnected sidechain a copy of this track's own sound: that is not a sidechain
         {
             bool same = true;
             for (int i = 0; i < n && same; ++i) same = sl[i] == l[i] && sr[i] == r[i];
             if (same) sl = sr = nullptr;
         }
-        else { if (spare.getNumSamples() < n) return; spare.copyFrom (0, 0, l, n); r = spare.getWritePointer (0); }
         engine.process (l, r, sl, sr, n);
         for (int i = 0; i < n; ++i) { mine.push (0.5f * (l[i] + r[i])); other.push (sl ? 0.5f * (sl[i] + sr[i]) : 0.0f); }
+        tellBus (l, r, n, p);
         if (p.role == 1) { if (bassOne.load (std::memory_order_relaxed) != this) bassOne.store (this); }
         else if (p.role == 0) { if (kickOne.load (std::memory_order_relaxed) != this) kickOne.store (this); linkedRoom.store (raw.at ("room")->load() / 100); }
         if (p.role == 0 && engine.note() > 0) linkedKickHz.store ((float) (engine.note() * kf::Engine::ratioOf (p.tune)));
         if (engine.latency() != lastLatency) { lastLatency = engine.latency(); triggerAsyncUpdate(); }
     }
     void handleAsyncUpdate() override { setLatencySamples (lastLatency); }
+
+    // Fit Bus (a separate plug-in on the bus) reads what this Kick Fit is on and how strong its output is: see FitLink.h
+    void tellBus (const float* l, const float* r, int n, const kf::Params& p)
+    {
+        auto* b = fl::shared(); if (b == nullptr) return;
+        for (int i = 0; i < n; ++i)
+        {
+            if (! linkMeter.push (0.5 * ((double) l[i] + r[i]), std::max (std::abs (l[i]), std::abs (r[i])))) continue;
+            int s = linkSlot.load (std::memory_order_relaxed);
+            if (s < 0 || b->slot[s].owner.load() != linkId)
+            {
+                s = fl::claim (b, linkId); linkSlot.store (s); if (s < 0) return;
+                linkSeq.store (b->slot[s].askSeq.load());               // requests left for whoever had the slot before are not ours
+            }
+            auto& t = b->slot[s];
+            t.role.store (p.role); for (int k = 0; k < fl::numBands; ++k) t.power[k].store ((float) linkMeter.power[k]);
+            t.peak.store ((float) linkMeter.peak); t.level.store (p.gainDb); t.seenMs.store (fl::nowMs());
+        }
+    }
+    void timerCallback() override           // Fit Bus asked for a Level change (its Fix button)
+    {
+        auto* b = fl::shared(); const int s = linkSlot.load(); if (b == nullptr || s < 0 || b->slot[s].owner.load() != linkId) return;
+        const uint32_t seq = b->slot[s].askSeq.load(); if (seq == linkSeq.load()) return;
+        linkSeq.store (seq); const float ask = b->slot[s].askDb.load();
+        if (std::isfinite (ask) && std::abs (ask) <= 48.0f) setParam ("level", juce::jlimit (-24.0f, 24.0f, raw.at ("level")->load() + ask));
+    }
 
     void getStateInformation (juce::MemoryBlock& dest) override { if (auto xml = state.copyState().createXml()) copyXmlToBinary (*xml, dest); }
     void setStateInformation (const void* data, int size) override
@@ -150,6 +181,7 @@ public:
     kf::Engine engine; Scope mine, other; double rate = 48000;
 private:
     std::map<juce::String, std::atomic<float>*> raw; juce::AudioBuffer<float> spare; int lastLatency = 0;
+    fl::BandMeter linkMeter; std::atomic<int> linkSlot { -1 }; std::atomic<uint32_t> linkSeq { 0 }; uint32_t linkId = 1;
 };
 
 // ---------- the window ----------
@@ -348,7 +380,7 @@ private:
             spectrum (proc.mine, magMine); spectrum (paired ? b->mine : proc.other, magOther);
         }
         const bool led = onBass && linkedRoom.load() >= 0;                     // a Kick Fit on the kick sets Room for this one
-        for (int i = 0; i < knobs.size(); ++i) { const bool on = onVocal ? i == 6 : onBass ? (i == 4 && ! led) : true; knobs[i]->setEnabled (on); knobs[i]->setAlpha (on ? 1.0f : 0.3f); }
+        for (int i = 0; i < knobs.size(); ++i) { const bool on = onVocal ? i == 6 : onBass ? ((i == 4 && ! led) || i == 6) : true; knobs[i]->setEnabled (on); knobs[i]->setAlpha (on ? 1.0f : 0.3f); }
         sitBtn.setEnabled (! onBass);
         keys.add ((onBass ? magMine : magOther).data(), fftSize / 2, proc.rate / fftSize);
         const double hz = onVocal ? 0.0 : proc.engine.noteShown(), tune = proc.get ("tune");

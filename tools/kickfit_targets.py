@@ -28,10 +28,13 @@ def build():
             note = {}                                  # too few songs with a steady kick note: no zone drawn
         dip = (m.get('bass_dip_db') or {}).get('median', 0) if ok else 0
         voc = (m.get('vocal_vs_backing_db') or {}) if ok else {}
-        rows.append('    { "%s", "%s", %d, %s, %.2ff, %.2ff, %.2ff, %.1ff, %.1ff, %.1ff, %.2ff, %s, %.2ff, %.2ff, %.2ff },' % (
+        pk = [(m.get(k) or {}) if ok else {} for k in ('kick_peak_vs_song_db', 'bass_peak_vs_song_db', 'vocal_peak_vs_song_db')]
+        pk_ok = all(q.get('n', 0) >= d['min_songs_per_mode'] for q in pk)
+        rows.append('    { "%s", "%s", %d, %s, %.2ff, %.2ff, %.2ff, %.1ff, %.1ff, %.1ff, %.2ff, %s, %.2ff, %.2ff, %.2ff, %s, %s },' % (
             mid, name, m.get('songs', 0), 'true' if ok else 'false', sit['p25'], sit['median'], sit['p75'],
             note.get('p25', 0), note.get('median', 0), note.get('p75', 0), dip,
-            'true' if voc.get('n', 0) >= d['min_songs_per_mode'] else 'false', voc.get('p25', 0), voc.get('median', 0), voc.get('p75', 0)))
+            'true' if voc.get('n', 0) >= d['min_songs_per_mode'] else 'false', voc.get('p25', 0), voc.get('median', 0), voc.get('p75', 0),
+            'true' if pk_ok else 'false', ', '.join('{ %.2ff, %.2ff, %.2ff }' % (q.get('p25', 0), q.get('median', 0), q.get('p75', 0)) if pk_ok else '{ 0, 0, 0 }' for q in pk)))
     ks = d['kickSamples']['all']
     return '''#pragma once
 // Made by tools/kickfit_targets.py from data/kickfit-targets.json (measured %s). Do not edit by hand.
@@ -44,6 +47,7 @@ struct ModeTarget
     float noteLo, noteMid, noteHi;     // the kick's boom note in those songs, Hz (0 = too few songs with a steady note)
     float dipDb;                       // how far the bass's lows drop under the kick in those songs, dB (middle)
     bool vocal; float vocLo, vocMid, vocHi;   // the singing against everything else (K-weighted), dB: quarter, middle, three quarters of the songs
+    bool peaks; float kickPk[3], bassPk[3], vocPk[3];   // each part's usual peak against the song's loudest peak, dB (quarter, middle, three quarters); full songs, parts split by Demucs
 };
 inline constexpr ModeTarget modeTargets[] = {
 %s

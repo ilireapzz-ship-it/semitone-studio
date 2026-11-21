@@ -8,6 +8,7 @@
 // Each averaged value is made only from gains that are low enough for the sample it is applied to, so nothing passes the ceiling.
 // Below the ceiling the gain is exactly 1: the sound comes out untouched, only 5 ms late (the host is told, and lines it up).
 #include "../kickfit/KickFit.h"
+#include "../kickfit/FitLink.h"
 #include <atomic>
 #include <vector>
 
@@ -21,6 +22,62 @@ struct Column { float in = 0, out = 0, gain = 1, band[numBands] {}; };      // o
 
 struct Params { float gainDb = 0, ceilingDb = 0, releaseMs = 120; };
 
+// How much of each part (kick, bass, vocal) is in the bus. Each Kick Fit says how strong its own output is in six ranges of
+// pitch; the bus measures itself the same way. The bus should be those parts added together, each times its own gain
+// (the mixer fader and anything else between Kick Fit and here). This finds the three gains that fit best over the last
+// several seconds: least squares on the strengths, never below zero. `fit` says how much of the bus the parts explain
+// (near 1 = the bus is just these parts; low = there is a lot else in it, or the parts cannot be told apart).
+struct Mixer
+{
+    static constexpr int parts = 3;
+    void reset() { for (auto& row : A) for (auto& v : row) v = 0; for (auto& v : r) v = 0; c = 0; }
+    void add (const double P[parts][fl::numBands], const bool have[parts], const double B[fl::numBands])
+    {
+        double tot = 0; for (int b = 0; b < fl::numBands; ++b) tot += B[b];
+        if (tot <= 1e-12) return;
+        for (auto& row : A) for (auto& v : row) v *= keep;
+        for (auto& v : r) v *= keep;
+        c *= keep;
+        for (int b = 0; b < fl::numBands; ++b)
+        {
+            const double d = B[b] + 0.02 * tot, w = 1 / (d * d);          // every range counts about the same, quiet ones a little less
+            for (int i = 0; i < parts; ++i) if (have[i]) { for (int j = 0; j < parts; ++j) if (have[j]) A[i][j] += w * P[i][b] * P[j][b]; r[i] += w * P[i][b] * B[b]; }
+            c += w * B[b] * B[b];
+        }
+    }
+    // gain2[i] = that part's gain, squared. false = nothing to go on yet.
+    bool solve (const bool have[parts], double gain2[parts], double& fit) const
+    {
+        for (int i = 0; i < parts; ++i) gain2[i] = 0;
+        fit = 0; if (c <= 0) return false;
+        double best = c;
+        for (int mask = 1; mask < (1 << parts); ++mask)
+        {
+            int idx[parts], n = 0; bool ok = true;
+            for (int i = 0; i < parts; ++i) if (mask & (1 << i)) { if (! have[i]) ok = false; idx[n++] = i; }
+            if (! ok) continue;
+            double M[parts][parts + 1];
+            for (int a = 0; a < n; ++a) { for (int b = 0; b < n; ++b) M[a][b] = A[idx[a]][idx[b]]; M[a][n] = r[idx[a]]; }
+            for (int a = 0; a < n && ok; ++a)                              // Gaussian elimination with pivoting
+            {
+                int pv = a; for (int k = a + 1; k < n; ++k) if (std::abs (M[k][a]) > std::abs (M[pv][a])) pv = k;
+                if (std::abs (M[pv][a]) < 1e-12) { ok = false; break; }
+                for (int k = 0; k <= n; ++k) std::swap (M[a][k], M[pv][k]);
+                for (int k = 0; k < n; ++k) if (k != a) { const double f = M[k][a] / M[a][a]; for (int q = a; q <= n; ++q) M[k][q] -= f * M[a][q]; }
+            }
+            if (! ok) continue;
+            double x[parts], res = c; for (int a = 0; a < n; ++a) { x[a] = M[a][n] / M[a][a]; if (x[a] < 0) ok = false; res -= x[a] * r[idx[a]]; }
+            if (! ok || res >= best) continue;
+            best = res; for (int i = 0; i < parts; ++i) gain2[i] = 0;
+            for (int a = 0; a < n; ++a) gain2[idx[a]] = x[a];
+        }
+        fit = std::clamp (1 - best / c, 0.0, 1.0); return true;
+    }
+    double keep = 0.99;          // how fast old moments fade (per add)
+private:
+    double A[parts][parts] {}, r[parts] {}, c = 0;
+};
+
 class Engine
 {
 public:
@@ -33,6 +90,7 @@ public:
         pos = 0; n = 0; dqHead = dqTail = 0; rel = 1; boxSum = L; lowered = 0; colStep = std::max (1, (int) (0.02 * sr)); colN = 0; cur = {}; cur.gain = 1;
         for (int i = 0; i < numBands - 1; ++i) { lpA[i].lowpass (bandEdges[i], 0.5412, sr); lpB[i].lowpass (bandEdges[i], 1.3066, sr); lpA[i].reset(); lpB[i].reset(); }
         for (auto& e : bandE) e = 0;
+        inMeter.prepare (sr);
         set (p);
     }
     void set (const Params& np) { p = np; gIn = kf::dbToGain (p.gainDb); ceil = kf::dbToGain (p.ceilingDb); relCoef = 1 - std::exp (-1.0 / (std::max (5.0f, p.releaseMs) * 0.001 * sr)); }
@@ -43,6 +101,8 @@ public:
     {
         for (int i = 0; i < count; ++i)
         {
+            if (inMeter.push (0.5 * ((double) l[i] + r[i]), std::max (std::abs (l[i]), std::abs (r[i]))))      // what arrives, measured the way each Kick Fit measures itself
+            { for (int k = 0; k < fl::numBands; ++k) inPower[k].store ((float) inMeter.power[k]); inPeak.store ((float) inMeter.peak); }
             const float xl = (float) (l[i] * gIn), xr = (float) (r[i] * gIn);
             const double pk = std::max (std::abs ((double) xl), std::abs ((double) xr));
             const double need = pk > ceil ? ceil / pk : 1.0;
@@ -90,6 +150,10 @@ private:
     int L = 221, pos = 0, dqHead = 0, dqTail = 0, lowered = 0, colStep = 882, colN = 0; long long n = 0;
     std::vector<float> dl, dr; std::vector<double> box, dqV; std::vector<long long> dqI;
     kf::Biquad lpA[numBands - 1], lpB[numBands - 1];
+    fl::BandMeter inMeter;
+public:
+    std::atomic<float> inPower[fl::numBands] {}, inPeak { 0.0f };       // the bus as it arrives: strength per range, recent peak
+private:
     Column cur, cols[numColumns]; std::atomic<int> colW { 0 }; std::atomic<float> redNow { 0.0f };
 };
 }
