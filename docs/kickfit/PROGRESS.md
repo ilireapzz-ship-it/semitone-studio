@@ -79,3 +79,17 @@ How far under the song's highest peak each part usually reaches:
 - Vocal fit, first version (built and tested, not yet tried in FL): a third "I am on: The vocal" setting. It hears the rest of
   the song on its sidechain, shows the vocal against it, and Sit it sets Level to where your songs have the singing
   (rock: 2.5 dB under to 1.3 over everything else; pop: 1.6 under to 3.3 over). Only Level changes the sound.
+- Vocal fit tried in FL on a real vocal: Sit it turned it down 12.4 dB into the Pop range. Fixed: the bar now follows Level at once.
+- Found in FL: Kick Fit listens before the mixer fader, so it cannot see fader moves. With only a kick, bass and vocal in a
+  project the peak heights above (from full songs) and Kick Fit's bar disagree about the bass: in a full song other
+  instruments share the low end. Not solved.
+
+## Fit Bus (new, first piece)
+
+A second plug-in for the bus (or master) the kick, bass and vocal meet on. First piece only:
+- A limiter that looks 5 ms ahead. Tested: nothing passes the ceiling; under the ceiling the sound is untouched, only late.
+- Its picture is the level over time on a plain dB scale (every 6 dB the same distance), each column coloured by pitch:
+  red under 60 Hz, orange bass, yellow, green, light blue, deep blue above 5 kHz. Pale tops show what the limiter took off.
+- Built and installed on the Windows PC. Not yet opened in FL Studio.
+- Not built yet: knowing which part is the kick, bass and vocal (plan: each Kick Fit tells Fit Bus what it is on, which is
+  certain, where guessing from the mixed sound is not), and the suggested fixes for common mix problems from measurements.

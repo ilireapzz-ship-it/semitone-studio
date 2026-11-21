@@ -22,6 +22,7 @@ FetchContent_MakeAvailable(JUCE)
 option(ST_KICKFIT_ONLY "Build only the Kick Fit plug-in" OFF)
 if(ST_KICKFIT_ONLY)
     add_subdirectory(kickfit)
+    add_subdirectory(fitbus)
     return()
 endif()
 
@@ -101,3 +102,5 @@ target_link_libraries(SemitoneStudio
 
 # Kick Fit: a separate effect plug-in for the kick channel (see kickfit/CMakeLists.txt)
 add_subdirectory(kickfit)
+# Fit Bus: the limiter the kick, bass and vocal meet in (see fitbus/CMakeLists.txt)
+add_subdirectory(fitbus)
