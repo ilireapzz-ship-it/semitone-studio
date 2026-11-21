@@ -109,7 +109,7 @@ public:
         for (int i = 0; i < count; ++i)
         {
             if (inMeter.push (0.5 * ((double) l[i] + r[i]), std::max (std::abs (l[i]), std::abs (r[i]))))      // what arrives, measured the way each Kick Fit measures itself
-            { for (int k = 0; k < fl::numBands; ++k) inPower[k].store ((float) inMeter.power[k]); inPeak.store ((float) inMeter.peak); }
+            { for (int k = 0; k < fl::numBands; ++k) inPower[k].store ((float) inMeter.power[k]); inPeak.store ((float) inMeter.peak); inNow.store ((float) inMeter.stepPeak); }
             const float xl = (float) (l[i] * gIn), xr = (float) (r[i] * gIn);
             const double pk = std::max (std::abs ((double) xl), std::abs ((double) xr));
             const double need = pk > ceil ? ceil / pk : 1.0;
@@ -159,7 +159,7 @@ private:
     kf::Biquad lpA[numBands - 1], lpB[numBands - 1];
     fl::BandMeter inMeter;
 public:
-    std::atomic<float> inPower[fl::numBands] {}, inPeak { 0.0f };       // the bus as it arrives: strength per range, recent peak
+    std::atomic<float> inPower[fl::numBands] {}, inPeak { 0.0f }, inNow { 0.0f };       // the bus as it arrives: strength per range, recent peak, the peak of the last 20 ms
 private:
     Column cur, cols[numColumns]; std::atomic<int> colW { 0 }; std::atomic<float> redNow { 0.0f };
 };

@@ -564,6 +564,7 @@ def cmd_targets(args):
             'kick_low_vs_mix_db': 'Level of the drum stem between 30 and 150 Hz against the whole mix, in the 120 ms after each kick hit; median over the hits.',
             'kick_low_vs_lows_db': 'The same kick lows (30-150 Hz) against everything under 300 Hz in the whole mix, in the same windows. This is what Sit it uses: it does not depend on how much is playing above the bass range.',
             'kick_low_vs_kickbass_lows_db': 'The same, against only the drum and bass stems under 300 Hz: what Kick Fit hears when just the bass is fed to it.',
+            'bass_/vocal_peak_vs_kick_db': 'Per song: that part\'s usual peak (as below) minus the kick\'s usual peak. Fit Bus uses these: with only a few parts in a bus the tallest one is the loudest peak, so heights against the whole song do not carry over, but the gaps between parts do.',
             'peaks': 'What a peak meter shows. mix_peak_db: the highest the finished song reaches (dBFS). kick_peak_vs_song_db: the drum stem peak in the 120 ms after a kick hit, against that (middle hit; includes a snare or hat landing with it). bass_/vocal_peak_vs_song_db: the middle of that stem, its 0.1 s peaks while it plays; _top_ is its loudest twentieth. These are finished, mastered songs: a mix before mastering sits lower overall, but the gaps between the parts are the useful bit.',
             'vocal_vs_backing_db': 'K-weighted level of the vocal stem against everything else, in 0.4 s steps while there is singing; middle step. vocal_share: how much of the song has singing.',
             'drums_at_kick_vs_mix_kw_db': 'K-weighted level of the whole drum stem against the mix in the same windows. Includes hats and snares that land with the kick.',
@@ -597,6 +598,8 @@ def cmd_targets(args):
             continue
         steady = [s for s in sub if s.get('kick_f0_spread_cents') is not None and s['kick_f0_spread_cents'] < 50]
         d = {'songs': len(sub), 'status': 'measured', **{f: stat([s.get(f) for s in sub]) for f in SONG_FIELDS}}
+        gap = lambda f: stat([s[f] - s['kick_peak_vs_song_db'] for s in sub if s.get(f) is not None and s.get('kick_peak_vs_song_db') is not None])
+        d['bass_peak_vs_kick_db'] = gap('bass_peak_vs_song_db'); d['vocal_peak_vs_kick_db'] = gap('vocal_peak_vs_song_db')
         d['kick_f0'] = stat([s.get('kick_f0') for s in steady]); d['kick_cents'] = stat([s.get('kick_cents') for s in steady])
         keyed = [s for s in steady if (s.get('key_conf') or 0) >= 0.05]
         d['kick_note_steady_songs'] = len(steady)

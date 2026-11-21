@@ -55,12 +55,31 @@ private:
     kf::Biquad a[numBands - 1], b[numBands - 1]; double e[numBands] {}, top = 0, smooth = 0.06, fade = 0.995; int step = 882, n = 0;
 };
 
+// A part's usual peak while it plays, the way tools/kick_analyse.py measures a stem: the peak of every 0.1 s, the quiet
+// stretches left out (under a tenth of the loudest twentieth), then the middle one. Over the last 12 s.
+struct UsualPeak
+{
+    void prepare (double sr) { step = std::max (1, (int) (0.1 * sr)); n = 0; top = 0; w = 0; count = 0; value = 0; }
+    void push (double size)
+    {
+        top = std::max (top, size); if (++n < step) return;
+        ring[w] = (float) top; w = (w + 1) % size_; count = std::min (count + 1, size_); top = 0; n = 0;
+        float v[size_]; for (int i = 0; i < count; ++i) v[i] = ring[i];
+        std::sort (v, v + count); const float floor = 0.1f * v[(int) (0.95 * (count - 1))];
+        int from = 0; while (from < count && v[from] <= floor) ++from;
+        value = count - from >= 5 ? v[from + (count - from) / 2] : 0.0;
+    }
+    double value = 0;            // 0 = not enough playing yet
+private:
+    static constexpr int size_ = 120; float ring[size_] {}; double top = 0; int step = 4410, n = 0, w = 0, count = 0;
+};
+
 struct Slot
 {
     std::atomic<uint32_t> owner;                 // 0 = free
     std::atomic<int32_t> role;                   // 0 kick, 1 bass, 2 vocal
     std::atomic<int64_t> seenMs;                 // when it last wrote
-    std::atomic<float> power[numBands], peak, level;
+    std::atomic<float> power[numBands], peak, usual, level;      // peak: the recent highest (a kick's hits); usual: see UsualPeak
     std::atomic<float> askDb; std::atomic<uint32_t> askSeq;      // from Fit Bus: change Level by askDb (a new askSeq = a new request)
 };
 struct Block { Slot slot[maxSlots]; };
@@ -73,11 +92,11 @@ inline Block* shared()
     static Block* block = [] () -> Block*
     {
        #ifdef _WIN32
-        HANDLE h = CreateFileMappingA (INVALID_HANDLE_VALUE, nullptr, PAGE_READWRITE, 0, (DWORD) sizeof (Block), "Local\\SemitoneFitLink1");
+        HANDLE h = CreateFileMappingA (INVALID_HANDLE_VALUE, nullptr, PAGE_READWRITE, 0, (DWORD) sizeof (Block), "Local\\SemitoneFitLink2");
         if (h == nullptr) return nullptr;
         return static_cast<Block*> (MapViewOfFile (h, FILE_MAP_ALL_ACCESS, 0, 0, sizeof (Block)));          // new memory starts as zeros: every slot free
        #else
-        const int fd = shm_open ("/semitone-fitlink1", O_CREAT | O_RDWR, 0600);
+        const int fd = shm_open ("/semitone-fitlink2", O_CREAT | O_RDWR, 0600);
         if (fd < 0) return nullptr;
         if (ftruncate (fd, (off_t) sizeof (Block)) != 0) { /* already sized by another plug-in */ }
         void* p = mmap (nullptr, sizeof (Block), PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0); close (fd);

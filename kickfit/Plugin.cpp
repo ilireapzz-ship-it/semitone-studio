@@ -91,7 +91,7 @@ public:
     }
     void prepareToPlay (double sr, int block) override
     {
-        rate = sr; engine.setParams (read()); engine.prepare (sr); linkMeter.prepare (sr);
+        rate = sr; engine.setParams (read()); engine.prepare (sr); linkMeter.prepare (sr); linkUsual.prepare (sr);
         spare.setSize (1, std::max (block, 4096)); setLatencySamples (engine.latency()); lastLatency = engine.latency();
     }
     void releaseResources() override {}
@@ -146,7 +146,8 @@ public:
         auto* b = fl::shared(); if (b == nullptr) return;
         for (int i = 0; i < n; ++i)
         {
-            if (! linkMeter.push (0.5 * ((double) l[i] + r[i]), std::max (std::abs (l[i]), std::abs (r[i])))) continue;
+            const double size = std::max (std::abs (l[i]), std::abs (r[i])); linkUsual.push (size);
+            if (! linkMeter.push (0.5 * ((double) l[i] + r[i]), size)) continue;
             int s = linkSlot.load (std::memory_order_relaxed);
             if (s < 0 || b->slot[s].owner.load() != linkId)
             {
@@ -155,7 +156,7 @@ public:
             }
             auto& t = b->slot[s];
             t.role.store (p.role); for (int k = 0; k < fl::numBands; ++k) t.power[k].store ((float) linkMeter.power[k]);
-            t.peak.store ((float) linkMeter.peak); t.level.store (p.gainDb); t.seenMs.store (fl::nowMs());
+            t.peak.store ((float) linkMeter.peak); t.usual.store ((float) linkUsual.value); t.level.store (p.gainDb); t.seenMs.store (fl::nowMs());
         }
     }
     void timerCallback() override           // Fit Bus asked for a Level change (its Fix button)
@@ -181,7 +182,7 @@ public:
     kf::Engine engine; Scope mine, other; double rate = 48000;
 private:
     std::map<juce::String, std::atomic<float>*> raw; juce::AudioBuffer<float> spare; int lastLatency = 0;
-    fl::BandMeter linkMeter; std::atomic<int> linkSlot { -1 }; std::atomic<uint32_t> linkSeq { 0 }; uint32_t linkId = 1;
+    fl::BandMeter linkMeter; fl::UsualPeak linkUsual; std::atomic<int> linkSlot { -1 }; std::atomic<uint32_t> linkSeq { 0 }; uint32_t linkId = 1;
 };
 
 // ---------- the window ----------

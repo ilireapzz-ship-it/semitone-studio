@@ -158,51 +158,66 @@ private:
     {
         static const char* const names[3] = { "Kick", "Bass", "Vocal" }; static const char* const on[3] = { "The kick", "The bass", "The vocal" };
         const auto& t = kf::modeTargets[(size_t) juce::jlimit (0, kf::numModes - 1, (int) proc.state.getRawParameterValue ("mode")->load())];
-        auto* b = fl::shared(); bool have[3] = { false, false, false }; double P[3][fl::numBands] {}, peak[3] {}, B[fl::numBands];
+        auto* b = fl::shared(); bool have[3] = { false, false, false }; double P[3][fl::numBands] {}, peak[3] {}, usual[3] {}, B[fl::numBands];
         for (auto& q : part) q.slot = -1;
         if (b != nullptr)
             for (int i = 0; i < fl::maxSlots; ++i)
             {
                 const auto& sl = b->slot[i]; const int r = sl.role.load();
                 if (! fl::alive (sl) || r < 0 || r > 2 || have[r]) continue;                 // the first of each kind counts
-                have[r] = true; part[r].slot = i; peak[r] = sl.peak.load(); for (int k = 0; k < fl::numBands; ++k) P[r][k] = sl.power[k].load();
+                have[r] = true; part[r].slot = i; peak[r] = sl.peak.load(); usual[r] = sl.usual.load(); for (int k = 0; k < fl::numBands; ++k) P[r][k] = sl.power[k].load();
             }
         if (have[0] != had[0] || have[1] != had[1] || have[2] != had[2]) { mixer.reset(); for (int k = 0; k < 3; ++k) had[k] = have[k]; }
         for (int k = 0; k < fl::numBands; ++k) B[k] = proc.engine.inPower[k].load();
-        const double song = proc.engine.inPeak.load(); const bool playing = song > 1e-4;
+        const double song = proc.engine.inPeak.load();
+        if (proc.engine.inNow.load() > 1e-4f) quiet = 0; else if (quiet < 1000) ++quiet;
+        const bool playing = quiet < 15;                                   // sound arrived in the last half second
         if (playing != wasPlaying) { wasPlaying = playing; if (playing) mixer.reset(); }          // start afresh each time the song starts
-        if (playing) mixer.add (P, have, B, 1.0 / 30.0);
-        if (logOn && playing)            // for working on Fit Bus: the numbers it sees, 30 lines a second (only when the switch file exists)
+        if (cool > 0) --cool;
+        if (! playing)                                                     // stopped: keep the last reading on screen
+        {
+            note = b == nullptr ? "This computer would not let Fit Bus and Kick Fit talk to each other, so Fit Bus only limits and draws."
+                 : ! (have[0] || have[1] || have[2]) ? "No Kick Fit found. Put Kick Fit on the kick, the bass and the vocal, set each one's \"I am on\", and send those tracks here."
+                 : read ? "Stopped. Showing the last reading." : "Play the song.";
+            if (! read) for (int k = 0; k < 3; ++k) part[k].text = juce::String (names[k]) + (have[k] ? ": found." : juce::String (": no Kick Fit set to \"") + on[k] + "\" is running.");
+            for (auto& f : fix) f.setEnabled (false);
+            repaint(); return;
+        }
+        mixer.add (P, have, B, 1.0 / 30.0);
+        if (logOn)                       // for working on Fit Bus: the numbers it sees, 30 lines a second (only when the switch file exists)
         {
             juce::String row; for (int k = 0; k < 3; ++k) { row << (have[k] ? 1 : 0) << "," << peak[k] << ","; for (int i = 0; i < fl::numBands; ++i) row << P[k][i] << ","; }
             for (int i = 0; i < fl::numBands; ++i) row << B[i] << ",";
             row << song << "\n"; logFile.appendText (row);
         }
-        double g2[3], fit = 0; const bool solved = playing && mixer.solve (have, g2, fit), sure = solved && fit >= 0.9;
-        if (cool > 0) --cool;
-        note = b == nullptr ? "This computer would not let Fit Bus and Kick Fit talk to each other, so Fit Bus only limits and draws."
-             : ! (have[0] || have[1] || have[2]) ? "No Kick Fit found. Put Kick Fit on the kick, the bass and the vocal, set each one's \"I am on\", and send those tracks here."
-             : ! playing ? "Play the song."
-             : ! solved ? "Listening..."
+        double g2[3], fit = 0; const bool solved = mixer.solve (have, g2, fit), sure = solved && fit >= 0.9;
+        read = read || sure;
+        note = ! solved ? "Listening..."
              : ! sure ? "There is more in this bus than the parts with a Kick Fit on them, so their heights can't be read. Send only the kick, bass and vocal here."
              : said.isNotEmpty() && cool > 0 ? said
-             : "Heights are measured after the faders. The ranges come from finished songs, where other instruments share the low end: with only these parts playing, trust your ears on the bass.";
+             : "Measured after the faders. The gaps come from finished songs, where other instruments share the low end with the bass: with only these parts playing, trust your ears on the bass.";
+        auto rel = [] (float v) { return juce::String (std::abs (v), 1) + (v < 0 ? " under" : " over"); };
+        const double kickTop = have[0] && sure && g2[0] > 1e-9 ? peak[0] * std::sqrt (g2[0]) : 0.0;          // the kick's hits as they arrive here
         for (int k = 0; k < 3; ++k)
         {
-            auto& q = part[k]; q.warn = false; q.fixDb = 0; const float* range = k == 0 ? t.kickPk : k == 1 ? t.bassPk : t.vocPk;
+            auto& q = part[k]; q.warn = false; q.fixDb = 0;
+            double mine = 0, all = 0; for (int i = 0; i < fl::numBands; ++i) { mine += g2[k] * P[k][i]; all += B[i]; }
             if (! have[k]) q.text = juce::String (names[k]) + ": no Kick Fit set to \"" + on[k] + "\" is running.";
             else if (! sure) q.text = juce::String (names[k]) + ": found.";
             else if (g2[k] <= 1e-9 || peak[k] <= 1e-6) q.text = juce::String (names[k]) + ": found, but none of it reaches this bus.";
+            else if (k == 0) q.text = "Kick: its hits peak " + (kickTop < song * 0.994 ? rel ((float) (20 * std::log10 (kickTop / song))) : juce::String ("at")) + " the loudest peak here. The bass and vocal are compared with it.";
+            else if (kickTop <= 0) q.text = juce::String (names[k]) + ": found. It is compared with the kick, and no kick reaches this bus.";
+            else if (usual[k] <= 1e-6) q.text = juce::String (names[k]) + ": found. Waiting for more of it to play.";
+            else if (mine < 0.03 * all) q.text = juce::String (names[k]) + ": too quiet next to the others here to read exactly.";          // under about 15 dB down the reading can be several dB out
             else
             {
-                const float h = (float) (20 * std::log10 (peak[k] * std::sqrt (g2[k]) / song));          // this part's peak against the bus's loudest peak
-                q.text = juce::String (names[k]) + ": peaks " + (h < -0.05f ? juce::String (-h, 1) + " dB under" : "at") + " the loudest peak. ";
-                double mine = 0, all = 0; for (int i = 0; i < fl::numBands; ++i) { mine += g2[k] * P[k][i]; all += B[i]; }
-                if (mine < 0.03 * all) q.text << "Too quiet next to the others here to read exactly.";          // under about 15 dB down the reading can be several dB out
-                else if (! t.peaks) q.text << "Not enough " << t.name << " songs measured to compare.";
-                else if (mine >= 0.03 * all)
+                const float* range = k == 1 ? t.bassVsKick : t.vocVsKick;
+                const float h = (float) (20 * std::log10 (usual[k] * std::sqrt (g2[k]) / kickTop));          // its usual peak against the kick's hits
+                q.text = juce::String (names[k]) + ": usually peaks " + rel (h) + " the kick (dB). ";
+                if (! t.peaks) q.text << "Not enough " << t.name << " songs measured to compare.";
+                else
                 {
-                    q.text << "Your " << t.name << " songs: " << juce::String (-range[2], 1) << " to " << juce::String (-range[0], 1) << " under. ";
+                    q.text << "Your " << t.name << " songs: " << rel (range[0]) << " to " << rel (range[2]) << ". ";
                     if (h > range[2] + 0.5f) { q.warn = true; q.fixDb = range[1] - h; q.text << "Taller than most."; }
                     else if (h < range[0] - 0.5f) { q.warn = true; q.fixDb = range[1] - h; q.text << "Lower than most."; }
                     else q.text << "In range.";
@@ -228,7 +243,7 @@ private:
     juce::ComboBox mode; std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> modeLink; juce::TextButton fix[3];
     juce::File logFile { juce::File::getSpecialLocation (juce::File::tempDirectory).getChildFile ("fitbus-log.csv") };
     bool logOn = juce::File::getSpecialLocation (juce::File::tempDirectory).getChildFile ("fitbus-log.on").existsAsFile();
-    fb::Mixer mixer; Part part[3]; bool had[3] = { false, false, false }, wasPlaying = false; juce::String note, said; int cool = 0;
+    fb::Mixer mixer; Part part[3]; bool had[3] = { false, false, false }, wasPlaying = false, read = false; int quiet = 1000; juce::String note, said; int cool = 0;
 };
 
 juce::AudioProcessorEditor* FitBusProcessor::createEditor() { return new FitBusEditor (*this); }

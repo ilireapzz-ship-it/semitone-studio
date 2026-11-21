@@ -1,6 +1,6 @@
 {
  "about": "Kick Fit targets, measured by tools/kick_analyse.py on the kicks and songs on Jamie's PC. Totals only: no names, no paths, no audio.",
- "made": "2026-11-21",
+ "made": "2026-11-22",
  "how": {
   "kicks": "Files with a kick word in the name (kick, kck, bd, 808...), kept only when they sound like one hit with strong lows at the start.",
   "f0": "Boom note in Hz: strongest spectrum peak after the glide has settled, near the cycle-by-cycle estimate.",
@@ -14,6 +14,7 @@
   "kick_low_vs_mix_db": "Level of the drum stem between 30 and 150 Hz against the whole mix, in the 120 ms after each kick hit; median over the hits.",
   "kick_low_vs_lows_db": "The same kick lows (30-150 Hz) against everything under 300 Hz in the whole mix, in the same windows. This is what Sit it uses: it does not depend on how much is playing above the bass range.",
   "kick_low_vs_kickbass_lows_db": "The same, against only the drum and bass stems under 300 Hz: what Kick Fit hears when just the bass is fed to it.",
+  "bass_/vocal_peak_vs_kick_db": "Per song: that part's usual peak (as below) minus the kick's usual peak. Fit Bus uses these: with only a few parts in a bus the tallest one is the loudest peak, so heights against the whole song do not carry over, but the gaps between parts do.",
   "peaks": "What a peak meter shows. mix_peak_db: the highest the finished song reaches (dBFS). kick_peak_vs_song_db: the drum stem peak in the 120 ms after a kick hit, against that (middle hit; includes a snare or hat landing with it). bass_/vocal_peak_vs_song_db: the middle of that stem, its 0.1 s peaks while it plays; _top_ is its loudest twentieth. These are finished, mastered songs: a mix before mastering sits lower overall, but the gaps between the parts are the useful bit.",
   "vocal_vs_backing_db": "K-weighted level of the vocal stem against everything else, in 0.4 s steps while there is singing; middle step. vocal_share: how much of the song has singing.",
   "drums_at_kick_vs_mix_kw_db": "K-weighted level of the whole drum stem against the mix in the same windows. Includes hats and snares that land with the kick.",
@@ -613,6 +614,22 @@
     "p75": 114.6,
     "p90": 150.72
    },
+   "bass_peak_vs_kick_db": {
+    "n": 53,
+    "median": -5.83,
+    "p10": -13.82,
+    "p25": -11.06,
+    "p75": 0.93,
+    "p90": 29.85
+   },
+   "vocal_peak_vs_kick_db": {
+    "n": 53,
+    "median": -1.18,
+    "p10": -5.6,
+    "p25": -4.18,
+    "p75": 5.72,
+    "p90": 43.11
+   },
    "kick_note_steady_songs": 45,
    "kick_note_and_key_songs": 32,
    "kick_vs_tonic_semitones": {
@@ -829,6 +846,22 @@
     "p25": 66.43,
     "p75": 133.4,
     "p90": 158.29
+   },
+   "bass_peak_vs_kick_db": {
+    "n": 242,
+    "median": -7.96,
+    "p10": -12.69,
+    "p25": -9.73,
+    "p75": -6.38,
+    "p90": -3.89
+   },
+   "vocal_peak_vs_kick_db": {
+    "n": 242,
+    "median": -3.09,
+    "p10": -6.42,
+    "p25": -5.01,
+    "p75": -0.55,
+    "p90": 7.92
    },
    "kick_note_steady_songs": 216,
    "kick_note_and_key_songs": 163,
