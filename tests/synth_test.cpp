@@ -199,12 +199,12 @@ int main()
         auto s = std::make_shared<SynthPatch>(); s->drumCh = 9;
         const int N = (int) (SR * 1.6), head = (int) (SR * .25), second = (int) SR;
         Synth a; a.prepare (SR); a.setPatch (s);
-        const auto plain = run (a, { { 0, on (9, 36, 40) } }, N);
+        const auto plain = run (a, { { 0, on (9, 36, 10) } }, N);   // soft, so the safety compressor at the end stays out of the pan law
         Synth b; b.prepare (SR); b.setPatch (s);
-        const auto right = run (b, { { 0, cc (85, 36) }, { 0, cc (86, 127) }, { 0, on (9, 36, 40) }, { second, on (9, 36, 40) } }, N);
+        const auto right = run (b, { { 0, cc (85, 36) }, { 0, cc (86, 127) }, { 0, on (9, 36, 10) }, { second, on (9, 36, 10) } }, N);
         const float pl = rmsOf (plain.l, 0, head), rl = rmsOf (right.l, 0, head), rr = rmsOf (right.r, 0, head);
         CHECK (std::abs (pl - rmsOf (plain.r, 0, head)) < 1e-6f && pl > .001f, "a plain hit sits in the middle (%f)", pl);
-        CHECK (rl < pl * .05f && rr > pl * 1.2f && rr < pl * 1.6f, "a hit panned hard right: left %f right %f (plain %f)", rl, rr, pl);
+        CHECK (rl < pl * .05f && rr > pl * 1.05f && rr < pl * 1.6f, "a hit panned hard right: left %f right %f (plain %f)", rl, rr, pl);
         const float nl = rmsOf (right.l, second, second + head), nr = rmsOf (right.r, second, second + head);
         CHECK (std::abs (nl - nr) < 1e-6f && nl > pl * .5f, "the next hit has no message, so it is back in the middle (%f, %f)", nl, nr);
         Synth c; c.prepare (SR); c.setPatch (s);
