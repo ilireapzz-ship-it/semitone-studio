@@ -343,8 +343,8 @@ private:
         else
         {
             line = "Boom: " + noteText (shownHz) + (proc.engine.glideSemis() > 0.5 && proc.engine.glideSemis() < 36 ? " (drops " + juce::String (proc.engine.glideSemis(), 1) + " semitones at the start)" : juce::String()) + ". ";
-            const bool moving = proc.engine.noteSpreadCents() > 40;
-            if (moving) line += "Its pitch keeps moving, so it has no single note: tune by ear. ";
+            const double apart = proc.engine.noteSpreadCents(); const bool moving = apart > 30;
+            if (moving) line += "It reads a little differently on every hit (" + juce::String ((int) apart) + " cents apart), so it has no one clear note: tune by ear. ";
             if (haveKey && ! moving)
             {
                 int pc = 0; const double move = kf::tuneToKey (shownHz, tonic, minor, &pc);

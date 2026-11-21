@@ -75,7 +75,7 @@ private:
 
 // ---------- the boom note ----------
 // The lows (under 350 Hz) at about 4 kHz, searched for the repeat length that fits best (the YIN method),
-// every 15 ms. A hit's note is the middle value of the later, steady frames, so a pitch drop at the start doesn't count.
+// every 5 ms. A hit's note is the middle value of the later, steady frames, so a pitch drop at the start doesn't count.
 class PitchTracker
 {
 public:
@@ -85,9 +85,9 @@ public:
         lp1.lowpass (350, .54, sr); lp2.lowpass (350, 1.31, sr); lp1.reset(); lp2.reset();
         W = (int) (fs * 0.045); tauMin = (int) (fs / 260.0); tauMax = (int) (fs / 26.0) + 2;
         N = W + tauMax + 2; ring.assign ((size_t) N, 0.0); lin.assign ((size_t) N, 0.0); d.assign ((size_t) tauMax + 2, 0.0);
-        hop = std::max (1, (int) (fs * 0.015)); w = 0; ph = 0; sinceFrame = 0; sinceOnset = 1 << 28; frames.clear(); peakRms = 0; last = 0; held = 0; nRecent = 0;
+        hop = std::max (1, (int) (fs * 0.005)); w = 0; ph = 0; sinceFrame = 0; sinceOnset = 1 << 28; frames.clear(); weights.clear(); frames.reserve (maxFrames); weights.reserve (maxFrames); peakRms = 0; last = 0; held = 0; nRecent = 0;
     }
-    void onset() { if (frames.size() >= 3) { held = settled(); heldSpread = spreadCents(); recent[nRecent % 5] = held; ++nRecent; } sinceOnset = 0; frames.clear(); peakRms = 0; }
+    void onset() { if (frames.size() >= 3) { held = settled(); heldSpread = spreadCents(); recent[nRecent % 5] = held; ++nRecent; } sinceOnset = 0; frames.clear(); weights.clear(); peakRms = 0; }
     // for the display: the middle of the last five hits when they agree (one kick), else the newest hit (an 808 playing notes)
     double steadyNote() const
     {
@@ -95,6 +95,13 @@ public:
         double v[5]; for (int i = 0; i < n; ++i) v[i] = recent[i];
         std::sort (v, v + n);
         return 1200 * std::log2 (v[n - 1] / v[0]) < 80 ? v[n / 2] : (frames.size() >= 4 ? settled() : held);
+    }
+    // how far apart the last five hits read, in cents. Small = this kick has one note we can trust. -1 = fewer than 3 hits so far.
+    double agreeCents() const
+    {
+        const int n = std::min (nRecent, 5); if (n < 3) return -1;
+        double lo = recent[0], hi = recent[0]; for (int i = 1; i < n; ++i) { lo = std::min (lo, recent[i]); hi = std::max (hi, recent[i]); }
+        return lo > 0 ? 1200 * std::log2 (hi / lo) : 9999;
     }
     double heldNote() const { return held > 0 ? held : (frames.size() >= 8 ? settled() : 0.0); }     // steady between hits: for filters
     void push (double x)
@@ -106,27 +113,35 @@ public:
         if (sinceOnset < (1 << 28)) ++sinceOnset;
         if (++sinceFrame >= hop) { sinceFrame = 0; analyse(); }
     }
-    // the note of the hit playing now or just played (Hz), 0 when not known
+    // The note of the hit playing now or just played (Hz), 0 when not known: the average pitch by loudness, so the loud body
+    // of the hit decides and the quiet end of the tail (where the pitch often keeps sinking) hardly counts. That makes the
+    // same kick read the same on every hit.
     double settled() const
     {
         if (frames.empty()) return last;
-        std::vector<double> v; const size_t from = frames.size() >= 4 ? frames.size() / 2 : 0;
-        for (size_t i = from; i < frames.size(); ++i) v.push_back (frames[i]);
-        std::nth_element (v.begin(), v.begin() + (long) (v.size() / 2), v.end());
-        return v[v.size() / 2];
+        const double mid = weighted (0.5); double sum = 0, total = 0;          // loudness-weighted average pitch, wild frames left out
+        for (size_t i = 0; i < frames.size(); ++i)
+        {
+            const double st = 12 * std::log2 (frames[i] / mid);
+            if (std::abs (st) < 3) { sum += weights[i] * st; total += weights[i]; }
+        }
+        return total > 0 ? mid * std::pow (2.0, sum / total / 12) : mid;
     }
-    // how far the later frames spread around that note, in cents (middle half). Big = the pitch keeps moving: no single note.
-    double spreadCents() const
-    {
-        if (frames.size() < 4) return 0;
-        std::vector<double> v (frames.begin() + (long) (frames.size() / 2), frames.end());
-        std::sort (v.begin(), v.end());
-        return 1200 * std::log2 (v[v.size() * 3 / 4] / v[v.size() / 4]);
-    }
+    // how far the pitch moves through the body of the hit, in cents (middle half by loudness). Big = no single note.
+    double spreadCents() const { return frames.size() < 4 ? 0.0 : 1200 * std::log2 (weighted (0.75) / weighted (0.25)); }
     double current() const { return frames.empty() ? 0.0 : frames.back(); }                 // the newest frame (follows a slide)
     double glideSemis() const { const double s = settled(); return frames.size() >= 3 && s > 0 ? 12 * std::log2 (frames.front() / s) : 0.0; }
     int frameCount() const { return (int) frames.size(); }
 private:
+    double weighted (double q) const          // the frame value below which a share q of the loudness lies
+    {
+        int idx[maxFrames]; const int n = (int) std::min<size_t> (frames.size(), maxFrames); double total = 0;
+        for (int i = 0; i < n; ++i) { idx[i] = i; total += weights[(size_t) i]; }
+        std::sort (idx, idx + n, [this] (int a, int b) { return frames[(size_t) a] < frames[(size_t) b]; });
+        double run = 0;
+        for (int i = 0; i < n; ++i) { run += weights[(size_t) idx[i]]; if (run >= q * total) return frames[(size_t) idx[i]]; }
+        return frames[(size_t) idx[n - 1]];
+    }
     void analyse()
     {
         if (sinceOnset < N || sinceOnset > (int) (fs * 4)) return;        // wait until the frame holds only this hit
@@ -154,10 +169,11 @@ private:
         }
         const double y0 = d[(size_t) (best - 1)], y1 = d[(size_t) best], y2 = d[(size_t) (best + 1)], den = y0 - 2 * y1 + y2;
         const double tau = best + (den != 0 ? 0.5 * (y0 - y2) / den : 0.0);
-        if (frames.size() < 256) frames.push_back (fs / tau);
+        if (frames.size() < maxFrames) { frames.push_back (fs / tau); weights.push_back (rms); }
         last = settled();
     }
-    Biquad lp1, lp2; std::vector<double> ring, lin, d, frames;
+    static constexpr int maxFrames = 800;       // 4 seconds of one note
+    Biquad lp1, lp2; std::vector<double> ring, lin, d, frames, weights;
     double fs = 4000, peakRms = 0, last = 0, held = 0, heldSpread = 0, recent[5] {}; int nRecent = 0;
 public:
     double lastSpread() const { return frames.size() >= 8 ? spreadCents() : heldSpread; }
@@ -388,7 +404,7 @@ public:
     double noteNow() const { return pitch.current(); }
     double noteShown() const { return pitch.steadyNote(); }             // steadier, for the window
     double glideSemis() const { return pitch.glideSemis(); }
-    double noteSpreadCents() const { return pitch.lastSpread(); }       // above about 40: the kick has no single note
+    double noteSpreadCents() const { return pitch.agreeCents(); }       // how far apart the last hits read; above about 30 the note can't be trusted (-1: too few hits)
     int hitsSeen() const { return hitCount; }
     bool hasSidechain() const { return sideAge < (int) (sr * 3); }       // something came in on the other input in the last 3 s
     // kick lows (30-150 Hz) against everything under 300 Hz in kick + sidechain, dB, middle of the last hits.

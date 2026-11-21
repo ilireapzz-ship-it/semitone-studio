@@ -114,7 +114,7 @@ def cmd_run(args):
                     if r2['note'] > 0:
                         off = abs(tune_to_key(r2['note'], b['key_pc'], b['key_mode'] == 'min')) * 100
                         s['tune_tried'] += 1; s['tune_in_key'] += off < 20; s['tune_off_cents'].append(off)
-                        if r['spread'] <= 40: s['steady_tune_tried'] += 1; s['steady_tune_in_key'] += off < 20
+                        if 0 <= r['spread'] <= 30: s['steady_tune_tried'] += 1; s['steady_tune_in_key'] += off < 20
                         else: s['no_single_note'] += 1
         # phone check: kicks with less above 180 Hz than nine in ten of the others, with Click all the way up
         if k['above180_db'] < p10:

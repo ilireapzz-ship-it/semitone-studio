@@ -152,11 +152,12 @@ static void testPitch()
             Engine e; render (sr, Params(), kicks (sr, 1.2, 5, { f, f, 0.03, 1.5, 0.2, 0.7 }), nullptr, 256, &e);
             CHECK (e.note() > 0 && std::abs (cents (e.note(), f)) < 5, "steady %.2f Hz read as %.2f Hz (%.1f cents) at %g", f, e.note(), e.note() > 0 ? cents (e.note(), f) : 0.0, sr);
         }
-        // a kick whose pitch drops at the start: the note is where it settles
+        // a kick whose pitch drops at the start: the note is the pitch of its loud body, which sits a little above where the
+        // pitch finally comes to rest (about 22 cents on these). Reading the body is what makes a real kick read the same on every hit.
         for (auto k : { Kick { 50, 220, 0.025, 0.35, 0.4, 0.8 }, Kick { 61.74, 300, 0.02, 0.25, 0.2, 0.8 }, Kick { 43.65, 120, 0.04, 0.6, 0, 0.8 } })
         {
             Engine e; render (sr, Params(), kicks (sr, 1.2, 5, k), nullptr, 256, &e);
-            CHECK (e.note() > 0 && std::abs (cents (e.note(), k.f)) < 12, "dropping kick to %.2f Hz read as %.2f Hz (%.1f cents) at %g", k.f, e.note(), e.note() > 0 ? cents (e.note(), k.f) : 0.0, sr);
+            CHECK (e.note() > 0 && cents (e.note(), k.f) > -5 && cents (e.note(), k.f) < 30, "dropping kick to %.2f Hz read as %.2f Hz (%.1f cents) at %g", k.f, e.note(), e.note() > 0 ? cents (e.note(), k.f) : 0.0, sr);
             CHECK (e.glideSemis() > 0.3, "a pitch drop should show as a glide (%.2f semitones)", e.glideSemis());
         }
         // an 808 that slides from one note to another and holds it
