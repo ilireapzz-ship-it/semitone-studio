@@ -221,9 +221,27 @@ static void testTame()
     float jump = 0; for (size_t i = (size_t) (sr * 0.2); i < (size_t) (sr * 0.9); ++i) jump = std::max (jump, std::abs (l[i] - l[i - 1])); CHECK (jump < 0.25f, "the tamed sound has a click in it (step %.3f)", jump);
 }
 
+// loudness: a 1 kHz tone on both sides at -20 dB reads -20 (the standard's own check), and quiet gaps don't drag it down
+static void testLoudness()
+{
+    for (double sr : { 44100.0, 48000.0, 96000.0 })
+    {
+        Buf l = sine (sr, 997, 0.1, 6), r = l; Engine e; e.prepare (sr); run (e, l, r, 512);
+        double v = 0; CHECK (e.loud.read (v), "no loudness after 6 s of tone");
+        CHECK (std::abs (v + 20.0) < 0.2, "a -20 dB tone on both sides read %.2f at %.0f Hz", v, sr);
+        Buf q ((size_t) (sr * 6), 0.0f); Buf l2 = sine (sr, 997, 0.1, 6); l2.insert (l2.end(), q.begin(), q.end()); Buf r2 = l2;
+        Engine e2; e2.prepare (sr); run (e2, l2, r2, 512);
+        CHECK (e2.loud.read (v) && std::abs (v + 20.0) < 0.3, "silence after the tone dragged it to %.2f", v);
+        Buf a = sine (sr, 997, 0.1, 6), b2 = sine (sr, 997, 0.2, 6); a.insert (a.end(), b2.begin(), b2.end()); Buf ar = a;
+        Engine e3; e3.prepare (sr); run (e3, a, ar, 512);
+        CHECK (e3.loud.read (v, 4) && std::abs (v + 14.0) < 0.3, "the last 4 s (a -14 dB tone) read %.2f", v);
+    }
+    Buf z (48000 * 3, 0.0f), z2 = z; Engine e; e.prepare (48000); run (e, z, z2, 512); double v = 0; CHECK (! e.loud.read (v), "silence gave a loudness");
+}
+
 int main()
 {
-    testUntouched(); testCeiling(); testBlocks(); testReduction(); testPicture(); testMixer(); testTransient(); testTame();
+    testUntouched(); testCeiling(); testBlocks(); testReduction(); testPicture(); testMixer(); testTransient(); testTame(); testLoudness();
     if (failures) { printf ("fitbus: %d failed\n", failures); return 1; }
     printf ("fitbus: all tests passed\n"); return 0;
 }

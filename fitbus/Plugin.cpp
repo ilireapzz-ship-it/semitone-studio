@@ -111,6 +111,8 @@ public:
             fix[k].setColour (juce::TextButton::buttonColourId, look::panel); fix[k].setColour (juce::TextButton::textColourOffId, look::ink);
             fix[k].onClick = [this, k] { doFix (k); };
         }
+        addAndMakeVisible (setBtn); setBtn.setButtonText ("Set it"); setBtn.setColour (juce::TextButton::buttonColourId, look::panel); setBtn.setColour (juce::TextButton::textColourOffId, look::ink);
+        setBtn.onClick = [this] { setLoudness(); };
         startTimerHz (30); setSize (860, 600 + stripHeight);                      // last: resized() needs the controls
     }
     void resized() override
@@ -118,6 +120,7 @@ public:
         auto side = getLocalBounds().reduced (14).removeFromRight (120); side.removeFromTop (40);
         gainL.setBounds (side.removeFromTop (16)); gain.setBounds (side.removeFromTop (100)); side.removeFromTop (14);
         ceilL.setBounds (side.removeFromTop (16)); ceiling.setBounds (side.removeFromTop (100));
+        { auto lb = getLocalBounds().reduced (14).removeFromRight (120); lb.removeFromTop (loudTop + 16 + 22 + 44); setBtn.setBounds (lb.removeFromTop (24)); }
         auto area = getLocalBounds().reduced (14); area.removeFromRight (130);
         {
             auto strip = area.removeFromBottom (stripHeight).withTrimmedTop (30);
@@ -199,6 +202,19 @@ public:
             }
             g.setColour (look::soft); g.setFont (juce::FontOptions (10.0f)); g.drawFittedText ("Outlined = more than 2 dB outside your songs.", box.removeFromTop (26), juce::Justification::topLeft, 2);
         }
+        {   // loudness of what leaves, against the finished songs of this genre
+            const auto& t = kf::modeTargets[(size_t) juce::jlimit (0, kf::numModes - 1, (int) proc.state.getRawParameterValue ("mode")->load())];
+            auto box = getLocalBounds().reduced (14).removeFromRight (120); box.removeFromTop (loudTop);
+            g.setColour (look::ink); g.setFont (juce::FontOptions (12.0f, juce::Font::bold)); g.drawText ("How loud", box.removeFromTop (16), juce::Justification::centredLeft);
+            auto tr = box.removeFromTop (22).reduced (0, 6); auto xOf = [&] (float lufs) { return (float) tr.getX() + (float) tr.getWidth() * juce::jlimit (0.0f, 1.0f, (lufs + 26.0f) / 22.0f); };          // -26 to -4 LUFS
+            g.setColour (look::panel); g.fillRect (tr);
+            if (t.loud) { g.setColour (look::ink.withAlpha (0.22f)); g.fillRect (xOf (t.lufs[0]), (float) tr.getY(), xOf (t.lufs[2]) - xOf (t.lufs[0]), (float) tr.getHeight()); }
+            if (loudOk) { g.setColour (look::bands[1]); g.fillRect (xOf ((float) loudNow) - 2, (float) tr.getY() - 3, 4.0f, (float) tr.getHeight() + 6); }
+            g.setColour (look::soft); g.setFont (juce::FontOptions (10.0f));
+            g.drawFittedText (loudSaid.isNotEmpty() && loudCool > 0 ? loudSaid
+                              : loudOk ? juce::String (loudNow, 1) + " LUFS since play began." + (t.loud ? juce::String (" Shaded: your ") + t.name + " songs." : juce::String (" Not enough ") + t.name + " songs measured.")
+                                       : juce::String ("Play a few seconds for a reading."), box.removeFromTop (44), juce::Justification::topLeft, 4);
+        }
         g.setFont (juce::FontOptions (11.0f)); int lx = legend.getX();
         for (int b = 0; b < fb::numBands; ++b)
         {
@@ -230,8 +246,10 @@ private:
         const double song = proc.engine.inPeak.load();
         if (proc.engine.inNow.load() > 1e-4f) quiet = 0; else if (quiet < 1000) ++quiet;
         const bool playing = quiet < 15;                                   // sound arrived in the last half second
-        if (playing != wasPlaying) { wasPlaying = playing; if (playing) mixer.reset(); }          // start afresh each time the song starts
+        if (playing != wasPlaying) { wasPlaying = playing; if (playing) { mixer.reset(); proc.engine.loud.clear(); loudOk = false; } }          // start afresh each time the song starts
         if (cool > 0) --cool;
+        if (loudCool > 0) --loudCool;
+        if (playing) { double v = 0; if (proc.engine.loud.read (v)) { loudNow = v; loudOk = true; } }
         if (! playing)                                                     // stopped: keep the last reading on screen
         {
             note = b == nullptr ? "This computer would not let Fit Bus and Kick Fit talk to each other, so Fit Bus only limits and draws."
@@ -288,6 +306,20 @@ private:
         }
         repaint();
     }
+    // turn Loudness so what leaves is as loud as the middle of the measured songs; nothing when it is already among them
+    void setLoudness()
+    {
+        const auto& t = kf::modeTargets[(size_t) juce::jlimit (0, kf::numModes - 1, (int) proc.state.getRawParameterValue ("mode")->load())];
+        double now = 0; loudCool = 300;
+        if (! t.loud) { loudSaid = juce::String ("Not enough ") + t.name + " songs measured for a loudness range. Set it by ear."; return; }
+        if (! proc.engine.loud.read (now)) { loudSaid = "Play the song for a few seconds first."; return; }
+        if (now >= t.lufs[0] && now <= t.lufs[2]) { loudSaid = juce::String ("Already as loud as your ") + t.name + " songs. Left alone."; return; }
+        const float before = proc.raw ("gain"), after = juce::jlimit (0.0f, 24.0f, before + (float) (t.lufs[1] - now));
+        if (std::abs (after - before) < 0.05f) { loudSaid = now > t.lufs[2] ? "Louder than your songs with Loudness already at 0: turn the parts down." : "Loudness is already at its top."; return; }
+        if (auto* p = proc.state.getParameter ("gain")) { p->beginChangeGesture(); p->setValueNotifyingHost (p->convertTo0to1 (after)); p->endChangeGesture(); }
+        proc.engine.loud.clear(); loudOk = false;
+        loudSaid = juce::String ("Turned Loudness ") + (after > before ? "up " : "down ") + juce::String (std::abs (after - before), 1) + " dB. The limiter can hold some back: play on, and press again if it still reads short.";
+    }
     // ask that part's Kick Fit to change its Level so the part lands in the middle of the measured range
     void doFix (int k)
     {
@@ -302,7 +334,8 @@ private:
     }
     FitBusProcessor& proc; juce::Slider gain, ceiling; juce::Label gainL, ceilL; juce::OwnedArray<juce::AudioProcessorValueTreeState::SliderAttachment> links;
     juce::ComboBox mode; std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> modeLink; juce::TextButton fix[3];
-    float tameShown = 0;
+    float tameShown = 0; double loudNow = 0; bool loudOk = false; juce::String loudSaid; int loudCool = 0; juce::TextButton setBtn;
+    static constexpr int loudTop = 558;
     juce::Slider attack, sustain, tameThr, tameAmt; juce::Label attackL, sustainL, tameThrL, tameAmtL; juce::ComboBox tame; juce::TextButton hear;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> tameLink; std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> hearLink;
     juce::File logFile { juce::File::getSpecialLocation (juce::File::tempDirectory).getChildFile ("fitbus-log.csv") };

@@ -177,6 +177,55 @@ private:
     double A[parts][parts] {}, r[parts] {}, c = 0, sP[parts][fl::numBands] {}, sB[fl::numBands] {}, age = 0;
 };
 
+// Loudness the way finished songs are measured (ITU-R BS.1770, the "LUFS" figure): both sides filtered to weigh pitches as
+// the ear does, the energy of every 0.4 s (a new one each 0.1 s), stretches under -70 left out, then those more than 10
+// under the rest left out, and the average of what remains. Loudness::lufs works that out from the 0.4 s energies.
+struct Loudness
+{
+    static constexpr int size = 1200;                       // two minutes of 0.1 s steps
+    void prepare (double sr)
+    {
+        for (auto& f : shelf) weigh (f, hp[&f - shelf], sr);
+        step = std::max (1, (int) (0.1 * sr)); n = 0; e = 0; for (auto& v : last) v = 0; w.store (0); count.store (0);
+    }
+    void clear() { count.store (0); }
+    void push (float l, float r)
+    {
+        const double a = hp[0].run (shelf[0].run (l)), b = hp[1].run (shelf[1].run (r)); e += a * a + b * b;
+        if (++n < step) return;
+        last[3] = last[2]; last[2] = last[1]; last[1] = last[0]; last[0] = e / n; e = 0; n = 0;
+        const int i = w.load (std::memory_order_relaxed); ring[i] = (float) (0.25 * (last[0] + last[1] + last[2] + last[3]));
+        w.store ((i + 1) % size, std::memory_order_release); if (count.load() < size) count.fetch_add (1);
+    }
+    // the newest `seconds` of it (0 = all that is kept). false = not enough sound yet.
+    bool read (double& lufsOut, double seconds = 0) const
+    {
+        float v[size]; int c = count.load(); if (seconds > 0) c = std::min (c, (int) (seconds * 10)); const int end = w.load (std::memory_order_acquire);
+        for (int i = 0; i < c; ++i) v[i] = ring[((end - c + i) % size + size) % size];
+        return lufs (v, c, lufsOut);
+    }
+    static bool lufs (const float* z, int c, double& out)
+    {
+        auto lk = [] (double ms) { return -0.691 + 10 * std::log10 (ms + 1e-12); };
+        double sum = 0; int k = 0; for (int i = 0; i < c; ++i) if (lk (z[i]) > -70) { sum += z[i]; ++k; }
+        if (k < 10) return false;                             // under a second of sound
+        const double gate = lk (sum / k) - 10; sum = 0; k = 0;
+        for (int i = 0; i < c; ++i) if (lk (z[i]) > -70 && lk (z[i]) > gate) { sum += z[i]; ++k; }
+        if (k == 0) return false;
+        out = lk (sum / k); return true;
+    }
+private:
+    static void weigh (kf::Biquad& sh, kf::Biquad& h, double sr)
+    {
+        double f0 = 1681.974450955533, G = 3.999843853973347, Q = 0.7071752369554196;
+        double K = std::tan (kf::pi * f0 / sr); const double Vh = std::pow (10.0, G / 20), Vb = std::pow (Vh, 0.4996667741545416);
+        sh.set (Vh + Vb * K / Q + K * K, 2 * (K * K - Vh), Vh - Vb * K / Q + K * K, 1 + K / Q + K * K, 2 * (K * K - 1), 1 - K / Q + K * K);
+        f0 = 38.13547087602444; Q = 0.5003270373238773; K = std::tan (kf::pi * f0 / sr);
+        h.set (1, -2, 1, 1 + K / Q + K * K, 2 * (K * K - 1), 1 - K / Q + K * K); sh.reset(); h.reset();
+    }
+    kf::Biquad shelf[2], hp[2]; double e = 0, last[4] {}; int step = 4410, n = 0; float ring[size] {}; std::atomic<int> w { 0 }, count { 0 };
+};
+
 class Engine
 {
 public:
@@ -189,7 +238,7 @@ public:
         pos = 0; n = 0; dqHead = dqTail = 0; rel = 1; boxSum = L; lowered = 0; colStep = std::max (1, (int) (0.02 * sr)); colN = 0; cur = {}; cur.gain = 1;
         for (int i = 0; i < numBands - 1; ++i) { lpA[i].lowpass (bandEdges[i], 0.5412, sr); lpB[i].lowpass (bandEdges[i], 1.3066, sr); lpA[i].reset(); lpB[i].reset(); }
         for (auto& e : bandE) e = 0;
-        inMeter.prepare (sr); transient.prepare (sr); tame.prepare (sr);
+        inMeter.prepare (sr); transient.prepare (sr); tame.prepare (sr); loud.prepare (sr);
         set (p);
     }
     void set (const Params& np) { p = np; transient.set (p.attack, p.sustain); tame.set (p.tameRange, p.tameThrDb, p.tameAmount, p.tameHear); gIn = kf::dbToGain (p.gainDb); ceil = kf::dbToGain (p.ceilingDb); relCoef = 1 - std::exp (-1.0 / (std::max (5.0f, p.releaseMs) * 0.001 * sr)); }
@@ -235,6 +284,7 @@ public:
                 const int w = colW.load (std::memory_order_relaxed); cols[(size_t) w] = cur; colW.store ((w + 1) % numColumns, std::memory_order_release);
                 redNow.store ((float) (20 * std::log10 (std::max (1e-6f, cur.gain)))); tameNow.store (std::min (tameHeld, tame.reductionDb())); tameHeld = 0; cur = {}; cur.gain = 1; colN = 0;
             }
+            loud.push (yl, yr);                                          // what leaves, after the limiter
             l[i] = yl; r[i] = yr; ++n;
         }
     }
@@ -254,6 +304,7 @@ private:
     kf::Biquad lpA[numBands - 1], lpB[numBands - 1];
     fl::BandMeter inMeter; Transient transient; Tame tame; float tameHeld = 0; std::atomic<float> tameNow { 0.0f };
 public:
+    Loudness loud;
     std::atomic<float> inPower[fl::numBands] {}, inPeak { 0.0f }, inNow { 0.0f };       // the bus as it arrives: strength per range, recent peak, the peak of the last 20 ms
 private:
     Column cur, cols[numColumns]; std::atomic<int> colW { 0 }; std::atomic<float> redNow { 0.0f };

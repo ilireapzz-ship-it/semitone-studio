@@ -114,3 +114,6 @@ A second plug-in for the bus (or master) the kick, bass and vocal meet on. First
   nothing at all at rest. Tested on made-up sounds. Not yet tried in FL.
 - Tried in FL on the test project: the tone bars draw (that mix has far less air than the pop songs), Tame on the sub range
   held it down by up to about 4 dB, and Attack moved the loudest peak from -5.8 dB to -2.8 dB turned up and -7.7 dB turned down.
+- Fit Bus: loudness. It measures what leaves the way finished songs are measured (LUFS, BS.1770 gating; a -20 dB test tone
+  reads -20), shows it against the songs of the genre (pop -13.0 to -7.9, middle -10.1; rock -10.6 to -7.5, middle -8.5)
+  and Set it turns Loudness toward the middle. Not yet tried in FL.
