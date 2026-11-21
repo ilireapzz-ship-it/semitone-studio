@@ -141,7 +141,6 @@ class KickFitEditor : public juce::AudioProcessorEditor, private juce::Timer
 public:
     explicit KickFitEditor (KickFitProcessor& p) : AudioProcessorEditor (p), proc (p), fft (fftOrder), window ((size_t) fftSize, juce::dsp::WindowingFunction<float>::hann)
     {
-        setSize (820, 500);
         for (auto* c : { &role, &mode, &key }) { addAndMakeVisible (*c); c->setColour (juce::ComboBox::backgroundColourId, look::panel); c->setColour (juce::ComboBox::textColourId, look::ink); c->setColour (juce::ComboBox::outlineColourId, look::line); }
         auto fill = [&] (juce::ComboBox& box, const char* id) { if (auto* ch = dynamic_cast<juce::AudioParameterChoice*> (proc.state.getParameter (id))) box.addItemList (ch->choices, 1); boxes.add (new juce::AudioProcessorValueTreeState::ComboBoxAttachment (proc.state, id, box)); };
         fill (role, "role"); fill (mode, "mode"); fill (key, "key");
@@ -162,6 +161,7 @@ public:
         sitBtn.onClick = [this] { sit(); };
         tuneBtn.onClick = [this] { if (canTune) proc.setParam ("tune", (float) tuneMove); };
         said.setColour (juce::Label::textColourId, look::ink); said.setFont (juce::FontOptions (13.5f)); said.setJustificationType (juce::Justification::centredLeft); addAndMakeVisible (said);
+        setSize (820, 500);          // last: sizing lays out the knobs, so they must exist first
         startTimerHz (24);
     }
 
@@ -178,7 +178,7 @@ public:
         auto btns = bottom.removeFromRight (150).reduced (4, 14);
         sitBtn.setBounds (btns.removeFromTop (40)); btns.removeFromTop (8); tuneBtn.setBounds (btns.removeFromTop (40));
         const int w = bottom.getWidth() / 7;
-        for (int i = 0; i < 7; ++i) { auto c = bottom.removeFromLeft (w); labels[i]->setBounds (c.removeFromTop (18)); knobs[i]->setBounds (c.reduced (4, 0)); }
+        for (int i = 0; i < knobs.size() && i < labels.size(); ++i) { auto c = bottom.removeFromLeft (w); labels[i]->setBounds (c.removeFromTop (18)); knobs[i]->setBounds (c.reduced (4, 0)); }
     }
 
     void paint (juce::Graphics& g) override
