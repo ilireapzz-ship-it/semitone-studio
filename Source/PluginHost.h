@@ -81,6 +81,24 @@ public:
     std::function<void (bool, juce::String)> onBridge;              // loaded, name or why not
     SongHead head;
     std::function<void (int, bool, juce::String)> onLoaded;         // channel, ok, name or why not
+    std::function<void (const juce::String&)> onLog;               // a line for the start-up log
+
+    // 21 Nov (Jamie: "how come no sound is coming from opus?"; it works in FL). process() skips a plug-in with more channels than its buffer,
+    // so a plug-in with many multi-outs never ran at all, not even from its own keyboard. Its buses are left alone (some instruments crash
+    // when outputs are switched off) unless there are more than the buffer holds; then only its main ones stay on (we use the first pair).
+    void fitChannels (juce::AudioPluginInstance& p)
+    {
+        auto count = [&p] { return juce::jmax (p.getTotalNumOutputChannels(), p.getTotalNumInputChannels()); };
+        juce::String say = p.getName() + ": " + juce::String (p.getTotalNumInputChannels()) + " in, " + juce::String (p.getTotalNumOutputChannels())
+                         + " out, " + juce::String (p.getBusCount (false)) + " output buses";
+        if (count() > maxChannels)
+        {
+            p.disableNonMainBuses();
+            say << "; more than Semitone holds, so only its main outputs are on (" << p.getTotalNumOutputChannels() << " out)";
+            if (count() > maxChannels) say << " - still too many, it can't play";
+        }
+        if (onLog) onLog (say);
+    }
     bool scanning = false; juce::String scanningName; float progress = 0;
 
     PartHost()
@@ -144,6 +162,7 @@ public:
             p->setRateAndBufferSizeDetails (sr, bs);
             p->setPlayHead (&head);
             if (stateB64.isNotEmpty()) { juce::MemoryBlock mb; if (mb.fromBase64Encoding (stateB64)) p->setStateInformation (mb.getData(), (int) mb.getSize()); }
+            fitChannels (*p);
             p->prepareToPlay (sr, bs);
             const auto name = p->getName();
             { const juce::SpinLock::ScopedLockType sl (lock); inst[(size_t) ch] = std::move (p); }
@@ -171,6 +190,7 @@ public:
             if (p == nullptr) { if (onBridge) onBridge (false, err); return; }
             p->setRateAndBufferSizeDetails (sr, bs);
             p->setPlayHead (&head);
+            fitChannels (*p);
             p->prepareToPlay (sr, bs);
             const auto name = p->getName();
             { const juce::SpinLock::ScopedLockType sl (lock); audition = std::move (p); }
@@ -277,6 +297,7 @@ public:
             p->setRateAndBufferSizeDetails (sr, bs);
             if (stateB64.isNotEmpty()) { juce::MemoryBlock mb; if (mb.fromBase64Encoding (stateB64)) p->setStateInformation (mb.getData(), (int) mb.getSize()); }
             p->setPlayHead (&head);
+            fitChannels (*p);
             p->prepareToPlay (sr, bs);
             const auto name = p->getName();
             { const juce::SpinLock::ScopedLockType sl (lock); fx[(size_t) t][(size_t) slot] = std::move (p); }
@@ -772,7 +793,7 @@ private:
     std::vector<float> learnBase;
     std::vector<bool> learnNoisy;
     int heldCh = -1, heldLeft = 0;
-    static constexpr int maxChannels = 128;
+    static constexpr int maxChannels = 256;   // 21 Nov: was 128; multi-out instruments (Opus) can ask for more
     juce::AudioBuffer<float> temp { maxChannels, 8192 };
     juce::MidiBuffer midi;
 };

@@ -13,4 +13,6 @@ const {chromium}=require('playwright'), path=require('path'); const url='file://
  ok(r.loads.length===1&&r.loads[0].id==='VST3-Pianoteq'&&r.loads[0].state==='STATE'&&/went quiet/.test(r.toast),'4 seconds of silence where Chords should play: Pianoteq is reloaded with its settings, and Semitone says so '+JSON.stringify(r));
  ok(r.again===1,'not again within a minute');
  ok(r.sounding===1,'a plug-in that is sounding is left alone');
+ const r2=await p.evaluate(()=>{ S.playing=true; MTN.ch[hostCh('chords')]=0; PW.last={}; __nlog.length=0; PW.quiet.chords=Date.now()-4500; pwTick(); const loads=__nlog.filter(x=>x[0]==='st_host_load').length, tell=$('#pwTell'); S.playing=false; return {loads,tell:tell&&!tell.hidden?tell.textContent:''}; });
+ ok(r2.loads===0&&/isn.t making any sound/.test(r2.tell),'still silent after one reload: no more reloads (they restart it and close its window); Semitone says what to check '+JSON.stringify(r2).slice(0,160));
  console.log(fails.length?`${fails.length} failed`:'all passed'); console.log(JSON.stringify(errs)); await b.close(); process.exit(fails.length?1:0); })();

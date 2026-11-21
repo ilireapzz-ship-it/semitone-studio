@@ -49,6 +49,7 @@ SemitoneEditor::SemitoneEditor (SemitoneProcessor& p)
     {
         juce::Component::SafePointer<SemitoneEditor> self (this);
         proc.host->onList = [self] { if (self != nullptr) self->sendHostList(); };
+        proc.host->onLog = [] (const juce::String& s) { bootMark ("plug-in channels: " + s); };
         proc.host->onLoaded = [self] (int ch, bool ok, juce::String info)
         {
             if (self == nullptr) return;
