@@ -114,27 +114,27 @@ static void testMixer()
     const double sr = 48000, secs = 12; const Buf part[3] = { fakeKick (sr, secs), fakeBass (sr, secs), fakeVoice (sr, secs) };
     struct Case { double g[3]; bool have[3]; double extra; double tolDb; double minFit, maxFit; };
     const Case cases[] = { { { 0.5, 0.3, 1.2 }, { true, true, true }, 0, 1.0, 0.9, 1.0 },          // all three, faders all over the place
-                           { { 1.0, 0.1, 0.4 }, { true, true, true }, 0, 2.5, 0.9, 1.0 },          // a bass 20 dB down: read to within 2.5 dB
+                           { { 1.0, 0.1, 0.4 }, { true, true, true }, 0, 6.0, 0.9, 1.0 },          // a bass 20 dB down under a kick in the same range: only roughly (the window says so and offers no fix)
                            { { 0.7, 0.0, 0.9 }, { true, false, true }, 0, 1.0, 0.9, 1.0 },         // no Kick Fit on a bass, and no bass
                            { { 0.5, 0.5, 0.5 }, { true, true, true }, 0.6, 99, 0.0, 0.9 } };       // a lot else in the bus (a loud hiss): the levels can't be trusted, and the fit must say so (under 0.9)
-    for (auto& cs : cases)
+    for (size_t late : { (size_t) 0, (size_t) (0.03 * sr), (size_t) (0.007 * sr) }) for (auto& cs : cases)       // the bus may hear the parts a little late (the host lines plug-ins up)
     {
         fl::BandMeter pm[3], bm; for (auto& m : pm) m.prepare (sr);
         bm.prepare (sr); Mixer mix; std::mt19937 rng (11); std::uniform_real_distribution<double> u (-1, 1);
         for (size_t i = 0; i < part[0].size(); ++i)
         {
-            double sum = cs.extra * u (rng); for (int k = 0; k < 3; ++k) sum += cs.g[k] * part[k][i];
+            double sum = cs.extra * u (rng); for (int k = 0; k < 3; ++k) sum += i >= late ? cs.g[k] * part[k][i - late] : 0.0;
             const bool step = bm.push (sum, std::abs (sum)); for (int k = 0; k < 3; ++k) pm[k].push (part[k][i], std::abs (part[k][i]));
-            if (step) { double P[3][fl::numBands]; for (int k = 0; k < 3; ++k) for (int b = 0; b < fl::numBands; ++b) P[k][b] = pm[k].power[b]; mix.add (P, cs.have, bm.power); }
+            if (step) { double P[3][fl::numBands]; for (int k = 0; k < 3; ++k) for (int b = 0; b < fl::numBands; ++b) P[k][b] = pm[k].power[b]; mix.add (P, cs.have, bm.power, 0.02); }
         }
         double g2[3], fit = 0; CHECK (mix.solve (cs.have, g2, fit), "nothing solved");
         for (int k = 0; k < 3; ++k)
         {
             if (! cs.have[k]) { CHECK (g2[k] == 0, "a part with no Kick Fit got a level"); continue; }
             const double got = 10 * std::log10 (std::max (g2[k], 1e-12)), want = 20 * std::log10 (cs.g[k]);
-            CHECK (std::abs (got - want) < cs.tolDb, "part %d: fader read as %.2f dB, was %.2f dB (extra %.1f)", k, got, want, cs.extra);
+            CHECK (std::abs (got - want) < cs.tolDb, "part %d: fader read as %.2f dB, was %.2f dB (extra %.1f, late %d)", k, got, want, cs.extra, (int) late);
         }
-        CHECK (fit >= cs.minFit && fit <= cs.maxFit, "fit %.2f not in %.2f..%.2f (extra %.1f)", fit, cs.minFit, cs.maxFit, cs.extra);
+        CHECK (fit >= cs.minFit && fit <= cs.maxFit, "fit %.2f not in %.2f..%.2f (extra %.1f, late %d)", fit, cs.minFit, cs.maxFit, cs.extra, (int) late);
     }
 }
 

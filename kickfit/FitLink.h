@@ -34,7 +34,7 @@ struct BandMeter
     void prepare (double sr)
     {
         for (int i = 0; i < numBands - 1; ++i) { a[i].lowpass (bandEdges[i], 0.5412, sr); b[i].lowpass (bandEdges[i], 1.3066, sr); a[i].reset(); b[i].reset(); }
-        step = std::max (1, (int) (0.02 * sr)); n = 0; top = 0; peak = 0; for (auto& v : e) v = 0; for (auto& v : power) v = 0; for (auto& v : now) v = 0;
+        step = std::max (1, (int) (0.02 * sr)); n = 0; top = 0; peak = 0; for (auto& v : e) v = 0; for (auto& v : power) v = 0; for (auto& v : upTo) v = 0;
         smooth = 1 - std::exp (-0.02 / 0.3); fade = std::exp (-0.02 / 4.0);
     }
     // one sample (mono, and the louder side's size). true when a 20 ms step has just finished and the numbers are fresh.
@@ -43,11 +43,14 @@ struct BandMeter
         for (int i = 0; i < numBands; ++i) { const double upTo = i < numBands - 1 ? b[i].run (a[i].run (mono)) : mono; e[i] += upTo * upTo; }
         top = std::max (top, size);
         if (++n < step) return false;
-        for (int i = numBands - 1; i >= 0; --i) { now[i] = std::max (0.0, e[i] - (i ? e[i - 1] : 0.0)) / n; power[i] += smooth * (now[i] - power[i]); }
+        // e[i] is everything up to range i's upper edge. Smooth those first and take the differences afterwards: inside one 20 ms
+        // step the filters' delays can make a difference negative, and cutting that off there would bend the numbers.
+        for (int i = 0; i < numBands; ++i) upTo[i] += smooth * (e[i] / n - upTo[i]);
+        for (int i = 0; i < numBands; ++i) power[i] = std::max (0.0, upTo[i] - (i ? upTo[i - 1] : 0.0));
         for (auto& v : e) v = 0;
         stepPeak = top; peak = std::max (top, peak * fade); top = 0; n = 0; return true;
     }
-    double power[numBands] {}, now[numBands] {}, peak = 0, stepPeak = 0;
+    double power[numBands] {}, upTo[numBands] {}, peak = 0, stepPeak = 0;
 private:
     kf::Biquad a[numBands - 1], b[numBands - 1]; double e[numBands] {}, top = 0, smooth = 0.06, fade = 0.995; int step = 882, n = 0;
 };

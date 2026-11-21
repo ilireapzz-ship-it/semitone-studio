@@ -170,7 +170,7 @@ private:
         if (have[0] != had[0] || have[1] != had[1] || have[2] != had[2]) { mixer.reset(); for (int k = 0; k < 3; ++k) had[k] = have[k]; }
         for (int k = 0; k < fl::numBands; ++k) B[k] = proc.engine.inPower[k].load();
         const double song = proc.engine.inPeak.load(); const bool playing = song > 1e-4;
-        if (playing) mixer.add (P, have, B);
+        if (playing) mixer.add (P, have, B, 1.0 / 30.0);
         double g2[3], fit = 0; const bool solved = playing && mixer.solve (have, g2, fit), sure = solved && fit >= 0.9;
         if (cool > 0) --cool;
         note = b == nullptr ? "This computer would not let Fit Bus and Kick Fit talk to each other, so Fit Bus only limits and draws."
@@ -189,8 +189,10 @@ private:
             {
                 const float h = (float) (20 * std::log10 (peak[k] * std::sqrt (g2[k]) / song));          // this part's peak against the bus's loudest peak
                 q.text = juce::String (names[k]) + ": peaks " + (h < -0.05f ? juce::String (-h, 1) + " dB under" : "at") + " the loudest peak. ";
-                if (! t.peaks) q.text << "Not enough " << t.name << " songs measured to compare.";
-                else
+                double mine = 0, all = 0; for (int i = 0; i < fl::numBands; ++i) { mine += g2[k] * P[k][i]; all += B[i]; }
+                if (mine < 0.03 * all) q.text << "Too quiet next to the others here to read exactly.";          // under about 15 dB down the reading can be several dB out
+                else if (! t.peaks) q.text << "Not enough " << t.name << " songs measured to compare.";
+                else if (mine >= 0.03 * all)
                 {
                     q.text << "Your " << t.name << " songs: " << juce::String (-range[2], 1) << " to " << juce::String (-range[0], 1) << " under. ";
                     if (h > range[2] + 0.5f) { q.warn = true; q.fixDb = range[1] - h; q.text << "Taller than most."; }
