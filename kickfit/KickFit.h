@@ -406,7 +406,7 @@ public:
         changeDb = 0; if (now >= lo && now <= hi) return true;
         const Hit h = middle(); const double T = std::pow (10.0, target / 10.0), den = h.low - T * h.full;
         if (h.side <= 1e-12) return false;
-        changeDb = den > 1e-14 ? std::clamp (10 * std::log10 (T * h.side / den), -12.0, 12.0) : 12.0;   // a kick with few lows can't get there: stop at +12
+        changeDb = den > 1e-14 ? std::clamp (10 * std::log10 (T * h.side / den), -24.0, 24.0) : 24.0;   // a kick with few lows can't get there: stop at +24
         return true;
     }
     const HitView& view() const { return hv; }

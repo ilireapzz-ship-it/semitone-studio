@@ -50,7 +50,11 @@
   and that barely changes whether you count the whole mix or only kick and bass. Pop varies a lot more (1 to 12 dB under).
 - Bench again with the new target, 400 kicks: Rock 237 already in range, 125 moved into range, 31 closer, 1 worse.
   Pop 345 already in range, 45 moved into range, 4 closer, none worse.
-- Not yet tried in FL with the new target.
+- Tried in FL with your 505 kick and synth bass: Sit it turned the kick down 8 dB and the marker landed inside the green
+  range. That used all of the Level knob (-12 dB), so Level now goes to 24 dB either way (in the next build).
+- Still not right: the boom note of the 505 kick reads differently from hit to hit (A1, B1, C2), so the Tune to key
+  offer changes too. Don't trust Tune to key on that kick yet.
+- The saved test project had lost the kick-to-bass sidechain; it was put back in the open session, not saved.
 
 **Not done yet**
 - Tune's delay compensation in FL.

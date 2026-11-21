@@ -63,7 +63,7 @@ public:
             l.add (std::make_unique<F> (juce::ParameterID { id, 1 }, juce::String (id).substring (0, 1).toUpperCase() + juce::String (id).substring (1), juce::NormalisableRange<float> (-100, 100, 1), 0.0f));
         l.add (std::make_unique<F> (juce::ParameterID { "room", 1 }, "Room for bass", juce::NormalisableRange<float> (0, 100, 1), 0.0f));
         l.add (std::make_unique<F> (juce::ParameterID { "tune", 1 }, "Tune", juce::NormalisableRange<float> (-12, 12, 0.01f), 0.0f));
-        l.add (std::make_unique<F> (juce::ParameterID { "level", 1 }, "Level", juce::NormalisableRange<float> (-12, 12, 0.1f), 0.0f));
+        l.add (std::make_unique<F> (juce::ParameterID { "level", 1 }, "Level", juce::NormalisableRange<float> (-24, 24, 0.1f), 0.0f));
         return l;
     }
 
@@ -299,7 +299,7 @@ private:
         if (! ctx().hasSidechain()) { sitSaid = "Kick Fit can't hear the bass yet. Put a second Kick Fit on the bass, set it to The bass, and send the kick to its sidechain. Then play and press Sit it."; return; }
         if (! ctx().sitGain (t.sitLo, t.sitMid, t.sitHi, change) || ! ctx().sitLevel (now)) { sitSaid = "Play a few bars with the kick first, then press Sit it."; return; }
         if (std::abs (change) < 0.05) { sitSaid = "The kick already sits where your " + juce::String (t.name) + " songs have it. Left alone."; return; }
-        const float before = proc.get ("level"), after = juce::jlimit (-12.0f, 12.0f, before + (float) change), moved = after - before;
+        const float before = proc.get ("level"), after = juce::jlimit (-24.0f, 24.0f, before + (float) change), moved = after - before;
         proc.setParam ("level", after);
         const bool short_ = std::abs (moved - (float) change) > 0.3f;          // Level ran out before the kick got there
         sitSaid = juce::String (moved > 0 ? "Turned the kick up " : "Turned the kick down ") + juce::String (std::abs (moved), 1) + " dB"
@@ -342,7 +342,7 @@ private:
         else if (hz <= 0) line = "Play the kick: Kick Fit reads its boom note.";
         else
         {
-            line = "Boom: " + noteText (shownHz) + (std::abs (proc.engine.glideSemis()) > 0.5 ? " (drops " + juce::String (proc.engine.glideSemis(), 1) + " semitones at the start)" : juce::String()) + ". ";
+            line = "Boom: " + noteText (shownHz) + (proc.engine.glideSemis() > 0.5 && proc.engine.glideSemis() < 36 ? " (drops " + juce::String (proc.engine.glideSemis(), 1) + " semitones at the start)" : juce::String()) + ". ";
             const bool moving = proc.engine.noteSpreadCents() > 40;
             if (moving) line += "Its pitch keeps moving, so it has no single note: tune by ear. ";
             if (haveKey && ! moving)
