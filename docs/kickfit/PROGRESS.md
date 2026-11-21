@@ -40,8 +40,15 @@
 - The boom note no longer flickers between hits, and the time picture shows outlines instead of the raw wave.
 - The key guess said C major for a bass loop named C minor. Pick the key at the top when you know it.
 
+**The pair, checked in FL with your kick and bass**
+- The Kick Fit on the kick shows the bass "from the Kick Fit on the bass", and Sit it responds.
+- The Kick Fit on the bass dips the bass's lows under the kick (7.3 dB with Room for bass at 71).
+- FL hands an unused sidechain a copy of the track's own sound; Kick Fit now ignores that.
+- Known problem: Sit it compares the kick with the whole song, because that is what was measured in your songs. With only a
+  bass playing it turns the kick down much too far (it hit the -12 dB limit). Until that is measured properly, use Sit it
+  only when the rest of the song is playing into the bass's Kick Fit, or set Level by ear.
+
 **Not done yet**
-- Trying the paired build in FL (it is built and tested, but FL has to be restarted to load it).
 - Tune's delay compensation in FL.
 - The test bench on your kicks, and the blind A/B listening test.
 - Mac build (GitHub does this when the branch is pushed).

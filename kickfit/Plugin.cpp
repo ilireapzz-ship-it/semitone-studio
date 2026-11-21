@@ -119,6 +119,12 @@ public:
         engine.setParams (p);
         float* l = main.getWritePointer (0); float* r = l;
         if (main.getNumChannels() > 1) r = main.getWritePointer (1);
+        if (sl != nullptr)          // FL Studio hands an unconnected sidechain a copy of this track's own sound: that is not a sidechain
+        {
+            bool same = true;
+            for (int i = 0; i < n && same; ++i) same = sl[i] == l[i] && sr[i] == r[i];
+            if (same) sl = sr = nullptr;
+        }
         else { if (spare.getNumSamples() < n) return; spare.copyFrom (0, 0, l, n); r = spare.getWritePointer (0); }
         engine.process (l, r, sl, sr, n);
         for (int i = 0; i < n; ++i) { mine.push (0.5f * (l[i] + r[i])); other.push (sl ? 0.5f * (sl[i] + sr[i]) : 0.0f); }
@@ -293,8 +299,12 @@ private:
         if (! ctx().hasSidechain()) { sitSaid = "Kick Fit can't hear the bass yet. Put a second Kick Fit on the bass, set it to The bass, and send the kick to its sidechain. Then play and press Sit it."; return; }
         if (! ctx().sitGain (t.sitLo, t.sitMid, t.sitHi, change) || ! ctx().sitLevel (now)) { sitSaid = "Play a few bars with the kick first, then press Sit it."; return; }
         if (std::abs (change) < 0.05) { sitSaid = "The kick already sits where your " + juce::String (t.name) + " songs have it. Left alone."; return; }
-        proc.setParam ("level", juce::jlimit (-12.0f, 12.0f, proc.get ("level") + (float) change));
-        sitSaid = juce::String (change > 0 ? "Turned the kick up " : "Turned the kick down ") + juce::String (std::abs (change), 1) + " dB to where your " + t.name + " songs have it. Your ears do the rest.";
+        const float before = proc.get ("level"), after = juce::jlimit (-12.0f, 12.0f, before + (float) change), moved = after - before;
+        proc.setParam ("level", after);
+        const bool short_ = std::abs (moved - (float) change) > 0.3f;          // Level ran out before the kick got there
+        sitSaid = juce::String (moved > 0 ? "Turned the kick up " : "Turned the kick down ") + juce::String (std::abs (moved), 1) + " dB"
+                + (short_ ? juce::String (". That is as far as Level goes and it is still ") + (change > 0 ? "quieter" : "louder") + " than your " + t.name + " songs: move the kick's fader too."
+                          : juce::String (" to where your ") + t.name + " songs have it. Your ears do the rest.");
     }
 
     void timerCallback() override
