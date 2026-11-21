@@ -314,6 +314,9 @@ private:
         if (! t.loud) { loudSaid = juce::String ("Not enough ") + t.name + " songs measured for a loudness range. Set it by ear."; return; }
         if (! proc.engine.loud.read (now)) { loudSaid = "Play the song for a few seconds first."; return; }
         if (now >= t.lufs[0] && now <= t.lufs[2]) { loudSaid = juce::String ("Already as loud as your ") + t.name + " songs. Left alone."; return; }
+        const float ceil = proc.raw ("ceiling"), heldNow = proc.engine.reductionDb();
+        // seen in FL: with the Ceiling at -12 dB, 11.8 dB more Loudness made it 1 dB louder. Pushing into a low ceiling only squashes.
+        if (now < t.lufs[0] && ceil < -1.0f && heldNow < -1.0f) { loudSaid = juce::String ("The Ceiling is at ") + juce::String (ceil, 1) + " dB and the limiter is already holding the mix under it, so more Loudness would only squash it. Raise the Ceiling toward 0 first."; return; }
         const float before = proc.raw ("gain"), after = juce::jlimit (0.0f, 24.0f, before + (float) (t.lufs[1] - now));
         if (std::abs (after - before) < 0.05f) { loudSaid = now > t.lufs[2] ? "Louder than your songs with Loudness already at 0: turn the parts down." : "Loudness is already at its top."; return; }
         if (auto* p = proc.state.getParameter ("gain")) { p->beginChangeGesture(); p->setValueNotifyingHost (p->convertTo0to1 (after)); p->endChangeGesture(); }

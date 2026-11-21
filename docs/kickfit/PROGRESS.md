@@ -117,3 +117,5 @@ A second plug-in for the bus (or master) the kick, bass and vocal meet on. First
 - Fit Bus: loudness. It measures what leaves the way finished songs are measured (LUFS, BS.1770 gating; a -20 dB test tone
   reads -20), shows it against the songs of the genre (pop -13.0 to -7.9, middle -10.1; rock -10.6 to -7.5, middle -8.5)
   and Set it turns Loudness toward the middle. Not yet tried in FL.
+- Loudness tried in FL: the reading works. With the Ceiling at -12 dB, Set it added 11.8 dB of Loudness and the mix got
+  only 1 dB louder, so Set it now says to raise the Ceiling in that case and changes nothing.
