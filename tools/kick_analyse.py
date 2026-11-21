@@ -66,11 +66,19 @@ def load_audio(path, sr=None):
             x, r = sf.read(path, dtype='float32', always_2d=True)
         except Exception:
             x = None
+    if x is None and path.lower().endswith('.wav'):          # FL Studio's packs: an Ogg Vorbis stream inside a WAV (format 0x674F)
+        try:
+            import io, soundfile as sf
+            b = open(path, 'rb').read(); i = b.find(b'data', 12); j = b.find(b'OggS', i)
+            if i > 0 and 0 < j < i + 64:
+                x, r = sf.read(io.BytesIO(b[j:]), dtype='float32', always_2d=True)
+        except Exception:
+            x = None
     if x is None:
         import av
         with av.open(path) as c:
             st = c.streams.audio[0]
-            r = sr or st.rate
+            r = sr or st.codec_context.sample_rate
             rs = av.AudioResampler(format='flt', layout='stereo', rate=r)
             parts = []
             for fr in c.decode(st):
@@ -372,7 +380,8 @@ def measure_song(mix, stems, sr):
     def lvl(v, a, b):
         a = max(a, 0); b = min(b, len(v))
         return np.mean(v[a:b] ** 2) if b > a else 0.0
-    d_low, d_full, f0s, ducks, both, glue = [], [], [], [], [], []
+    d_low, d_full, ducks, both = [], [], [], []
+    NF = 1 << 17; f0s = [np.zeros(NF // 2 + 1), np.zeros(NF // 2 + 1)]; nf0 = [0, 0]
     for i, o in enumerate(ons):
         if o + W >= len(mx): break
         m = lvl(mx, o, o + W)
@@ -381,9 +390,9 @@ def measure_song(mix, stems, sr):
         d_full.append(db(lvl(kfull_k, o, o + W)) - db(lvl(mix_k, o, o + W)))
         nxt = ons[i + 1] if i + 1 < len(ons) else len(mx)
         a, b = o + int(0.03 * sr), min(o + int(0.22 * sr), nxt - int(0.01 * sr))
-        if b - a > int(0.07 * sr):
-            f = spec_peak(band(dr[a:b], sr, None, 250), sr, 30, 150)
-            if f: f0s.append(f)
+        if b - a >= int(0.1 * sr):                     # add this hit's spectrum to one of two piles (every other hit)
+            seg = dr[a:a + int(0.1 * sr)]
+            f0s[len(d_low) % 2] += np.abs(np.fft.rfft(seg * np.hanning(len(seg)), NF)) ** 2; nf0[len(d_low) % 2] += 1
         # is the bass sounding when the kick hits, and does it dip
         before = math.sqrt(lvl(blow, o - int(0.08 * sr), o - int(0.02 * sr)))
         during = math.sqrt(lvl(blow, o + int(0.01 * sr), o + int(0.07 * sr)))
@@ -397,9 +406,11 @@ def measure_song(mix, stems, sr):
     if len(ducks) >= 12:
         r['bass_dip_db'] = round(float(np.median(ducks)), 2); r['bass_dip_hits'] = len(ducks)
     # boom note against the key
-    if len(f0s) >= 12:
-        f0 = float(np.median(f0s))
-        spread = 1200 * float(np.subtract(*np.percentile(np.log2(f0s), [75, 25])))
+    if min(nf0) >= 8:
+        fr = np.fft.rfftfreq(NF, 1 / sr); a_i, b_i = np.searchsorted(fr, 30), np.searchsorted(fr, 150)
+        pk = lambda sp: float(fr[a_i + int(np.argmax(sp[a_i:b_i]))])
+        f0 = pk(f0s[0] + f0s[1])
+        spread = abs(1200 * math.log2(pk(f0s[0]) / pk(f0s[1])))        # do the two piles agree
         nm, pc, cents = note_of(f0)
         r.update(kick_f0=round(f0, 2), kick_note=nm, kick_pc=pc, kick_cents=round(cents, 1), kick_f0_spread_cents=round(spread, 1))
     pitched = (stems['bass'] + stems['other'] + stems['vocals']).mean(axis=1)
@@ -443,7 +454,8 @@ def cmd_songs(args):
     os.makedirs(LOCAL, exist_ok=True)
     out = os.path.join(LOCAL, 'songs.jsonl')
     done = set()
-    if os.path.exists(out) and not args.fresh:
+    if args.fresh and os.path.exists(out): os.remove(out)
+    if os.path.exists(out):
         for ln in open(out, encoding='utf-8'):
             try: done.add(json.loads(ln)['path'])
             except Exception: pass
@@ -527,7 +539,8 @@ def cmd_targets(args):
             'drums_at_kick_vs_mix_kw_db': 'K-weighted level of the whole drum stem against the mix in the same windows. Includes hats and snares that land with the kick.',
             'bass_under_kick_share': 'Share of kick hits with bass sounding under them.',
             'bass_dip_db': 'Bass stem (30-150 Hz) level in the 10-70 ms after a kick against its level just before and 150-250 ms after. Negative = the bass drops. Leaked kick makes this look smaller than it is.',
-            'kick_vs_tonic': 'Boom note of the kick as semitones above the key note; key guessed from the non-drum stems (Krumhansl-Kessler profiles, wrong roughly one time in four). Only songs whose kick note is steady hit to hit (spread under 50 cents).',
+            'kick_f0': 'Boom note of the kick in a song: the strongest peak between 30 and 150 Hz in the summed spectrum of every hit (30 to 130 ms after its start) in the drum stem. Counted only when two halves of the hits agree within 50 cents.',
+            'kick_vs_tonic': 'That boom note as semitones above the key note; key guessed from the non-drum stems (Krumhansl-Kessler profiles; such guesses are often a fifth or a relative key out). Only songs with a steady kick note and a key guess that clearly beats the next one.',
             'low_overlap': 'How much the kick and the bass share the same third-octave bands between 20 and 320 Hz: 0 none, 1 identical.',
             'low_side_vs_mid_db': 'Below 120 Hz, the side (stereo difference) against the middle. Very negative = mono lows.',
             'click in songs': 'Not measured: hats and snares hit with the kick, so the kick\'s own click cannot be told apart in a finished song.',
@@ -554,9 +567,12 @@ def cmd_targets(args):
             continue
         steady = [s for s in sub if s.get('kick_f0_spread_cents') is not None and s['kick_f0_spread_cents'] < 50]
         d = {'songs': len(sub), 'status': 'measured', **{f: stat([s.get(f) for s in sub]) for f in SONG_FIELDS}}
+        d['kick_f0'] = stat([s.get('kick_f0') for s in steady]); d['kick_cents'] = stat([s.get('kick_cents') for s in steady])
+        keyed = [s for s in steady if (s.get('key_conf') or 0) >= 0.05]
         d['kick_note_steady_songs'] = len(steady)
-        d['kick_vs_tonic_semitones'] = {str(i): sum(1 for s in steady if s.get('kick_vs_tonic') == i) for i in range(12)}
-        d['kick_in_scale_share'] = round(sum(1 for s in steady if s.get('kick_in_scale')) / len(steady), 3) if steady else None
+        d['kick_note_and_key_songs'] = len(keyed)
+        d['kick_vs_tonic_semitones'] = {str(i): sum(1 for s in keyed if s.get('kick_vs_tonic') == i) for i in range(12)}
+        d['kick_in_scale_share'] = round(sum(1 for s in keyed if s.get('kick_in_scale')) / len(keyed), 3) if keyed else None
         out['modes'][m] = d
     dst = os.path.join(REPO, 'data', 'kickfit-targets.json')
     json.dump(out, open(dst, 'w', encoding='utf-8'), indent=1)
@@ -581,10 +597,10 @@ def cmd_selftest(args):
     bad = 0
     for sr in (44100, 48000, 96000):
         for f_end, f_start, decay in ((55.0, 180.0, 0.18), (43.65, 43.65, 0.9), (61.74, 240.0, 0.12), (49.0, 98.0, 0.5), (82.41, 300.0, 0.08)):
-            r, why = measure_kick(synth_kick(sr, f_end, f_start, decay=decay, click=0.2), sr)
+            r, why = measure_kick(synth_kick(sr, f_end, f_start, decay=decay, click=0.2, dur=max(1.0, decay * 4)), sr)
             cents = 1200 * math.log2(r['f0'] / f_end) if r and 'f0' in r else 999
             want = decay * math.log(10)       # time to fall 20 dB
-            ok = why is None and abs(cents) < 15 and abs(r['t20'] - want) < 0.03 + 0.1 * want
+            ok = why is None and abs(cents) < 15 and r.get('t20') is not None and abs(r['t20'] - want) < 0.03 + 0.1 * want
             bad += not ok
             print(f"{'ok  ' if ok else 'FAIL'} {sr} Hz: boom {f_end} Hz measured {r.get('f0')} ({cents:+.1f} cents), glide {r.get('glide_st')} st, "
                   f"20 dB decay {r.get('t20')} s (true {want:.3f}) {why or ''}")
