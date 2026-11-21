@@ -26,7 +26,13 @@
   says so and leaves those to your ears. For kicks with a steady note, tuning landed in key (within 20 cents) 84 times in 100.
   That is not good enough yet.
 
+**Checked in FL Studio 2026 on your PC**
+- FL's Plugin Manager finds Kick Fit (status ok, VST3, 64-bit, effect).
+- It loads on a mixer track and its window shows the picture and every control. (The first try came up empty; fixed.)
+- FL reports its delay as "none" with Tune at zero, and offers "1. Input" and "2. Sidechain" under Processing > Connections.
+- GitHub builds the Mac VST3 and AU and the Windows VST3.
+
 **Not done yet**
-- Loading it in FL Studio and checking the sidechain steps.
+- Playing a real kick and bass through it in FL (sound, the sidechain picture, Sit it, Tune's delay compensation).
 - The test bench on your kicks, and the blind A/B listening test.
 - Mac build (GitHub does this when the branch is pushed).
