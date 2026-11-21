@@ -444,6 +444,28 @@ def measure_song(mix, stems, sr):
     r['low_side_vs_mid_db'] = round(db(np.mean(side ** 2)) - db(np.mean(mid ** 2)), 2)
     den = math.sqrt(np.sum(L * L) * np.sum(R * R))
     r['low_corr'] = round(float(np.sum(L * R) / den), 3) if den > 1e-12 else None
+    # what a peak meter (or Fruity Limiter's picture) shows: how high each part reaches against the highest the whole song reaches
+    top = float(np.percentile(np.abs(mix), 99.99)) + 1e-9
+    r['mix_peak_db'] = round(20 * math.log10(top), 2)
+    dfull = np.abs(stems['drums']).max(axis=1)
+    r['kick_peak_vs_song_db'] = round(20 * math.log10(float(np.median([dfull[o:o + W].max() for o in ons if o + W < len(dfull)])) / top + 1e-9), 2)
+    hop = int(0.1 * sr)
+
+    def reach(st):                      # typical peak of a stem while it is playing: middle of its 0.1 s peaks, quiet stretches left out
+        a = np.abs(st).max(axis=1); n = len(a) // hop
+        pk = a[:n * hop].reshape(n, hop).max(axis=1); act = pk[pk > 0.1 * np.percentile(pk, 95)]
+        return (round(20 * math.log10(float(np.median(act)) / top + 1e-9), 2), round(20 * math.log10(float(np.percentile(act, 95)) / top + 1e-9), 2), len(act) / max(n, 1)) if len(act) > 20 else (None, None, 0.0)
+    r['bass_peak_vs_song_db'], r['bass_top_vs_song_db'], _ = reach(stems['bass'])
+    r['vocal_peak_vs_song_db'], r['vocal_top_vs_song_db'], share = reach(stems['vocals'])
+    r['vocal_share'] = round(share, 3)
+    # how loud the singing is against everything else while it sings (K-weighted, 0.4 s steps)
+    vk, bk = kweight(stems['vocals'].mean(axis=1).astype(np.float64), sr), kweight((mix - stems['vocals']).mean(axis=1).astype(np.float64), sr)
+    h4 = int(0.4 * sr); n4 = len(vk) // h4
+    if n4 > 20:
+        ve = (vk[:n4 * h4] ** 2).reshape(n4, h4).mean(axis=1); be = (bk[:n4 * h4] ** 2).reshape(n4, h4).mean(axis=1)
+        on = ve > 0.1 * np.percentile(ve, 90)
+        if on.sum() > 20:
+            r['vocal_vs_backing_db'] = round(float(np.median(10 * np.log10(ve[on] / np.maximum(be[on], 1e-12)))), 2)
     # how loud the low end of the whole mix is against the whole mix
     ml = band(mx, sr, None, 120)
     r['mix_low_share_db'] = round(db(np.mean(ml ** 2)) - db(np.mean(mx ** 2)), 2)
@@ -512,7 +534,7 @@ def read_local(name):
 
 KICK_FIELDS = ['f0', 'f_start', 'glide_st', 'glide_ms', 'attack_ms', 't20', 't40', 'click_db', 'click_hz', 'b_sub', 'b_lowb', 'b_lowmid',
                'b_mid', 'b_high', 'above180_db', 'peak_db', 'true_peak_db', 'rms_db', 'kw_db', 'dc', 'asym_db', 'low_corr', 'wobble_cents']
-SONG_FIELDS = ['kick_low_vs_mix_db', 'kick_low_vs_lows_db', 'kick_low_vs_kickbass_lows_db', 'drums_at_kick_vs_mix_kw_db', 'bass_under_kick_share', 'bass_dip_db', 'kick_f0', 'kick_cents',
+SONG_FIELDS = ['mix_peak_db', 'kick_peak_vs_song_db', 'bass_peak_vs_song_db', 'bass_top_vs_song_db', 'vocal_peak_vs_song_db', 'vocal_top_vs_song_db', 'vocal_vs_backing_db', 'vocal_share', 'kick_low_vs_mix_db', 'kick_low_vs_lows_db', 'kick_low_vs_kickbass_lows_db', 'drums_at_kick_vs_mix_kw_db', 'bass_under_kick_share', 'bass_dip_db', 'kick_f0', 'kick_cents',
                'low_overlap', 'kick_low_centre_hz', 'bass_low_centre_hz', 'low_side_vs_mid_db', 'low_corr', 'mix_low_share_db', 'kicks_per_min']
 
 
@@ -542,6 +564,8 @@ def cmd_targets(args):
             'kick_low_vs_mix_db': 'Level of the drum stem between 30 and 150 Hz against the whole mix, in the 120 ms after each kick hit; median over the hits.',
             'kick_low_vs_lows_db': 'The same kick lows (30-150 Hz) against everything under 300 Hz in the whole mix, in the same windows. This is what Sit it uses: it does not depend on how much is playing above the bass range.',
             'kick_low_vs_kickbass_lows_db': 'The same, against only the drum and bass stems under 300 Hz: what Kick Fit hears when just the bass is fed to it.',
+            'peaks': 'What a peak meter shows. mix_peak_db: the highest the finished song reaches (dBFS). kick_peak_vs_song_db: the drum stem peak in the 120 ms after a kick hit, against that (middle hit; includes a snare or hat landing with it). bass_/vocal_peak_vs_song_db: the middle of that stem, its 0.1 s peaks while it plays; _top_ is its loudest twentieth. These are finished, mastered songs: a mix before mastering sits lower overall, but the gaps between the parts are the useful bit.',
+            'vocal_vs_backing_db': 'K-weighted level of the vocal stem against everything else, in 0.4 s steps while there is singing; middle step. vocal_share: how much of the song has singing.',
             'drums_at_kick_vs_mix_kw_db': 'K-weighted level of the whole drum stem against the mix in the same windows. Includes hats and snares that land with the kick.',
             'bass_under_kick_share': 'Share of kick hits with bass sounding under them.',
             'bass_dip_db': 'Bass stem (30-150 Hz) level in the 10-70 ms after a kick against its level just before and 150-250 ms after. Negative = the bass drops. Leaked kick makes this look smaller than it is.',

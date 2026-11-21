@@ -60,3 +60,20 @@
 - Tune's delay compensation in FL.
 - The test bench on your kicks, and the blind A/B listening test.
 - Mac build (GitHub does this when the branch is pushed).
+
+## 21 Nov 2026, night: what a peak meter shows in your songs
+Measured on the same 299 songs (finished, mastered songs: they reach about -0.3 dB at their highest).
+How far under the song's highest peak each part usually reaches:
+
+| | Rock (242 songs) | Pop (53 songs) |
+|---|---|---|
+| Kick, each hit | about 2.5 dB under (most 1.5 to 5) | about 4.5 dB under (most 2 to 17.5) |
+| Vocal, most of the time | about 6.5 dB under (most 5 to 8) | about 8 dB under (most 5 to 9.5) |
+| Vocal, its loudest moments | about 2 dB under | about 2 dB under |
+| Bass, most of the time | about 11 dB under (most 9 to 14.5) | about 13.5 dB under (most 10 to 17) |
+| Bass, its loudest moments | about 7.5 dB under | about 7.5 dB under |
+
+- The singing is about as loud as everything else put together while it sings: 1 dB under in rock, 1 dB over in pop.
+- The kick figure comes from the drum part at kick hits, so a snare or hat landing with the kick is counted in.
+- Splitting a song into parts is not perfect, so treat these as within a dB or two.
+- Vocal fit: the numbers are measured; nothing is built for vocals yet.

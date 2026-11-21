@@ -11,11 +11,11 @@ struct ModeTarget
 };
 inline constexpr ModeTarget modeTargets[] = {
     { "trap-hiphop", "Trap / hip-hop", 0, false, 0.00f, 0.00f, 0.00f, 0.0f, 0.0f, 0.0f, 0.00f },
-    { "pop", "Pop", 53, true, -12.47f, -3.01f, -0.88f, 48.9f, 52.1f, 61.6f, -0.10f },
+    { "pop", "Pop", 53, true, -12.13f, -2.96f, -0.88f, 48.8f, 52.8f, 72.0f, -0.12f },
     { "rnb", "R&B", 2, false, 0.00f, 0.00f, 0.00f, 0.0f, 0.0f, 0.0f, 0.00f },
     { "house-edm", "House / EDM", 0, false, 0.00f, 0.00f, 0.00f, 0.0f, 0.0f, 0.0f, 0.00f },
     { "dnb", "Drum & bass", 0, false, 0.00f, 0.00f, 0.00f, 0.0f, 0.0f, 0.0f, 0.00f },
-    { "rock", "Rock", 242, true, -3.60f, -2.09f, -1.12f, 43.7f, 50.5f, 60.3f, -0.59f },
+    { "rock", "Rock", 242, true, -3.69f, -2.10f, -1.14f, 44.0f, 50.0f, 60.2f, -0.56f },
     { "afro", "Afrobeats / amapiano", 0, false, 0.00f, 0.00f, 0.00f, 0.0f, 0.0f, 0.0f, 0.00f },
     { "lofi", "Lo-fi", 0, false, 0.00f, 0.00f, 0.00f, 0.0f, 0.0f, 0.0f, 0.00f },
 };
