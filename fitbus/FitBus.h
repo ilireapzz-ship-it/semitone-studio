@@ -238,7 +238,7 @@ public:
         pos = 0; n = 0; dqHead = dqTail = 0; rel = 1; boxSum = L; lowered = 0; colStep = std::max (1, (int) (0.02 * sr)); colN = 0; cur = {}; cur.gain = 1;
         for (int i = 0; i < numBands - 1; ++i) { lpA[i].lowpass (bandEdges[i], 0.5412, sr); lpB[i].lowpass (bandEdges[i], 1.3066, sr); lpA[i].reset(); lpB[i].reset(); }
         for (auto& e : bandE) e = 0;
-        inMeter.prepare (sr); transient.prepare (sr); tame.prepare (sr); loud.prepare (sr);
+        inMeter.prepare (sr); outMeter.prepare (sr); transient.prepare (sr); tame.prepare (sr); loud.prepare (sr);
         set (p);
     }
     void set (const Params& np) { p = np; transient.set (p.attack, p.sustain); tame.set (p.tameRange, p.tameThrDb, p.tameAmount, p.tameHear); gIn = kf::dbToGain (p.gainDb); ceil = kf::dbToGain (p.ceilingDb); relCoef = 1 - std::exp (-1.0 / (std::max (5.0f, p.releaseMs) * 0.001 * sr)); }
@@ -285,6 +285,7 @@ public:
                 redNow.store ((float) (20 * std::log10 (std::max (1e-6f, cur.gain)))); tameNow.store (std::min (tameHeld, tame.reductionDb())); tameHeld = 0; cur = {}; cur.gain = 1; colN = 0;
             }
             loud.push (yl, yr);                                          // what leaves, after the limiter
+            if (outMeter.push (0.5 * ((double) yl + yr), std::max (std::abs (yl), std::abs (yr)))) for (int k = 0; k < fl::numBands; ++k) outPower[k].store ((float) outMeter.power[k]);
             l[i] = yl; r[i] = yr; ++n;
         }
     }
@@ -302,9 +303,10 @@ private:
     int L = 221, pos = 0, dqHead = 0, dqTail = 0, lowered = 0, colStep = 882, colN = 0; long long n = 0;
     std::vector<float> dl, dr; std::vector<double> box, dqV; std::vector<long long> dqI;
     kf::Biquad lpA[numBands - 1], lpB[numBands - 1];
-    fl::BandMeter inMeter; Transient transient; Tame tame; float tameHeld = 0; std::atomic<float> tameNow { 0.0f };
+    fl::BandMeter inMeter, outMeter; Transient transient; Tame tame; float tameHeld = 0; std::atomic<float> tameNow { 0.0f };
 public:
     Loudness loud;
+    std::atomic<float> outPower[fl::numBands] {};                          // what leaves, strength per range: the tone bars (so Tame and the rest show in them)
     std::atomic<float> inPower[fl::numBands] {}, inPeak { 0.0f }, inNow { 0.0f };       // the bus as it arrives: strength per range, recent peak, the peak of the last 20 ms
 private:
     Column cur, cols[numColumns]; std::atomic<int> colW { 0 }; std::atomic<float> redNow { 0.0f };

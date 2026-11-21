@@ -119,3 +119,6 @@ A second plug-in for the bus (or master) the kick, bass and vocal meet on. First
   and Set it turns Loudness toward the middle. Not yet tried in FL.
 - Loudness tried in FL: the reading works. With the Ceiling at -12 dB, Set it added 11.8 dB of Loudness and the mix got
   only 1 dB louder, so Set it now says to raise the Ceiling in that case and changes nothing.
+- Jamie spotted that taming a range did not move that range's tone bar: the bars were reading what arrives. They now read
+  what leaves Fit Bus, after Tame, Transients and the limiter, and settle in about 3 s. The three plug-in names (Kick Fit,
+  Bass Fit, Vocal Fit) are dropped: Jamie doesn't need them.

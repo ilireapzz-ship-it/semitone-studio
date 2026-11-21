@@ -205,6 +205,9 @@ static void testTame()
         CHECK (inside < -6.0, "range %d: the loud tone inside it (%.0f Hz) should come down, moved %.2f dB", c.range, c.hzIn, inside);
         CHECK (std::abs (outside) < 1.5, "range %d: the tone outside it (%.0f Hz) moved %.2f dB", c.range, c.hzOut, outside);
         CHECK (e.tameDb() < -3.0f, "range %d: it should report holding down, said %.2f dB", c.range, e.tameDb());
+        // the tone bars read what leaves: the tamed range's share must be lower than without Tame
+        Buf nl = in, nr = in; Engine en; en.prepare (sr); run (en, nl, nr, 512); const int b = c.range - 1;
+        CHECK (e.outPower[b].load() < 0.5f * en.outPower[b].load(), "range %d: the tone reading did not follow Tame (%.5f against %.5f)", c.range, e.outPower[b].load(), en.outPower[b].load());
         // quiet enough to stay under the threshold: the same samples come out
         const Buf q = mixOf (0.01, c.hzIn, c.hzOut); Buf ql = q, qr = q; Engine e2; e2.set (p); e2.prepare (sr); run (e2, ql, qr, 512);
         bool same = true; const size_t d = (size_t) e2.latency(); for (size_t i = d; i < n; ++i) same = same && ql[i] == q[i - d];

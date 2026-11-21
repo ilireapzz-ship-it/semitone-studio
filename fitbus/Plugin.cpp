@@ -186,7 +186,7 @@ public:
             auto box = getLocalBounds().reduced (14).removeFromRight (120); box.removeFromTop (300);
             g.setColour (look::ink); g.setFont (juce::FontOptions (12.0f, juce::Font::bold)); g.drawText ("Tone", box.removeFromTop (16), juce::Justification::centredLeft);
             g.setColour (look::soft); g.setFont (juce::FontOptions (10.0f));
-            g.drawFittedText (t.tone ? juce::String ("Bars: this mix. Shaded: your ") + t.name + " songs." : juce::String ("Not enough ") + t.name + " songs measured for a range.", box.removeFromTop (26), juce::Justification::topLeft, 2);
+            g.drawFittedText (t.tone ? juce::String ("Bars: what leaves here. Shaded: your ") + t.name + " songs." : juce::String ("Not enough ") + t.name + " songs measured for a range.", box.removeFromTop (26), juce::Justification::topLeft, 2);
             auto xOf = [&] (float dB, juce::Rectangle<int> tr) { return (float) tr.getX() + (float) tr.getWidth() * juce::jlimit (0.0f, 1.0f, (dB + 36.0f) / 36.0f); };
             for (int b = fl::numBands - 1; b >= 0; --b)                 // highest pitch at the top, like the picture
             {
@@ -260,7 +260,7 @@ private:
             repaint(); return;
         }
         mixer.add (P, have, B, 1.0 / 30.0);
-        { double all = 0; for (int k = 0; k < fl::numBands; ++k) { toneP[k] += (toneSeen ? 0.004 : 1.0) * (B[k] - toneP[k]); all += toneP[k]; }          // about 8 s
+        { double all = 0; for (int k = 0; k < fl::numBands; ++k) { toneP[k] += (toneSeen ? toneEase : 1.0) * ((double) proc.engine.outPower[k].load() - toneP[k]); all += toneP[k]; }          // about 8 s
           toneSeen = all > 1e-10; if (toneSeen) for (int k = 0; k < fl::numBands; ++k) toneNow[k] = (float) (10 * std::log10 (std::max (toneP[k] / all, 1e-6))); }
         if (logOn)                       // for working on Fit Bus: the numbers it sees, 30 lines a second (only when the switch file exists)
         {
@@ -343,6 +343,7 @@ private:
     std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> tameLink; std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> hearLink;
     juce::File logFile { juce::File::getSpecialLocation (juce::File::tempDirectory).getChildFile ("fitbus-log.csv") };
     bool logOn = juce::File::getSpecialLocation (juce::File::tempDirectory).getChildFile ("fitbus-log.on").existsAsFile();
+    static constexpr double toneEase = 0.011;          // about 3 s: slow enough to be a balance, quick enough to see a knob move it
     double toneP[fl::numBands] {}; float toneNow[fl::numBands] {}; bool toneSeen = false;
     fb::Mixer mixer; Part part[3]; bool had[4] = { false, false, false, false }, wasPlaying = false, read = false; int quiet = 1000; juce::String note, said; int cool = 0;
 };
