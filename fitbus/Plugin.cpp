@@ -170,12 +170,20 @@ private:
         if (have[0] != had[0] || have[1] != had[1] || have[2] != had[2]) { mixer.reset(); for (int k = 0; k < 3; ++k) had[k] = have[k]; }
         for (int k = 0; k < fl::numBands; ++k) B[k] = proc.engine.inPower[k].load();
         const double song = proc.engine.inPeak.load(); const bool playing = song > 1e-4;
+        if (playing != wasPlaying) { wasPlaying = playing; if (playing) mixer.reset(); }          // start afresh each time the song starts
         if (playing) mixer.add (P, have, B, 1.0 / 30.0);
+        if (logOn && playing)            // for working on Fit Bus: the numbers it sees, 30 lines a second (only when the switch file exists)
+        {
+            juce::String row; for (int k = 0; k < 3; ++k) { row << (have[k] ? 1 : 0) << "," << peak[k] << ","; for (int i = 0; i < fl::numBands; ++i) row << P[k][i] << ","; }
+            for (int i = 0; i < fl::numBands; ++i) row << B[i] << ",";
+            row << song << "\n"; logFile.appendText (row);
+        }
         double g2[3], fit = 0; const bool solved = playing && mixer.solve (have, g2, fit), sure = solved && fit >= 0.9;
         if (cool > 0) --cool;
         note = b == nullptr ? "This computer would not let Fit Bus and Kick Fit talk to each other, so Fit Bus only limits and draws."
              : ! (have[0] || have[1] || have[2]) ? "No Kick Fit found. Put Kick Fit on the kick, the bass and the vocal, set each one's \"I am on\", and send those tracks here."
              : ! playing ? "Play the song."
+             : ! solved ? "Listening..."
              : ! sure ? "There is more in this bus than the parts with a Kick Fit on them, so their heights can't be read. Send only the kick, bass and vocal here."
              : said.isNotEmpty() && cool > 0 ? said
              : "Heights are measured after the faders. The ranges come from finished songs, where other instruments share the low end: with only these parts playing, trust your ears on the bass.";
@@ -218,7 +226,9 @@ private:
     }
     FitBusProcessor& proc; juce::Slider gain, ceiling; juce::Label gainL, ceilL; juce::OwnedArray<juce::AudioProcessorValueTreeState::SliderAttachment> links;
     juce::ComboBox mode; std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> modeLink; juce::TextButton fix[3];
-    fb::Mixer mixer; Part part[3]; bool had[3] = { false, false, false }; juce::String note, said; int cool = 0;
+    juce::File logFile { juce::File::getSpecialLocation (juce::File::tempDirectory).getChildFile ("fitbus-log.csv") };
+    bool logOn = juce::File::getSpecialLocation (juce::File::tempDirectory).getChildFile ("fitbus-log.on").existsAsFile();
+    fb::Mixer mixer; Part part[3]; bool had[3] = { false, false, false }, wasPlaying = false; juce::String note, said; int cool = 0;
 };
 
 juce::AudioProcessorEditor* FitBusProcessor::createEditor() { return new FitBusEditor (*this); }

@@ -30,7 +30,7 @@ struct Params { float gainDb = 0, ceilingDb = 0, releaseMs = 120; };
 struct Mixer
 {
     static constexpr int parts = 3;
-    void reset() { for (auto& row : A) for (auto& v : row) v = 0; for (auto& v : r) v = 0; c = 0; for (auto& row : sP) for (auto& v : row) v = 0; for (auto& v : sB) v = 0; }
+    void reset() { for (auto& row : A) for (auto& v : row) v = 0; for (auto& v : r) v = 0; c = 0; for (auto& row : sP) for (auto& v : row) v = 0; for (auto& v : sB) v = 0; age = 0; }
     // P: each part's strengths as its Kick Fit reports them; Bnow: the bus's; dt: seconds since the last call.
     // Both are first averaged over about 1.5 s: the bus hears the parts a few ms late (the host lines plug-ins up, and the
     // numbers are read at slightly different moments), which matters at the instant a kick lands and not over a second.
@@ -38,6 +38,7 @@ struct Mixer
     {
         const double a = 1 - std::exp (-dt / slow), keep = std::exp (-dt / memory);
         for (int b = 0; b < fl::numBands; ++b) { sB[b] += a * (Bnow[b] - sB[b]); for (int i = 0; i < parts; ++i) sP[i][b] += a * ((have[i] ? Pnow[i][b] : 0.0) - sP[i][b]); }
+        age += dt; if (age < warm) return;          // the first moments after play starts are not averaged yet: measured in FL, counting them kept the fit low for 10 s
         const auto& P = sP; const auto& B = sB;
         double tot = 0; for (int b = 0; b < fl::numBands; ++b) tot += B[b];
         if (tot <= 1e-12) return;
@@ -79,9 +80,9 @@ struct Mixer
         }
         fit = std::clamp (1 - best / c, 0.0, 1.0); return true;
     }
-    double slow = 1.5, memory = 4.0;          // seconds: the averaging, and how fast old moments fade
+    double slow = 1.5, memory = 4.0, warm = 2.0;          // seconds: the averaging, how fast old moments fade, and how long to listen before counting
 private:
-    double A[parts][parts] {}, r[parts] {}, c = 0, sP[parts][fl::numBands] {}, sB[fl::numBands] {};
+    double A[parts][parts] {}, r[parts] {}, c = 0, sP[parts][fl::numBands] {}, sB[fl::numBands] {}, age = 0;
 };
 
 class Engine
