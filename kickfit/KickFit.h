@@ -332,6 +332,7 @@ public:
     {
         if (n.tune != p.tune) retune.setRatio (ratioOf (n.tune));
         if (n.duckHz != p.duckHz) duckSet = -1;
+        if (n.role != p.role) { hv = {}; nVoc = vocW = 0; nHits = hitW = 0; accOn = false; viewPos = HitView::n; }      // another job: forget the old picture and readings
         p = n;
     }
     const Params& params() const { return p; }
@@ -344,7 +345,7 @@ public:
     {
         const int cnt = std::min (nVoc, maxVoc); if (cnt < 5) return false;
         double v[maxVoc]; for (int i = 0; i < cnt; ++i) v[i] = voc[i];
-        std::nth_element (v, v + cnt / 2, v + cnt); dB = v[cnt / 2]; return true;
+        std::nth_element (v, v + cnt / 2, v + cnt); dB = v[cnt / 2] + p.gainDb; return true;      // measured before Level, so a Level change shows at once
     }
     // the Level change (dB) that puts the vocal at `target`; nothing when it already sits between lo and hi. false = can't tell.
     bool vocalGain (double lo, double target, double hi, double& changeDb) const
@@ -501,13 +502,14 @@ private:
         const bool moving = std::abs (p.gainDb) > 1e-4f || std::abs (gainSmooth.y - 1.0) > 1e-5;
         for (int i = 0; i < n; ++i)
         {
+            const double v = 0.5 * ((double) l[i] + r[i]);          // the vocal as it came in, before Level
             if (moving)
             {
                 const double g = gainSmooth.run (gTarget); double x[2] = { l[i] * g, r[i] * g };
                 for (auto& y : x) { const double ay = std::abs (y); if (ay > knee) y = (y < 0 ? -1 : 1) * (knee + (1 - knee) * std::tanh ((ay - knee) / (1 - knee))); }
                 l[i] = (float) x[0]; r[i] = (float) x[1];
             }
-            const double v = 0.5 * ((double) l[i] + r[i]), s = sl ? 0.5 * ((double) sl[i] + (sr_ ? sr_[i] : sl[i])) : 0.0;
+            const double s = sl ? 0.5 * ((double) sl[i] + (sr_ ? sr_[i] : sl[i])) : 0.0;
             if (std::abs (s) > 1e-5) sideAge = 0; else if (sideAge < (1 << 30)) ++sideAge;
             const double vk = vocK2.run (vocK1.run (v)), bk = backK2.run (backK1.run (s));
             vocE += vk * vk; backE += bk * bk;
@@ -516,7 +518,7 @@ private:
                 const double ve = vocE / vocN, be = backE / vocN; vocE = backE = 0; vocN = 0;
                 vocTop = std::max (ve, vocTop * 0.98);
                 for (int j = 0; j < HitView::n - 1; ++j) { hv.kick[j] = hv.kick[j + 1]; hv.side[j] = hv.side[j + 1]; }       // a rolling picture of the last 51 s
-                hv.kick[HitView::n - 1] = (float) std::sqrt (ve); hv.side[HitView::n - 1] = (float) std::sqrt (be); ++hv.count;
+                hv.kick[HitView::n - 1] = (float) (std::sqrt (ve) * gTarget); hv.side[HitView::n - 1] = (float) std::sqrt (be); ++hv.count;
                 if (ve > 1e-9 && ve > 0.1 * vocTop && be > 1e-10)             // there is singing, and something to compare it with
                 { voc[vocW] = 10 * std::log10 (ve / be); vocW = (vocW + 1) % maxVoc; nVoc = std::min (nVoc + 1, maxVoc); }
             }
