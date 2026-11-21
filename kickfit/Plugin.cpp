@@ -1,0 +1,334 @@
+// Kick Fit: the plug-in and its window. The sound work is in KickFit.h; the genre targets in KickFitTargets.h
+// (made by tools/kickfit_targets.py from data/kickfit-targets.json, which holds measurements, not guesses).
+#include <juce_audio_utils/juce_audio_utils.h>
+#include <juce_dsp/juce_dsp.h>
+#include "KickFit.h"
+#include "KickFitTargets.h"
+
+namespace
+{
+const char* const noteNames[12] = { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+juce::String noteText (double hz)
+{
+    if (hz <= 0) return "?";
+    const double m = 69 + 12 * std::log2 (hz / 440.0); const int r = (int) std::lround (m), cents = (int) std::lround (100 * (m - r));
+    return juce::String (noteNames[((r % 12) + 12) % 12]) + juce::String (r / 12 - 1) + (cents ? juce::String (cents > 0 ? " +" : " ") + juce::String (cents) + " cents" : juce::String());
+}
+constexpr int scopeSize = 16384, fftOrder = 13, fftSize = 1 << fftOrder;
+
+struct Scope       // the last stretch of sound, written by the audio thread, read by the window
+{
+    std::array<float, scopeSize> data {}; std::atomic<int> w { 0 };
+    void push (float v) { const int i = w.load (std::memory_order_relaxed); data[(size_t) i] = v; w.store ((i + 1) & (scopeSize - 1), std::memory_order_relaxed); }
+    void latest (float* out, int n) const { const int e = w.load(); for (int i = 0; i < n; ++i) out[i] = data[(size_t) ((e - n + i) & (scopeSize - 1))]; }
+};
+std::atomic<float> linkedKickHz { 0.0f };       // a Kick Fit on the kick tells a Kick Fit on the bass where the boom is
+}
+
+class KickFitProcessor : public juce::AudioProcessor, private juce::AsyncUpdater
+{
+public:
+    KickFitProcessor()
+        : AudioProcessor (BusesProperties().withInput ("Input", juce::AudioChannelSet::stereo(), true)
+                                           .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
+                                           .withInput ("Sidechain", juce::AudioChannelSet::stereo(), true)),
+          state (*this, nullptr, "KickFit", layout())
+    {
+        for (auto* id : { "role", "mode", "key", "thump", "punch", "click", "tail", "room", "tune", "level" }) raw[id] = state.getRawParameterValue (id);
+    }
+    static juce::AudioProcessorValueTreeState::ParameterLayout layout()
+    {
+        using F = juce::AudioParameterFloat; using C = juce::AudioParameterChoice;
+        juce::StringArray modes, keys { "Listen for it" };
+        for (auto& m : kf::modeTargets) modes.add (m.name);
+        for (int minor = 0; minor < 2; ++minor) for (auto* n : noteNames) keys.add (juce::String (n) + (minor ? " minor" : " major"));
+        juce::AudioProcessorValueTreeState::ParameterLayout l;
+        l.add (std::make_unique<C> (juce::ParameterID { "role", 1 }, "I am on", juce::StringArray { "The kick", "The bass" }, 0));
+        l.add (std::make_unique<C> (juce::ParameterID { "mode", 1 }, "Genre", modes, 0));
+        l.add (std::make_unique<C> (juce::ParameterID { "key", 1 }, "Key", keys, 0));
+        for (auto* id : { "thump", "punch", "click", "tail" })
+            l.add (std::make_unique<F> (juce::ParameterID { id, 1 }, juce::String (id).substring (0, 1).toUpperCase() + juce::String (id).substring (1), juce::NormalisableRange<float> (-100, 100, 1), 0.0f));
+        l.add (std::make_unique<F> (juce::ParameterID { "room", 1 }, "Room for bass", juce::NormalisableRange<float> (0, 100, 1), 0.0f));
+        l.add (std::make_unique<F> (juce::ParameterID { "tune", 1 }, "Tune", juce::NormalisableRange<float> (-12, 12, 0.01f), 0.0f));
+        l.add (std::make_unique<F> (juce::ParameterID { "level", 1 }, "Level", juce::NormalisableRange<float> (-12, 12, 0.1f), 0.0f));
+        return l;
+    }
+
+    const juce::String getName() const override { return "Kick Fit"; }
+    bool acceptsMidi() const override { return false; }
+    bool producesMidi() const override { return false; }
+    double getTailLengthSeconds() const override { return 0.5; }
+    int getNumPrograms() override { return 1; }
+    int getCurrentProgram() override { return 0; }
+    void setCurrentProgram (int) override {}
+    const juce::String getProgramName (int) override { return {}; }
+    void changeProgramName (int, const juce::String&) override {}
+    bool hasEditor() const override { return true; }
+    juce::AudioProcessorEditor* createEditor() override;
+
+    bool isBusesLayoutSupported (const BusesLayout& l) const override
+    {
+        const auto in = l.getMainInputChannelSet(), out = l.getMainOutputChannelSet(), sc = l.getChannelSet (true, 1);
+        if (in != out || (in != juce::AudioChannelSet::mono() && in != juce::AudioChannelSet::stereo())) return false;
+        return sc.isDisabled() || sc == juce::AudioChannelSet::mono() || sc == juce::AudioChannelSet::stereo();
+    }
+    void prepareToPlay (double sr, int block) override
+    {
+        rate = sr; engine.setParams (read()); engine.prepare (sr);
+        spare.setSize (1, std::max (block, 4096)); setLatencySamples (engine.latency()); lastLatency = engine.latency();
+    }
+    void releaseResources() override {}
+
+    kf::Params read() const
+    {
+        kf::Params p;
+        p.role = (int) raw.at ("role")->load();
+        p.thump = raw.at ("thump")->load() / 100; p.punch = raw.at ("punch")->load() / 100; p.click = raw.at ("click")->load() / 100; p.tail = raw.at ("tail")->load() / 100;
+        p.room = raw.at ("room")->load() / 100; p.tune = raw.at ("tune")->load(); p.gainDb = raw.at ("level")->load();
+        const float k = linkedKickHz.load();                       // the dip covers the kick's boom and the octave above it
+        p.duckHz = k > 0 ? juce::jlimit (90.0f, 200.0f, k * 2.2f) : 120.0f;
+        return p;
+    }
+    void processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer&) override
+    {
+        juce::ScopedNoDenormals noDenormals;
+        auto main = getBusBuffer (buffer, true, 0);
+        const int n = main.getNumSamples();
+        if (n == 0 || main.getNumChannels() == 0) return;
+        const float *sl = nullptr, *sr = nullptr;
+        if (getBusCount (true) > 1 && getBus (true, 1) != nullptr && getBus (true, 1)->isEnabled())
+        {
+            auto side = getBusBuffer (buffer, true, 1);
+            if (side.getNumChannels() > 0) { sl = side.getReadPointer (0); sr = side.getReadPointer (side.getNumChannels() > 1 ? 1 : 0); }
+        }
+        const auto p = read();
+        engine.setParams (p);
+        float* l = main.getWritePointer (0); float* r = l;
+        if (main.getNumChannels() > 1) r = main.getWritePointer (1);
+        else { if (spare.getNumSamples() < n) return; spare.copyFrom (0, 0, l, n); r = spare.getWritePointer (0); }
+        engine.process (l, r, sl, sr, n);
+        for (int i = 0; i < n; ++i) { mine.push (0.5f * (l[i] + r[i])); other.push (sl ? 0.5f * (sl[i] + sr[i]) : 0.0f); }
+        if (p.role == 0 && engine.note() > 0) linkedKickHz.store ((float) (engine.note() * kf::Engine::ratioOf (p.tune)));
+        if (engine.latency() != lastLatency) { lastLatency = engine.latency(); triggerAsyncUpdate(); }
+    }
+    void handleAsyncUpdate() override { setLatencySamples (lastLatency); }
+
+    void getStateInformation (juce::MemoryBlock& dest) override { if (auto xml = state.copyState().createXml()) copyXmlToBinary (*xml, dest); }
+    void setStateInformation (const void* data, int size) override
+    {
+        if (auto xml = getXmlFromBinary (data, size)) if (xml->hasTagName (state.state.getType())) state.replaceState (juce::ValueTree::fromXml (*xml));
+    }
+    void setParam (const char* id, float value)
+    {
+        if (auto* p = state.getParameter (id)) { p->beginChangeGesture(); p->setValueNotifyingHost (p->convertTo0to1 (value)); p->endChangeGesture(); }
+    }
+    float get (const char* id) const { return raw.at (id)->load(); }
+
+    juce::AudioProcessorValueTreeState state;
+    kf::Engine engine; Scope mine, other; double rate = 48000;
+private:
+    std::map<juce::String, std::atomic<float>*> raw; juce::AudioBuffer<float> spare; int lastLatency = 0;
+};
+
+// ---------- the window ----------
+namespace look
+{
+const juce::Colour paper (0xff121314), panel (0xff1b1d1f), line (0xff2c2f33), ink (0xffe9e6df), soft (0xff9a968d), kick (0xffe8a23a), bass (0xff5fb0c9), zone (0xff6fbf73);
+}
+
+class KickFitEditor : public juce::AudioProcessorEditor, private juce::Timer
+{
+public:
+    explicit KickFitEditor (KickFitProcessor& p) : AudioProcessorEditor (p), proc (p), fft (fftOrder), window ((size_t) fftSize, juce::dsp::WindowingFunction<float>::hann)
+    {
+        setSize (820, 500);
+        for (auto* c : { &role, &mode, &key }) { addAndMakeVisible (*c); c->setColour (juce::ComboBox::backgroundColourId, look::panel); c->setColour (juce::ComboBox::textColourId, look::ink); c->setColour (juce::ComboBox::outlineColourId, look::line); }
+        auto fill = [&] (juce::ComboBox& box, const char* id) { if (auto* ch = dynamic_cast<juce::AudioParameterChoice*> (proc.state.getParameter (id))) box.addItemList (ch->choices, 1); boxes.add (new juce::AudioProcessorValueTreeState::ComboBoxAttachment (proc.state, id, box)); };
+        fill (role, "role"); fill (mode, "mode"); fill (key, "key");
+        const char* ids[] = { "thump", "punch", "click", "tail", "room", "tune", "level" };
+        const char* names[] = { "Thump", "Punch", "Click", "Tail", "Room for bass", "Tune", "Level" };
+        for (int i = 0; i < 7; ++i)
+        {
+            auto* s = knobs.add (new juce::Slider (juce::Slider::RotaryHorizontalVerticalDrag, juce::Slider::TextBoxBelow));
+            s->setColour (juce::Slider::rotarySliderFillColourId, i == 4 ? look::bass : look::kick); s->setColour (juce::Slider::rotarySliderOutlineColourId, look::line);
+            s->setColour (juce::Slider::thumbColourId, look::ink); s->setColour (juce::Slider::textBoxTextColourId, look::ink); s->setColour (juce::Slider::textBoxOutlineColourId, juce::Colours::transparentBlack);
+            s->setTextBoxStyle (juce::Slider::TextBoxBelow, false, 70, 18);
+            addAndMakeVisible (s); sliders.add (new juce::AudioProcessorValueTreeState::SliderAttachment (proc.state, ids[i], *s));
+            auto* l = labels.add (new juce::Label ({}, names[i])); l->setJustificationType (juce::Justification::centred); l->setColour (juce::Label::textColourId, look::soft); l->setFont (juce::FontOptions (13.0f)); addAndMakeVisible (l);
+        }
+        knobs[5]->setTextValueSuffix (" st"); knobs[6]->setTextValueSuffix (" dB");
+        for (auto* b : { &tuneBtn, &sitBtn }) { addAndMakeVisible (*b); b->setColour (juce::TextButton::buttonColourId, look::panel); b->setColour (juce::TextButton::textColourOffId, look::ink); }
+        sitBtn.setButtonText ("Sit it");
+        sitBtn.onClick = [this] { sit(); };
+        tuneBtn.onClick = [this] { if (canTune) proc.setParam ("tune", (float) tuneMove); };
+        said.setColour (juce::Label::textColourId, look::ink); said.setFont (juce::FontOptions (13.5f)); said.setJustificationType (juce::Justification::centredLeft); addAndMakeVisible (said);
+        startTimerHz (24);
+    }
+
+    void resized() override
+    {
+        auto a = getLocalBounds().reduced (12);
+        auto top = a.removeFromTop (28);
+        top.removeFromLeft (110);
+        role.setBounds (top.removeFromLeft (120)); top.removeFromLeft (8); mode.setBounds (top.removeFromLeft (190)); top.removeFromLeft (8); key.setBounds (top.removeFromLeft (150));
+        a.removeFromTop (8);
+        auto bottom = a.removeFromBottom (128);
+        said.setBounds (a.removeFromBottom (40));
+        picture = a;
+        auto btns = bottom.removeFromRight (150).reduced (4, 14);
+        sitBtn.setBounds (btns.removeFromTop (40)); btns.removeFromTop (8); tuneBtn.setBounds (btns.removeFromTop (40));
+        const int w = bottom.getWidth() / 7;
+        for (int i = 0; i < 7; ++i) { auto c = bottom.removeFromLeft (w); labels[i]->setBounds (c.removeFromTop (18)); knobs[i]->setBounds (c.reduced (4, 0)); }
+    }
+
+    void paint (juce::Graphics& g) override
+    {
+        g.fillAll (look::paper);
+        g.setColour (look::ink); g.setFont (juce::FontOptions (19.0f, juce::Font::bold)); g.drawText ("Kick Fit", 12, 12, 110, 28, juce::Justification::centredLeft);
+        auto a = picture;
+        auto timeBox = a.removeFromRight (a.getWidth() * 34 / 100); a.removeFromRight (8);
+        auto meterBox = a.removeFromBottom (46); a.removeFromBottom (6);
+        drawPitch (g, a); drawTime (g, timeBox); drawMeter (g, meterBox);
+    }
+
+private:
+    static float xOf (double hz, juce::Rectangle<int> r) { return r.getX() + (float) (std::log (hz / 20.0) / std::log (500.0 / 20.0)) * r.getWidth(); }
+    void frame (juce::Graphics& g, juce::Rectangle<int> r, const juce::String& title)
+    {
+        g.setColour (look::panel); g.fillRoundedRectangle (r.toFloat(), 6); g.setColour (look::line); g.drawRoundedRectangle (r.toFloat(), 6, 1);
+        g.setColour (look::soft); g.setFont (juce::FontOptions (12.0f)); g.drawText (title, r.reduced (8, 4), juce::Justification::topLeft);
+    }
+    void drawPitch (juce::Graphics& g, juce::Rectangle<int> r)
+    {
+        const bool onBass = proc.get ("role") > 0.5f;
+        frame (g, r, onBass ? "Pitch: this bass (blue) and the kick on the sidechain (orange)" : "Pitch: this kick (orange) and the sidechain (blue)");
+        auto in = r.reduced (8, 22);
+        const auto& t = kf::modeTargets[(size_t) juce::jlimit (0, kf::numModes - 1, (int) proc.get ("mode"))];
+        if (t.measured && t.noteHi > t.noteLo)
+        {
+            const float x0 = xOf (t.noteLo, in), x1 = xOf (t.noteHi, in);
+            g.setColour (look::zone.withAlpha (0.16f)); g.fillRect (x0, (float) in.getY(), x1 - x0, (float) in.getHeight());
+            g.setColour (look::zone); g.setFont (juce::FontOptions (11.0f)); g.drawText (juce::String ("where the boom sits in your ") + t.name + " songs", (int) x0 + 4, in.getY() + 2, 260, 14, juce::Justification::left);
+        }
+        else { g.setColour (look::soft); g.setFont (juce::FontOptions (11.0f)); g.drawText (juce::String ("No zone: not enough of your ") + t.name + " songs to measure", in.removeFromTop (14), juce::Justification::right); }
+        g.setFont (juce::FontOptions (10.0f));
+        for (int m = 24; m <= 71; ++m)
+        {
+            const double hz = 440 * std::pow (2.0, (m - 69) / 12.0); if (hz < 20 || hz > 500) continue;
+            const float x = xOf (hz, in);
+            if (m % 12 == 0) { g.setColour (look::line); g.drawVerticalLine ((int) x, (float) in.getY(), (float) in.getBottom()); g.setColour (look::soft); g.drawText ("C" + juce::String (m / 12 - 1), (int) x + 2, in.getBottom() - 12, 30, 12, juce::Justification::left); }
+        }
+        auto curve = [&] (const std::vector<float>& mag, juce::Colour c, bool filled)
+        {
+            juce::Path p; bool started = false; const double binHz = proc.rate / fftSize;
+            for (int x = 0; x <= in.getWidth(); x += 2)
+            {
+                const double hz = 20.0 * std::pow (500.0 / 20.0, x / (double) in.getWidth()), bin = hz / binHz; const int i = (int) bin;
+                if (i + 1 >= (int) mag.size()) break;
+                const float v = mag[(size_t) i] + (float) (bin - i) * (mag[(size_t) i + 1] - mag[(size_t) i]);
+                const float y = in.getBottom() - juce::jlimit (0.0f, 1.0f, (juce::Decibels::gainToDecibels (v, -90.0f) + 72) / 72) * in.getHeight();
+                if (! started) { p.startNewSubPath ((float) in.getX() + x, y); started = true; } else p.lineTo ((float) in.getX() + x, y);
+            }
+            if (! started) return;
+            g.setColour (c); g.strokePath (p, juce::PathStrokeType (1.6f));
+            if (filled) { p.lineTo ((float) in.getRight(), (float) in.getBottom()); p.lineTo ((float) in.getX(), (float) in.getBottom()); p.closeSubPath(); g.setColour (c.withAlpha (0.18f)); g.fillPath (p); }
+        };
+        curve (onBass ? magMine : magOther, look::bass, false);
+        curve (onBass ? magOther : magMine, look::kick, true);
+        if (! onBass && shownHz > 20 && shownHz < 500)
+        {
+            const float x = xOf (shownHz, in);
+            g.setColour (look::ink); g.drawVerticalLine ((int) x, (float) in.getY() + 16, (float) in.getBottom());
+            g.setFont (juce::FontOptions (12.0f, juce::Font::bold)); g.drawText (noteText (shownHz), (int) x + 4, in.getY() + 18, 120, 14, juce::Justification::left);
+        }
+    }
+    void drawTime (juce::Graphics& g, juce::Rectangle<int> r)
+    {
+        frame (g, r, "Time: one hit, lows only (0.4 s)");
+        auto in = r.reduced (8, 22); const auto& v = proc.engine.view();
+        float top = 1e-4f; for (int i = 0; i < kf::HitView::n; ++i) top = std::max ({ top, v.kick[i], v.side[i] });
+        auto draw = [&] (const float* d, juce::Colour c, bool filled)
+        {
+            juce::Path p; p.startNewSubPath ((float) in.getX(), (float) in.getBottom());
+            for (int i = 0; i < kf::HitView::n; ++i) p.lineTo (in.getX() + in.getWidth() * (i + 0.5f) / kf::HitView::n, in.getBottom() - std::sqrt (d[i] / top) * in.getHeight());
+            p.lineTo ((float) in.getRight(), (float) in.getBottom());
+            g.setColour (c); g.strokePath (p, juce::PathStrokeType (1.5f)); if (filled) { g.setColour (c.withAlpha (0.18f)); g.fillPath (p); }
+        };
+        const bool onBass = proc.get ("role") > 0.5f;
+        draw (onBass ? v.kick : v.side, look::bass, false); draw (onBass ? v.side : v.kick, look::kick, true);
+    }
+    void drawMeter (juce::Graphics& g, juce::Rectangle<int> r)
+    {
+        frame (g, r, "Kick against the whole mix");
+        if (proc.get ("role") > 0.5f) { g.setColour (look::soft); g.drawText (juce::String ("Bass lows now: ") + juce::String (proc.engine.duckNowDb(), 1) + " dB", r.reduced (8, 4), juce::Justification::centredRight); return; }
+        auto bar = r.reduced (10, 0).removeFromBottom (18).translated (0, -6);
+        const auto& t = kf::modeTargets[(size_t) juce::jlimit (0, kf::numModes - 1, (int) proc.get ("mode"))];
+        auto x = [&] (double dB) { return bar.getX() + (float) juce::jlimit (0.0, 1.0, (dB + 30) / 30) * bar.getWidth(); };
+        g.setColour (look::paper); g.fillRect (bar);
+        if (t.measured) { g.setColour (look::zone.withAlpha (0.35f)); g.fillRect (x (t.sitLo), (float) bar.getY(), x (t.sitHi) - x (t.sitLo), (float) bar.getHeight()); }
+        double now; if (proc.engine.hasSidechain() && proc.engine.sitLevel (now)) { g.setColour (look::kick); g.fillRect (x (now) - 2, (float) bar.getY() - 3, 4.0f, (float) bar.getHeight() + 6); }
+    }
+
+    void sit()
+    {
+        const auto& t = kf::modeTargets[(size_t) juce::jlimit (0, kf::numModes - 1, (int) proc.get ("mode"))];
+        double change = 0, now = 0;
+        if (! t.measured) { sitSaid = juce::String ("Not enough of your ") + t.name + " songs were measured to know where the kick should sit. Pick another genre or set Level by ear."; return; }
+        if (! proc.engine.hasSidechain()) { sitSaid = "No sidechain yet: route the bass or the beat into Kick Fit's sidechain, play the song, then press Sit it."; return; }
+        if (! proc.engine.sitGain (t.sitLo, t.sitMid, t.sitHi, change) || ! proc.engine.sitLevel (now)) { sitSaid = "Play a few bars with the kick first, then press Sit it."; return; }
+        if (std::abs (change) < 0.05) { sitSaid = "The kick already sits where your " + juce::String (t.name) + " songs have it. Left alone."; return; }
+        proc.setParam ("level", juce::jlimit (-12.0f, 12.0f, proc.get ("level") + (float) change));
+        sitSaid = juce::String (change > 0 ? "Turned the kick up " : "Turned the kick down ") + juce::String (std::abs (change), 1) + " dB to where your " + t.name + " songs have it. Your ears do the rest.";
+    }
+
+    void timerCallback() override
+    {
+        std::vector<float> buf ((size_t) fftSize * 2);
+        auto spectrum = [&] (const Scope& s, std::vector<float>& mag)
+        {
+            std::fill (buf.begin(), buf.end(), 0.0f); s.latest (buf.data(), fftSize); window.multiplyWithWindowingTable (buf.data(), (size_t) fftSize);
+            fft.performFrequencyOnlyForwardTransform (buf.data());
+            mag.resize ((size_t) fftSize / 2, 0.0f);
+            for (size_t i = 0; i < mag.size(); ++i) { const float v = buf[i] / (fftSize * 0.25f); mag[i] = v > mag[i] ? v : mag[i] * 0.86f + v * 0.14f; }
+        };
+        spectrum (proc.mine, magMine); spectrum (proc.other, magOther);
+        const bool onBass = proc.get ("role") > 0.5f;
+        keys.add ((onBass ? magMine : magOther).data(), fftSize / 2, proc.rate / fftSize);
+        const double hz = proc.engine.note(), tune = proc.get ("tune");
+        shownHz = hz > 0 ? hz * kf::Engine::ratioOf (tune) : 0;
+        int tonic = 0; bool minor = false; double sure = 0; juce::String keyText; bool haveKey = false;
+        const int pick = (int) proc.get ("key");
+        if (pick > 0) { tonic = (pick - 1) % 12; minor = pick > 12; haveKey = true; keyText = juce::String (noteNames[tonic]) + (minor ? " minor" : " major"); }
+        else if (keys.key (tonic, minor, sure) && sure > 0.04) { haveKey = true; keyText = juce::String (noteNames[tonic]) + (minor ? " minor" : " major") + " (heard on the sidechain)"; }
+        canTune = false;
+        juce::String line;
+        if (onBass) line = "On the bass: its lows dip when the kick on the sidechain hits. Room for bass sets how far.";
+        else if (hz <= 0) line = "Play the kick: Kick Fit reads its boom note.";
+        else
+        {
+            line = "Boom: " + noteText (shownHz) + (std::abs (proc.engine.glideSemis()) > 0.5 ? " (drops " + juce::String (proc.engine.glideSemis(), 1) + " semitones at the start)" : juce::String()) + ". ";
+            if (haveKey)
+            {
+                int pc = 0; const double move = kf::tuneToKey (shownHz, tonic, minor, &pc);
+                if (std::abs (move) < 0.15) line += "That fits " + keyText + ".";
+                else { tuneMove = tune + move; canTune = std::abs (tuneMove) <= 12; line += "Key: " + keyText + ". " + juce::String (noteNames[pc]) + " is the nearest note that fits."; tuneBtn.setButtonText (juce::String ("Tune to ") + noteNames[pc] + " (" + (move > 0 ? "+" : "") + juce::String (move, 2) + ")"); }
+            }
+            else line += "Key not known yet: pick it at the top, or feed the bass or beat into the sidechain.";
+        }
+        if (! canTune) tuneBtn.setButtonText (std::abs (tune) > 0.005 ? "Tuned" : "Tune to key");
+        tuneBtn.setEnabled (canTune);
+        said.setText (sitSaid.isNotEmpty() && ++sitShown < 24 * 8 ? sitSaid : line, juce::dontSendNotification);
+        if (sitShown >= 24 * 8) { sitSaid.clear(); sitShown = 0; }
+        repaint();
+    }
+
+    KickFitProcessor& proc;
+    juce::ComboBox role, mode, key; juce::OwnedArray<juce::AudioProcessorValueTreeState::ComboBoxAttachment> boxes;
+    juce::OwnedArray<juce::Slider> knobs; juce::OwnedArray<juce::Label> labels; juce::OwnedArray<juce::AudioProcessorValueTreeState::SliderAttachment> sliders;
+    juce::TextButton tuneBtn, sitBtn; juce::Label said; juce::Rectangle<int> picture;
+    juce::dsp::FFT fft; juce::dsp::WindowingFunction<float> window; std::vector<float> magMine, magOther;
+    kf::KeyFinder keys; double shownHz = 0, tuneMove = 0; bool canTune = false; juce::String sitSaid; int sitShown = 0;
+};
+
+juce::AudioProcessorEditor* KickFitProcessor::createEditor() { return new KickFitEditor (*this); }
+juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter() { return new KickFitProcessor(); }

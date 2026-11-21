@@ -18,6 +18,13 @@ FetchContent_Declare(JUCE
     GIT_SHALLOW TRUE)
 FetchContent_MakeAvailable(JUCE)
 
+# -DST_KICKFIT_ONLY=ON builds just the Kick Fit plug-in (quick, and needs no WebView2 kit on Windows)
+option(ST_KICKFIT_ONLY "Build only the Kick Fit plug-in" OFF)
+if(ST_KICKFIT_ONLY)
+    add_subdirectory(kickfit)
+    return()
+endif()
+
 # The interface is the same single-file web app as the online version (web/semitone-studio.html),
 # wrapped into a full HTML document and compiled into the plugin.
 find_package(Python3 COMPONENTS Interpreter REQUIRED)
@@ -91,3 +98,6 @@ target_link_libraries(SemitoneStudio
         juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags
         juce::juce_recommended_warning_flags)
+
+# Kick Fit: a separate effect plug-in for the kick channel (see kickfit/CMakeLists.txt)
+add_subdirectory(kickfit)

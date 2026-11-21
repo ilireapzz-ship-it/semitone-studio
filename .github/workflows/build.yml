@@ -20,6 +20,7 @@ jobs:
           g++ -std=c++17 -O1 -Wall -ISource tests/sequencer_test.cpp -o seqtest && ./seqtest
           g++ -std=c++17 -O2 -Wall -ISource tests/synth_test.cpp -o synthtest && ./synthtest
           g++ -std=c++17 -O2 -Wall -pthread -ISource tests/take_test.cpp -o taketest && ./taketest
+          python3 tools/kickfit_targets.py --check
           g++ -std=c++17 -O2 -Wall -Ikickfit tests/kickfit_test.cpp -o kickfittest && ./kickfittest
 
   windows:
@@ -42,6 +43,8 @@ jobs:
           New-Item -ItemType Directory dist | Out-Null
           Copy-Item -Recurse "build/SemitoneStudio_artefacts/Release/VST3/Semitone Studio.vst3" dist/
           Copy-Item "build/SemitoneStudio_artefacts/Release/Standalone/Semitone Studio.exe" dist/
+          Copy-Item -Recurse "build/kickfit/KickFit_artefacts/Release/VST3/Kick Fit.vst3" dist/
+          Copy-Item docs/kickfit/README.md dist/KICK-FIT.txt
           Copy-Item docs/INSTALL-WINDOWS.txt dist/
       - uses: actions/upload-artifact@v4
         with:
@@ -64,6 +67,9 @@ jobs:
           mkdir -p dist
           A="build/SemitoneStudio_artefacts/Release"
           cp -R "$A/VST3/Semitone Studio.vst3" "$A/AU/Semitone Studio.component" "$A/Standalone/Semitone Studio.app" dist/
+          K="build/kickfit/KickFit_artefacts/Release"
+          cp -R "$K/VST3/Kick Fit.vst3" "$K/AU/Kick Fit.component" dist/
+          cp docs/kickfit/README.md dist/KICK-FIT.txt
           for b in dist/*.vst3 dist/*.component dist/*.app; do codesign --force --deep -s - "$b"; done
           cp docs/INSTALL-MAC.txt dist/
       - uses: actions/upload-artifact@v4

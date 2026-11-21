@@ -1,0 +1,702 @@
+{
+ "about": "Kick Fit targets, measured by tools/kick_analyse.py on the kicks and songs on Jamie's PC. Totals only: no names, no paths, no audio.",
+ "made": "2026-11-21",
+ "how": {
+  "kicks": "Files with a kick word in the name (kick, kck, bd, 808...), kept only when they sound like one hit with strong lows at the start.",
+  "f0": "Boom note in Hz: strongest spectrum peak after the glide has settled, near the cycle-by-cycle estimate.",
+  "glide_st": "Semitones from the pitch in the first 25 ms down to the settled boom note. glide_ms: when it comes within a semitone.",
+  "t20/t40": "Seconds for the level (20 ms RMS) to fall 20 / 40 dB under its peak.",
+  "click_db": "Energy above 2 kHz in the first 20 ms, against the whole hit. click_hz: its centre.",
+  "b_*": "Energy share per band over the hit, dB: sub 20-60 Hz, lowb 60-120, lowmid 120-300, mid 300-2000, high above 2000.",
+  "above180_db": "What is left of the hit above 180 Hz (what a phone speaker can play), dB against the whole hit.",
+  "kw_db/rms_db": "K-weighted (BS.1770 filters) and plain RMS level of the hit from its start to 40 dB down. Not LUFS: a hit is too short for that.",
+  "songs": "Each song is split into drums, bass, other and vocals with Demucs (htdemucs). Kick hits are found as peaks in the drum stem between 30 and 150 Hz. Separation is not perfect, so some bass leaks into the drum stem and the other way round.",
+  "kick_low_vs_mix_db": "Level of the drum stem between 30 and 150 Hz against the whole mix, in the 120 ms after each kick hit; median over the hits.",
+  "drums_at_kick_vs_mix_kw_db": "K-weighted level of the whole drum stem against the mix in the same windows. Includes hats and snares that land with the kick.",
+  "bass_under_kick_share": "Share of kick hits with bass sounding under them.",
+  "bass_dip_db": "Bass stem (30-150 Hz) level in the 10-70 ms after a kick against its level just before and 150-250 ms after. Negative = the bass drops. Leaked kick makes this look smaller than it is.",
+  "kick_f0": "Boom note of the kick in a song: the strongest peak between 30 and 150 Hz in the summed spectrum of every hit (30 to 130 ms after its start) in the drum stem. Counted only when two halves of the hits agree within 50 cents.",
+  "kick_vs_tonic": "That boom note as semitones above the key note; key guessed from the non-drum stems (Krumhansl-Kessler profiles; such guesses are often a fifth or a relative key out). Only songs with a steady kick note and a key guess that clearly beats the next one.",
+  "low_overlap": "How much the kick and the bass share the same third-octave bands between 20 and 320 Hz: 0 none, 1 identical.",
+  "low_side_vs_mid_db": "Below 120 Hz, the side (stereo difference) against the middle. Very negative = mono lows.",
+  "click in songs": "Not measured: hats and snares hit with the kick, so the kick's own click cannot be told apart in a finished song."
+ },
+ "kickSamples": {
+  "looked_at": 2234,
+  "confirmed": 1947,
+  "by_source": {
+   "battery": 1474,
+   "flcloud": 33,
+   "flpacks": 316,
+   "splice": 124
+  },
+  "by_kind": {
+   "short": {
+    "n": 675,
+    "f0": {
+     "n": 671,
+     "median": 59.44,
+     "p10": 37.19,
+     "p25": 48.3,
+     "p75": 82.69,
+     "p90": 127.3
+    },
+    "glide_st": {
+     "n": 671,
+     "median": 8.94,
+     "p10": -2.53,
+     "p25": 1.78,
+     "p75": 13.99,
+     "p90": 19.39
+    },
+    "t20": {
+     "n": 675,
+     "median": 0.1,
+     "p10": 0.06,
+     "p25": 0.08,
+     "p75": 0.12,
+     "p90": 0.14
+    },
+    "click_db": {
+     "n": 675,
+     "median": -27.87,
+     "p10": -43.76,
+     "p25": -36.47,
+     "p75": -22.29,
+     "p90": -18.82
+    },
+    "above180_db": {
+     "n": 675,
+     "median": -14.37,
+     "p10": -23.42,
+     "p25": -19.07,
+     "p75": -8.98,
+     "p90": -4.82
+    },
+    "b_sub": {
+     "n": 675,
+     "median": -7.31,
+     "p10": -20.4,
+     "p25": -13.75,
+     "p75": -4.66,
+     "p90": -2.92
+    },
+    "b_lowb": {
+     "n": 675,
+     "median": -3.78,
+     "p10": -7.57,
+     "p25": -5.4,
+     "p75": -2.58,
+     "p90": -1.8
+    }
+   },
+   "medium": {
+    "n": 1122,
+    "f0": {
+     "n": 1122,
+     "median": 49.0,
+     "p10": 34.29,
+     "p25": 41.9,
+     "p75": 56.18,
+     "p90": 81.4
+    },
+    "glide_st": {
+     "n": 1122,
+     "median": 17.27,
+     "p10": 2.31,
+     "p25": 7.84,
+     "p75": 23.21,
+     "p90": 27.96
+    },
+    "t20": {
+     "n": 1092,
+     "median": 0.24,
+     "p10": 0.17,
+     "p25": 0.19,
+     "p75": 0.3,
+     "p90": 0.36
+    },
+    "click_db": {
+     "n": 1122,
+     "median": -29.65,
+     "p10": -49.53,
+     "p25": -38.56,
+     "p75": -23.71,
+     "p90": -20.15
+    },
+    "above180_db": {
+     "n": 1122,
+     "median": -14.21,
+     "p10": -22.48,
+     "p25": -17.77,
+     "p75": -10.96,
+     "p90": -8.59
+    },
+    "b_sub": {
+     "n": 1122,
+     "median": -3.76,
+     "p10": -10.69,
+     "p25": -6.9,
+     "p75": -2.11,
+     "p90": -1.24
+    },
+    "b_lowb": {
+     "n": 1122,
+     "median": -5.46,
+     "p10": -10.08,
+     "p25": -7.88,
+     "p75": -3.67,
+     "p90": -2.62
+    }
+   },
+   "long-pitched (808 style)": {
+    "n": 150,
+    "f0": {
+     "n": 150,
+     "median": 46.39,
+     "p10": 34.73,
+     "p25": 38.89,
+     "p75": 50.65,
+     "p90": 56.58
+    },
+    "glide_st": {
+     "n": 150,
+     "median": 19.35,
+     "p10": 3.96,
+     "p25": 7.7,
+     "p75": 25.79,
+     "p90": 30.5
+    },
+    "t20": {
+     "n": 150,
+     "median": 0.48,
+     "p10": 0.36,
+     "p25": 0.4,
+     "p75": 0.85,
+     "p90": 1.37
+    },
+    "click_db": {
+     "n": 150,
+     "median": -39.94,
+     "p10": -70.74,
+     "p25": -54.8,
+     "p75": -32.09,
+     "p90": -24.82
+    },
+    "above180_db": {
+     "n": 150,
+     "median": -16.52,
+     "p10": -26.81,
+     "p25": -22.33,
+     "p75": -13.48,
+     "p90": -11.09
+    },
+    "b_sub": {
+     "n": 150,
+     "median": -1.08,
+     "p10": -6.33,
+     "p25": -2.16,
+     "p75": -0.65,
+     "p90": -0.4
+    },
+    "b_lowb": {
+     "n": 150,
+     "median": -10.91,
+     "p10": -15.63,
+     "p25": -13.08,
+     "p75": -7.72,
+     "p90": -4.13
+    }
+   }
+  },
+  "all": {
+   "f0": {
+    "n": 1943,
+    "median": 50.61,
+    "p10": 35.52,
+    "p25": 43.39,
+    "p75": 62.98,
+    "p90": 101.37
+   },
+   "f_start": {
+    "n": 1943,
+    "median": 119.3,
+    "p10": 59.3,
+    "p25": 82.7,
+    "p75": 172.8,
+    "p90": 212.64
+   },
+   "glide_st": {
+    "n": 1943,
+    "median": 13.55,
+    "p10": 0.12,
+    "p25": 5.49,
+    "p75": 21.59,
+    "p90": 26.7
+   },
+   "glide_ms": {
+    "n": 1943,
+    "median": 110.4,
+    "p10": 36.3,
+    "p25": 64.25,
+    "p75": 187.8,
+    "p90": 278.46
+   },
+   "attack_ms": {
+    "n": 1947,
+    "median": 9.12,
+    "p10": 1.02,
+    "p25": 3.17,
+    "p75": 21.37,
+    "p90": 42.19
+   },
+   "t20": {
+    "n": 1917,
+    "median": 0.19,
+    "p10": 0.08,
+    "p25": 0.12,
+    "p75": 0.28,
+    "p90": 0.41
+   },
+   "t40": {
+    "n": 1672,
+    "median": 0.34,
+    "p10": 0.15,
+    "p25": 0.23,
+    "p75": 0.5,
+    "p90": 0.7
+   },
+   "click_db": {
+    "n": 1947,
+    "median": -29.77,
+    "p10": -50.12,
+    "p25": -38.63,
+    "p75": -23.64,
+    "p90": -19.74
+   },
+   "click_hz": {
+    "n": 1947,
+    "median": 3932.0,
+    "p10": 2710.0,
+    "p25": 3178.0,
+    "p75": 5124.0,
+    "p90": 7416.0
+   },
+   "b_sub": {
+    "n": 1947,
+    "median": -4.7,
+    "p10": -15.45,
+    "p25": -8.68,
+    "p75": -2.41,
+    "p90": -1.21
+   },
+   "b_lowb": {
+    "n": 1947,
+    "median": -4.9,
+    "p10": -10.68,
+    "p25": -7.56,
+    "p75": -3.25,
+    "p90": -2.18
+   },
+   "b_lowmid": {
+    "n": 1947,
+    "median": -10.56,
+    "p10": -17.55,
+    "p25": -13.94,
+    "p75": -7.2,
+    "p90": -4.99
+   },
+   "b_mid": {
+    "n": 1947,
+    "median": -20.55,
+    "p10": -31.14,
+    "p25": -25.61,
+    "p75": -16.35,
+    "p90": -11.63
+   },
+   "b_high": {
+    "n": 1947,
+    "median": -28.41,
+    "p10": -48.87,
+    "p25": -37.23,
+    "p75": -22.37,
+    "p90": -18.2
+   },
+   "above180_db": {
+    "n": 1947,
+    "median": -14.5,
+    "p10": -23.36,
+    "p25": -18.36,
+    "p75": -10.8,
+    "p90": -7.23
+   },
+   "peak_db": {
+    "n": 1947,
+    "median": -0.03,
+    "p10": -4.16,
+    "p25": -1.0,
+    "p75": 0.0,
+    "p90": 0.0
+   },
+   "true_peak_db": {
+    "n": 1947,
+    "median": -0.13,
+    "p10": -4.36,
+    "p25": -1.14,
+    "p75": 0.01,
+    "p90": 0.11
+   },
+   "rms_db": {
+    "n": 1947,
+    "median": -11.79,
+    "p10": -19.48,
+    "p25": -15.61,
+    "p75": -8.46,
+    "p90": -6.48
+   },
+   "kw_db": {
+    "n": 1947,
+    "median": -14.97,
+    "p10": -22.7,
+    "p25": -18.38,
+    "p75": -11.61,
+    "p90": -9.64
+   },
+   "dc": {
+    "n": 1947,
+    "median": 0.0,
+    "p10": -0.0,
+    "p25": -0.0,
+    "p75": 0.0,
+    "p90": 0.0
+   },
+   "asym_db": {
+    "n": 1947,
+    "median": -0.01,
+    "p10": -1.76,
+    "p25": -0.48,
+    "p75": 0.23,
+    "p90": 1.15
+   },
+   "low_corr": {
+    "n": 1231,
+    "median": 1.0,
+    "p10": 0.96,
+    "p25": 1.0,
+    "p75": 1.0,
+    "p90": 1.0
+   },
+   "wobble_cents": {
+    "n": 1298,
+    "median": 150.5,
+    "p10": 16.3,
+    "p25": 28.8,
+    "p75": 569.73,
+    "p90": 819.19
+   }
+  },
+  "notes": {
+   "C": 137,
+   "C#": 100,
+   "D": 131,
+   "D#": 100,
+   "E": 159,
+   "F": 116,
+   "F#": 243,
+   "G": 244,
+   "G#": 262,
+   "A": 201,
+   "A#": 111,
+   "B": 139
+  },
+  "first_swing_up_share": 0.56,
+  "stereo_share": 0.632,
+  "sample_rates": {
+   "44100": 1933,
+   "48000": 13,
+   "96000": 1
+  }
+ },
+ "modes": {
+  "trap-hiphop": {
+   "songs": 0,
+   "status": "not enough data"
+  },
+  "pop": {
+   "songs": 53,
+   "status": "measured",
+   "kick_low_vs_mix_db": {
+    "n": 53,
+    "median": -5.39,
+    "p10": -63.31,
+    "p25": -18.67,
+    "p75": -2.47,
+    "p90": -1.83
+   },
+   "drums_at_kick_vs_mix_kw_db": {
+    "n": 53,
+    "median": -5.27,
+    "p10": -52.35,
+    "p25": -16.94,
+    "p75": -2.81,
+    "p90": -1.94
+   },
+   "bass_under_kick_share": {
+    "n": 53,
+    "median": 0.85,
+    "p10": 0.64,
+    "p25": 0.78,
+    "p75": 0.93,
+    "p90": 0.97
+   },
+   "bass_dip_db": {
+    "n": 53,
+    "median": -0.14,
+    "p10": -3.19,
+    "p25": -1.38,
+    "p75": 0.13,
+    "p90": 0.35
+   },
+   "kick_f0": {
+    "n": 44,
+    "median": 51.64,
+    "p10": 44.41,
+    "p25": 48.7,
+    "p75": 60.9,
+    "p90": 112.68
+   },
+   "kick_cents": {
+    "n": 44,
+    "median": 0.35,
+    "p10": -37.4,
+    "p25": -26.5,
+    "p75": 21.23,
+    "p90": 32.69
+   },
+   "low_overlap": {
+    "n": 53,
+    "median": 0.53,
+    "p10": 0.28,
+    "p25": 0.46,
+    "p75": 0.65,
+    "p90": 0.73
+   },
+   "kick_low_centre_hz": {
+    "n": 53,
+    "median": 83.8,
+    "p10": 65.06,
+    "p25": 75.1,
+    "p75": 105.8,
+    "p90": 175.6
+   },
+   "bass_low_centre_hz": {
+    "n": 53,
+    "median": 80.1,
+    "p10": 59.94,
+    "p25": 65.9,
+    "p75": 117.7,
+    "p90": 152.72
+   },
+   "low_side_vs_mid_db": {
+    "n": 53,
+    "median": -12.62,
+    "p10": -21.93,
+    "p25": -17.6,
+    "p75": -10.01,
+    "p90": -6.14
+   },
+   "low_corr": {
+    "n": 53,
+    "median": 0.9,
+    "p10": 0.63,
+    "p25": 0.82,
+    "p75": 0.97,
+    "p90": 0.99
+   },
+   "mix_low_share_db": {
+    "n": 53,
+    "median": -5.26,
+    "p10": -13.45,
+    "p25": -9.34,
+    "p75": -4.08,
+    "p90": -3.48
+   },
+   "kicks_per_min": {
+    "n": 53,
+    "median": 87.9,
+    "p10": 25.7,
+    "p25": 52.1,
+    "p75": 114.7,
+    "p90": 149.64
+   },
+   "kick_note_steady_songs": 44,
+   "kick_note_and_key_songs": 30,
+   "kick_vs_tonic_semitones": {
+    "0": 4,
+    "1": 2,
+    "2": 2,
+    "3": 2,
+    "4": 2,
+    "5": 1,
+    "6": 3,
+    "7": 1,
+    "8": 2,
+    "9": 6,
+    "10": 0,
+    "11": 5
+   },
+   "kick_in_scale_share": 0.633
+  },
+  "rnb": {
+   "songs": 2,
+   "status": "not enough data"
+  },
+  "house-edm": {
+   "songs": 0,
+   "status": "not enough data"
+  },
+  "dnb": {
+   "songs": 0,
+   "status": "not enough data"
+  },
+  "rock": {
+   "songs": 242,
+   "status": "measured",
+   "kick_low_vs_mix_db": {
+    "n": 242,
+    "median": -4.14,
+    "p10": -11.23,
+    "p25": -6.04,
+    "p75": -3.07,
+    "p90": -1.97
+   },
+   "drums_at_kick_vs_mix_kw_db": {
+    "n": 242,
+    "median": -4.47,
+    "p10": -12.37,
+    "p25": -6.33,
+    "p75": -3.17,
+    "p90": -2.14
+   },
+   "bass_under_kick_share": {
+    "n": 242,
+    "median": 0.92,
+    "p10": 0.62,
+    "p25": 0.79,
+    "p75": 0.99,
+    "p90": 1.0
+   },
+   "bass_dip_db": {
+    "n": 238,
+    "median": -0.55,
+    "p10": -2.63,
+    "p25": -1.36,
+    "p75": 0.04,
+    "p90": 0.3
+   },
+   "kick_f0": {
+    "n": 216,
+    "median": 50.47,
+    "p10": 41.05,
+    "p25": 44.08,
+    "p75": 60.23,
+    "p90": 79.57
+   },
+   "kick_cents": {
+    "n": 216,
+    "median": -0.6,
+    "p10": -40.8,
+    "p25": -26.07,
+    "p75": 21.15,
+    "p90": 36.25
+   },
+   "low_overlap": {
+    "n": 242,
+    "median": 0.56,
+    "p10": 0.32,
+    "p25": 0.44,
+    "p75": 0.66,
+    "p90": 0.74
+   },
+   "kick_low_centre_hz": {
+    "n": 242,
+    "median": 86.9,
+    "p10": 67.8,
+    "p25": 77.12,
+    "p75": 97.45,
+    "p90": 108.4
+   },
+   "bass_low_centre_hz": {
+    "n": 242,
+    "median": 95.15,
+    "p10": 62.28,
+    "p25": 75.62,
+    "p75": 113.33,
+    "p90": 128.56
+   },
+   "low_side_vs_mid_db": {
+    "n": 242,
+    "median": -16.59,
+    "p10": -24.27,
+    "p25": -20.34,
+    "p75": -12.18,
+    "p90": -7.2
+   },
+   "low_corr": {
+    "n": 242,
+    "median": 0.96,
+    "p10": 0.72,
+    "p25": 0.89,
+    "p75": 0.98,
+    "p90": 0.99
+   },
+   "mix_low_share_db": {
+    "n": 242,
+    "median": -5.49,
+    "p10": -9.48,
+    "p25": -6.65,
+    "p75": -4.22,
+    "p90": -3.32
+   },
+   "kicks_per_min": {
+    "n": 242,
+    "median": 97.05,
+    "p10": 39.45,
+    "p25": 66.62,
+    "p75": 133.4,
+    "p90": 160.33
+   },
+   "kick_note_steady_songs": 216,
+   "kick_note_and_key_songs": 165,
+   "kick_vs_tonic_semitones": {
+    "0": 18,
+    "1": 15,
+    "2": 9,
+    "3": 14,
+    "4": 15,
+    "5": 17,
+    "6": 15,
+    "7": 13,
+    "8": 7,
+    "9": 16,
+    "10": 9,
+    "11": 17
+   },
+   "kick_in_scale_share": 0.594
+  },
+  "afro": {
+   "songs": 0,
+   "status": "not enough data"
+  },
+  "lofi": {
+   "songs": 0,
+   "status": "not enough data"
+  }
+ },
+ "songs": {
+  "measured": 299,
+  "could_not_use": 3,
+  "no_matching_mode": 2
+ },
+ "min_songs_per_mode": 8
+}

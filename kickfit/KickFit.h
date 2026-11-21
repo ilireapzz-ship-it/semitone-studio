@@ -262,7 +262,7 @@ struct Params
 {
     int role = 0;                 // 0 on the kick, 1 on the bass
     float thump = 0, punch = 0, click = 0, tail = 0;    // -1..1, 0 changes nothing
-    float room = 0.5f;            // 0..1: how far the bass's lows dip under the kick (role 1), up to 12 dB
+    float room = 0;               // 0..1: how far the bass's lows dip under the kick (role 1), up to 12 dB
     float tune = 0;               // semitones, 0 = off
     float gainDb = 0;             // set by Sit it, or by hand
     float duckHz = 120, duckRelease = 0.12f;
