@@ -23,8 +23,19 @@ Jamie is a songwriter, not a programmer: explain results in plain words, not cod
 | Recording takes (desktop app, audio input to WAV, tested) | `Source/TakeRecorder.h`; files in Documents/Semitone Studio/Songs/Takes |
 | Your plug-ins on parts (desktop app) | `Source/PluginHost.h`; events `st_host_*` |
 | Mac drag of MIDI files | `Source/MacDrag.mm` |
+| Kick Fit (separate effect plug-in for the kick channel) | `kickfit/KickFit.h` (JUCE-free processing), `kickfit/Plugin.cpp` (plug-in + window), `kickfit/KickFitTargets.h` (generated) |
 | Interface tests | `tests/web/*.test.js` (Playwright, see tests/web/README.md) |
 | Tests | `tests/sequencer_test.cpp` (sequencer + clip player): `clang++ -std=c++17 -ISource tests/sequencer_test.cpp -o t && ./t`; `tests/synth_test.cpp` (sound engine), same way with `-O2`. `build-mac.sh` and CI run both |
+
+## Kick Fit (kickfit/)
+- Its own `juce_add_plugin` target (VST3, AU on Mac), built with everything else; `-DST_KICKFIT_ONLY=ON` builds only it (no WebView2 kit needed).
+- Test: `clang++ -std=c++17 -O2 -Ikickfit tests/kickfit_test.cpp -o t && ./t` (CI runs it). Made-up signals only, never Jamie's samples.
+- Targets are measured, never guessed: `tools/kick_analyse.py` (kicks, songs with Demucs, targets) writes `data/kickfit-targets.json` (totals only);
+  `tools/kickfit_targets.py` turns that into `KickFitTargets.h` (CI checks it is up to date). Per-file results stay in `%LOCALAPPDATA%/SemitoneKickFit`.
+  A genre with fewer than 8 songs is "not enough data" and the plug-in says so.
+- With every control at rest the kick passes through bit for bit (many samples peak at full scale), and the bass dip is a wire. Keep it that way.
+- Role 0 sits on the kick; role 1 sits on the bass with the kick on its sidechain (a plug-in can't change its sidechain). Tune replays each hit at another
+  speed (`Retune`), so it reports latency; nothing else does. Notes for Jamie: `docs/kickfit/PROGRESS.md`; bench: `tools/kickfit_bench.py`.
 
 ## Bridge events (web ⇄ native, JSON)
 Web → native: `st_ready`, `st_timeline` (notes `[start,dur,ch,key,vel,…]`, `ev` pitch bends, `length`, `offset`,
