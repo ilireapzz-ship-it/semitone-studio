@@ -251,7 +251,7 @@ juce::WebBrowserComponent::Options SemitoneEditor::makeOptions()
         .withEventListener ("st_clip_file", [this] (const juce::var&) { clipFile(); })
         .withEventListener ("st_host_scan", [this] (const juce::var&) { if (proc.host) proc.host->startScan(); })
         .withEventListener ("st_host_list", [this] (const juce::var&) { sendHostList(); })
-        .withEventListener ("st_host_load", [this] (const juce::var& v) { bootMark ("plug-in asked for: " + v.getProperty ("id", "").toString()); if (proc.host) proc.host->load ((int) v.getProperty ("ch", 0), v.getProperty ("id", "").toString(), v.getProperty ("state", "").toString()); })
+        .withEventListener ("st_host_load", [this] (const juce::var& v) { bootMark ("plug-in asked for: " + v.getProperty ("id", "").toString()); if (proc.host) proc.host->load ((int) v.getProperty ("ch", 0), v.getProperty ("id", "").toString(), v.getProperty ("state", "").toString(), (bool) v.getProperty ("mainOnly", false)); })
         .withEventListener ("st_host_params", [this] (const juce::var& v)
         {
             if (! proc.host) return;

@@ -146,7 +146,9 @@ public:
         return a;
     }
 
-    void load (int ch, const juce::String& id, const juce::String& stateB64)
+    // mainOnly: every output but the main pair is switched off before it starts, as FL Studio does by default. Opus (21 Nov) stays silent with
+    // all nine of its output pairs on ("channel not fully connected"); the page asks for this when a plug-in stays silent.
+    void load (int ch, const juce::String& id, const juce::String& stateB64, bool mainOnly = false)
     {
         if (ch < 0 || ch > 15) return;
         clear (ch);
@@ -154,13 +156,14 @@ public:
         if (id.isEmpty()) return;
         auto d = known.getTypeForIdentifierString (id);
         if (d == nullptr) { if (onLoaded) onLoaded (ch, false, "That plug-in isn't on this computer"); return; }
-        fm.createPluginInstanceAsync (*d, sr, bs, [this, ch, stateB64, gen, alive = aliveFlag] (std::unique_ptr<juce::AudioPluginInstance> p, const juce::String& err)
+        fm.createPluginInstanceAsync (*d, sr, bs, [this, ch, stateB64, gen, mainOnly, alive = aliveFlag] (std::unique_ptr<juce::AudioPluginInstance> p, const juce::String& err)
         {
             if (! alive->load() || gen != loadGen[(size_t) ch]) return;
             if (p == nullptr) { if (onLoaded) onLoaded (ch, false, err); return; }
             // leave its buses alone: some instruments crash if outputs are switched off. process() gives room for them all and uses the first two.
             p->setRateAndBufferSizeDetails (sr, bs);
             p->setPlayHead (&head);
+            if (mainOnly) p->disableNonMainBuses();
             if (stateB64.isNotEmpty()) { juce::MemoryBlock mb; if (mb.fromBase64Encoding (stateB64)) p->setStateInformation (mb.getData(), (int) mb.getSize()); }
             fitChannels (*p);
             p->prepareToPlay (sr, bs);
