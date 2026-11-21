@@ -306,6 +306,7 @@ public:
             for (auto* b : { &punchBp[c], &clickHp[c], &harmLp[c], &harmHp[c], &thumpEq[c] }) b->reset();
         }
         meterLow1.highpass (30, .707, sr); meterLow2.lowpass (150, .707, sr); sideLow1.highpass (30, .707, sr); sideLow2.lowpass (150, .707, sr); duckDet1.highpass (30, .707, sr); duckDet2.lowpass (150, .707, sr);
+        for (auto* b : { &kLow3a, &sLow3a }) { b->lowpass (300, .54, sr); b->reset(); } for (auto* b : { &kLow3b, &sLow3b }) { b->lowpass (300, 1.31, sr); b->reset(); }
         duckEnv.y = 0; duckRef = 0; duckSet = 1; duckTick = 0; duckRefDecay = std::exp (-1.0 / (3.0 * sr)); duckAtk = std::exp (-1.0 / (0.001 * sr));
         win = (int) (0.12 * sr); viewStep = std::max (1, (int) (0.003 * sr)); viewDecay = std::exp (-1.0 / (0.02 * sr)); nHits = 0; hitW = 0; accOn = false; viewPos = HitView::n; thumpHz = 0; thumpDb = 0;
         gainSmooth.y = dbToGain (p.gainDb); tailSmooth.y = 1; applied = p; retune.setRatio (ratioOf (p.tune)); retune.prepare (sr, 2); setThump (true);
@@ -390,7 +391,8 @@ public:
     double noteSpreadCents() const { return pitch.lastSpread(); }       // above about 40: the kick has no single note
     int hitsSeen() const { return hitCount; }
     bool hasSidechain() const { return sideAge < (int) (sr * 3); }       // something came in on the other input in the last 3 s
-    // kick lows (30-150 Hz) against kick + sidechain, dB, middle of the last hits. Same measure as tools/kick_analyse.py.
+    // kick lows (30-150 Hz) against everything under 300 Hz in kick + sidechain, dB, middle of the last hits.
+    // Same measure as kick_low_vs_lows_db in tools/kick_analyse.py; lows only, so it works with just a bass or a whole song.
     bool sitLevel (double& dB) const
     {
         if (nHits < 4) return false;
@@ -411,7 +413,7 @@ public:
     double duckNowDb() const { return gainToDb (duckGainNow); }
 
 private:
-    struct Hit { double low = 0, full = 0, side = 0, mix = 0; };
+    struct Hit { double low = 0, full = 0, side = 0, mix = 0; };      // kick 30-150 Hz; kick, sidechain and both together under 300 Hz
     Hit middle() const
     {
         const int cnt = std::clamp (nHits, 1, maxHits);
@@ -425,7 +427,8 @@ private:
         if (hit) { if (accOn && accN >= win) store(); acc = {}; accN = 0; accOn = true; viewPos = 0; viewN = 0; vk = vs = 0; ++hv.count; }
         if (accOn && accN < win)
         {
-            acc.low += kl * kl; acc.full += k * k; acc.side += s * s; acc.mix += (k + s) * (k + s);
+            const double k3 = kLow3b.run (kLow3a.run (k)), s3 = sLow3b.run (sLow3a.run (s));        // everything under 300 Hz, each side
+            acc.low += kl * kl; acc.full += k3 * k3; acc.side += s3 * s3; acc.mix += (k3 + s3) * (k3 + s3);
             if (++accN == win) store();
         }
         if (viewPos < HitView::n)
@@ -473,7 +476,7 @@ private:
     double sr = 48000; Params p, applied;
     Onset onsetIn, onsetOut, onsetSide; PitchTracker pitch; Retune retune;
     OnePole envFast, envSlow, slowUp, trSmooth, tailSmooth, gainSmooth, duckEnv;
-    Biquad thumpEq[2], punchBp[2], clickHp[2], harmLp[2], harmHp[2], meterLow1, meterLow2, sideLow1, sideLow2, duckDet1, duckDet2, duckShelf[2];
+    Biquad thumpEq[2], punchBp[2], clickHp[2], harmLp[2], harmHp[2], meterLow1, meterLow2, sideLow1, sideLow2, duckDet1, duckDet2, duckShelf[2], kLow3a, kLow3b, sLow3a, sLow3b;
     double peakHold = 0, peakDecay = 0, fast = 0, thumpHz = 0, thumpDb = 0, duckRef = 0, duckRefDecay = 0, duckAtk = 0, duckGainNow = 1, duckSet = 1, vk = 0, vs = 0, ek = 0, es = 0, viewDecay = 0; unsigned duckTick = 0;
     const double knee = 0.89;
     int since = 0, hitCount = 0, win = 1, accN = 0, viewStep = 1, viewPos = 0, viewN = 0; bool accOn = false; int sideAge = 1 << 30;

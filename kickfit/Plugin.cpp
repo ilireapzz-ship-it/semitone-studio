@@ -280,7 +280,7 @@ private:
     }
     void drawMeter (juce::Graphics& g, juce::Rectangle<int> r)
     {
-        frame (g, r, "Kick against the whole mix");
+        frame (g, r, "Kick's lows against all the lows");
         if (proc.get ("role") > 0.5f) { g.setColour (look::soft); g.drawText (juce::String ("Bass lows now: ") + juce::String (proc.engine.duckNowDb(), 1) + " dB", r.reduced (8, 4), juce::Justification::centredRight); return; }
         auto bar = r.reduced (10, 0).removeFromBottom (18).translated (0, -6);
         const auto& t = kf::modeTargets[(size_t) juce::jlimit (0, kf::numModes - 1, (int) proc.get ("mode"))];

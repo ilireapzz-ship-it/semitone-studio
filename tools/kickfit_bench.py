@@ -11,6 +11,7 @@ import sys, os, json, math, random, subprocess, argparse, tempfile
 import numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import kick_analyse as ka
+import kickfit_targets as kt
 
 SR = 44100
 BENCH = os.path.join(ka.LOCAL, 'bench')
@@ -93,7 +94,7 @@ def cmd_run(args):
         track.tofile(kf_)
         for m in modes:
             b = [q for q in meta if q['mode'] == m]; b = b[n % len(b)]
-            d = T['modes'][m]['kick_low_vs_mix_db']; lo, mid, hi = d['p25'], d['median'], d['p75']
+            d = kt.sit_range(T['modes'][m]); lo, mid, hi = d['p25'], d['median'], d['p75']
             r = run(kf_, b['file'], of_, sit=(lo, mid, hi)); s = S[m]; s['kicks'] += 1
             peak_over += r['peak'] > max(1.0, float(np.max(np.abs(track)))) + 1e-3      # louder than full scale and louder than it came in
             if not r['measured']: s['could_not_measure'] += 1; continue

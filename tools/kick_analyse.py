@@ -374,6 +374,8 @@ def measure_song(mix, stems, sr):
     W = int(0.12 * sr)
     kfull_k, mix_k = kweight(dr, sr), kweight(mx, sr)
     blow = band(bs, sr, 30, 150)
+    lows_mix, lows_kb = band(mx, sr, None, 300), band(dr + bs, sr, None, 300)      # everything under 300 Hz: the whole mix, and kick + bass only
+    d_lm, d_kb = [], []
     benv = rms_env(blow, sr, 15)
     bact = np.percentile(benv, 75)
 
@@ -387,6 +389,7 @@ def measure_song(mix, stems, sr):
         m = lvl(mx, o, o + W)
         if m < 1e-10: continue
         d_low.append(db(lvl(klow, o, o + W)) - db(m))
+        d_lm.append(db(lvl(klow, o, o + W)) - db(lvl(lows_mix, o, o + W))); d_kb.append(db(lvl(klow, o, o + W)) - db(lvl(lows_kb, o, o + W)))
         d_full.append(db(lvl(kfull_k, o, o + W)) - db(lvl(mix_k, o, o + W)))
         nxt = ons[i + 1] if i + 1 < len(ons) else len(mx)
         a, b = o + int(0.03 * sr), min(o + int(0.22 * sr), nxt - int(0.01 * sr))
@@ -401,6 +404,7 @@ def measure_song(mix, stems, sr):
         if before > 0.5 * bact and after > 0.5 * bact:
             ducks.append(20 * math.log10(max(during, 1e-9) / (0.5 * (before + after))))
     r['kick_low_vs_mix_db'] = round(float(np.median(d_low)), 2)
+    r['kick_low_vs_lows_db'] = round(float(np.median(d_lm)), 2); r['kick_low_vs_kickbass_lows_db'] = round(float(np.median(d_kb)), 2)
     r['drums_at_kick_vs_mix_kw_db'] = round(float(np.median(d_full)), 2)
     r['bass_under_kick_share'] = round(float(np.mean(both)), 3)
     if len(ducks) >= 12:
@@ -508,7 +512,7 @@ def read_local(name):
 
 KICK_FIELDS = ['f0', 'f_start', 'glide_st', 'glide_ms', 'attack_ms', 't20', 't40', 'click_db', 'click_hz', 'b_sub', 'b_lowb', 'b_lowmid',
                'b_mid', 'b_high', 'above180_db', 'peak_db', 'true_peak_db', 'rms_db', 'kw_db', 'dc', 'asym_db', 'low_corr', 'wobble_cents']
-SONG_FIELDS = ['kick_low_vs_mix_db', 'drums_at_kick_vs_mix_kw_db', 'bass_under_kick_share', 'bass_dip_db', 'kick_f0', 'kick_cents',
+SONG_FIELDS = ['kick_low_vs_mix_db', 'kick_low_vs_lows_db', 'kick_low_vs_kickbass_lows_db', 'drums_at_kick_vs_mix_kw_db', 'bass_under_kick_share', 'bass_dip_db', 'kick_f0', 'kick_cents',
                'low_overlap', 'kick_low_centre_hz', 'bass_low_centre_hz', 'low_side_vs_mid_db', 'low_corr', 'mix_low_share_db', 'kicks_per_min']
 
 
@@ -536,6 +540,8 @@ def cmd_targets(args):
             'kw_db/rms_db': 'K-weighted (BS.1770 filters) and plain RMS level of the hit from its start to 40 dB down. Not LUFS: a hit is too short for that.',
             'songs': 'Each song is split into drums, bass, other and vocals with Demucs (htdemucs). Kick hits are found as peaks in the drum stem between 30 and 150 Hz. Separation is not perfect, so some bass leaks into the drum stem and the other way round.',
             'kick_low_vs_mix_db': 'Level of the drum stem between 30 and 150 Hz against the whole mix, in the 120 ms after each kick hit; median over the hits.',
+            'kick_low_vs_lows_db': 'The same kick lows (30-150 Hz) against everything under 300 Hz in the whole mix, in the same windows. This is what Sit it uses: it does not depend on how much is playing above the bass range.',
+            'kick_low_vs_kickbass_lows_db': 'The same, against only the drum and bass stems under 300 Hz: what Kick Fit hears when just the bass is fed to it.',
             'drums_at_kick_vs_mix_kw_db': 'K-weighted level of the whole drum stem against the mix in the same windows. Includes hats and snares that land with the kick.',
             'bass_under_kick_share': 'Share of kick hits with bass sounding under them.',
             'bass_dip_db': 'Bass stem (30-150 Hz) level in the 10-70 ms after a kick against its level just before and 150-250 ms after. Negative = the bass drops. Leaked kick makes this look smaller than it is.',

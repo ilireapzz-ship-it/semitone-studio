@@ -9,13 +9,20 @@ NAMES = [('trap-hiphop', 'Trap / hip-hop'), ('pop', 'Pop'), ('rnb', 'R&B'), ('ho
          ('dnb', 'Drum & bass'), ('rock', 'Rock'), ('afro', 'Afrobeats / amapiano'), ('lofi', 'Lo-fi')]
 
 
+def sit_range(m):
+    """Where the kick's lows sit against all the lows: from the whole-mix measure and the kick+bass-only measure together
+    (low edge = the lower quarter mark, high edge = the higher three-quarter mark, middle = between the two middles)."""
+    a, b = m['kick_low_vs_lows_db'], m['kick_low_vs_kickbass_lows_db']
+    return {'p25': min(a['p25'], b['p25']), 'median': (a['median'] + b['median']) / 2, 'p75': max(a['p75'], b['p75'])}
+
+
 def build():
     d = json.load(open(os.path.join(REPO, 'data', 'kickfit-targets.json'), encoding='utf-8'))
     rows = []
     for mid, name in NAMES:
         m = d['modes'].get(mid, {})
-        ok = m.get('status') == 'measured' and m.get('kick_low_vs_mix_db')
-        sit = m['kick_low_vs_mix_db'] if ok else {'p25': 0, 'median': 0, 'p75': 0}
+        ok = m.get('status') == 'measured' and m.get('kick_low_vs_lows_db') and m.get('kick_low_vs_kickbass_lows_db')
+        sit = sit_range(m) if ok else {'p25': 0, 'median': 0, 'p75': 0}
         note = (m.get('kick_f0') or {}) if ok else {}
         if note.get('n', 0) < d['min_songs_per_mode']:
             note = {}                                  # too few songs with a steady kick note: no zone drawn
@@ -31,7 +38,7 @@ namespace kf
 struct ModeTarget
 {
     const char* id; const char* name; int songs; bool measured;
-    float sitLo, sitMid, sitHi;        // kick lows (30-150 Hz) against the whole mix at kick hits, dB: quarter, middle, three quarters of the songs
+    float sitLo, sitMid, sitHi;        // kick lows (30-150 Hz) against everything under 300 Hz at kick hits, dB: low edge, middle, high edge (see sit_range)
     float noteLo, noteMid, noteHi;     // the kick's boom note in those songs, Hz (0 = too few songs with a steady note)
     float dipDb;                       // how far the bass's lows drop under the kick in those songs, dB (middle)
 };

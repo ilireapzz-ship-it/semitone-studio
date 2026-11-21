@@ -7,10 +7,10 @@
   "pop": {
    "kicks": 400,
    "could_not_measure": 5,
-   "already_in_range": 184,
-   "left_alone": 184,
-   "moved_into_range": 208,
-   "moved_closer": 3,
+   "already_in_range": 345,
+   "left_alone": 344,
+   "moved_into_range": 45,
+   "moved_closer": 4,
    "got_worse": 0,
    "tune_tried": 318,
    "tune_in_key": 210,
@@ -18,12 +18,12 @@
    "steady_tune_in_key": 122,
    "no_single_note": 172,
    "change_db": {
-    "n": 211,
-    "median": -11.09,
+    "n": 50,
+    "median": -11.75,
     "p10": -12.0,
     "p25": -12.0,
-    "p75": -8.56,
-    "p90": -6.95
+    "p75": -8.22,
+    "p90": 12.0
    },
    "tune_off_cents": {
     "n": 318,
@@ -37,23 +37,23 @@
   "rock": {
    "kicks": 400,
    "could_not_measure": 5,
-   "already_in_range": 95,
-   "left_alone": 95,
-   "moved_into_range": 285,
-   "moved_closer": 12,
-   "got_worse": 3,
+   "already_in_range": 237,
+   "left_alone": 234,
+   "moved_into_range": 125,
+   "moved_closer": 31,
+   "got_worse": 1,
    "tune_tried": 319,
    "tune_in_key": 214,
    "steady_tune_tried": 143,
    "steady_tune_in_key": 120,
    "no_single_note": 176,
    "change_db": {
-    "n": 300,
-    "median": -5.54,
-    "p10": -9.63,
-    "p25": -8.03,
-    "p75": -3.02,
-    "p90": 9.05
+    "n": 158,
+    "median": 6.33,
+    "p10": -12.0,
+    "p25": -12.0,
+    "p75": 12.0,
+    "p90": 12.0
    },
    "tune_off_cents": {
     "n": 319,

@@ -44,9 +44,13 @@
 - The Kick Fit on the kick shows the bass "from the Kick Fit on the bass", and Sit it responds.
 - The Kick Fit on the bass dips the bass's lows under the kick (7.3 dB with Room for bass at 71).
 - FL hands an unused sidechain a copy of the track's own sound; Kick Fit now ignores that.
-- Known problem: Sit it compares the kick with the whole song, because that is what was measured in your songs. With only a
-  bass playing it turns the kick down much too far (it hit the -12 dB limit). Until that is measured properly, use Sit it
-  only when the rest of the song is playing into the bass's Kick Fit, or set Level by ear.
+- Sit it used to compare the kick with the whole song, so with only a bass playing it turned the kick down far too much.
+  Fixed (21 Nov, late): all 299 songs were measured again, and Sit it now compares the kick's lows with all the lows it hears
+  (everything under 300 Hz). In your rock songs the kick's lows sit about 2 dB under all the lows (most songs 1 to 3.6 dB under),
+  and that barely changes whether you count the whole mix or only kick and bass. Pop varies a lot more (1 to 12 dB under).
+- Bench again with the new target, 400 kicks: Rock 237 already in range, 125 moved into range, 31 closer, 1 worse.
+  Pop 345 already in range, 45 moved into range, 4 closer, none worse.
+- Not yet tried in FL with the new target.
 
 **Not done yet**
 - Tune's delay compensation in FL.
