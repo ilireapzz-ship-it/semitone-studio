@@ -444,6 +444,17 @@ public:
         changeDb = den > 1e-14 ? std::clamp (10 * std::log10 (T * h.side / den), -24.0, 24.0) : 24.0;   // a kick with few lows can't get there: stop at +24
         return true;
     }
+    // On the bass (the kick is on the sidechain, so "low" and "full" are the kick and "side" is this bass): the change to the
+    // BASS's Level that puts the same measure at `target`. Nothing if it already sits between lo and hi. false = can't tell.
+    bool sitGainBass (double lo, double target, double hi, double& changeDb) const
+    {
+        double now; if (! sitLevel (now) || ! hasSidechain()) return false;
+        changeDb = 0; if (now >= lo && now <= hi) return true;
+        const Hit h = middle(); const double T = std::pow (10.0, target / 10.0), room = h.low / T - h.full;       // what is left for the bass under 300 Hz
+        if (h.side <= 1e-12) return false;
+        changeDb = room > 1e-14 ? std::clamp (10 * std::log10 (room / h.side), -24.0, 24.0) : -24.0;   // even with no bass the kick would not get there: stop at -24
+        return true;
+    }
     const HitView& view() const { return hv; }
     double duckNowDb() const { return gainToDb (duckGainNow); }
 

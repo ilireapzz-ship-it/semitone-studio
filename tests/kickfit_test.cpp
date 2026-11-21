@@ -281,6 +281,24 @@ static void testSit()
         CHECK (now < lo || now > hi, "the test kick should start out of range (%.1f dB)", now);
         CHECK (std::abs (after - target) < 1.0, "Sit it moved the kick from %.1f to %.1f dB, wanted %.1f", now, after, target);
     }
+    // on the bass, with the kick on its sidechain: the same measure, moved with the bass's Level
+    auto onBass = [&] (double bassAmp, double gainDb, double& out)
+    {
+        Params p; p.role = 1; p.gainDb = (float) gainDb; Engine e; Buf b = bass; for (auto& v : b) v = (float) (v * bassAmp);
+        const Buf k = kicks (sr, 6.0, 0.5, { 52, 160, 0.03, 0.18, 0.15, inside });
+        render (sr, p, b, &k, 256, &e);
+        double change = 0; const bool ok = e.sitLevel (out) && e.sitGainBass (lo, target, hi, change);
+        CHECK (ok, "Sit it on the bass should be able to measure with the kick on the sidechain");
+        return change;
+    };
+    CHECK (onBass (1.0, 0, now) == 0, "a bass already in range must not be moved (the kick sits at %.1f dB)", now);
+    for (double scale : { 0.25, 4.0 })
+    {
+        const double change = onBass (scale, 0, now);
+        onBass (scale, change, after);
+        CHECK (now < lo || now > hi, "the test bass should start out of range (%.1f dB)", now);
+        CHECK (std::abs (after - target) < 1.0, "Sit it on the bass moved the measure from %.1f to %.1f dB, wanted %.1f (change %.1f)", now, after, target, change);
+    }
     Engine e; render (sr, Params(), kicks (sr, 4.0, 0.5, Kick()), nullptr, 256, &e);
     double c; CHECK (! e.sitGain (lo, target, hi, c), "without a sidechain Sit it must say it can't tell, not guess");
 }

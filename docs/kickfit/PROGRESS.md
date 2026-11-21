@@ -126,3 +126,5 @@ A second plug-in for the bus (or master) the kick, bass and vocal meet on. First
   measured songs to their middle (at most 6 dB down or 4 dB up; a range already inside is left alone; the range Tame is
   holding is skipped), Amount scales it, Reset clears it. A/B switches it off at the same loudness, so only the tone
   differs. Tested on made-up tones. Not yet tried in FL.
+- Kick Fit on the bass now has the bar (the kick's lows against all the lows, kick + this bass, with the songs' range
+  shaded) and Sit it, which moves the bass's own Level to bring that measure into range. Tested. Not yet tried in FL.

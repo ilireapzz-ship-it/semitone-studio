@@ -326,8 +326,9 @@ private:
             double now; if (proc.engine.hasSidechain() && proc.engine.vocalLevel (now)) { g.setColour (look::kick); g.fillRect (x (now) - 2, (float) bar.getY() - 3, 4.0f, (float) bar.getHeight() + 6); }
             return;
         }
-        frame (g, r, "Kick's lows against all the lows");
-        if (proc.get ("role") > 0.5f) { g.setColour (look::soft); g.drawText (juce::String ("Bass lows now: ") + juce::String (proc.engine.duckNowDb(), 1) + " dB", r.reduced (8, 4), juce::Justification::centredRight); return; }
+        const bool bassHere = proc.get ("role") > 0.5f;
+        frame (g, r, bassHere ? "The kick's lows against all the lows (kick + this bass)" : "Kick's lows against all the lows");
+        if (bassHere) { g.setColour (look::soft); g.drawText (juce::String ("Dip now: ") + juce::String (proc.engine.duckNowDb(), 1) + " dB", r.reduced (8, 4), juce::Justification::topRight); }
         auto bar = r.reduced (10, 0).removeFromBottom (18).translated (0, -6);
         const auto& t = kf::modeTargets[(size_t) juce::jlimit (0, kf::numModes - 1, (int) proc.get ("mode"))];
         auto x = [&] (double dB) { return bar.getX() + (float) juce::jlimit (0.0, 1.0, (dB + 30) / 30) * bar.getWidth(); };
@@ -352,6 +353,16 @@ private:
             return;
         }
         if (! t.measured) { sitSaid = juce::String ("Not enough of your ") + t.name + " songs were measured to know where the kick should sit. Pick another genre or set Level by ear."; return; }
+        if (proc.get ("role") > 0.5f)          // on the bass: the same measure, moved with the bass's own Level
+        {
+            if (! proc.engine.hasSidechain()) { sitSaid = "Kick Fit can't hear the kick yet: send the kick to this Kick Fit's sidechain, play, then press Sit it."; return; }
+            if (! proc.engine.sitGainBass (t.sitLo, t.sitMid, t.sitHi, change) || ! proc.engine.sitLevel (now)) { sitSaid = "Play a few bars with the kick first, then press Sit it."; return; }
+            if (std::abs (change) < 0.05) { sitSaid = "The kick and this bass already sit where your " + juce::String (t.name) + " songs have them. Left alone."; return; }
+            const float before = proc.get ("level"), after = juce::jlimit (-24.0f, 24.0f, before + (float) change);
+            proc.setParam ("level", after);
+            sitSaid = juce::String (after > before ? "Turned the bass up " : "Turned the bass down ") + juce::String (std::abs (after - before), 1) + " dB so the kick sits against it as in your " + t.name + " songs. Your ears do the rest.";
+            return;
+        }
         const juce::ScopedLock sl (linkLock);
         if (! ctx().hasSidechain()) { sitSaid = "Kick Fit can't hear the bass yet. Put a second Kick Fit on the bass, set it to The bass, and send the kick to its sidechain. Then play and press Sit it."; return; }
         if (! ctx().sitGain (t.sitLo, t.sitMid, t.sitHi, change) || ! ctx().sitLevel (now)) { sitSaid = "Play a few bars with the kick first, then press Sit it."; return; }
@@ -383,7 +394,7 @@ private:
         }
         const bool led = onBass && linkedRoom.load() >= 0;                     // a Kick Fit on the kick sets Room for this one
         for (int i = 0; i < knobs.size(); ++i) { const bool on = onVocal ? i == 6 : onBass ? ((i == 4 && ! led) || i == 6) : true; knobs[i]->setEnabled (on); knobs[i]->setAlpha (on ? 1.0f : 0.3f); }
-        sitBtn.setEnabled (! onBass && ! onRest);
+        sitBtn.setEnabled (! onRest);
         keys.add ((onBass ? magMine : magOther).data(), fftSize / 2, proc.rate / fftSize);
         const double hz = onVocal ? 0.0 : proc.engine.noteShown(), tune = proc.get ("tune");
         shownHz = hz > 0 ? hz * kf::Engine::ratioOf (tune) : 0;
