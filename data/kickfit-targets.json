@@ -14,7 +14,7 @@
   "kick_low_vs_mix_db": "Level of the drum stem between 30 and 150 Hz against the whole mix, in the 120 ms after each kick hit; median over the hits.",
   "kick_low_vs_lows_db": "The same kick lows (30-150 Hz) against everything under 300 Hz in the whole mix, in the same windows. This is what Sit it uses: it does not depend on how much is playing above the bass range.",
   "kick_low_vs_kickbass_lows_db": "The same, against only the drum and bass stems under 300 Hz: what Kick Fit hears when just the bass is fed to it.",
-  "bass_/vocal_peak_vs_kick_db": "Per song: that part's usual peak (as below) minus the kick's usual peak. Fit Bus uses these: with only a few parts in a bus the tallest one is the loudest peak, so heights against the whole song do not carry over, but the gaps between parts do.",
+  "bass_/vocal_peak_vs_kick_db": "Per song: that part's usual peak (as below) minus the kick's usual peak. Fit Bus uses these: with only a few parts in a bus the tallest one is the loudest peak, so heights against the whole song do not carry over, but the gaps between parts do. Only songs whose kick hits come within 12 dB of the loudest peak of the song are counted (n says how many).",
   "whole song": "tone_db: share of the whole song's energy in six ranges (under 60 Hz, 60-150, 150-400, 400-1500, 1500-5000, above 5000), dB against the total, mono sum, 4th-order filters as in Fit Bus. loudness_lufs: integrated loudness (BS.1770 gating). crest_db: highest peak over average level. at_peak_share: share of samples within 0.5% of the highest peak. spike_db: how far the 10 ms level stands above the 100 ms level at the sharpest twentieth of moments. Finished, mastered songs.",
   "peaks": "What a peak meter shows. mix_peak_db: the highest the finished song reaches (dBFS). kick_peak_vs_song_db: the drum stem peak in the 120 ms after a kick hit, against that (middle hit; includes a snare or hat landing with it). bass_/vocal_peak_vs_song_db: the middle of that stem, its 0.1 s peaks while it plays; _top_ is its loudest twentieth. These are finished, mastered songs: a mix before mastering sits lower overall, but the gaps between the parts are the useful bit.",
   "vocal_vs_backing_db": "K-weighted level of the vocal stem against everything else, in 0.4 s steps while there is singing; middle step. vocal_share: how much of the song has singing.",
@@ -616,20 +616,20 @@
     "p90": 150.72
    },
    "bass_peak_vs_kick_db": {
-    "n": 53,
-    "median": -5.83,
-    "p10": -13.82,
-    "p25": -11.06,
-    "p75": 0.93,
-    "p90": 29.85
+    "n": 36,
+    "median": -8.61,
+    "p10": -13.95,
+    "p25": -13.22,
+    "p75": -5.47,
+    "p90": -3.81
    },
    "vocal_peak_vs_kick_db": {
-    "n": 53,
-    "median": -1.18,
-    "p10": -5.6,
-    "p25": -4.18,
-    "p75": 5.72,
-    "p90": 43.11
+    "n": 36,
+    "median": -3.38,
+    "p10": -7.11,
+    "p25": -5.21,
+    "p75": -1.16,
+    "p90": 0.99
    },
    "whole_songs": 54,
    "tone_db": [
@@ -932,20 +932,20 @@
     "p90": 158.29
    },
    "bass_peak_vs_kick_db": {
-    "n": 242,
-    "median": -7.96,
-    "p10": -12.69,
-    "p25": -9.73,
-    "p75": -6.38,
-    "p90": -3.89
+    "n": 211,
+    "median": -8.25,
+    "p10": -13.25,
+    "p25": -9.88,
+    "p75": -6.84,
+    "p90": -5.45
    },
    "vocal_peak_vs_kick_db": {
-    "n": 242,
-    "median": -3.09,
-    "p10": -6.42,
-    "p25": -5.01,
-    "p75": -0.55,
-    "p90": 7.92
+    "n": 211,
+    "median": -3.42,
+    "p10": -6.76,
+    "p25": -5.41,
+    "p75": -2.0,
+    "p90": 0.36
    },
    "whole_songs": 244,
    "tone_db": [

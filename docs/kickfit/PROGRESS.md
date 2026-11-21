@@ -128,3 +128,8 @@ A second plug-in for the bus (or master) the kick, bass and vocal meet on. First
   differs. Tested on made-up tones. Not yet tried in FL.
 - Kick Fit on the bass now has the bar (the kick's lows against all the lows, kick + this bass, with the songs' range
   shaded) and Sit it, which moves the bass's own Level to bring that measure into range. Tested. Not yet tried in FL.
+- Jamie found the vocal recommendation too high, and the songs agreed: 17 of the 53 pop songs barely have a kick, and
+  against a kick that isn't there the gap means nothing. Counting only songs whose kick comes within 12 dB of the song's
+  top (36 pop, 211 rock; -9 and -6 give the same answer), pop is: vocal 5.2 to 1.2 dB under the kick (middle 3.4), bass
+  13.2 to 5.5 under (middle 8.6). It was vocal 4.2 under to 5.7 over. Rock barely moves. Still true: mastering shaves
+  kick peaks more than vocals, so in a mix before mastering the kick can stand a little taller than these gaps say.

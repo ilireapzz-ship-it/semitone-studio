@@ -612,7 +612,7 @@ def cmd_targets(args):
             'kick_low_vs_mix_db': 'Level of the drum stem between 30 and 150 Hz against the whole mix, in the 120 ms after each kick hit; median over the hits.',
             'kick_low_vs_lows_db': 'The same kick lows (30-150 Hz) against everything under 300 Hz in the whole mix, in the same windows. This is what Sit it uses: it does not depend on how much is playing above the bass range.',
             'kick_low_vs_kickbass_lows_db': 'The same, against only the drum and bass stems under 300 Hz: what Kick Fit hears when just the bass is fed to it.',
-            'bass_/vocal_peak_vs_kick_db': 'Per song: that part\'s usual peak (as below) minus the kick\'s usual peak. Fit Bus uses these: with only a few parts in a bus the tallest one is the loudest peak, so heights against the whole song do not carry over, but the gaps between parts do.',
+            'bass_/vocal_peak_vs_kick_db': 'Per song: that part\'s usual peak (as below) minus the kick\'s usual peak. Fit Bus uses these: with only a few parts in a bus the tallest one is the loudest peak, so heights against the whole song do not carry over, but the gaps between parts do. Only songs whose kick hits come within 12 dB of the loudest peak of the song are counted (n says how many).',
             'whole song': 'tone_db: share of the whole song\'s energy in six ranges (under 60 Hz, 60-150, 150-400, 400-1500, 1500-5000, above 5000), dB against the total, mono sum, 4th-order filters as in Fit Bus. loudness_lufs: integrated loudness (BS.1770 gating). crest_db: highest peak over average level. at_peak_share: share of samples within 0.5% of the highest peak. spike_db: how far the 10 ms level stands above the 100 ms level at the sharpest twentieth of moments. Finished, mastered songs.',
             'peaks': 'What a peak meter shows. mix_peak_db: the highest the finished song reaches (dBFS). kick_peak_vs_song_db: the drum stem peak in the 120 ms after a kick hit, against that (middle hit; includes a snare or hat landing with it). bass_/vocal_peak_vs_song_db: the middle of that stem, its 0.1 s peaks while it plays; _top_ is its loudest twentieth. These are finished, mastered songs: a mix before mastering sits lower overall, but the gaps between the parts are the useful bit.',
             'vocal_vs_backing_db': 'K-weighted level of the vocal stem against everything else, in 0.4 s steps while there is singing; middle step. vocal_share: how much of the song has singing.',
@@ -647,7 +647,9 @@ def cmd_targets(args):
             continue
         steady = [s for s in sub if s.get('kick_f0_spread_cents') is not None and s['kick_f0_spread_cents'] < 50]
         d = {'songs': len(sub), 'status': 'measured', **{f: stat([s.get(f) for s in sub]) for f in SONG_FIELDS}}
-        gap = lambda f: stat([s[f] - s['kick_peak_vs_song_db'] for s in sub if s.get(f) is not None and s.get('kick_peak_vs_song_db') is not None])
+        # only songs where the kick is a real part of the song (its hits come within 12 dB of the song's top): against a kick that is barely
+        # there the gap is huge and means nothing. 17 of 53 pop songs were like that and pulled the range up; -12, -9 and -6 give the same answer.
+        gap = lambda f: stat([s[f] - s['kick_peak_vs_song_db'] for s in sub if s.get(f) is not None and s.get('kick_peak_vs_song_db') is not None and s['kick_peak_vs_song_db'] >= -12])
         d['bass_peak_vs_kick_db'] = gap('bass_peak_vs_song_db'); d['vocal_peak_vs_kick_db'] = gap('vocal_peak_vs_song_db')
         wh = [w for w in whole if w.get('mode') == m]
         if len(wh) >= MIN_SONGS:
