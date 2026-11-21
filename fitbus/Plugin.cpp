@@ -196,7 +196,7 @@ private:
              : ! sure ? "There is more in this bus than the parts with a Kick Fit on them, so their heights can't be read. Send only the kick, bass and vocal here."
              : said.isNotEmpty() && cool > 0 ? said
              : "Measured after the faders. The gaps come from finished songs, where other instruments share the low end with the bass: with only these parts playing, trust your ears on the bass.";
-        auto rel = [] (float v) { return juce::String (std::abs (v), 1) + (v < 0 ? " under" : " over"); };
+        auto rel = [] (float v) { return juce::String (std::abs (v), 1) + (v < 0 ? " dB under" : " dB over"); };
         const double kickTop = have[0] && sure && g2[0] > 1e-9 ? peak[0] * std::sqrt (g2[0]) : 0.0;          // the kick's hits as they arrive here
         for (int k = 0; k < 3; ++k)
         {
@@ -213,7 +213,7 @@ private:
             {
                 const float* range = k == 1 ? t.bassVsKick : t.vocVsKick;
                 const float h = (float) (20 * std::log10 (usual[k] * std::sqrt (g2[k]) / kickTop));          // its usual peak against the kick's hits
-                q.text = juce::String (names[k]) + ": usually peaks " + rel (h) + " the kick (dB). ";
+                q.text = juce::String (names[k]) + ": usually peaks " + rel (h) + " the kick. ";
                 if (! t.peaks) q.text << "Not enough " << t.name << " songs measured to compare.";
                 else
                 {

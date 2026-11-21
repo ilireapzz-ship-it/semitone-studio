@@ -99,3 +99,8 @@ A second plug-in for the bus (or master) the kick, bass and vocal meet on. First
   button asks that Kick Fit to change its Level. Tested on made-up parts: faders read to within 1 dB (2.5 dB for a part
   20 dB down). If the bus holds much more than the parts with a Kick Fit, it says it cannot read them. Not yet tried in FL.
 - Kick Fit: Level now works on the bass too. Fixed: with no sidechain bus at all, the right channel was left unprocessed.
+- Fit Bus tried in FL on the kick, bass and vocal test project: it found all three Kick Fits, read the faders exactly
+  (kick 0, bass -10, vocal 0 dB) within a few seconds of play, and its button moved the vocal into range. It now compares
+  the bass and vocal with the kick, song by song as measured (pop: bass 11.1 dB under to 0.9 over the kick, vocal 4.2
+  under to 5.7 over; rock: bass 9.7 to 6.4 under, vocal 5.0 to 0.6 under), because with three parts in a bus the tallest
+  part is the loudest peak. Known: a reading wobbles by a dB or so, and a part can briefly show "too quiet to read".
