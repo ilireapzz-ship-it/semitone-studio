@@ -27,9 +27,11 @@ def build():
         if note.get('n', 0) < d['min_songs_per_mode']:
             note = {}                                  # too few songs with a steady kick note: no zone drawn
         dip = (m.get('bass_dip_db') or {}).get('median', 0) if ok else 0
-        rows.append('    { "%s", "%s", %d, %s, %.2ff, %.2ff, %.2ff, %.1ff, %.1ff, %.1ff, %.2ff },' % (
+        voc = (m.get('vocal_vs_backing_db') or {}) if ok else {}
+        rows.append('    { "%s", "%s", %d, %s, %.2ff, %.2ff, %.2ff, %.1ff, %.1ff, %.1ff, %.2ff, %s, %.2ff, %.2ff, %.2ff },' % (
             mid, name, m.get('songs', 0), 'true' if ok else 'false', sit['p25'], sit['median'], sit['p75'],
-            note.get('p25', 0), note.get('median', 0), note.get('p75', 0), dip))
+            note.get('p25', 0), note.get('median', 0), note.get('p75', 0), dip,
+            'true' if voc.get('n', 0) >= d['min_songs_per_mode'] else 'false', voc.get('p25', 0), voc.get('median', 0), voc.get('p75', 0)))
     ks = d['kickSamples']['all']
     return '''#pragma once
 // Made by tools/kickfit_targets.py from data/kickfit-targets.json (measured %s). Do not edit by hand.
@@ -41,6 +43,7 @@ struct ModeTarget
     float sitLo, sitMid, sitHi;        // kick lows (30-150 Hz) against everything under 300 Hz at kick hits, dB: low edge, middle, high edge (see sit_range)
     float noteLo, noteMid, noteHi;     // the kick's boom note in those songs, Hz (0 = too few songs with a steady note)
     float dipDb;                       // how far the bass's lows drop under the kick in those songs, dB (middle)
+    bool vocal; float vocLo, vocMid, vocHi;   // the singing against everything else (K-weighted), dB: quarter, middle, three quarters of the songs
 };
 inline constexpr ModeTarget modeTargets[] = {
 %s

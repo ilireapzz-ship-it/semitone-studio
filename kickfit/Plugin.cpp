@@ -56,7 +56,7 @@ public:
         for (auto& m : kf::modeTargets) modes.add (m.name);
         for (int minor = 0; minor < 2; ++minor) for (auto* n : noteNames) keys.add (juce::String (n) + (minor ? " minor" : " major"));
         juce::AudioProcessorValueTreeState::ParameterLayout l;
-        l.add (std::make_unique<C> (juce::ParameterID { "role", 1 }, "I am on", juce::StringArray { "The kick", "The bass" }, 0));
+        l.add (std::make_unique<C> (juce::ParameterID { "role", 1 }, "I am on", juce::StringArray { "The kick", "The bass", "The vocal" }, 0));
         l.add (std::make_unique<C> (juce::ParameterID { "mode", 1 }, "Genre", modes, 0));
         l.add (std::make_unique<C> (juce::ParameterID { "key", 1 }, "Key", keys, 0));
         for (auto* id : { "thump", "punch", "click", "tail" })
@@ -129,7 +129,7 @@ public:
         engine.process (l, r, sl, sr, n);
         for (int i = 0; i < n; ++i) { mine.push (0.5f * (l[i] + r[i])); other.push (sl ? 0.5f * (sl[i] + sr[i]) : 0.0f); }
         if (p.role == 1) { if (bassOne.load (std::memory_order_relaxed) != this) bassOne.store (this); }
-        else { if (kickOne.load (std::memory_order_relaxed) != this) kickOne.store (this); linkedRoom.store (raw.at ("room")->load() / 100); }
+        else if (p.role == 0) { if (kickOne.load (std::memory_order_relaxed) != this) kickOne.store (this); linkedRoom.store (raw.at ("room")->load() / 100); }
         if (p.role == 0 && engine.note() > 0) linkedKickHz.store ((float) (engine.note() * kf::Engine::ratioOf (p.tune)));
         if (engine.latency() != lastLatency) { lastLatency = engine.latency(); triggerAsyncUpdate(); }
     }
@@ -222,11 +222,12 @@ private:
     }
     void drawPitch (juce::Graphics& g, juce::Rectangle<int> r)
     {
-        const bool onBass = proc.get ("role") > 0.5f;
-        frame (g, r, onBass ? "Pitch: this bass (blue) and the kick on the sidechain (orange)" : paired ? "Pitch: this kick (orange) and the bass (blue, from the Kick Fit on the bass)" : "Pitch: this kick (orange) and the sidechain (blue)");
+        const int role = (int) proc.get ("role"); const bool onBass = role == 1;
+        frame (g, r, role == 2 ? "Pitch: this vocal (orange) and the rest of the song (blue)" : onBass ? "Pitch: this bass (blue) and the kick on the sidechain (orange)" : paired ? "Pitch: this kick (orange) and the bass (blue, from the Kick Fit on the bass)" : "Pitch: this kick (orange) and the sidechain (blue)");
         auto in = r.reduced (8, 22);
         const auto& t = kf::modeTargets[(size_t) juce::jlimit (0, kf::numModes - 1, (int) proc.get ("mode"))];
-        if (t.measured && t.noteHi > t.noteLo)
+        if (role == 2) {}
+        else if (t.measured && t.noteHi > t.noteLo)
         {
             const float x0 = xOf (t.noteLo, in), x1 = xOf (t.noteHi, in);
             g.setColour (look::zone.withAlpha (0.16f)); g.fillRect (x0, (float) in.getY(), x1 - x0, (float) in.getHeight());
@@ -257,7 +258,7 @@ private:
         };
         curve (onBass ? magMine : magOther, look::bass, false);
         curve (onBass ? magOther : magMine, look::kick, true);
-        if (! onBass && shownHz > 20 && shownHz < 500)
+        if (role == 0 && shownHz > 20 && shownHz < 500)
         {
             const float x = xOf (shownHz, in);
             g.setColour (look::ink); g.drawVerticalLine ((int) x, (float) in.getY() + 16, (float) in.getBottom());
@@ -266,7 +267,7 @@ private:
     }
     void drawTime (juce::Graphics& g, juce::Rectangle<int> r)
     {
-        frame (g, r, "Time: one hit, lows only (0.4 s)");
+        frame (g, r, proc.get ("role") > 1.5f ? "Level: the last 50 seconds" : "Time: one hit, lows only (0.4 s)");
         auto in = r.reduced (8, 22); const juce::ScopedLock sl (linkLock); const auto& v = ctx().view();
         float top = 1e-4f; for (int i = 0; i < kf::HitView::n; ++i) top = std::max ({ top, v.kick[i], v.side[i] });
         auto draw = [&] (const float* d, juce::Colour c, bool filled)
@@ -280,6 +281,17 @@ private:
     }
     void drawMeter (juce::Graphics& g, juce::Rectangle<int> r)
     {
+        const auto& tv = kf::modeTargets[(size_t) juce::jlimit (0, kf::numModes - 1, (int) proc.get ("mode"))];
+        if (proc.get ("role") > 1.5f)
+        {
+            frame (g, r, "Vocal against everything else");
+            auto bar = r.reduced (10, 0).removeFromBottom (18).translated (0, -6);
+            auto x = [&] (double dB) { return bar.getX() + (float) juce::jlimit (0.0, 1.0, (dB + 15) / 25) * bar.getWidth(); };
+            g.setColour (look::paper); g.fillRect (bar);
+            if (tv.vocal) { g.setColour (look::zone.withAlpha (0.35f)); g.fillRect (x (tv.vocLo), (float) bar.getY(), x (tv.vocHi) - x (tv.vocLo), (float) bar.getHeight()); }
+            double now; if (proc.engine.hasSidechain() && proc.engine.vocalLevel (now)) { g.setColour (look::kick); g.fillRect (x (now) - 2, (float) bar.getY() - 3, 4.0f, (float) bar.getHeight() + 6); }
+            return;
+        }
         frame (g, r, "Kick's lows against all the lows");
         if (proc.get ("role") > 0.5f) { g.setColour (look::soft); g.drawText (juce::String ("Bass lows now: ") + juce::String (proc.engine.duckNowDb(), 1) + " dB", r.reduced (8, 4), juce::Justification::centredRight); return; }
         auto bar = r.reduced (10, 0).removeFromBottom (18).translated (0, -6);
@@ -294,6 +306,17 @@ private:
     {
         const auto& t = kf::modeTargets[(size_t) juce::jlimit (0, kf::numModes - 1, (int) proc.get ("mode"))];
         double change = 0, now = 0;
+        if (proc.get ("role") > 1.5f)
+        {
+            if (! t.vocal) { sitSaid = juce::String ("Not enough of your ") + t.name + " songs were measured to know where the vocal should sit. Pick another genre or set Level by ear."; return; }
+            if (! proc.engine.hasSidechain()) { sitSaid = "Kick Fit can't hear the rest of the song yet: send everything except the vocal to this Kick Fit's sidechain, play, then press Sit it."; return; }
+            if (! proc.engine.vocalGain (t.vocLo, t.vocMid, t.vocHi, change)) { sitSaid = "Play a part with singing for a few seconds first, then press Sit it."; return; }
+            if (std::abs (change) < 0.05) { sitSaid = "The vocal already sits where your " + juce::String (t.name) + " songs have it. Left alone."; return; }
+            const float before = proc.get ("level"), after = juce::jlimit (-24.0f, 24.0f, before + (float) change);
+            proc.setParam ("level", after);
+            sitSaid = juce::String (after > before ? "Turned the vocal up " : "Turned the vocal down ") + juce::String (std::abs (after - before), 1) + " dB to where your " + t.name + " songs have it. Your ears do the rest.";
+            return;
+        }
         if (! t.measured) { sitSaid = juce::String ("Not enough of your ") + t.name + " songs were measured to know where the kick should sit. Pick another genre or set Level by ear."; return; }
         const juce::ScopedLock sl (linkLock);
         if (! ctx().hasSidechain()) { sitSaid = "Kick Fit can't hear the bass yet. Put a second Kick Fit on the bass, set it to The bass, and send the kick to its sidechain. Then play and press Sit it."; return; }
@@ -317,18 +340,18 @@ private:
             mag.resize ((size_t) fftSize / 2, 0.0f);
             for (size_t i = 0; i < mag.size(); ++i) { const float v = buf[i] / (fftSize * 0.25f); mag[i] = v > mag[i] ? v : mag[i] * 0.86f + v * 0.14f; }
         };
-        const bool onBass = proc.get ("role") > 0.5f;
+        const int role = (int) proc.get ("role"); const bool onBass = role == 1, onVocal = role == 2;
         {
             const juce::ScopedLock sl (linkLock);
-            auto* b = onBass ? nullptr : bassOne.load();
+            auto* b = role != 0 ? nullptr : bassOne.load();
             paired = b != nullptr && ! proc.engine.hasSidechain() && b->engine.hasSidechain();
             spectrum (proc.mine, magMine); spectrum (paired ? b->mine : proc.other, magOther);
         }
         const bool led = onBass && linkedRoom.load() >= 0;                     // a Kick Fit on the kick sets Room for this one
-        for (int i = 0; i < knobs.size(); ++i) { const bool on = onBass ? (i == 4 && ! led) : true; knobs[i]->setEnabled (on); knobs[i]->setAlpha (on ? 1.0f : 0.3f); }
+        for (int i = 0; i < knobs.size(); ++i) { const bool on = onVocal ? i == 6 : onBass ? (i == 4 && ! led) : true; knobs[i]->setEnabled (on); knobs[i]->setAlpha (on ? 1.0f : 0.3f); }
         sitBtn.setEnabled (! onBass);
         keys.add ((onBass ? magMine : magOther).data(), fftSize / 2, proc.rate / fftSize);
-        const double hz = proc.engine.noteShown(), tune = proc.get ("tune");
+        const double hz = onVocal ? 0.0 : proc.engine.noteShown(), tune = proc.get ("tune");
         shownHz = hz > 0 ? hz * kf::Engine::ratioOf (tune) : 0;
         int tonic = 0; bool minor = false; double sure = 0; juce::String keyText; bool haveKey = false;
         const int pick = (int) proc.get ("key");
@@ -336,7 +359,9 @@ private:
         else if (keys.key (tonic, minor, sure) && sure > 0.04) { haveKey = true; keyText = juce::String (noteNames[tonic]) + (minor ? " minor" : " major") + " (heard on the sidechain)"; }
         canTune = false;
         juce::String line;
-        if (onBass) line = ! proc.engine.hasSidechain() ? "On the bass: send the kick to this Kick Fit's sidechain so it knows when the kick hits."
+        if (onVocal) line = ! proc.engine.hasSidechain() ? "On the vocal: send everything except the vocal to this Kick Fit's sidechain, so it can hear the rest of the song."
+                                                          : "On the vocal: the bar shows how loud the singing is against everything else. Sit it sets Level.";
+        else if (onBass) line = ! proc.engine.hasSidechain() ? "On the bass: send the kick to this Kick Fit's sidechain so it knows when the kick hits."
                          : led ? "On the bass: its lows dip when the kick hits. Room for bass is set on the kick's Kick Fit."
                                : "On the bass: its lows dip when the kick on the sidechain hits. Room for bass sets how far.";
         else if (hz <= 0) line = "Play the kick: Kick Fit reads its boom note.";

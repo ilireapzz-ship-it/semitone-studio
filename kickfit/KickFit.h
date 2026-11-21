@@ -295,7 +295,7 @@ inline double tuneToKey (double hz, int tonic, bool minor, int* notePc = nullptr
 
 struct Params
 {
-    int role = 0;                 // 0 on the kick, 1 on the bass
+    int role = 0;                 // 0 on the kick, 1 on the bass, 2 on the vocal
     float thump = 0, punch = 0, click = 0, tail = 0;    // -1..1, 0 changes nothing
     float room = 0;               // 0..1: how far the bass's lows dip under the kick (role 1), up to 12 dB
     float tune = 0;               // semitones, 0 = off
@@ -324,6 +324,7 @@ public:
         meterLow1.highpass (30, .707, sr); meterLow2.lowpass (150, .707, sr); sideLow1.highpass (30, .707, sr); sideLow2.lowpass (150, .707, sr); duckDet1.highpass (30, .707, sr); duckDet2.lowpass (150, .707, sr);
         for (auto* b : { &kLow3a, &sLow3a }) { b->lowpass (300, .54, sr); b->reset(); } for (auto* b : { &kLow3b, &sLow3b }) { b->lowpass (300, 1.31, sr); b->reset(); }
         duckEnv.y = 0; duckRef = 0; duckSet = 1; duckTick = 0; duckRefDecay = std::exp (-1.0 / (3.0 * sr)); duckAtk = std::exp (-1.0 / (0.001 * sr));
+        kWeight (vocK1, vocK2, sr); kWeight (backK1, backK2, sr); vocStep = std::max (1, (int) (0.4 * sr)); vocE = backE = vocTop = 0; vocN = vocW = nVoc = 0;
         win = (int) (0.12 * sr); viewStep = std::max (1, (int) (0.003 * sr)); viewDecay = std::exp (-1.0 / (0.02 * sr)); nHits = 0; hitW = 0; accOn = false; viewPos = HitView::n; thumpHz = 0; thumpDb = 0;
         gainSmooth.y = dbToGain (p.gainDb); tailSmooth.y = 1; applied = p; retune.setRatio (ratioOf (p.tune)); retune.prepare (sr, 2); setThump (true);
     }
@@ -335,12 +336,29 @@ public:
     }
     const Params& params() const { return p; }
     int latency() const { return p.role == 0 ? retune.latency() : 0; }
+
+    // ---------- on the vocal (role 2) ----------
+    // How loud the singing is against everything else (the sidechain), both K-weighted, in 0.4 s steps while there is singing;
+    // the middle of the last 16 s of singing. Same measure as vocal_vs_backing_db in tools/kick_analyse.py.
+    bool vocalLevel (double& dB) const
+    {
+        const int cnt = std::min (nVoc, maxVoc); if (cnt < 5) return false;
+        double v[maxVoc]; for (int i = 0; i < cnt; ++i) v[i] = voc[i];
+        std::nth_element (v, v + cnt / 2, v + cnt); dB = v[cnt / 2]; return true;
+    }
+    // the Level change (dB) that puts the vocal at `target`; nothing when it already sits between lo and hi. false = can't tell.
+    bool vocalGain (double lo, double target, double hi, double& changeDb) const
+    {
+        double now; if (! vocalLevel (now) || ! hasSidechain()) return false;
+        changeDb = now >= lo && now <= hi ? 0.0 : std::clamp (target - now, -24.0, 24.0); return true;
+    }
     static double ratioOf (double semis) { return std::pow (2.0, semis / 12.0); }
 
     // l, r: this channel (changed in place). sl, sr_: the sidechain, or null when nothing is connected.
     void process (float* l, float* r, const float* sl, const float* sr_, int n)
     {
         if (p.role == 1) { duck (l, r, sl, sr_, n); return; }
+        if (p.role == 2) { vocal (l, r, sl, sr_, n); return; }
         setThump (false);
         const bool tuning = std::abs (p.tune) > 1e-4f || retune.latency() > 0;
         const bool shaping = p.thump != 0 || p.punch != 0 || p.click != 0 || p.tail != 0 || std::abs (p.gainDb) > 1e-4f || std::abs (gainSmooth.y - 1.0) > 1e-5 || std::abs (tailSmooth.y - 1.0) > 1e-5;
@@ -467,6 +485,43 @@ private:
         thumpHz = f;
         for (int c = 0; c < 2; ++c) thumpEq[c].peak (thumpHz, 1.0, thumpDb, sr);
     }
+    static void kWeight (Biquad& shelf, Biquad& hp, double sr)        // ITU-R BS.1770: a high shelf and a high-pass
+    {
+        double f0 = 1681.974450955533, G = 3.999843853973347, Q = 0.7071752369554196;
+        double K = std::tan (pi * f0 / sr); const double Vh = std::pow (10.0, G / 20), Vb = std::pow (Vh, 0.4996667741545416);
+        shelf.set (Vh + Vb * K / Q + K * K, 2 * (K * K - Vh), Vh - Vb * K / Q + K * K, 1 + K / Q + K * K, 2 * (K * K - 1), 1 - K / Q + K * K);
+        f0 = 38.13547087602444; Q = 0.5003270373238773; K = std::tan (pi * f0 / sr);
+        hp.set (1, -2, 1, 1 + K / Q + K * K, 2 * (K * K - 1), 1 - K / Q + K * K);
+        shelf.reset(); hp.reset();
+    }
+    // role 2: this channel is the vocal, the sidechain is everything else. Only Level changes the sound.
+    void vocal (float* l, float* r, const float* sl, const float* sr_, int n)
+    {
+        const double gTarget = dbToGain (p.gainDb);
+        const bool moving = std::abs (p.gainDb) > 1e-4f || std::abs (gainSmooth.y - 1.0) > 1e-5;
+        for (int i = 0; i < n; ++i)
+        {
+            if (moving)
+            {
+                const double g = gainSmooth.run (gTarget); double x[2] = { l[i] * g, r[i] * g };
+                for (auto& y : x) { const double ay = std::abs (y); if (ay > knee) y = (y < 0 ? -1 : 1) * (knee + (1 - knee) * std::tanh ((ay - knee) / (1 - knee))); }
+                l[i] = (float) x[0]; r[i] = (float) x[1];
+            }
+            const double v = 0.5 * ((double) l[i] + r[i]), s = sl ? 0.5 * ((double) sl[i] + (sr_ ? sr_[i] : sl[i])) : 0.0;
+            if (std::abs (s) > 1e-5) sideAge = 0; else if (sideAge < (1 << 30)) ++sideAge;
+            const double vk = vocK2.run (vocK1.run (v)), bk = backK2.run (backK1.run (s));
+            vocE += vk * vk; backE += bk * bk;
+            if (++vocN >= vocStep)
+            {
+                const double ve = vocE / vocN, be = backE / vocN; vocE = backE = 0; vocN = 0;
+                vocTop = std::max (ve, vocTop * 0.98);
+                for (int j = 0; j < HitView::n - 1; ++j) { hv.kick[j] = hv.kick[j + 1]; hv.side[j] = hv.side[j + 1]; }       // a rolling picture of the last 51 s
+                hv.kick[HitView::n - 1] = (float) std::sqrt (ve); hv.side[HitView::n - 1] = (float) std::sqrt (be); ++hv.count;
+                if (ve > 1e-9 && ve > 0.1 * vocTop && be > 1e-10)             // there is singing, and something to compare it with
+                { voc[vocW] = 10 * std::log10 (ve / be); vocW = (vocW + 1) % maxVoc; nVoc = std::min (nVoc + 1, maxVoc); }
+            }
+        }
+    }
     // role 1: this channel is the bass, the sidechain is the kick. A low shelf at duckHz that dips with the kick: above it nothing changes,
     // and at rest the shelf is exactly a wire.
     void duck (float* l, float* r, const float* sl, const float* sr_, int n)
@@ -496,7 +551,8 @@ private:
     double peakHold = 0, peakDecay = 0, fast = 0, thumpHz = 0, thumpDb = 0, duckRef = 0, duckRefDecay = 0, duckAtk = 0, duckGainNow = 1, duckSet = 1, vk = 0, vs = 0, ek = 0, es = 0, viewDecay = 0; unsigned duckTick = 0;
     const double knee = 0.89;
     int since = 0, hitCount = 0, win = 1, accN = 0, viewStep = 1, viewPos = 0, viewN = 0; bool accOn = false; int sideAge = 1 << 30;
-    static constexpr int maxHits = 12;
+    static constexpr int maxHits = 12, maxVoc = 40;
+    Biquad vocK1, vocK2, backK1, backK2; double vocE = 0, backE = 0, vocTop = 0, voc[maxVoc] {}; int vocN = 0, vocStep = 1, vocW = 0, nVoc = 0;
     Hit acc, hits[maxHits]; int nHits = 0, hitW = 0; double slowY = 0; HitView hv;
 };
 }

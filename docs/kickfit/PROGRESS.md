@@ -76,4 +76,6 @@ How far under the song's highest peak each part usually reaches:
 - The singing is about as loud as everything else put together while it sings: 1 dB under in rock, 1 dB over in pop.
 - The kick figure comes from the drum part at kick hits, so a snare or hat landing with the kick is counted in.
 - Splitting a song into parts is not perfect, so treat these as within a dB or two.
-- Vocal fit: the numbers are measured; nothing is built for vocals yet.
+- Vocal fit, first version (built and tested, not yet tried in FL): a third "I am on: The vocal" setting. It hears the rest of
+  the song on its sidechain, shows the vocal against it, and Sit it sets Level to where your songs have the singing
+  (rock: 2.5 dB under to 1.3 over everything else; pop: 1.6 under to 3.3 over). Only Level changes the sound.

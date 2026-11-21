@@ -285,9 +285,40 @@ static void testSit()
     double c; CHECK (! e.sitGain (lo, target, hi, c), "without a sidechain Sit it must say it can't tell, not guess");
 }
 
+// On the vocal: only Level changes the sound, and Sit it moves the singing to the target against the rest of the song.
+static void testVocal()
+{
+    const double sr = 48000, lo = -2, target = 0, hi = 2;          // a made-up target range, only for the test
+    Buf voice ((size_t) (sr * 12), 0.0f), back = tone (sr, 12.0, { { 110, 0.1 }, { 440, 0.08 }, { 2500, 0.03 } });
+    for (size_t i = 0; i < voice.size(); ++i)                        // sung phrases with gaps: 1.2 s on, 0.4 s off
+    {
+        const double t = (double) i / sr, ph = std::fmod (t, 1.6);
+        if (ph < 1.2) voice[i] = (float) (0.1 * std::sin (2 * pi * 330 * t) + 0.05 * std::sin (2 * pi * 1320 * t));
+    }
+    auto run1 = [&] (double scale, double level, double& now, double& change, const Buf* side)
+    {
+        Buf v = voice; for (auto& x : v) x *= (float) scale;
+        Params p; p.role = 2; p.gainDb = (float) level; Engine e; const Out o = render (sr, p, v, side, 256, &e);
+        if (level == 0) CHECK (std::memcmp (o.l.data(), v.data(), v.size() * sizeof (float)) == 0, "on the vocal, Level at 0 must change nothing");
+        return e.vocalLevel (now) && e.vocalGain (lo, target, hi, change);
+    };
+    double now = 0, change = 0, at1 = 0;
+    CHECK (run1 (1, 0, at1, change, &back), "the vocal setting should be able to measure singing against a backing");
+    const double inRange = std::pow (10.0, (target - at1) / 20);     // the scale that puts this voice on the target
+    CHECK (run1 (inRange, 0, now, change, &back) && change == 0 && std::abs (now - target) < 0.5, "a vocal already in range must not be moved (it sits at %.1f dB)", now);
+    for (double off : { -9.0, 7.0 })
+    {
+        const double scale = inRange * std::pow (10.0, off / 20);
+        CHECK (run1 (scale, 0, now, change, &back) && std::abs (now - (target + off)) < 0.5, "a vocal %.0f dB off should read as that, read %.1f", off, now);
+        double after = 0, c2 = 0; run1 (scale, change, after, c2, &back);
+        CHECK (std::abs (after - target) < 1.0, "Sit it moved the vocal from %.1f to %.1f dB, wanted %.1f", now, after, target);
+    }
+    CHECK (! run1 (1, 0, now, change, nullptr), "without the rest of the song, the vocal setting must say it can't tell");
+}
+
 int main()
 {
-    testDoNoHarm(); testSafe(); testPitch(); testTune(); testControls(); testSmallSpeaker(); testDuck(); testSit();
+    testDoNoHarm(); testSafe(); testPitch(); testTune(); testControls(); testSmallSpeaker(); testDuck(); testSit(); testVocal();
     printf (failures ? "%d FAILED\n" : "kickfit: all tests passed\n", failures);
     return failures ? 1 : 0;
 }

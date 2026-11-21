@@ -32,6 +32,12 @@ Use
 - Thump, Punch, Click and Tail shape the kick. At 0 they change nothing at all.
 - Room for bass (on the kick's Kick Fit) sets how far the bass's lows dip when the kick hits. Only the lows dip.
 
+On a vocal
+Put Kick Fit on the vocal's mixer track and set "I am on" to The vocal. Send everything except the vocal to its
+sidechain (the same two steps as above: "Sidechain to this track", then Processing > Connections > "2. Sidechain").
+The bar shows how loud the singing is against everything else, with the range your songs sit in. Sit it sets Level.
+On a vocal only Level changes the sound.
+
 Delay
 None, unless Tune is moving the note: 3 ms when tuning down, up to 63 ms when tuning up. FL Studio lines this up by itself.
 
