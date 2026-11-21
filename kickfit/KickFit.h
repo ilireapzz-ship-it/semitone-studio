@@ -85,9 +85,17 @@ public:
         lp1.lowpass (350, .54, sr); lp2.lowpass (350, 1.31, sr); lp1.reset(); lp2.reset();
         W = (int) (fs * 0.045); tauMin = (int) (fs / 260.0); tauMax = (int) (fs / 26.0) + 2;
         N = W + tauMax + 2; ring.assign ((size_t) N, 0.0); lin.assign ((size_t) N, 0.0); d.assign ((size_t) tauMax + 2, 0.0);
-        hop = std::max (1, (int) (fs * 0.015)); w = 0; ph = 0; sinceFrame = 0; sinceOnset = 1 << 28; frames.clear(); peakRms = 0; last = 0; held = 0;
+        hop = std::max (1, (int) (fs * 0.015)); w = 0; ph = 0; sinceFrame = 0; sinceOnset = 1 << 28; frames.clear(); peakRms = 0; last = 0; held = 0; nRecent = 0;
     }
-    void onset() { if (frames.size() >= 3) { held = settled(); heldSpread = spreadCents(); } sinceOnset = 0; frames.clear(); peakRms = 0; }
+    void onset() { if (frames.size() >= 3) { held = settled(); heldSpread = spreadCents(); recent[nRecent % 5] = held; ++nRecent; } sinceOnset = 0; frames.clear(); peakRms = 0; }
+    // for the display: the middle of the last five hits when they agree (one kick), else the newest hit (an 808 playing notes)
+    double steadyNote() const
+    {
+        const int n = std::min (nRecent, 5); if (n < 3) return settled();
+        double v[5]; for (int i = 0; i < n; ++i) v[i] = recent[i];
+        std::sort (v, v + n);
+        return 1200 * std::log2 (v[n - 1] / v[0]) < 80 ? v[n / 2] : (frames.size() >= 4 ? settled() : held);
+    }
     double heldNote() const { return held > 0 ? held : (frames.size() >= 8 ? settled() : 0.0); }     // steady between hits: for filters
     void push (double x)
     {
@@ -150,7 +158,7 @@ private:
         last = settled();
     }
     Biquad lp1, lp2; std::vector<double> ring, lin, d, frames;
-    double fs = 4000, peakRms = 0, last = 0, held = 0, heldSpread = 0;
+    double fs = 4000, peakRms = 0, last = 0, held = 0, heldSpread = 0, recent[5] {}; int nRecent = 0;
 public:
     double lastSpread() const { return frames.size() >= 8 ? spreadCents() : heldSpread; }
 private: int M = 1, W = 0, N = 0, tauMin = 0, tauMax = 0, hop = 1, w = 0, ph = 0, sinceFrame = 0, sinceOnset = 0;
@@ -297,9 +305,9 @@ public:
             duckShelf[c].lowShelf (p.duckHz, 1.0, sr); duckShelf[c].reset();
             for (auto* b : { &punchBp[c], &clickHp[c], &harmLp[c], &harmHp[c], &thumpEq[c] }) b->reset();
         }
-        meterLow1.highpass (30, .707, sr); meterLow2.lowpass (150, .707, sr); sideLow1.highpass (30, .707, sr); sideLow2.lowpass (150, .707, sr);
+        meterLow1.highpass (30, .707, sr); meterLow2.lowpass (150, .707, sr); sideLow1.highpass (30, .707, sr); sideLow2.lowpass (150, .707, sr); duckDet1.highpass (30, .707, sr); duckDet2.lowpass (150, .707, sr);
         duckEnv.y = 0; duckRef = 0; duckSet = 1; duckTick = 0; duckRefDecay = std::exp (-1.0 / (3.0 * sr)); duckAtk = std::exp (-1.0 / (0.001 * sr));
-        win = (int) (0.12 * sr); viewStep = std::max (1, (int) (0.003 * sr)); nHits = 0; hitW = 0; accOn = false; viewPos = HitView::n; thumpHz = 0; thumpDb = 0;
+        win = (int) (0.12 * sr); viewStep = std::max (1, (int) (0.003 * sr)); viewDecay = std::exp (-1.0 / (0.02 * sr)); nHits = 0; hitW = 0; accOn = false; viewPos = HitView::n; thumpHz = 0; thumpDb = 0;
         gainSmooth.y = dbToGain (p.gainDb); tailSmooth.y = 1; applied = p; retune.setRatio (ratioOf (p.tune)); retune.prepare (sr, 2); setThump (true);
     }
     void setParams (const Params& n)
@@ -377,10 +385,11 @@ public:
     // ---------- what the picture and Sit it read ----------
     double note() const { return pitch.settled(); }                 // Hz of the kick as it comes in; x ratioOf(tune) after tuning
     double noteNow() const { return pitch.current(); }
+    double noteShown() const { return pitch.steadyNote(); }             // steadier, for the window
     double glideSemis() const { return pitch.glideSemis(); }
     double noteSpreadCents() const { return pitch.lastSpread(); }       // above about 40: the kick has no single note
     int hitsSeen() const { return hitCount; }
-    bool hasSidechain() const { return sideSeen; }
+    bool hasSidechain() const { return sideAge < (int) (sr * 3); }       // something came in on the other input in the last 3 s
     // kick lows (30-150 Hz) against kick + sidechain, dB, middle of the last hits. Same measure as tools/kick_analyse.py.
     bool sitLevel (double& dB) const
     {
@@ -391,7 +400,7 @@ public:
     // the gain change (dB) that puts the kick at `target`; nothing if it already sits between lo and hi. false = can't tell.
     bool sitGain (double lo, double target, double hi, double& changeDb) const
     {
-        double now; if (! sitLevel (now) || ! sideSeen) return false;
+        double now; if (! sitLevel (now) || ! hasSidechain()) return false;
         changeDb = 0; if (now >= lo && now <= hi) return true;
         const Hit h = middle(); const double T = std::pow (10.0, target / 10.0), den = h.low - T * h.full;
         if (h.side <= 1e-12) return false;
@@ -412,7 +421,7 @@ private:
     void meter (bool hit, double k, double s)
     {
         const double kl = meterLow2.run (meterLow1.run (k)), sLow = sideLow2.run (sideLow1.run (s));
-        if (std::abs (s) > 1e-5) sideSeen = true;
+        if (std::abs (s) > 1e-5) sideAge = 0; else if (sideAge < (1 << 30)) ++sideAge;
         if (hit) { if (accOn && accN >= win) store(); acc = {}; accN = 0; accOn = true; viewPos = 0; viewN = 0; vk = vs = 0; ++hv.count; }
         if (accOn && accN < win)
         {
@@ -421,7 +430,8 @@ private:
         }
         if (viewPos < HitView::n)
         {
-            vk = std::max (vk, std::abs (kl)); vs = std::max (vs, std::abs (sLow));
+            ek = std::max (std::abs (kl), ek * viewDecay); es = std::max (std::abs (sLow), es * viewDecay);      // outline, not the wave itself
+            vk = std::max (vk, ek); vs = std::max (vs, es);
             if (++viewN >= viewStep) { hv.kick[viewPos] = (float) vk; hv.side[viewPos] = (float) vs; ++viewPos; viewN = 0; vk = vs = 0; }
         }
     }
@@ -446,8 +456,8 @@ private:
         for (int i = 0; i < n; ++i)
         {
             const double s = sl ? 0.5 * ((double) sl[i] + (sr_ ? sr_[i] : sl[i])) : 0.0;
-            const double e = std::abs (sideLow2.run (sideLow1.run (s)));
-            if (onsetSide.run (s)) { ++hitCount; }
+            const double e = std::abs (duckDet2.run (duckDet1.run (s)));
+            const bool hit = onsetSide.run (s); if (hit) ++hitCount;
             duckEnv.y = zap (e > duckEnv.y ? e + duckAtk * (duckEnv.y - e) : e + rel * (duckEnv.y - e));
             duckRef = std::max (duckEnv.y, zap (duckRef * duckRefDecay));
             const double amt = duckRef > 1e-5 ? std::min (1.0, duckEnv.y / duckRef) : 0.0;
@@ -456,16 +466,17 @@ private:
             // at rest and rung out: a wire, to the last bit (a compiler may round the idle filter differently)
             const bool idle = duckSet == 1.0 && std::abs (duckShelf[0].z1) + std::abs (duckShelf[0].z2) + std::abs (duckShelf[1].z1) + std::abs (duckShelf[1].z2) < 1e-9;
             if (! idle) { l[i] = (float) duckShelf[0].run (l[i]); r[i] = (float) duckShelf[1].run (r[i]); }
+            meter (hit, s, 0.5 * ((double) l[i] + r[i]));          // the kick (sidechain) against the bass (this channel), as on the kick
         }
     }
 
     double sr = 48000; Params p, applied;
     Onset onsetIn, onsetOut, onsetSide; PitchTracker pitch; Retune retune;
     OnePole envFast, envSlow, slowUp, trSmooth, tailSmooth, gainSmooth, duckEnv;
-    Biquad thumpEq[2], punchBp[2], clickHp[2], harmLp[2], harmHp[2], meterLow1, meterLow2, sideLow1, sideLow2, duckShelf[2];
-    double peakHold = 0, peakDecay = 0, fast = 0, thumpHz = 0, thumpDb = 0, duckRef = 0, duckRefDecay = 0, duckAtk = 0, duckGainNow = 1, duckSet = 1, vk = 0, vs = 0; unsigned duckTick = 0;
+    Biquad thumpEq[2], punchBp[2], clickHp[2], harmLp[2], harmHp[2], meterLow1, meterLow2, sideLow1, sideLow2, duckDet1, duckDet2, duckShelf[2];
+    double peakHold = 0, peakDecay = 0, fast = 0, thumpHz = 0, thumpDb = 0, duckRef = 0, duckRefDecay = 0, duckAtk = 0, duckGainNow = 1, duckSet = 1, vk = 0, vs = 0, ek = 0, es = 0, viewDecay = 0; unsigned duckTick = 0;
     const double knee = 0.89;
-    int since = 0, hitCount = 0, win = 1, accN = 0, viewStep = 1, viewPos = 0, viewN = 0; bool accOn = false, sideSeen = false;
+    int since = 0, hitCount = 0, win = 1, accN = 0, viewStep = 1, viewPos = 0, viewN = 0; bool accOn = false; int sideAge = 1 << 30;
     static constexpr int maxHits = 12;
     Hit acc, hits[maxHits]; int nHits = 0, hitW = 0; double slowY = 0; HitView hv;
 };

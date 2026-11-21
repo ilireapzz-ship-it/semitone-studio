@@ -32,7 +32,16 @@
 - FL reports its delay as "none" with Tune at zero, and offers "1. Input" and "2. Sidechain" under Processing > Connections.
 - GitHub builds the Mac VST3 and AU and the Windows VST3.
 
+**With your kick and bass in FL (21 Nov, evening)**
+- The kick and bass were on the same mixer track; they need one each. Set up: kick on Insert 1, bass on Insert 2.
+- Works: the picture (kick over bass), the boom note, the key heard from the bass, and the bass's lows dipping under the kick.
+- Found: FL Studio won't let two tracks feed each other's sidechains. So Kick Fit now works as a pair: the one on the
+  bass hears both and shares it with the one on the kick (picture, Sit it, and the Room for bass knob).
+- The boom note no longer flickers between hits, and the time picture shows outlines instead of the raw wave.
+- The key guess said C major for a bass loop named C minor. Pick the key at the top when you know it.
+
 **Not done yet**
-- Playing a real kick and bass through it in FL (sound, the sidechain picture, Sit it, Tune's delay compensation).
+- Trying the paired build in FL (it is built and tested, but FL has to be restarted to load it).
+- Tune's delay compensation in FL.
 - The test bench on your kicks, and the blind A/B listening test.
 - Mac build (GitHub does this when the branch is pushed).

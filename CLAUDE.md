@@ -34,7 +34,7 @@ Jamie is a songwriter, not a programmer: explain results in plain words, not cod
   `tools/kickfit_targets.py` turns that into `KickFitTargets.h` (CI checks it is up to date). Per-file results stay in `%LOCALAPPDATA%/SemitoneKickFit`.
   A genre with fewer than 8 songs is "not enough data" and the plug-in says so.
 - With every control at rest the kick passes through bit for bit (many samples peak at full scale), and the bass dip is a wire. Keep it that way.
-- Role 0 sits on the kick; role 1 sits on the bass with the kick on its sidechain (a plug-in can't change its sidechain). Tune replays each hit at another
+- Role 0 sits on the kick; role 1 sits on the bass with the kick on its sidechain (a plug-in can't change its sidechain). FL Studio refuses two tracks sidechained to each other, so the pair shares in-process (`bassOne`, `kickOne`, `linkedRoom`, `linkLock` in Plugin.cpp): the bass one measures kick against bass and the kick one's window reads it (`ctx()`). Tune replays each hit at another
   speed (`Retune`), so it reports latency; nothing else does. Notes for Jamie: `docs/kickfit/PROGRESS.md`; bench: `tools/kickfit_bench.py`.
 
 ## Bridge events (web ⇄ native, JSON)

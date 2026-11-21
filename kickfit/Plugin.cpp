@@ -22,12 +22,25 @@ struct Scope       // the last stretch of sound, written by the audio thread, re
     void push (float v) { const int i = w.load (std::memory_order_relaxed); data[(size_t) i] = v; w.store ((i + 1) & (scopeSize - 1), std::memory_order_relaxed); }
     void latest (float* out, int n) const { const int e = w.load(); for (int i = 0; i < n; ++i) out[i] = data[(size_t) ((e - n + i) & (scopeSize - 1))]; }
 };
-std::atomic<float> linkedKickHz { 0.0f };       // a Kick Fit on the kick tells a Kick Fit on the bass where the boom is
+// Two Kick Fits in one song work as a pair: one on the kick, one on the bass with the kick on its sidechain.
+// (FL Studio won't let two mixer tracks feed each other's sidechains, so only the one on the bass hears both.)
+std::atomic<float> linkedKickHz { 0.0f };       // the one on the kick says where the boom is
+std::atomic<float> linkedRoom { -1.0f };        // and how much room the bass should make (-1 = no Kick Fit on a kick)
+juce::CriticalSection linkLock;                 // held while the window reads the other one, and while one is deleted
 }
+
+class KickFitProcessor;
+namespace { std::atomic<KickFitProcessor*> bassOne { nullptr }, kickOne { nullptr }; }
 
 class KickFitProcessor : public juce::AudioProcessor, private juce::AsyncUpdater
 {
 public:
+    ~KickFitProcessor() override
+    {
+        const juce::ScopedLock sl (linkLock);
+        KickFitProcessor* me = this; bassOne.compare_exchange_strong (me, nullptr);
+        me = this; if (kickOne.compare_exchange_strong (me, nullptr)) linkedRoom.store (-1.0f);
+    }
     KickFitProcessor()
         : AudioProcessor (BusesProperties().withInput ("Input", juce::AudioChannelSet::stereo(), true)
                                            .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
@@ -87,6 +100,7 @@ public:
         p.room = raw.at ("room")->load() / 100; p.tune = raw.at ("tune")->load(); p.gainDb = raw.at ("level")->load();
         const float k = linkedKickHz.load();                       // the dip covers the kick's boom and the octave above it
         p.duckHz = k > 0 ? juce::jlimit (90.0f, 200.0f, k * 2.2f) : 120.0f;
+        const float lr = linkedRoom.load(); if (p.role == 1 && lr >= 0) p.room = lr;        // the knob on the kick's Kick Fit leads
         return p;
     }
     void processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer&) override
@@ -108,6 +122,8 @@ public:
         else { if (spare.getNumSamples() < n) return; spare.copyFrom (0, 0, l, n); r = spare.getWritePointer (0); }
         engine.process (l, r, sl, sr, n);
         for (int i = 0; i < n; ++i) { mine.push (0.5f * (l[i] + r[i])); other.push (sl ? 0.5f * (sl[i] + sr[i]) : 0.0f); }
+        if (p.role == 1) { if (bassOne.load (std::memory_order_relaxed) != this) bassOne.store (this); }
+        else { if (kickOne.load (std::memory_order_relaxed) != this) kickOne.store (this); linkedRoom.store (raw.at ("room")->load() / 100); }
         if (p.role == 0 && engine.note() > 0) linkedKickHz.store ((float) (engine.note() * kf::Engine::ratioOf (p.tune)));
         if (engine.latency() != lastLatency) { lastLatency = engine.latency(); triggerAsyncUpdate(); }
     }
@@ -201,7 +217,7 @@ private:
     void drawPitch (juce::Graphics& g, juce::Rectangle<int> r)
     {
         const bool onBass = proc.get ("role") > 0.5f;
-        frame (g, r, onBass ? "Pitch: this bass (blue) and the kick on the sidechain (orange)" : "Pitch: this kick (orange) and the sidechain (blue)");
+        frame (g, r, onBass ? "Pitch: this bass (blue) and the kick on the sidechain (orange)" : paired ? "Pitch: this kick (orange) and the bass (blue, from the Kick Fit on the bass)" : "Pitch: this kick (orange) and the sidechain (blue)");
         auto in = r.reduced (8, 22);
         const auto& t = kf::modeTargets[(size_t) juce::jlimit (0, kf::numModes - 1, (int) proc.get ("mode"))];
         if (t.measured && t.noteHi > t.noteLo)
@@ -245,7 +261,7 @@ private:
     void drawTime (juce::Graphics& g, juce::Rectangle<int> r)
     {
         frame (g, r, "Time: one hit, lows only (0.4 s)");
-        auto in = r.reduced (8, 22); const auto& v = proc.engine.view();
+        auto in = r.reduced (8, 22); const juce::ScopedLock sl (linkLock); const auto& v = ctx().view();
         float top = 1e-4f; for (int i = 0; i < kf::HitView::n; ++i) top = std::max ({ top, v.kick[i], v.side[i] });
         auto draw = [&] (const float* d, juce::Colour c, bool filled)
         {
@@ -254,8 +270,7 @@ private:
             p.lineTo ((float) in.getRight(), (float) in.getBottom());
             g.setColour (c); g.strokePath (p, juce::PathStrokeType (1.5f)); if (filled) { g.setColour (c.withAlpha (0.18f)); g.fillPath (p); }
         };
-        const bool onBass = proc.get ("role") > 0.5f;
-        draw (onBass ? v.kick : v.side, look::bass, false); draw (onBass ? v.side : v.kick, look::kick, true);
+        draw (v.side, look::bass, false); draw (v.kick, look::kick, true);           // on the bass the sidechain is the kick: the engine already files it under kick
     }
     void drawMeter (juce::Graphics& g, juce::Rectangle<int> r)
     {
@@ -266,7 +281,7 @@ private:
         auto x = [&] (double dB) { return bar.getX() + (float) juce::jlimit (0.0, 1.0, (dB + 30) / 30) * bar.getWidth(); };
         g.setColour (look::paper); g.fillRect (bar);
         if (t.measured) { g.setColour (look::zone.withAlpha (0.35f)); g.fillRect (x (t.sitLo), (float) bar.getY(), x (t.sitHi) - x (t.sitLo), (float) bar.getHeight()); }
-        double now; if (proc.engine.hasSidechain() && proc.engine.sitLevel (now)) { g.setColour (look::kick); g.fillRect (x (now) - 2, (float) bar.getY() - 3, 4.0f, (float) bar.getHeight() + 6); }
+        const juce::ScopedLock sl (linkLock); double now; if (ctx().hasSidechain() && ctx().sitLevel (now)) { g.setColour (look::kick); g.fillRect (x (now) - 2, (float) bar.getY() - 3, 4.0f, (float) bar.getHeight() + 6); }
     }
 
     void sit()
@@ -274,8 +289,9 @@ private:
         const auto& t = kf::modeTargets[(size_t) juce::jlimit (0, kf::numModes - 1, (int) proc.get ("mode"))];
         double change = 0, now = 0;
         if (! t.measured) { sitSaid = juce::String ("Not enough of your ") + t.name + " songs were measured to know where the kick should sit. Pick another genre or set Level by ear."; return; }
-        if (! proc.engine.hasSidechain()) { sitSaid = "No sidechain yet: route the bass or the beat into Kick Fit's sidechain, play the song, then press Sit it."; return; }
-        if (! proc.engine.sitGain (t.sitLo, t.sitMid, t.sitHi, change) || ! proc.engine.sitLevel (now)) { sitSaid = "Play a few bars with the kick first, then press Sit it."; return; }
+        const juce::ScopedLock sl (linkLock);
+        if (! ctx().hasSidechain()) { sitSaid = "Kick Fit can't hear the bass yet. Put a second Kick Fit on the bass, set it to The bass, and send the kick to its sidechain. Then play and press Sit it."; return; }
+        if (! ctx().sitGain (t.sitLo, t.sitMid, t.sitHi, change) || ! ctx().sitLevel (now)) { sitSaid = "Play a few bars with the kick first, then press Sit it."; return; }
         if (std::abs (change) < 0.05) { sitSaid = "The kick already sits where your " + juce::String (t.name) + " songs have it. Left alone."; return; }
         proc.setParam ("level", juce::jlimit (-12.0f, 12.0f, proc.get ("level") + (float) change));
         sitSaid = juce::String (change > 0 ? "Turned the kick up " : "Turned the kick down ") + juce::String (std::abs (change), 1) + " dB to where your " + t.name + " songs have it. Your ears do the rest.";
@@ -291,10 +307,18 @@ private:
             mag.resize ((size_t) fftSize / 2, 0.0f);
             for (size_t i = 0; i < mag.size(); ++i) { const float v = buf[i] / (fftSize * 0.25f); mag[i] = v > mag[i] ? v : mag[i] * 0.86f + v * 0.14f; }
         };
-        spectrum (proc.mine, magMine); spectrum (proc.other, magOther);
         const bool onBass = proc.get ("role") > 0.5f;
+        {
+            const juce::ScopedLock sl (linkLock);
+            auto* b = onBass ? nullptr : bassOne.load();
+            paired = b != nullptr && ! proc.engine.hasSidechain() && b->engine.hasSidechain();
+            spectrum (proc.mine, magMine); spectrum (paired ? b->mine : proc.other, magOther);
+        }
+        const bool led = onBass && linkedRoom.load() >= 0;                     // a Kick Fit on the kick sets Room for this one
+        for (int i = 0; i < knobs.size(); ++i) { const bool on = onBass ? (i == 4 && ! led) : true; knobs[i]->setEnabled (on); knobs[i]->setAlpha (on ? 1.0f : 0.3f); }
+        sitBtn.setEnabled (! onBass);
         keys.add ((onBass ? magMine : magOther).data(), fftSize / 2, proc.rate / fftSize);
-        const double hz = proc.engine.note(), tune = proc.get ("tune");
+        const double hz = proc.engine.noteShown(), tune = proc.get ("tune");
         shownHz = hz > 0 ? hz * kf::Engine::ratioOf (tune) : 0;
         int tonic = 0; bool minor = false; double sure = 0; juce::String keyText; bool haveKey = false;
         const int pick = (int) proc.get ("key");
@@ -302,7 +326,9 @@ private:
         else if (keys.key (tonic, minor, sure) && sure > 0.04) { haveKey = true; keyText = juce::String (noteNames[tonic]) + (minor ? " minor" : " major") + " (heard on the sidechain)"; }
         canTune = false;
         juce::String line;
-        if (onBass) line = "On the bass: its lows dip when the kick on the sidechain hits. Room for bass sets how far.";
+        if (onBass) line = ! proc.engine.hasSidechain() ? "On the bass: send the kick to this Kick Fit's sidechain so it knows when the kick hits."
+                         : led ? "On the bass: its lows dip when the kick hits. Room for bass is set on the kick's Kick Fit."
+                               : "On the bass: its lows dip when the kick on the sidechain hits. Room for bass sets how far.";
         else if (hz <= 0) line = "Play the kick: Kick Fit reads its boom note.";
         else
         {
@@ -315,7 +341,7 @@ private:
                 if (std::abs (move) < 0.15) line += "That fits " + keyText + ".";
                 else { tuneMove = tune + move; canTune = std::abs (tuneMove) <= 12; line += "Key: " + keyText + ". " + juce::String (noteNames[pc]) + " is the nearest note that fits."; tuneBtn.setButtonText (juce::String ("Tune to ") + noteNames[pc] + " (" + (move > 0 ? "+" : "") + juce::String (move, 2) + ")"); }
             }
-            else if (! haveKey) line += "Key not known yet: pick it at the top, or feed the bass or beat into the sidechain.";
+            else if (! haveKey) line += "Key not known yet: pick it at the top, or put a Kick Fit on the bass so it can listen.";
         }
         if (! canTune) tuneBtn.setButtonText (std::abs (tune) > 0.005 ? "Tuned" : "Tune to key");
         tuneBtn.setEnabled (canTune);
@@ -329,7 +355,8 @@ private:
     juce::OwnedArray<juce::Slider> knobs; juce::OwnedArray<juce::Label> labels; juce::OwnedArray<juce::AudioProcessorValueTreeState::SliderAttachment> sliders;
     juce::TextButton tuneBtn, sitBtn; juce::Label said; juce::Rectangle<int> picture;
     juce::dsp::FFT fft; juce::dsp::WindowingFunction<float> window; std::vector<float> magMine, magOther;
-    kf::KeyFinder keys; double shownHz = 0, tuneMove = 0; bool canTune = false; juce::String sitSaid; int sitShown = 0;
+    kf::Engine& ctx() { auto* b = bassOne.load(); return paired && b != nullptr ? b->engine : proc.engine; }     // call with linkLock held
+    kf::KeyFinder keys; double shownHz = 0, tuneMove = 0; bool canTune = false, paired = false; juce::String sitSaid; int sitShown = 0;
 };
 
 juce::AudioProcessorEditor* KickFitProcessor::createEditor() { return new KickFitEditor (*this); }

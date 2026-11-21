@@ -1,28 +1,36 @@
 Kick Fit
 ========
-A plug-in for the kick channel that helps the kick sit in the mix. VST3 (Windows and Mac) and AU (Mac).
+A plug-in that helps the kick sit in the mix. VST3 (Windows and Mac) and AU (Mac).
 
 Install
-- Windows: copy the "Kick Fit.vst3" folder into C:\Program Files\Common Files\VST3, then restart FL Studio.
+- Windows: copy the "Kick Fit.vst3" folder into C:\Program Files\Common Files\VST3, then in FL Studio use
+  Options > Manage plugins > Find installed plugins.
 - Mac: copy "Kick Fit.vst3" into ~/Library/Audio/Plug-Ins/VST3 and "Kick Fit.component" into ~/Library/Audio/Plug-Ins/Components.
 
-Use
-1. Put Kick Fit on the kick's mixer channel. Leave "I am on" set to The kick.
-2. Send the bass (or the whole beat without the kick) to Kick Fit's sidechain, so it can judge the kick in context.
-   In FL Studio:
-   a. In the mixer, select the bass track, then right-click the small arrow at the bottom of the kick's track and
-      choose "Sidechain to this track".
-   b. In Kick Fit's window click the gear (top left), then the second icon (plug with a gear), then the Processing tab.
-   c. Under Connections, set the box next to "2. Sidechain" to the bass track.
-   (Step b and c's screen was checked in FL Studio 2026 on Windows; step a is FL's usual way and has not been run with sound yet.)
-3. Pick the genre and play the song. The picture shows the kick (orange) over the sidechain (blue), in pitch and in time.
-   The green zone is where the kick's boom sits in your own songs of that genre. No zone means too few songs were measured.
-4. Tune to key moves the boom to the nearest note that fits. Sit it sets the kick's level to where your songs have it.
-5. Thump, Punch, Click and Tail shape the kick. At rest (0) they change nothing at all.
+Set it up in FL Studio (checked in FL Studio 2026 on Windows)
+The kick and the bass must be on two different mixer tracks. You use two Kick Fits, one on each. They work as a pair.
+1. Kick on its own mixer track (say Insert 1). Bass on another (say Insert 2). In the Channel rack, the small number
+   left of each sound is its mixer track.
+2. Put Kick Fit on the kick's track. Leave "I am on" set to The kick.
+3. Put a second Kick Fit on the bass's track and set its "I am on" to The bass.
+4. Send the kick to the bass's Kick Fit: click the kick's mixer track to select it, then right-click the small arrow at
+   the bottom of the bass's track and choose "Sidechain to this track".
+5. In the bass's Kick Fit window: click the gear (top left), then the second icon (a plug with a gear), then the
+   Processing tab. Under Connections, right-click the box next to "2. Sidechain" and pick the kick's track.
+   Click the first icon (the plug) to get back to Kick Fit.
+6. Play. The Kick Fit on the kick now shows the kick (orange) over the bass (blue), and Sit it works.
 
-Make room in the bass
-A plug-in on the kick can hear the bass but cannot change it. So put a second Kick Fit on the bass channel, set
-"I am on" to The bass, and send the kick to its sidechain. Room for bass then dips only the bass's lows when the kick hits.
+Why two: a plug-in on the kick can't change the bass, and FL Studio won't let two tracks feed each other's sidechains.
+So the one on the bass listens to both and does the dipping, and shares what it hears with the one on the kick.
+
+Use
+- Pick the genre. The green zone is where the kick's boom sits in your own songs of that genre; the green part of the
+  bar is how loud the kick's lows are against the mix in those songs. No zone means too few songs were measured.
+- Sit it sets the kick's level to where your songs have it. Your ears do the rest.
+- Tune to key moves the boom to the nearest note that fits the key (picked at the top, or heard from the bass).
+  If the kick's pitch keeps falling it has no single note, and Kick Fit says so.
+- Thump, Punch, Click and Tail shape the kick. At 0 they change nothing at all.
+- Room for bass (on the kick's Kick Fit) sets how far the bass's lows dip when the kick hits. Only the lows dip.
 
 Delay
 None, unless Tune is moving the note: 3 ms when tuning down, up to 63 ms when tuning up. FL Studio lines this up by itself.
