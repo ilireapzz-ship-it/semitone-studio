@@ -112,3 +112,5 @@ A second plug-in for the bus (or master) the kick, bass and vocal meet on. First
 - Fit Bus: Transients (Attack and Sustain) and Tame a range (one of the six ranges held down only when it goes over a
   threshold: a de-esser for the top ranges, a boom tamer for the bottom ones; Hear it plays just that range). Both do
   nothing at all at rest. Tested on made-up sounds. Not yet tried in FL.
+- Tried in FL on the test project: the tone bars draw (that mix has far less air than the pop songs), Tame on the sub range
+  held it down by up to about 4 dB, and Attack moved the loudest peak from -5.8 dB to -2.8 dB turned up and -7.7 dB turned down.

@@ -139,10 +139,10 @@ public:
             auto head = strip.withTrimmedTop (10).removeFromTop (18); g.setColour (look::ink); g.setFont (juce::FontOptions (12.0f, juce::Font::bold));
             g.drawText ("Transients", head.removeFromLeft (168), juce::Justification::centredLeft); head.removeFromLeft (40);
             g.drawText ("Tame a range (holds it down only when it jumps out)", head, juce::Justification::centredLeft);
-            const bool on = proc.raw ("tame") > 0.5f; const float held = proc.engine.tameDb();
+            const bool on = proc.raw ("tame") > 0.5f; tameShown = std::min (proc.engine.tameDb(), tameShown * 0.97f); const float held = tameShown;          // the deepest of the last second or so, so the words don't flicker
             g.setColour (look::soft); g.setFont (juce::FontOptions (11.0f));
             g.drawFittedText (! on ? "Pick a range to watch." : proc.raw ("tameHear") > 0.5f ? "You are hearing only the range it watches. Switch Hear it off when done."
-                              : held < -0.1f ? juce::String ("Holding it down ") + juce::String (-held, 1) + " dB." : "Under the threshold: nothing is being changed.",
+                              : held < -0.1f ? juce::String ("Holding it down by up to ") + juce::String (-held, 1) + " dB." : "Under the threshold: nothing is being changed.",
                               strip.withTrimmedLeft (168 + 40 + 190 + 12 + 168 + 10).withTrimmedTop (40).reduced (0, 6), juce::Justification::topLeft, 4);
         }
         g.setColour (look::ink); g.setFont (juce::FontOptions (18.0f, juce::Font::bold)); g.drawText ("Fit Bus", area.removeFromTop (30), juce::Justification::centredLeft);
@@ -302,6 +302,7 @@ private:
     }
     FitBusProcessor& proc; juce::Slider gain, ceiling; juce::Label gainL, ceilL; juce::OwnedArray<juce::AudioProcessorValueTreeState::SliderAttachment> links;
     juce::ComboBox mode; std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> modeLink; juce::TextButton fix[3];
+    float tameShown = 0;
     juce::Slider attack, sustain, tameThr, tameAmt; juce::Label attackL, sustainL, tameThrL, tameAmtL; juce::ComboBox tame; juce::TextButton hear;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> tameLink; std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> hearLink;
     juce::File logFile { juce::File::getSpecialLocation (juce::File::tempDirectory).getChildFile ("fitbus-log.csv") };
