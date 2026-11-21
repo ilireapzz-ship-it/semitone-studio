@@ -44,7 +44,13 @@ public:
         juce::Component::SafePointer<HostWindow> safe (this);
         juce::Timer::callAfterDelay (150, [safe] { if (safe != nullptr) safe->raise(); });
     }
-    void closeButtonPressed() override { if (onClosed) onClosed(); }
+    // 22 Nov (Jamie: "when i click x on a plugin, it minimizes the daw"): Windows gives the focus to whatever window is next when the
+    // active one closes, often another program, so Semitone looked minimised. Semitone's own window comes to the front first.
+    void closeButtonPressed() override
+    {
+        if (owner != nullptr) { if (owner->isMinimised()) owner->setMinimised (false); owner->toFront (true); }
+        if (onClosed) onClosed();
+    }
     // Jamie, 11 Nov: a plug-in opened behind the app, and clicking its name again did nothing. Now it comes to the front every time.
     void raise() { if (isMinimised()) setMinimised (false); setVisible (true); toFront (true); }
 private:
@@ -60,6 +66,7 @@ private:
         {
             auto* w = juce::TopLevelWindow::getTopLevelWindow (i);
             if (w == nullptr || w == this || dynamic_cast<HostWindow*> (w) != nullptr || ! w->isShowing()) continue;
+            owner = w;
             if (auto* mp = w->getPeer())
             {
                 static juce::DynamicLibrary user32 ("user32.dll");
@@ -72,6 +79,7 @@ private:
        #endif
     }
     std::function<void()> onClosed;
+    juce::Component::SafePointer<juce::TopLevelWindow> owner;   // Semitone's own window (Windows app only)
 };
 
 class PartHost : private juce::Timer
