@@ -441,7 +441,9 @@ private:
             const double amt = duckRef > 1e-5 ? std::min (1.0, duckEnv.y / duckRef) : 0.0;
             const double g = 1 - depth * amt; duckGainNow = g;
             if ((duckTick++ & 7) == 0 && g != duckSet) { duckSet = g; duckShelf[0].lowShelf (p.duckHz, g, sr); duckShelf[1].lowShelf (p.duckHz, g, sr); }
-            l[i] = (float) duckShelf[0].run (l[i]); r[i] = (float) duckShelf[1].run (r[i]);
+            // at rest and rung out: a wire, to the last bit (a compiler may round the idle filter differently)
+            const bool idle = duckSet == 1.0 && std::abs (duckShelf[0].z1) + std::abs (duckShelf[0].z2) + std::abs (duckShelf[1].z1) + std::abs (duckShelf[1].z2) < 1e-9;
+            if (! idle) { l[i] = (float) duckShelf[0].run (l[i]); r[i] = (float) duckShelf[1].run (r[i]); }
         }
     }
 
