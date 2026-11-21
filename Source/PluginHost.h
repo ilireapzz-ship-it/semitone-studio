@@ -48,7 +48,7 @@ public:
     // active one closes, often another program, so Semitone looked minimised. Semitone's own window comes to the front first.
     void closeButtonPressed() override
     {
-        if (owner != nullptr) { if (owner->isMinimised()) owner->setMinimised (false); owner->toFront (true); }
+        if (owner != nullptr) { if (auto* op = owner->getPeer()) if (op->isMinimised()) op->setMinimised (false); owner->toFront (true); }
         if (onClosed) onClosed();
     }
     // Jamie, 11 Nov: a plug-in opened behind the app, and clicking its name again did nothing. Now it comes to the front every time.
