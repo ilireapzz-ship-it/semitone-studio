@@ -23,6 +23,12 @@ public:
         l.add (std::make_unique<juce::AudioParameterChoice> (juce::ParameterID { "mode", 1 }, "Genre", modes, 1));
         l.add (std::make_unique<F> (juce::ParameterID { "gain", 1 }, "Loudness", juce::NormalisableRange<float> (0, 24, 0.1f), 0.0f));
         l.add (std::make_unique<F> (juce::ParameterID { "ceiling", 1 }, "Ceiling", juce::NormalisableRange<float> (-12, 0, 0.1f), 0.0f));
+        l.add (std::make_unique<F> (juce::ParameterID { "attack", 1 }, "Attack", juce::NormalisableRange<float> (-100, 100, 1), 0.0f));
+        l.add (std::make_unique<F> (juce::ParameterID { "sustain", 1 }, "Sustain", juce::NormalisableRange<float> (-100, 100, 1), 0.0f));
+        l.add (std::make_unique<juce::AudioParameterChoice> (juce::ParameterID { "tame", 1 }, "Tame a range", juce::StringArray { "Off", "Sub (under 60 Hz)", "Bass (60-150 Hz)", "Low mids (150-400 Hz)", "Mids (400-1500 Hz)", "Presence (1.5-5 kHz)", "Air (over 5 kHz)" }, 0));
+        l.add (std::make_unique<F> (juce::ParameterID { "tameThr", 1 }, "Tame threshold", juce::NormalisableRange<float> (-60, 0, 0.5f), -24.0f));
+        l.add (std::make_unique<F> (juce::ParameterID { "tameAmt", 1 }, "Tame amount", juce::NormalisableRange<float> (0, 100, 1), 50.0f));
+        l.add (std::make_unique<juce::AudioParameterBool> (juce::ParameterID { "tameHear", 1 }, "Hear the range", false));
         return l;
     }
     const juce::String getName() const override { return "Fit Bus"; }
@@ -47,7 +53,10 @@ public:
     {
         juce::ScopedNoDenormals noDenormals;
         const int n = buffer.getNumSamples(); if (n == 0 || buffer.getNumChannels() == 0) return;
-        fb::Params p; p.gainDb = gain->load(); p.ceilingDb = ceiling->load(); engine.set (p);
+        fb::Params p; p.gainDb = gain->load(); p.ceilingDb = ceiling->load();
+        p.attack = raw ("attack") / 100; p.sustain = raw ("sustain") / 100;
+        p.tameRange = (int) raw ("tame"); p.tameThrDb = raw ("tameThr"); p.tameAmount = raw ("tameAmt") / 100; p.tameHear = raw ("tameHear") > 0.5f;
+        engine.set (p);
         float* l = buffer.getWritePointer (0); float* r = buffer.getNumChannels() > 1 ? buffer.getWritePointer (1) : nullptr;
         if (r != nullptr) { engine.process (l, r, n); return; }
         spare.resize ((size_t) n); std::copy (l, l + n, spare.begin()); engine.process (l, spare.data(), n);       // mono: the same sound on both sides
@@ -58,6 +67,7 @@ public:
         if (auto xml = getXmlFromBinary (data, size)) if (xml->hasTagName (state.state.getType())) state.replaceState (juce::ValueTree::fromXml (*xml));
     }
 
+    float raw (const char* id) const { return state.getRawParameterValue (id)->load(); }
     juce::AudioProcessorValueTreeState state; fb::Engine engine; double rate = 44100;
 private:
     std::atomic<float>* gain = nullptr; std::atomic<float>* ceiling = nullptr; std::vector<float> spare;
@@ -76,14 +86,22 @@ class FitBusEditor : public juce::AudioProcessorEditor, private juce::Timer
 public:
     explicit FitBusEditor (FitBusProcessor& p) : AudioProcessorEditor (p), proc (p)
     {
-        auto knob = [&] (juce::Slider& s, juce::Label& l, const char* id, const char* name)
+        auto knob = [&] (juce::Slider& s, juce::Label& l, const char* id, const char* name, const char* unit)
         {
-            s.setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag); s.setTextBoxStyle (juce::Slider::TextBoxBelow, false, 80, 18); s.setTextValueSuffix (" dB");
+            s.setSliderStyle (juce::Slider::RotaryHorizontalVerticalDrag); s.setTextBoxStyle (juce::Slider::TextBoxBelow, false, 80, 18); s.setTextValueSuffix (unit);
             s.setColour (juce::Slider::rotarySliderFillColourId, look::bands[1]); s.setColour (juce::Slider::textBoxTextColourId, look::ink); s.setColour (juce::Slider::textBoxOutlineColourId, juce::Colours::transparentBlack);
             l.setText (name, juce::dontSendNotification); l.setJustificationType (juce::Justification::centred); l.setColour (juce::Label::textColourId, look::soft); l.setFont (juce::FontOptions (12.0f));
             addAndMakeVisible (s); addAndMakeVisible (l); links.add (new juce::AudioProcessorValueTreeState::SliderAttachment (proc.state, id, s));
         };
-        knob (gain, gainL, "gain", "Loudness"); knob (ceiling, ceilL, "ceiling", "Ceiling");
+        knob (gain, gainL, "gain", "Loudness", " dB"); knob (ceiling, ceilL, "ceiling", "Ceiling", " dB");
+        knob (attack, attackL, "attack", "Attack", " %"); knob (sustain, sustainL, "sustain", "Sustain", " %");
+        knob (tameThr, tameThrL, "tameThr", "Threshold", " dB"); knob (tameAmt, tameAmtL, "tameAmt", "Amount", " %");
+        addAndMakeVisible (tame); tame.setColour (juce::ComboBox::backgroundColourId, look::panel); tame.setColour (juce::ComboBox::textColourId, look::ink); tame.setColour (juce::ComboBox::outlineColourId, look::line);
+        if (auto* ch = dynamic_cast<juce::AudioParameterChoice*> (proc.state.getParameter ("tame"))) tame.addItemList (ch->choices, 1);
+        tameLink = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment> (proc.state, "tame", tame);
+        addAndMakeVisible (hear); hear.setButtonText ("Hear it"); hear.setClickingTogglesState (true);
+        hear.setColour (juce::TextButton::buttonColourId, look::panel); hear.setColour (juce::TextButton::buttonOnColourId, look::bands[1]); hear.setColour (juce::TextButton::textColourOffId, look::ink);
+        hearLink = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment> (proc.state, "tameHear", hear);
         addAndMakeVisible (mode); mode.setColour (juce::ComboBox::backgroundColourId, look::panel); mode.setColour (juce::ComboBox::textColourId, look::ink); mode.setColour (juce::ComboBox::outlineColourId, look::line);
         if (auto* ch = dynamic_cast<juce::AudioParameterChoice*> (proc.state.getParameter ("mode"))) mode.addItemList (ch->choices, 1);
         modeLink = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment> (proc.state, "mode", mode);
@@ -93,7 +111,7 @@ public:
             fix[k].setColour (juce::TextButton::buttonColourId, look::panel); fix[k].setColour (juce::TextButton::textColourOffId, look::ink);
             fix[k].onClick = [this, k] { doFix (k); };
         }
-        startTimerHz (30); setSize (860, 600);                      // last: resized() needs the controls
+        startTimerHz (30); setSize (860, 600 + stripHeight);                      // last: resized() needs the controls
     }
     void resized() override
     {
@@ -101,6 +119,13 @@ public:
         gainL.setBounds (side.removeFromTop (16)); gain.setBounds (side.removeFromTop (100)); side.removeFromTop (14);
         ceilL.setBounds (side.removeFromTop (16)); ceiling.setBounds (side.removeFromTop (100));
         auto area = getLocalBounds().reduced (14); area.removeFromRight (130);
+        {
+            auto strip = area.removeFromBottom (stripHeight).withTrimmedTop (30);
+            auto place = [&] (juce::Slider& sl, juce::Label& lb) { auto c = strip.removeFromLeft (84); lb.setBounds (c.removeFromTop (14)); sl.setBounds (c); };
+            place (attack, attackL); place (sustain, sustainL); strip.removeFromLeft (40);
+            auto pick = strip.removeFromLeft (190); tame.setBounds (pick.removeFromTop (26)); pick.removeFromTop (8); hear.setBounds (pick.removeFromTop (24).removeFromLeft (80));
+            strip.removeFromLeft (12); place (tameThr, tameThrL); place (tameAmt, tameAmtL);
+        }
         mode.setBounds (area.removeFromTop (30).withTrimmedLeft (90).removeFromLeft (200).reduced (0, 3));
         area.removeFromBottom (22); auto rows = area.removeFromBottom (rowsHeight);
         for (int k = 0; k < 3; ++k) fix[k].setBounds (rows.removeFromTop (26).removeFromRight (84).reduced (0, 2));
@@ -109,6 +134,17 @@ public:
     {
         g.fillAll (look::paper);
         auto area = getLocalBounds().reduced (14); area.removeFromRight (130);
+        {
+            auto strip = area.removeFromBottom (stripHeight); g.setColour (look::line); g.fillRect (strip.getX(), strip.getY() + 6, strip.getWidth(), 1);
+            auto head = strip.withTrimmedTop (10).removeFromTop (18); g.setColour (look::ink); g.setFont (juce::FontOptions (12.0f, juce::Font::bold));
+            g.drawText ("Transients", head.removeFromLeft (168), juce::Justification::centredLeft); head.removeFromLeft (40);
+            g.drawText ("Tame a range (holds it down only when it jumps out)", head, juce::Justification::centredLeft);
+            const bool on = proc.raw ("tame") > 0.5f; const float held = proc.engine.tameDb();
+            g.setColour (look::soft); g.setFont (juce::FontOptions (11.0f));
+            g.drawFittedText (! on ? "Pick a range to watch." : proc.raw ("tameHear") > 0.5f ? "You are hearing only the range it watches. Switch Hear it off when done."
+                              : held < -0.1f ? juce::String ("Holding it down ") + juce::String (-held, 1) + " dB." : "Under the threshold: nothing is being changed.",
+                              strip.withTrimmedLeft (168 + 40 + 190 + 12 + 168 + 10).withTrimmedTop (40).reduced (0, 6), juce::Justification::topLeft, 4);
+        }
         g.setColour (look::ink); g.setFont (juce::FontOptions (18.0f, juce::Font::bold)); g.drawText ("Fit Bus", area.removeFromTop (30), juce::Justification::centredLeft);
         auto legend = area.removeFromBottom (22); auto rows = area.removeFromBottom (rowsHeight);
         g.setFont (juce::FontOptions (13.0f));
@@ -142,6 +178,27 @@ public:
         juce::String line = loudest <= 1e-5f ? "Play the song: the picture shows how tall it is, coloured by pitch."
                           : "Loudest peak in view: " + juce::String (dB (loudest), 1) + " dB. " + (held < 0.999f ? "The limiter held it down by up to " + juce::String (-dB (held), 1) + " dB (the pale tops)." : "The limiter has not had to do anything.");
         g.drawText (line, said, juce::Justification::centredLeft);
+        {   // tone balance: how the sound is shared between the six ranges, against the finished songs of this genre
+            const auto& t = kf::modeTargets[(size_t) juce::jlimit (0, kf::numModes - 1, (int) proc.state.getRawParameterValue ("mode")->load())];
+            auto box = getLocalBounds().reduced (14).removeFromRight (120); box.removeFromTop (300);
+            g.setColour (look::ink); g.setFont (juce::FontOptions (12.0f, juce::Font::bold)); g.drawText ("Tone", box.removeFromTop (16), juce::Justification::centredLeft);
+            g.setColour (look::soft); g.setFont (juce::FontOptions (10.0f));
+            g.drawFittedText (t.tone ? juce::String ("Bars: this mix. Shaded: your ") + t.name + " songs." : juce::String ("Not enough ") + t.name + " songs measured for a range.", box.removeFromTop (26), juce::Justification::topLeft, 2);
+            auto xOf = [&] (float dB, juce::Rectangle<int> tr) { return (float) tr.getX() + (float) tr.getWidth() * juce::jlimit (0.0f, 1.0f, (dB + 36.0f) / 36.0f); };
+            for (int b = fl::numBands - 1; b >= 0; --b)                 // highest pitch at the top, like the picture
+            {
+                auto tr = box.removeFromTop (30).reduced (0, 9);
+                g.setColour (look::panel); g.fillRect (tr);
+                if (t.tone) { g.setColour (look::ink.withAlpha (0.22f)); g.fillRect (xOf (t.toneDb[b][0], tr), (float) tr.getY(), xOf (t.toneDb[b][2], tr) - xOf (t.toneDb[b][0], tr), (float) tr.getHeight()); }
+                if (toneSeen)
+                {
+                    const bool out = t.tone && (toneNow[b] > t.toneDb[b][2] + 2.0f || toneNow[b] < t.toneDb[b][0] - 2.0f);
+                    g.setColour (look::bands[b]); g.fillRect ((float) tr.getX(), (float) tr.getY() + 3, xOf (toneNow[b], tr) - (float) tr.getX(), (float) tr.getHeight() - 6);
+                    if (out) { g.setColour (look::ink); g.drawRect (tr.toFloat(), 1.0f); }          // more than 2 dB outside the range: outlined
+                }
+            }
+            g.setColour (look::soft); g.setFont (juce::FontOptions (10.0f)); g.drawFittedText ("Outlined = more than 2 dB outside your songs.", box.removeFromTop (26), juce::Justification::topLeft, 2);
+        }
         g.setFont (juce::FontOptions (11.0f)); int lx = legend.getX();
         for (int b = 0; b < fb::numBands; ++b)
         {
@@ -151,23 +208,24 @@ public:
     }
 private:
     struct Part { juce::String text; bool warn = false; float fixDb = 0; int slot = -1; };
-    static constexpr int rowsHeight = 26 * 3 + 34;
+    static constexpr int rowsHeight = 26 * 3 + 34, stripHeight = 130;
 
     // 30 times a second: read what the Kick Fits say, work out how much of each is in the bus, compare with the measured songs
     void timerCallback() override
     {
         static const char* const names[3] = { "Kick", "Bass", "Vocal" }; static const char* const on[3] = { "The kick", "The bass", "The vocal" };
         const auto& t = kf::modeTargets[(size_t) juce::jlimit (0, kf::numModes - 1, (int) proc.state.getRawParameterValue ("mode")->load())];
-        auto* b = fl::shared(); bool have[3] = { false, false, false }; double P[3][fl::numBands] {}, peak[3] {}, usual[3] {}, B[fl::numBands];
+        auto* b = fl::shared(); bool have[4] = { false, false, false, false }; double P[4][fl::numBands] {}, peak[4] {}, usual[4] {}, B[fl::numBands];
         for (auto& q : part) q.slot = -1;
         if (b != nullptr)
             for (int i = 0; i < fl::maxSlots; ++i)
             {
                 const auto& sl = b->slot[i]; const int r = sl.role.load();
-                if (! fl::alive (sl) || r < 0 || r > 2 || have[r]) continue;                 // the first of each kind counts
-                have[r] = true; part[r].slot = i; peak[r] = sl.peak.load(); usual[r] = sl.usual.load(); for (int k = 0; k < fl::numBands; ++k) P[r][k] = sl.power[k].load();
+                if (! fl::alive (sl) || r < 0 || r > 3 || have[r]) continue;                 // the first of each kind counts
+                have[r] = true; if (r < 3) part[r].slot = i;
+                peak[r] = sl.peak.load(); usual[r] = sl.usual.load(); for (int k = 0; k < fl::numBands; ++k) P[r][k] = sl.power[k].load();
             }
-        if (have[0] != had[0] || have[1] != had[1] || have[2] != had[2]) { mixer.reset(); for (int k = 0; k < 3; ++k) had[k] = have[k]; }
+        if (have[0] != had[0] || have[1] != had[1] || have[2] != had[2] || have[3] != had[3]) { mixer.reset(); for (int k = 0; k < 4; ++k) had[k] = have[k]; }
         for (int k = 0; k < fl::numBands; ++k) B[k] = proc.engine.inPower[k].load();
         const double song = proc.engine.inPeak.load();
         if (proc.engine.inNow.load() > 1e-4f) quiet = 0; else if (quiet < 1000) ++quiet;
@@ -184,17 +242,20 @@ private:
             repaint(); return;
         }
         mixer.add (P, have, B, 1.0 / 30.0);
+        { double all = 0; for (int k = 0; k < fl::numBands; ++k) { toneP[k] += (toneSeen ? 0.004 : 1.0) * (B[k] - toneP[k]); all += toneP[k]; }          // about 8 s
+          toneSeen = all > 1e-10; if (toneSeen) for (int k = 0; k < fl::numBands; ++k) toneNow[k] = (float) (10 * std::log10 (std::max (toneP[k] / all, 1e-6))); }
         if (logOn)                       // for working on Fit Bus: the numbers it sees, 30 lines a second (only when the switch file exists)
         {
             juce::String row; for (int k = 0; k < 3; ++k) { row << (have[k] ? 1 : 0) << "," << peak[k] << ","; for (int i = 0; i < fl::numBands; ++i) row << P[k][i] << ","; }
             for (int i = 0; i < fl::numBands; ++i) row << B[i] << ",";
             row << song << "\n"; logFile.appendText (row);
         }
-        double g2[3], fit = 0; const bool solved = mixer.solve (have, g2, fit), sure = solved && fit >= 0.9;
+        double g2[4], fit = 0; const bool solved = mixer.solve (have, g2, fit), sure = solved && fit >= 0.97;          // measured: 0.999 on a real three-part project, 0.79 to 0.94 with unlabelled music in the bus
         read = read || sure;
         note = ! solved ? "Listening..."
-             : ! sure ? "There is more in this bus than the parts with a Kick Fit on them, so their heights can't be read. Send only the kick, bass and vocal here."
+             : ! sure ? "There is more in this bus than the parts with a Kick Fit on them, so their heights can't be read. Put a Kick Fit set to Everything else on the rest of the music, or send only the kick, bass and vocal here."
              : said.isNotEmpty() && cool > 0 ? said
+             : have[3] ? "Measured after the faders, with the rest of the song counted in (its Kick Fit is set to Everything else). The gaps come from your finished songs."
              : "Measured after the faders. The gaps come from finished songs, where other instruments share the low end with the bass: with only these parts playing, trust your ears on the bass.";
         auto rel = [] (float v) { return juce::String (std::abs (v), 1) + (v < 0 ? " dB under" : " dB over"); };
         const double kickTop = have[0] && sure && g2[0] > 1e-9 ? peak[0] * std::sqrt (g2[0]) : 0.0;          // the kick's hits as they arrive here
@@ -241,9 +302,12 @@ private:
     }
     FitBusProcessor& proc; juce::Slider gain, ceiling; juce::Label gainL, ceilL; juce::OwnedArray<juce::AudioProcessorValueTreeState::SliderAttachment> links;
     juce::ComboBox mode; std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> modeLink; juce::TextButton fix[3];
+    juce::Slider attack, sustain, tameThr, tameAmt; juce::Label attackL, sustainL, tameThrL, tameAmtL; juce::ComboBox tame; juce::TextButton hear;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> tameLink; std::unique_ptr<juce::AudioProcessorValueTreeState::ButtonAttachment> hearLink;
     juce::File logFile { juce::File::getSpecialLocation (juce::File::tempDirectory).getChildFile ("fitbus-log.csv") };
     bool logOn = juce::File::getSpecialLocation (juce::File::tempDirectory).getChildFile ("fitbus-log.on").existsAsFile();
-    fb::Mixer mixer; Part part[3]; bool had[3] = { false, false, false }, wasPlaying = false, read = false; int quiet = 1000; juce::String note, said; int cool = 0;
+    double toneP[fl::numBands] {}; float toneNow[fl::numBands] {}; bool toneSeen = false;
+    fb::Mixer mixer; Part part[3]; bool had[4] = { false, false, false, false }, wasPlaying = false, read = false; int quiet = 1000; juce::String note, said; int cool = 0;
 };
 
 juce::AudioProcessorEditor* FitBusProcessor::createEditor() { return new FitBusEditor (*this); }

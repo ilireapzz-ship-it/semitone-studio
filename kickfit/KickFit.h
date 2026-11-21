@@ -359,7 +359,7 @@ public:
     void process (float* l, float* r, const float* sl, const float* sr_, int n)
     {
         if (p.role == 1) { duck (l, r, sl, sr_, n); return; }
-        if (p.role == 2) { vocal (l, r, sl, sr_, n); return; }
+        if (p.role >= 2) { vocal (l, r, sl, sr_, n); return; }        // 3 = everything else: only Level, like the vocal
         setThump (false);
         const bool tuning = std::abs (p.tune) > 1e-4f || retune.latency() > 0;
         const bool shaping = p.thump != 0 || p.punch != 0 || p.click != 0 || p.tail != 0 || std::abs (p.gainDb) > 1e-4f || std::abs (gainSmooth.y - 1.0) > 1e-5 || std::abs (tailSmooth.y - 1.0) > 1e-5;

@@ -20,7 +20,99 @@ constexpr double bandEdges[numBands - 1] = { 60, 150, 400, 1500, 5000 };
 
 struct Column { float in = 0, out = 0, gain = 1, band[numBands] {}; };      // one slice of the picture (20 ms): peaks before and after, lowest gain, level per range
 
-struct Params { float gainDb = 0, ceilingDb = 0, releaseMs = 120; };
+struct Params
+{
+    float gainDb = 0, ceilingDb = 0, releaseMs = 120;
+    float attack = 0, sustain = 0;                       // transients, -1..1: the front of each hit, and the body after it
+    int tameRange = 0; float tameThrDb = -24, tameAmount = 0; bool tameHear = false;      // one range held down when it jumps out: 0 off, 1..6 = the six ranges
+};
+
+// follows a level: quick or slow to rise, quick or slow to fall
+struct Follower
+{
+    double y = 0, up = 0, down = 0;
+    void set (double riseMs, double fallMs, double sr) { up = std::exp (-1.0 / (riseMs * 0.001 * sr)); down = std::exp (-1.0 / (fallMs * 0.001 * sr)); }
+    double run (double x) { y = kf::zap (x + (x > y ? up : down) * (y - x)); return y; }
+};
+
+// Transients. First the outline of the sound (it rises at once and falls over 40 ms, so the wave's own ups and downs
+// don't count as hits). Then two pairs of followers on that outline: one pair differs only in how fast it rises, so the gap
+// between them opens at the front of a hit; the other differs only in how fast it falls, so its gap opens in the body after
+// a hit. Whatever gap a steady sound leaves open is learned and taken away, and the body's gap is ignored while a front is
+// landing. Attack turns the level up or down by the first gap, Sustain by the second. With both at 0 nothing is touched.
+class Transient
+{
+public:
+    void prepare (double sr)
+    {
+        outline.set (0.01, 40, sr); quickUp.set (1, 40, sr); slowUp.set (20, 40, sr); slowDown.set (5, 400, sr); quickDown.set (5, 60, sr);
+        ease = 1 - std::exp (-1.0 / (0.001 * sr)); learn = 1 - std::exp (-1.0 / (0.7 * sr)); gDb = gFront = gBody = 0; restFront = restBody = 0;
+        for (auto* f : { &outline, &quickUp, &slowUp, &slowDown, &quickDown }) f->y = 0;
+    }
+    void set (float attack, float sustain) { atk = std::clamp (attack, -1.0f, 1.0f); sus = std::clamp (sustain, -1.0f, 1.0f); }
+    void run (float& l, float& r)
+    {
+        if (atk == 0 && sus == 0 && std::abs (gDb) < 1e-4) { gDb = gFront = gBody = 0; return; }
+        const double was = quickDown.y, x = outline.run (std::max (std::abs ((double) l), std::abs ((double) r))), fl_ = 1e-4;       // the floor keeps silence from looking like a hit
+        double front = 20 * std::log10 ((quickUp.run (x) + fl_) / (slowUp.run (x) + fl_)), body = 20 * std::log10 ((slowDown.run (x) + fl_) / (quickDown.run (x) + fl_));
+        restFront += learn * (std::min (front, 1.5) - restFront); restBody += learn * (std::min (body, 1.5) - restBody);          // what a steady sound leaves open (a hit can't drag these far)
+        front = std::clamp (front - restFront, 0.0, 12.0); body = std::clamp (body - restBody, 0.0, 12.0) * std::clamp (1 - front / 2, 0.0, 1.0);
+        if (x > 1.4 * was + fl_) { body = 0; gBody = 0; }          // a new hit is landing this very sample: the body's share lets go at once, not a millisecond late
+        gFront += ease * (0.75 * atk * front - gFront); gBody += ease * (0.75 * sus * body - gBody); gDb = std::clamp (gFront + gBody, -12.0, 12.0);
+        const double g = std::pow (10.0, gDb / 20); l = (float) (l * g); r = (float) (r * g);
+    }
+private:
+    Follower outline, quickUp, slowUp, slowDown, quickDown; double ease = 0.02, learn = 0, gDb = 0, gFront = 0, gBody = 0, restFront = 0, restBody = 0; float atk = 0, sus = 0;
+};
+
+// One range held down when it jumps out (what a de-esser does for "s" sounds; the same idea tames a boomy or harsh range).
+// It listens to that range only. When the range goes over the threshold, an equaliser dip (a shelf at the bottom or top
+// range, a bell in between) turns just that range down, by more the further over it goes; everything else passes. Under
+// the threshold the equaliser is flat and switched out, so the sound is not touched at all.
+class Tame
+{
+public:
+    void prepare (double sampleRate) { sr = sampleRate; lev.set (2, 100, sr); lev.y = 0; red = setRed = 0; tick = 0; build(); for (auto& f : eq) f.reset(); for (auto& f : det) f.reset(); }
+    void set (int range_, float thrDb, float amount, bool hear_)
+    {
+        const int rg = std::clamp (range_, 0, numBands); if (rg != range) { range = rg; build(); setRed = -1; }
+        thr = thrDb; ratio = 1 + 9 * std::clamp (amount, 0.0f, 1.0f); hear = hear_;
+    }
+    float reductionDb() const { return -(float) red; }
+    void run (float& l, float& r)
+    {
+        if (range == 0) { red = 0; return; }
+        const double d = det[1].run (det[0].run (0.5 * ((double) l + r)));
+        const double over = 20 * std::log10 (lev.run (std::abs (d)) + 1e-9) - thr;
+        red = over > 0 ? std::min (18.0, over * (1 - 1 / ratio)) : 0.0;
+        if ((tick++ & 7) == 0 && std::abs (red - setRed) > (red == 0 ? 0.0 : 0.05)) { setRed = red; shape (red); }
+        const bool idle = setRed == 0 && std::abs (eq[0].z1) + std::abs (eq[0].z2) + std::abs (eq[1].z1) + std::abs (eq[1].z2) < 1e-9;
+        if (! idle) { l = (float) (post * eq[0].run (l)); r = (float) (post * eq[1].run (r)); }
+        if (hear) l = r = (float) d;                                    // listen to just the range it is watching
+    }
+private:
+    double lo() const { return range <= 1 ? 0.0 : bandEdges[range - 2]; }
+    double hi() const { return range >= numBands ? 0.0 : bandEdges[range - 1]; }
+    void build()
+    {
+        det[0] = {}; det[1] = {};
+        if (range == 0) return;
+        if (lo() > 0) det[0].highpass (lo(), 0.707, sr);
+        if (hi() > 0) det[1].lowpass (hi(), 0.707, sr);
+    }
+    void shape (double dB)                                              // the dip: dB down in the range
+    {
+        const double g = kf::dbToGain (-dB); post = 1;
+        for (auto& f : eq)
+        {
+            if (lo() <= 0) f.lowShelf (hi(), g, sr);                                    // bottom range: a low shelf
+            else if (hi() <= 0) { f.lowShelf (lo(), 1 / g, sr); post = g; }             // top range: lows up by 1/g, everything times g = highs down
+            else f.peak (std::sqrt (lo() * hi()), std::sqrt (lo() * hi()) / (hi() - lo()), -dB, sr);
+        }
+    }
+    double sr = 44100, thr = -24, ratio = 1, red = 0, setRed = 0, post = 1; int range = 0, tick = 0; bool hear = false;
+    Follower lev; kf::Biquad eq[2], det[2];
+};
 
 // How much of each part (kick, bass, vocal) is in the bus. Each Kick Fit says how strong its own output is in six ranges of
 // pitch; the bus measures itself the same way. The bus should be those parts added together, each times its own gain
@@ -29,7 +121,7 @@ struct Params { float gainDb = 0, ceilingDb = 0, releaseMs = 120; };
 // (near 1 = the bus is just these parts; low = there is a lot else in it, or the parts cannot be told apart).
 struct Mixer
 {
-    static constexpr int parts = 3;
+    static constexpr int parts = 4;          // kick, bass, vocal, everything else
     void reset() { for (auto& row : A) for (auto& v : row) v = 0; for (auto& v : r) v = 0; c = 0; for (auto& row : sP) for (auto& v : row) v = 0; for (auto& v : sB) v = 0; age = 0; }
     // P: each part's strengths as its Kick Fit reports them; Bnow: the bus's; dt: seconds since the last call.
     // Both are first averaged over about 1.5 s: the bus hears the parts a few ms late (the host lines plug-ins up, and the
@@ -97,12 +189,13 @@ public:
         pos = 0; n = 0; dqHead = dqTail = 0; rel = 1; boxSum = L; lowered = 0; colStep = std::max (1, (int) (0.02 * sr)); colN = 0; cur = {}; cur.gain = 1;
         for (int i = 0; i < numBands - 1; ++i) { lpA[i].lowpass (bandEdges[i], 0.5412, sr); lpB[i].lowpass (bandEdges[i], 1.3066, sr); lpA[i].reset(); lpB[i].reset(); }
         for (auto& e : bandE) e = 0;
-        inMeter.prepare (sr);
+        inMeter.prepare (sr); transient.prepare (sr); tame.prepare (sr);
         set (p);
     }
-    void set (const Params& np) { p = np; gIn = kf::dbToGain (p.gainDb); ceil = kf::dbToGain (p.ceilingDb); relCoef = 1 - std::exp (-1.0 / (std::max (5.0f, p.releaseMs) * 0.001 * sr)); }
+    void set (const Params& np) { p = np; transient.set (p.attack, p.sustain); tame.set (p.tameRange, p.tameThrDb, p.tameAmount, p.tameHear); gIn = kf::dbToGain (p.gainDb); ceil = kf::dbToGain (p.ceilingDb); relCoef = 1 - std::exp (-1.0 / (std::max (5.0f, p.releaseMs) * 0.001 * sr)); }
     int latency() const { return L - 1; }
-    float reductionDb() const { return redNow.load(); }                       // how far the limiter is holding the level down right now (0 or below)
+    float reductionDb() const { return redNow.load(); }
+    float tameDb() const { return tameNow.load(); }                           // how far the tamed range is being held down right now (0 or below)                       // how far the limiter is holding the level down right now (0 or below)
 
     void process (float* l, float* r, int count)
     {
@@ -110,6 +203,7 @@ public:
         {
             if (inMeter.push (0.5 * ((double) l[i] + r[i]), std::max (std::abs (l[i]), std::abs (r[i]))))      // what arrives, measured the way each Kick Fit measures itself
             { for (int k = 0; k < fl::numBands; ++k) inPower[k].store ((float) inMeter.power[k]); inPeak.store ((float) inMeter.peak); inNow.store ((float) inMeter.stepPeak); }
+            tame.run (l[i], r[i]); transient.run (l[i], r[i]);          // then Loudness, then the limiter
             const float xl = (float) (l[i] * gIn), xr = (float) (r[i] * gIn);
             const double pk = std::max (std::abs ((double) xl), std::abs ((double) xr));
             const double need = pk > ceil ? ceil / pk : 1.0;
@@ -132,13 +226,14 @@ public:
             // the picture
             const double mono = 0.5 * ((double) yl + yr);            // bandE[b] = energy of everything up to that range's upper edge
             for (int b = 0; b < numBands; ++b) { const double upTo = b < numBands - 1 ? lpB[b].run (lpA[b].run (mono)) : mono; bandE[b] += upTo * upTo; }
+            tameHeld = std::min (tameHeld, tame.reductionDb());
             cur.in = std::max (cur.in, (float) pk); cur.out = std::max (cur.out, std::max (std::abs (yl), std::abs (yr))); cur.gain = std::min (cur.gain, (float) g);
             if (++colN >= colStep)
             {
                 for (int b = numBands - 1; b >= 0; --b) { cur.band[b] = (float) std::sqrt (std::max (0.0, bandE[b] - (b ? bandE[b - 1] : 0.0)) / colN); }
                 for (auto& v : bandE) v = 0;
                 const int w = colW.load (std::memory_order_relaxed); cols[(size_t) w] = cur; colW.store ((w + 1) % numColumns, std::memory_order_release);
-                redNow.store ((float) (20 * std::log10 (std::max (1e-6f, cur.gain)))); cur = {}; cur.gain = 1; colN = 0;
+                redNow.store ((float) (20 * std::log10 (std::max (1e-6f, cur.gain)))); tameNow.store (std::min (tameHeld, tame.reductionDb())); tameHeld = 0; cur = {}; cur.gain = 1; colN = 0;
             }
             l[i] = yl; r[i] = yr; ++n;
         }
@@ -157,7 +252,7 @@ private:
     int L = 221, pos = 0, dqHead = 0, dqTail = 0, lowered = 0, colStep = 882, colN = 0; long long n = 0;
     std::vector<float> dl, dr; std::vector<double> box, dqV; std::vector<long long> dqI;
     kf::Biquad lpA[numBands - 1], lpB[numBands - 1];
-    fl::BandMeter inMeter;
+    fl::BandMeter inMeter; Transient transient; Tame tame; float tameHeld = 0; std::atomic<float> tameNow { 0.0f };
 public:
     std::atomic<float> inPower[fl::numBands] {}, inPeak { 0.0f }, inNow { 0.0f };       // the bus as it arrives: strength per range, recent peak, the peak of the last 20 ms
 private:

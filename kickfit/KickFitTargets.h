@@ -10,16 +10,17 @@ struct ModeTarget
     float dipDb;                       // how far the bass's lows drop under the kick in those songs, dB (middle)
     bool vocal; float vocLo, vocMid, vocHi;   // the singing against everything else (K-weighted), dB: quarter, middle, three quarters of the songs
     bool peaks; float bassVsKick[3], vocVsKick[3];   // the bass's / the vocal's usual peak against the kick's, dB, song by song (quarter, middle, three quarters); parts split by Demucs
+    bool tone; float toneDb[6][3];   // tone balance of the finished songs: share of the sound in each of Fit Bus's six ranges, dB against the whole (quarter, middle, three quarters)
 };
 inline constexpr ModeTarget modeTargets[] = {
-    { "trap-hiphop", "Trap / hip-hop", 0, false, 0.00f, 0.00f, 0.00f, 0.0f, 0.0f, 0.0f, 0.00f, false, 0.00f, 0.00f, 0.00f, false, { 0, 0, 0 }, { 0, 0, 0 } },
-    { "pop", "Pop", 53, true, -12.13f, -2.96f, -0.88f, 48.8f, 52.8f, 72.0f, -0.12f, true, -1.57f, 1.25f, 3.30f, true, { -11.06f, -5.83f, 0.93f }, { -4.18f, -1.18f, 5.72f } },
-    { "rnb", "R&B", 2, false, 0.00f, 0.00f, 0.00f, 0.0f, 0.0f, 0.0f, 0.00f, false, 0.00f, 0.00f, 0.00f, false, { 0, 0, 0 }, { 0, 0, 0 } },
-    { "house-edm", "House / EDM", 0, false, 0.00f, 0.00f, 0.00f, 0.0f, 0.0f, 0.0f, 0.00f, false, 0.00f, 0.00f, 0.00f, false, { 0, 0, 0 }, { 0, 0, 0 } },
-    { "dnb", "Drum & bass", 0, false, 0.00f, 0.00f, 0.00f, 0.0f, 0.0f, 0.0f, 0.00f, false, 0.00f, 0.00f, 0.00f, false, { 0, 0, 0 }, { 0, 0, 0 } },
-    { "rock", "Rock", 242, true, -3.69f, -2.10f, -1.14f, 44.0f, 50.0f, 60.2f, -0.56f, true, -2.54f, -0.84f, 1.26f, true, { -9.73f, -7.96f, -6.38f }, { -5.01f, -3.09f, -0.55f } },
-    { "afro", "Afrobeats / amapiano", 0, false, 0.00f, 0.00f, 0.00f, 0.0f, 0.0f, 0.0f, 0.00f, false, 0.00f, 0.00f, 0.00f, false, { 0, 0, 0 }, { 0, 0, 0 } },
-    { "lofi", "Lo-fi", 0, false, 0.00f, 0.00f, 0.00f, 0.0f, 0.0f, 0.0f, 0.00f, false, 0.00f, 0.00f, 0.00f, false, { 0, 0, 0 }, { 0, 0, 0 } },
+    { "trap-hiphop", "Trap / hip-hop", 0, false, 0.00f, 0.00f, 0.00f, 0.0f, 0.0f, 0.0f, 0.00f, false, 0.00f, 0.00f, 0.00f, false, { 0, 0, 0 }, { 0, 0, 0 }, false, { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } } },
+    { "pop", "Pop", 53, true, -12.13f, -2.96f, -0.88f, 48.8f, 52.8f, 72.0f, -0.12f, true, -1.57f, 1.25f, 3.30f, true, { -11.06f, -5.83f, 0.93f }, { -4.18f, -1.18f, 5.72f }, true, { { -14.95f, -10.06f, -7.30f }, { -8.33f, -6.22f, -5.42f }, { -7.80f, -5.89f, -4.23f }, { -6.65f, -5.72f, -4.45f }, { -14.82f, -11.43f, -10.25f }, { -25.74f, -22.15f, -16.53f } } },
+    { "rnb", "R&B", 2, false, 0.00f, 0.00f, 0.00f, 0.0f, 0.0f, 0.0f, 0.00f, false, 0.00f, 0.00f, 0.00f, false, { 0, 0, 0 }, { 0, 0, 0 }, false, { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } } },
+    { "house-edm", "House / EDM", 0, false, 0.00f, 0.00f, 0.00f, 0.0f, 0.0f, 0.0f, 0.00f, false, 0.00f, 0.00f, 0.00f, false, { 0, 0, 0 }, { 0, 0, 0 }, false, { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } } },
+    { "dnb", "Drum & bass", 0, false, 0.00f, 0.00f, 0.00f, 0.0f, 0.0f, 0.0f, 0.00f, false, 0.00f, 0.00f, 0.00f, false, { 0, 0, 0 }, { 0, 0, 0 }, false, { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } } },
+    { "rock", "Rock", 242, true, -3.69f, -2.10f, -1.14f, 44.0f, 50.0f, 60.2f, -0.56f, true, -2.54f, -0.84f, 1.26f, true, { -9.73f, -7.96f, -6.38f }, { -5.01f, -3.09f, -0.55f }, true, { { -12.64f, -9.89f, -7.97f }, { -6.91f, -5.69f, -4.55f }, { -7.60f, -6.80f, -5.92f }, { -7.31f, -6.17f, -4.93f }, { -13.43f, -11.12f, -9.09f }, { -21.26f, -18.26f, -15.79f } } },
+    { "afro", "Afrobeats / amapiano", 0, false, 0.00f, 0.00f, 0.00f, 0.0f, 0.0f, 0.0f, 0.00f, false, 0.00f, 0.00f, 0.00f, false, { 0, 0, 0 }, { 0, 0, 0 }, false, { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } } },
+    { "lofi", "Lo-fi", 0, false, 0.00f, 0.00f, 0.00f, 0.0f, 0.0f, 0.0f, 0.00f, false, 0.00f, 0.00f, 0.00f, false, { 0, 0, 0 }, { 0, 0, 0 }, false, { { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 } } },
 };
 inline constexpr int numModes = 8;
 // from 1947 kick samples: what is left of a kick above 180 Hz (what a phone plays), dB against the whole hit

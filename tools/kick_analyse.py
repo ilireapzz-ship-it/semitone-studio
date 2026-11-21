@@ -519,6 +519,54 @@ def cmd_songs(args):
 
 
 # ---------- totals ----------
+TONE_EDGES = [60, 150, 400, 1500, 5000]          # the same six ranges Fit Bus colours: sub, bass, low mids, mids, presence, air
+
+
+def measure_whole(x, sr):
+    """Whole-song numbers that need no splitting into parts: tone balance, loudness, how spiky and how clipped it is."""
+    mono = x.mean(axis=1).astype(np.float64); tot = float(np.mean(mono ** 2))
+    if tot <= 1e-12: return None
+    upto = [float(np.mean(signal.sosfilt(signal.butter(4, e, 'lowpass', fs=sr, output='sos'), mono) ** 2)) for e in TONE_EDGES] + [tot]
+    r = {'tone_db': [round(10 * math.log10(max(upto[i] - (upto[i - 1] if i else 0.0), 1e-12) / tot), 2) for i in range(6)]}
+    # loudness the BS.1770 way: K-weighted, 0.4 s blocks every 0.1 s, blocks under -70 left out, then those 10 under the rest
+    kw = np.stack([kweight(x[:, c].astype(np.float64), sr) for c in range(x.shape[1])], axis=1)
+    blk, hop = int(0.4 * sr), int(0.1 * sr); n = (len(kw) - blk) // hop
+    if n > 10:
+        cs = np.concatenate([[np.zeros(kw.shape[1])], np.cumsum(kw ** 2, axis=0)])
+        z = np.array([(cs[i * hop + blk] - cs[i * hop]).sum() / blk for i in range(n)]) * (2.0 / x.shape[1] if x.shape[1] == 1 else 1.0)
+        l = -0.691 + 10 * np.log10(z + 1e-12); z1 = z[l > -70]
+        if len(z1):
+            g = -0.691 + 10 * math.log10(z1.mean()) - 10; z2 = z[(l > -70) & (l > g)]
+            if len(z2): r['loudness_lufs'] = round(-0.691 + 10 * math.log10(z2.mean()), 2)
+    a = np.abs(x).max(axis=1); pk = float(a.max())
+    r['crest_db'] = round(20 * math.log10(pk / math.sqrt(float(np.mean(x.astype(np.float64) ** 2)) + 1e-12)), 2)      # peak over average level: lower = more squashed
+    r['at_peak_share'] = round(float(np.mean(a >= 0.995 * pk)), 6)                 # how much of the song sits at its very top (flat-topped = clipped or hard limited)
+    # how much louder the first 10 ms of a hit is than the 100 ms around it, over the song (higher = spikier transients)
+    cs2 = np.concatenate([[0.0], np.cumsum(mono ** 2)]); n10, n100 = int(0.01 * sr), int(0.1 * sr); at = np.arange(n100, len(mono) - n100, n10)
+    fast = (cs2[at + n10] - cs2[at]) / n10; slow = (cs2[at + n100 // 2] - cs2[at - n100 // 2]) / n100; keep = slow > 0.0025 * slow.max()
+    r['spike_db'] = round(float(np.percentile(10 * np.log10((fast[keep] + 1e-15) / slow[keep]), 95)), 2)
+    return r
+
+
+def cmd_whole(args):
+    """Second pass over the songs already measured: the whole-song numbers. Local file whole.jsonl; totals go into the targets."""
+    songs = [s for s in read_local('songs.jsonl') if s.get('mode') and 'error' not in s]
+    done = {w['id'] for w in read_local('whole.jsonl')} if not args.fresh else set()
+    dst = os.path.join(LOCAL, 'whole.jsonl')
+    if args.fresh and os.path.exists(dst): os.remove(dst)
+    todo = [s for s in songs if hashlib.sha1(s['path'].encode('utf-8')).hexdigest() not in done]
+    if args.limit: todo = todo[:args.limit]
+    with open(dst, 'a', encoding='utf-8') as f:
+        for i, s in enumerate(todo):
+            try:
+                x, sr = load_audio(s['path'], 44100); r = measure_whole(x, sr)
+            except Exception as e:
+                r = None; print('  could not measure one song:', type(e).__name__, flush=True)
+            if r: f.write(json.dumps({'id': hashlib.sha1(s['path'].encode('utf-8')).hexdigest(), 'mode': s['mode'], **r}) + '\n'); f.flush()
+            if (i + 1) % 25 == 0: print(f'  {i + 1}/{len(todo)}', flush=True)
+    print(len(read_local('whole.jsonl')), 'songs with whole-song numbers')
+
+
 def stat(vals, nd=2):
     v = np.array([x for x in vals if x is not None and not (isinstance(x, float) and math.isnan(x))], dtype=float)
     if len(v) == 0:
@@ -546,7 +594,7 @@ def kick_kind(k):
 def cmd_targets(args):
     kicks = [k for k in read_local('kicks.jsonl') if not k.get('reject')]
     allk = read_local('kicks.jsonl')
-    songs = read_local('songs.jsonl')
+    songs = read_local('songs.jsonl'); whole = read_local('whole.jsonl')
     good = [s for s in songs if s.get('kicks', 0) >= 16 and 'error' not in s]
     out = {
         'about': 'Kick Fit targets, measured by tools/kick_analyse.py on the kicks and songs on Jamie\'s PC. Totals only: no names, no paths, no audio.',
@@ -565,6 +613,7 @@ def cmd_targets(args):
             'kick_low_vs_lows_db': 'The same kick lows (30-150 Hz) against everything under 300 Hz in the whole mix, in the same windows. This is what Sit it uses: it does not depend on how much is playing above the bass range.',
             'kick_low_vs_kickbass_lows_db': 'The same, against only the drum and bass stems under 300 Hz: what Kick Fit hears when just the bass is fed to it.',
             'bass_/vocal_peak_vs_kick_db': 'Per song: that part\'s usual peak (as below) minus the kick\'s usual peak. Fit Bus uses these: with only a few parts in a bus the tallest one is the loudest peak, so heights against the whole song do not carry over, but the gaps between parts do.',
+            'whole song': 'tone_db: share of the whole song\'s energy in six ranges (under 60 Hz, 60-150, 150-400, 400-1500, 1500-5000, above 5000), dB against the total, mono sum, 4th-order filters as in Fit Bus. loudness_lufs: integrated loudness (BS.1770 gating). crest_db: highest peak over average level. at_peak_share: share of samples within 0.5% of the highest peak. spike_db: how far the 10 ms level stands above the 100 ms level at the sharpest twentieth of moments. Finished, mastered songs.',
             'peaks': 'What a peak meter shows. mix_peak_db: the highest the finished song reaches (dBFS). kick_peak_vs_song_db: the drum stem peak in the 120 ms after a kick hit, against that (middle hit; includes a snare or hat landing with it). bass_/vocal_peak_vs_song_db: the middle of that stem, its 0.1 s peaks while it plays; _top_ is its loudest twentieth. These are finished, mastered songs: a mix before mastering sits lower overall, but the gaps between the parts are the useful bit.',
             'vocal_vs_backing_db': 'K-weighted level of the vocal stem against everything else, in 0.4 s steps while there is singing; middle step. vocal_share: how much of the song has singing.',
             'drums_at_kick_vs_mix_kw_db': 'K-weighted level of the whole drum stem against the mix in the same windows. Includes hats and snares that land with the kick.',
@@ -600,6 +649,10 @@ def cmd_targets(args):
         d = {'songs': len(sub), 'status': 'measured', **{f: stat([s.get(f) for s in sub]) for f in SONG_FIELDS}}
         gap = lambda f: stat([s[f] - s['kick_peak_vs_song_db'] for s in sub if s.get(f) is not None and s.get('kick_peak_vs_song_db') is not None])
         d['bass_peak_vs_kick_db'] = gap('bass_peak_vs_song_db'); d['vocal_peak_vs_kick_db'] = gap('vocal_peak_vs_song_db')
+        wh = [w for w in whole if w.get('mode') == m]
+        if len(wh) >= MIN_SONGS:
+            d['whole_songs'] = len(wh); d['tone_db'] = [stat([w['tone_db'][i] for w in wh]) for i in range(6)]
+            for f in ('loudness_lufs', 'crest_db', 'at_peak_share', 'spike_db'): d[f] = stat([w.get(f) for w in wh], 6 if f == 'at_peak_share' else 2)
         d['kick_f0'] = stat([s.get('kick_f0') for s in steady]); d['kick_cents'] = stat([s.get('kick_cents') for s in steady])
         keyed = [s for s in steady if (s.get('key_conf') or 0) >= 0.05]
         d['kick_note_steady_songs'] = len(steady)
@@ -648,13 +701,13 @@ def cmd_selftest(args):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = ap.add_subparsers(dest='cmd', required=True)
-    for nm in ('selftest', 'kicks', 'songs', 'targets'):
+    for nm in ('selftest', 'kicks', 'songs', 'whole', 'targets'):
         p = sub.add_parser(nm)
         p.add_argument('folders', nargs='*')
         p.add_argument('--limit', type=int, default=0)
         p.add_argument('--fresh', action='store_true')
     a = ap.parse_args()
-    sys.exit({'selftest': cmd_selftest, 'kicks': cmd_kicks, 'songs': cmd_songs, 'targets': cmd_targets}[a.cmd](a) or 0)
+    sys.exit({'selftest': cmd_selftest, 'kicks': cmd_kicks, 'songs': cmd_songs, 'whole': cmd_whole, 'targets': cmd_targets}[a.cmd](a) or 0)
 
 
 if __name__ == '__main__':

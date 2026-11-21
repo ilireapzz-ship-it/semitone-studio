@@ -15,6 +15,7 @@
   "kick_low_vs_lows_db": "The same kick lows (30-150 Hz) against everything under 300 Hz in the whole mix, in the same windows. This is what Sit it uses: it does not depend on how much is playing above the bass range.",
   "kick_low_vs_kickbass_lows_db": "The same, against only the drum and bass stems under 300 Hz: what Kick Fit hears when just the bass is fed to it.",
   "bass_/vocal_peak_vs_kick_db": "Per song: that part's usual peak (as below) minus the kick's usual peak. Fit Bus uses these: with only a few parts in a bus the tallest one is the loudest peak, so heights against the whole song do not carry over, but the gaps between parts do.",
+  "whole song": "tone_db: share of the whole song's energy in six ranges (under 60 Hz, 60-150, 150-400, 400-1500, 1500-5000, above 5000), dB against the total, mono sum, 4th-order filters as in Fit Bus. loudness_lufs: integrated loudness (BS.1770 gating). crest_db: highest peak over average level. at_peak_share: share of samples within 0.5% of the highest peak. spike_db: how far the 10 ms level stands above the 100 ms level at the sharpest twentieth of moments. Finished, mastered songs.",
   "peaks": "What a peak meter shows. mix_peak_db: the highest the finished song reaches (dBFS). kick_peak_vs_song_db: the drum stem peak in the 120 ms after a kick hit, against that (middle hit; includes a snare or hat landing with it). bass_/vocal_peak_vs_song_db: the middle of that stem, its 0.1 s peaks while it plays; _top_ is its loudest twentieth. These are finished, mastered songs: a mix before mastering sits lower overall, but the gaps between the parts are the useful bit.",
   "vocal_vs_backing_db": "K-weighted level of the vocal stem against everything else, in 0.4 s steps while there is singing; middle step. vocal_share: how much of the song has singing.",
   "drums_at_kick_vs_mix_kw_db": "K-weighted level of the whole drum stem against the mix in the same windows. Includes hats and snares that land with the kick.",
@@ -630,6 +631,89 @@
     "p75": 5.72,
     "p90": 43.11
    },
+   "whole_songs": 54,
+   "tone_db": [
+    {
+     "n": 54,
+     "median": -10.06,
+     "p10": -24.59,
+     "p25": -14.95,
+     "p75": -7.3,
+     "p90": -5.9
+    },
+    {
+     "n": 54,
+     "median": -6.22,
+     "p10": -12.12,
+     "p25": -8.33,
+     "p75": -5.42,
+     "p90": -4.82
+    },
+    {
+     "n": 54,
+     "median": -5.89,
+     "p10": -8.84,
+     "p25": -7.8,
+     "p75": -4.23,
+     "p90": -3.38
+    },
+    {
+     "n": 54,
+     "median": -5.72,
+     "p10": -7.52,
+     "p25": -6.65,
+     "p75": -4.45,
+     "p90": -3.36
+    },
+    {
+     "n": 54,
+     "median": -11.43,
+     "p10": -17.55,
+     "p25": -14.82,
+     "p75": -10.25,
+     "p90": -8.61
+    },
+    {
+     "n": 54,
+     "median": -22.15,
+     "p10": -29.15,
+     "p25": -25.74,
+     "p75": -16.53,
+     "p90": -14.19
+    }
+   ],
+   "loudness_lufs": {
+    "n": 54,
+    "median": -10.12,
+    "p10": -17.06,
+    "p25": -13.01,
+    "p75": -7.86,
+    "p90": -7.17
+   },
+   "crest_db": {
+    "n": 54,
+    "median": 12.72,
+    "p10": 10.3,
+    "p25": 11.21,
+    "p75": 16.34,
+    "p90": 18.69
+   },
+   "at_peak_share": {
+    "n": 54,
+    "median": 0.0,
+    "p10": 0.0,
+    "p25": 0.0,
+    "p75": 0.0,
+    "p90": 1e-06
+   },
+   "spike_db": {
+    "n": 54,
+    "median": 1.9,
+    "p10": 1.71,
+    "p25": 1.79,
+    "p75": 2.1,
+    "p90": 2.21
+   },
    "kick_note_steady_songs": 45,
    "kick_note_and_key_songs": 32,
    "kick_vs_tonic_semitones": {
@@ -862,6 +946,89 @@
     "p25": -5.01,
     "p75": -0.55,
     "p90": 7.92
+   },
+   "whole_songs": 244,
+   "tone_db": [
+    {
+     "n": 244,
+     "median": -9.89,
+     "p10": -16.02,
+     "p25": -12.64,
+     "p75": -7.97,
+     "p90": -6.16
+    },
+    {
+     "n": 244,
+     "median": -5.69,
+     "p10": -9.22,
+     "p25": -6.91,
+     "p75": -4.55,
+     "p90": -3.76
+    },
+    {
+     "n": 244,
+     "median": -6.8,
+     "p10": -8.4,
+     "p25": -7.6,
+     "p75": -5.92,
+     "p90": -4.28
+    },
+    {
+     "n": 244,
+     "median": -6.17,
+     "p10": -8.73,
+     "p25": -7.31,
+     "p75": -4.93,
+     "p90": -3.49
+    },
+    {
+     "n": 244,
+     "median": -11.12,
+     "p10": -15.93,
+     "p25": -13.43,
+     "p75": -9.09,
+     "p90": -8.05
+    },
+    {
+     "n": 244,
+     "median": -18.26,
+     "p10": -25.01,
+     "p25": -21.26,
+     "p75": -15.79,
+     "p90": -14.31
+    }
+   ],
+   "loudness_lufs": {
+    "n": 244,
+    "median": -8.5,
+    "p10": -12.71,
+    "p25": -10.64,
+    "p75": -7.52,
+    "p90": -6.69
+   },
+   "crest_db": {
+    "n": 244,
+    "median": 11.45,
+    "p10": 10.02,
+    "p25": 10.63,
+    "p75": 12.7,
+    "p90": 14.74
+   },
+   "at_peak_share": {
+    "n": 244,
+    "median": 0.0,
+    "p10": 0.0,
+    "p25": 0.0,
+    "p75": 0.0,
+    "p90": 1e-06
+   },
+   "spike_db": {
+    "n": 244,
+    "median": 1.96,
+    "p10": 1.69,
+    "p25": 1.82,
+    "p75": 2.2,
+    "p90": 2.51
    },
    "kick_note_steady_songs": 216,
    "kick_note_and_key_songs": 163,

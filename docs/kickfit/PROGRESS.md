@@ -104,3 +104,11 @@ A second plug-in for the bus (or master) the kick, bass and vocal meet on. First
   the bass and vocal with the kick, song by song as measured (pop: bass 11.1 dB under to 0.9 over the kick, vocal 4.2
   under to 5.7 over; rock: bass 9.7 to 6.4 under, vocal 5.0 to 0.6 under), because with three parts in a bus the tallest
   part is the loudest peak. Known: a reading wobbles by a dB or so, and a part can briefly show "too quiet to read".
+- Kick Fit: a fourth "I am on: Everything else" setting for the rest of the music (changes nothing unless Level moves), so
+  Fit Bus can read a whole song. Fit Bus now needs the parts to explain 97% of the bus before it trusts its reading.
+- Fit Bus: tone balance. Six bars show how the mix is shared between the six pitch ranges, against the finished songs of
+  the genre (measured on 244 rock and 54 pop songs). Also measured, not used yet: loudness (rock about -8.5 LUFS, pop
+  about -10) and peak over average level. A "spikiness" number was tried and tells songs apart too little to use.
+- Fit Bus: Transients (Attack and Sustain) and Tame a range (one of the six ranges held down only when it goes over a
+  threshold: a de-esser for the top ranges, a boom tamer for the bottom ones; Hear it plays just that range). Both do
+  nothing at all at rest. Tested on made-up sounds. Not yet tried in FL.

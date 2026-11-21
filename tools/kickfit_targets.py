@@ -30,11 +30,14 @@ def build():
         voc = (m.get('vocal_vs_backing_db') or {}) if ok else {}
         pk = [(m.get(k) or {}) if ok else {} for k in ('bass_peak_vs_kick_db', 'vocal_peak_vs_kick_db')]
         pk_ok = all(q.get('n', 0) >= d['min_songs_per_mode'] for q in pk)
-        rows.append('    { "%s", "%s", %d, %s, %.2ff, %.2ff, %.2ff, %.1ff, %.1ff, %.1ff, %.2ff, %s, %.2ff, %.2ff, %.2ff, %s, %s },' % (
+        tone = (m.get('tone_db') or []) if ok else []
+        tone_ok = len(tone) == 6 and all(q.get('n', 0) >= d['min_songs_per_mode'] for q in tone)
+        rows.append('    { "%s", "%s", %d, %s, %.2ff, %.2ff, %.2ff, %.1ff, %.1ff, %.1ff, %.2ff, %s, %.2ff, %.2ff, %.2ff, %s, %s, %s, { %s } },' % (
             mid, name, m.get('songs', 0), 'true' if ok else 'false', sit['p25'], sit['median'], sit['p75'],
             note.get('p25', 0), note.get('median', 0), note.get('p75', 0), dip,
             'true' if voc.get('n', 0) >= d['min_songs_per_mode'] else 'false', voc.get('p25', 0), voc.get('median', 0), voc.get('p75', 0),
-            'true' if pk_ok else 'false', ', '.join('{ %.2ff, %.2ff, %.2ff }' % (q.get('p25', 0), q.get('median', 0), q.get('p75', 0)) if pk_ok else '{ 0, 0, 0 }' for q in pk)))
+            'true' if pk_ok else 'false', ', '.join('{ %.2ff, %.2ff, %.2ff }' % (q.get('p25', 0), q.get('median', 0), q.get('p75', 0)) if pk_ok else '{ 0, 0, 0 }' for q in pk),
+            'true' if tone_ok else 'false', ', '.join('{ %.2ff, %.2ff, %.2ff }' % (q['p25'], q['median'], q['p75']) for q in tone) if tone_ok else '{ 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }'))
     ks = d['kickSamples']['all']
     return '''#pragma once
 // Made by tools/kickfit_targets.py from data/kickfit-targets.json (measured %s). Do not edit by hand.
@@ -48,6 +51,7 @@ struct ModeTarget
     float dipDb;                       // how far the bass's lows drop under the kick in those songs, dB (middle)
     bool vocal; float vocLo, vocMid, vocHi;   // the singing against everything else (K-weighted), dB: quarter, middle, three quarters of the songs
     bool peaks; float bassVsKick[3], vocVsKick[3];   // the bass's / the vocal's usual peak against the kick's, dB, song by song (quarter, middle, three quarters); parts split by Demucs
+    bool tone; float toneDb[6][3];   // tone balance of the finished songs: share of the sound in each of Fit Bus's six ranges, dB against the whole (quarter, middle, three quarters)
 };
 inline constexpr ModeTarget modeTargets[] = {
 %s

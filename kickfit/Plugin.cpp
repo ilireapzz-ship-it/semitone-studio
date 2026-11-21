@@ -60,7 +60,7 @@ public:
         for (auto& m : kf::modeTargets) modes.add (m.name);
         for (int minor = 0; minor < 2; ++minor) for (auto* n : noteNames) keys.add (juce::String (n) + (minor ? " minor" : " major"));
         juce::AudioProcessorValueTreeState::ParameterLayout l;
-        l.add (std::make_unique<C> (juce::ParameterID { "role", 1 }, "I am on", juce::StringArray { "The kick", "The bass", "The vocal" }, 0));
+        l.add (std::make_unique<C> (juce::ParameterID { "role", 1 }, "I am on", juce::StringArray { "The kick", "The bass", "The vocal", "Everything else" }, 0));
         l.add (std::make_unique<C> (juce::ParameterID { "mode", 1 }, "Genre", modes, 0));
         l.add (std::make_unique<C> (juce::ParameterID { "key", 1 }, "Key", keys, 0));
         for (auto* id : { "thump", "punch", "click", "tail" })
@@ -256,10 +256,10 @@ private:
     void drawPitch (juce::Graphics& g, juce::Rectangle<int> r)
     {
         const int role = (int) proc.get ("role"); const bool onBass = role == 1;
-        frame (g, r, role == 2 ? "Pitch: this vocal (orange) and the rest of the song (blue)" : onBass ? "Pitch: this bass (blue) and the kick on the sidechain (orange)" : paired ? "Pitch: this kick (orange) and the bass (blue, from the Kick Fit on the bass)" : "Pitch: this kick (orange) and the sidechain (blue)");
+        frame (g, r, role == 3 ? "Pitch: everything else in the song" : role == 2 ? "Pitch: this vocal (orange) and the rest of the song (blue)" : onBass ? "Pitch: this bass (blue) and the kick on the sidechain (orange)" : paired ? "Pitch: this kick (orange) and the bass (blue, from the Kick Fit on the bass)" : "Pitch: this kick (orange) and the sidechain (blue)");
         auto in = r.reduced (8, 22);
         const auto& t = kf::modeTargets[(size_t) juce::jlimit (0, kf::numModes - 1, (int) proc.get ("mode"))];
-        if (role == 2) {}
+        if (role >= 2) {}
         else if (t.measured && t.noteHi > t.noteLo)
         {
             const float x0 = xOf (t.noteLo, in), x1 = xOf (t.noteHi, in);
@@ -315,6 +315,7 @@ private:
     void drawMeter (juce::Graphics& g, juce::Rectangle<int> r)
     {
         const auto& tv = kf::modeTargets[(size_t) juce::jlimit (0, kf::numModes - 1, (int) proc.get ("mode"))];
+        if (proc.get ("role") > 2.5f) { frame (g, r, "Nothing to sit here: Fit Bus reads this part on the bus"); return; }
         if (proc.get ("role") > 1.5f)
         {
             frame (g, r, "Vocal against everything else");
@@ -373,7 +374,7 @@ private:
             mag.resize ((size_t) fftSize / 2, 0.0f);
             for (size_t i = 0; i < mag.size(); ++i) { const float v = buf[i] / (fftSize * 0.25f); mag[i] = v > mag[i] ? v : mag[i] * 0.86f + v * 0.14f; }
         };
-        const int role = (int) proc.get ("role"); const bool onBass = role == 1, onVocal = role == 2;
+        const int role = (int) proc.get ("role"); const bool onBass = role == 1, onVocal = role >= 2, onRest = role == 3;
         {
             const juce::ScopedLock sl (linkLock);
             auto* b = role != 0 ? nullptr : bassOne.load();
@@ -382,7 +383,7 @@ private:
         }
         const bool led = onBass && linkedRoom.load() >= 0;                     // a Kick Fit on the kick sets Room for this one
         for (int i = 0; i < knobs.size(); ++i) { const bool on = onVocal ? i == 6 : onBass ? ((i == 4 && ! led) || i == 6) : true; knobs[i]->setEnabled (on); knobs[i]->setAlpha (on ? 1.0f : 0.3f); }
-        sitBtn.setEnabled (! onBass);
+        sitBtn.setEnabled (! onBass && ! onRest);
         keys.add ((onBass ? magMine : magOther).data(), fftSize / 2, proc.rate / fftSize);
         const double hz = onVocal ? 0.0 : proc.engine.noteShown(), tune = proc.get ("tune");
         shownHz = hz > 0 ? hz * kf::Engine::ratioOf (tune) : 0;
@@ -392,7 +393,8 @@ private:
         else if (keys.key (tonic, minor, sure) && sure > 0.04) { haveKey = true; keyText = juce::String (noteNames[tonic]) + (minor ? " minor" : " major") + " (heard on the sidechain)"; }
         canTune = false;
         juce::String line;
-        if (onVocal) line = ! proc.engine.hasSidechain() ? "On the vocal: send everything except the vocal to this Kick Fit's sidechain, so it can hear the rest of the song."
+        if (onRest) line = "On everything else: nothing changes here unless you move Level. This Kick Fit tells Fit Bus what the rest of the song is doing.";
+        else if (onVocal) line = ! proc.engine.hasSidechain() ? "On the vocal: send everything except the vocal to this Kick Fit's sidechain, so it can hear the rest of the song."
                                                           : "On the vocal: the bar shows how loud the singing is against everything else. Sit it sets Level.";
         else if (onBass) line = ! proc.engine.hasSidechain() ? "On the bass: send the kick to this Kick Fit's sidechain so it knows when the kick hits."
                          : led ? "On the bass: its lows dip when the kick hits. Room for bass is set on the kick's Kick Fit."

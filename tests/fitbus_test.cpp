@@ -109,26 +109,39 @@ static Buf fakeVoice (double sr, double secs)
     for (size_t i = 0; i < b.size(); ++i) { const double t = (double) i / sr, n = u (rng), syll = std::fmod (t, 0.37) < 0.25 && std::fmod (t, 3.0) < 2.2 ? 1.0 : 0.0; b[i] = (float) (syll * (0.8 * bp.run (n) + 0.5 * bp2.run (n))); }
     return b;
 }
+static Buf fakeRest (double sr, double secs)           // a pad: a chord of saw-ish notes that swells, with some air
+{
+    Buf b ((size_t) (sr * secs), 0.0f); std::mt19937 rng (8); std::uniform_real_distribution<double> u (-1, 1); kf::Biquad hp; hp.highpass (6000, 0.7, sr);
+    for (size_t i = 0; i < b.size(); ++i)
+    {
+        const double t = (double) i / sr, swell = 0.5 + 0.5 * std::sin (2 * kf::pi * 0.13 * t); double v = 0;
+        for (double f : { 220.0, 277.2, 329.6, 440.0 }) for (int h = 1; h <= 4; ++h) v += std::sin (2 * kf::pi * f * h * t) / (h * 4.0);
+        b[i] = (float) (swell * (0.3 * v + 0.15 * hp.run (u (rng))));
+    }
+    return b;
+}
 static void testMixer()
 {
-    const double sr = 48000, secs = 12; const Buf part[3] = { fakeKick (sr, secs), fakeBass (sr, secs), fakeVoice (sr, secs) };
-    struct Case { double g[3]; bool have[3]; double extra; double tolDb; double minFit, maxFit; };
-    const Case cases[] = { { { 0.5, 0.3, 1.2 }, { true, true, true }, 0, 1.0, 0.9, 1.0 },          // all three, faders all over the place
-                           { { 1.0, 0.1, 0.4 }, { true, true, true }, 0, 6.0, 0.9, 1.0 },          // a bass 20 dB down under a kick in the same range: only roughly (the window says so and offers no fix)
-                           { { 0.7, 0.0, 0.9 }, { true, false, true }, 0, 1.0, 0.9, 1.0 },         // no Kick Fit on a bass, and no bass
-                           { { 0.5, 0.5, 0.5 }, { true, true, true }, 0.6, 99, 0.0, 0.9 } };       // a lot else in the bus (a loud hiss): the levels can't be trusted, and the fit must say so (under 0.9)
+    const double sr = 48000, secs = 12; const Buf part[4] = { fakeKick (sr, secs), fakeBass (sr, secs), fakeVoice (sr, secs), fakeRest (sr, secs) };
+    struct Case { double g[4]; bool have[4]; double extra; double tolDb; double minFit, maxFit; };
+    const Case cases[] = { { { 0.5, 0.3, 1.2 }, { true, true, true }, 0, 1.0, 0.97, 1.0 },          // all three, faders all over the place
+                           { { 0.5, 0.4, 0.8, 0.7 }, { true, true, true, true }, 0, 1.5, 0.97, 1.0 },   // with the rest of the song, which has its own Kick Fit
+                           { { 0.5, 0.4, 0.8, 0.7 }, { true, true, true, false }, 0, 99, 0.0, 0.97 },   // the rest of the song is there but has no Kick Fit: it must say it can't tell
+                           { { 1.0, 0.1, 0.4 }, { true, true, true }, 0, 6.0, 0.97, 1.0 },          // a bass 20 dB down under a kick in the same range: only roughly (the window says so and offers no fix)
+                           { { 0.7, 0.0, 0.9 }, { true, false, true }, 0, 1.0, 0.97, 1.0 },         // no Kick Fit on a bass, and no bass
+                           { { 0.5, 0.5, 0.5 }, { true, true, true }, 0.6, 99, 0.0, 0.97 } };       // a lot else in the bus (a loud hiss): the levels can't be trusted, and the fit must say so (under 0.97)
     for (size_t late : { (size_t) 0, (size_t) (0.03 * sr), (size_t) (0.007 * sr) }) for (auto& cs : cases)       // the bus may hear the parts a little late (the host lines plug-ins up)
     {
-        fl::BandMeter pm[3], bm; for (auto& m : pm) m.prepare (sr);
+        fl::BandMeter pm[4], bm; for (auto& m : pm) m.prepare (sr);
         bm.prepare (sr); Mixer mix; std::mt19937 rng (11); std::uniform_real_distribution<double> u (-1, 1);
         for (size_t i = 0; i < part[0].size(); ++i)
         {
-            double sum = cs.extra * u (rng); for (int k = 0; k < 3; ++k) sum += i >= late ? cs.g[k] * part[k][i - late] : 0.0;
-            const bool step = bm.push (sum, std::abs (sum)); for (int k = 0; k < 3; ++k) pm[k].push (part[k][i], std::abs (part[k][i]));
-            if (step) { double P[3][fl::numBands]; for (int k = 0; k < 3; ++k) for (int b = 0; b < fl::numBands; ++b) P[k][b] = pm[k].power[b]; mix.add (P, cs.have, bm.power, 0.02); }
+            double sum = cs.extra * u (rng); for (int k = 0; k < 4; ++k) sum += i >= late ? cs.g[k] * part[k][i - late] : 0.0;
+            const bool step = bm.push (sum, std::abs (sum)); for (int k = 0; k < 4; ++k) pm[k].push (part[k][i], std::abs (part[k][i]));
+            if (step) { double P[4][fl::numBands]; for (int k = 0; k < 4; ++k) for (int b = 0; b < fl::numBands; ++b) P[k][b] = pm[k].power[b]; mix.add (P, cs.have, bm.power, 0.02); }
         }
-        double g2[3], fit = 0; CHECK (mix.solve (cs.have, g2, fit), "nothing solved");
-        for (int k = 0; k < 3; ++k)
+        double g2[4], fit = 0; CHECK (mix.solve (cs.have, g2, fit), "nothing solved");
+        for (int k = 0; k < 4; ++k)
         {
             if (! cs.have[k]) { CHECK (g2[k] == 0, "a part with no Kick Fit got a level"); continue; }
             const double got = 10 * std::log10 (std::max (g2[k], 1e-12)), want = 20 * std::log10 (cs.g[k]);
@@ -138,9 +151,79 @@ static void testMixer()
     }
 }
 
+// level of a stretch, dB
+static double levelDb (const Buf& b, double sr, double from, double to)
+{
+    double e = 0; size_t n = 0; for (size_t i = (size_t) (from * sr); i < (size_t) (to * sr) && i < b.size(); ++i) { e += (double) b[i] * b[i]; ++n; }
+    return 10 * std::log10 (e / std::max<size_t> (n, 1) + 1e-20);
+}
+static double peakDb (const Buf& b, double sr, double from, double to)
+{
+    float m = 0; for (size_t i = (size_t) (from * sr); i < (size_t) (to * sr) && i < b.size(); ++i) m = std::max (m, std::abs (b[i]));
+    return 20 * std::log10 (m + 1e-12);
+}
+// a hit every half second: a sharp front, then a body that dies away over a few tenths of a second
+static Buf hits (double sr, double secs)
+{
+    Buf b ((size_t) (sr * secs), 0.0f);
+    for (size_t i = 0; i < b.size(); ++i) { const double t = std::fmod ((double) i / sr, 0.5); b[i] = (float) (0.25 * std::sin (2 * kf::pi * 180 * t) * (std::exp (-t / 0.15) + 1.2 * std::exp (-t / 0.004))); }
+    return b;
+}
+static void testTransient()
+{
+    const double sr = 48000;
+    auto shaped = [&] (const Buf& in, float attack, float sustain) { Buf l = in, r = in; Engine e; Params p; p.attack = attack; p.sustain = sustain; e.set (p); e.prepare (sr); run (e, l, r, 512); return l; };
+    const Buf in = hits (sr, 4); const double d = (double) (Engine().latency()) / sr; Engine probe; probe.prepare (sr); const double lat = probe.latency() / sr; (void) d;
+    // measured on the fourth hit (3.0 s in): its front is the first 6 ms, its body 60 to 250 ms after
+    auto front = [&] (const Buf& b) { return peakDb (b, sr, 3.0 + lat, 3.006 + lat); };
+    auto body = [&] (const Buf& b) { return levelDb (b, sr, 3.06 + lat, 3.25 + lat); };
+    const Buf flat = shaped (in, 0, 0), up = shaped (in, 1, 0), down = shaped (in, -1, 0), longer = shaped (in, 0, 1), shorter = shaped (in, 0, -1);
+    CHECK (front (up) - front (flat) > 2.0, "Attack up should make the front of a hit taller: %.2f dB", front (up) - front (flat));
+    CHECK (front (down) - front (flat) < -2.0, "Attack down should soften the front: %.2f dB", front (down) - front (flat));
+    CHECK (std::abs (body (up) - body (flat)) < 1.0 && std::abs (body (down) - body (flat)) < 1.0, "Attack should leave the body alone: %.2f / %.2f dB", body (up) - body (flat), body (down) - body (flat));
+    CHECK (body (longer) - body (flat) > 1.5, "Sustain up should lift the body: %.2f dB", body (longer) - body (flat));
+    CHECK (body (shorter) - body (flat) < -1.5, "Sustain down should thin the body: %.2f dB", body (shorter) - body (flat));
+    CHECK (std::abs (front (longer) - front (flat)) < 1.0 && std::abs (front (shorter) - front (flat)) < 1.0, "Sustain should leave the front alone: %.2f / %.2f dB", front (longer) - front (flat), front (shorter) - front (flat));
+    // a steady sound has no hits: nothing should change, whatever the knobs say
+    const Buf tone = sine (sr, 300, 0.3, 3);
+    for (float a : { -1.0f, 1.0f }) for (float su : { -1.0f, 1.0f })
+    { const Buf o = shaped (tone, a, su); CHECK (std::abs (levelDb (o, sr, 2, 3) - levelDb (tone, sr, 2, 3)) < 0.3, "a steady sound moved %.2f dB (attack %.0f sustain %.0f)", levelDb (o, sr, 2, 3) - levelDb (tone, sr, 2, 3), a, su); }
+    Buf z ((size_t) sr, 0.0f); const Buf zo = shaped (z, 1, 1); bool ok = true; for (float v : zo) ok = ok && v == 0.0f; CHECK (ok, "silence came out as something");
+}
+
+// two tones at once, one in the range being watched and one outside it
+static void testTame()
+{
+    const double sr = 48000; const size_t n = (size_t) (sr * 3);
+    auto mixOf = [&] (double ampIn, double hzIn, double hzOut) { Buf b (n); for (size_t i = 0; i < n; ++i) { const double t = (double) i / sr; b[i] = (float) (ampIn * std::sin (2 * kf::pi * hzIn * t) + 0.2 * std::sin (2 * kf::pi * hzOut * t)); } return b; };
+    auto toneDb = [&] (const Buf& b, double hz) { double re = 0, im = 0; const size_t a = (size_t) (sr * 2); for (size_t i = a; i < n; ++i) { const double t = (double) i / sr; re += b[i] * std::cos (2 * kf::pi * hz * t); im += b[i] * std::sin (2 * kf::pi * hz * t); } return 20 * std::log10 (2 * std::sqrt (re * re + im * im) / (double) (n - a) + 1e-12); };
+    struct Case { int range; double hzIn, hzOut; }; const Case cases[] = { { 1, 40, 1000 }, { 2, 100, 2000 }, { 4, 800, 80 }, { 5, 3000, 200 }, { 6, 9000, 300 } };
+    for (auto& c : cases)
+    {
+        const Buf in = mixOf (0.5, c.hzIn, c.hzOut); Buf l = in, r = in; Engine e; Params p; p.tameRange = c.range; p.tameThrDb = -30; p.tameAmount = 1; e.set (p); e.prepare (sr); run (e, l, r, 512);
+        const double inside = toneDb (l, c.hzIn) - toneDb (in, c.hzIn), outside = toneDb (l, c.hzOut) - toneDb (in, c.hzOut);
+        CHECK (inside < -6.0, "range %d: the loud tone inside it (%.0f Hz) should come down, moved %.2f dB", c.range, c.hzIn, inside);
+        CHECK (std::abs (outside) < 1.5, "range %d: the tone outside it (%.0f Hz) moved %.2f dB", c.range, c.hzOut, outside);
+        CHECK (e.tameDb() < -3.0f, "range %d: it should report holding down, said %.2f dB", c.range, e.tameDb());
+        // quiet enough to stay under the threshold: the same samples come out
+        const Buf q = mixOf (0.01, c.hzIn, c.hzOut); Buf ql = q, qr = q; Engine e2; e2.set (p); e2.prepare (sr); run (e2, ql, qr, 512);
+        bool same = true; const size_t d = (size_t) e2.latency(); for (size_t i = d; i < n; ++i) same = same && ql[i] == q[i - d];
+        CHECK (same, "range %d: a sound under the threshold was changed", c.range);
+        // Amount at 0 does nothing even when loud
+        Buf al = in, ar = in; Engine e3; Params p0 = p; p0.tameAmount = 0; e3.set (p0); e3.prepare (sr); run (e3, al, ar, 512);
+        same = true; for (size_t i = d; i < n; ++i) same = same && al[i] == in[i - d];
+        CHECK (same, "range %d: Amount at 0 changed the sound", c.range);
+    }
+    // it lets go: loud in the range for a second, then quiet
+    Buf b (n); for (size_t i = 0; i < n; ++i) { const double t = (double) i / sr; b[i] = (float) ((t < 1 ? 0.5 : 0.005) * std::sin (2 * kf::pi * 3000 * t)); }
+    Buf l = b, r = b; Engine e; Params p; p.tameRange = 5; p.tameThrDb = -30; p.tameAmount = 1; e.set (p); e.prepare (sr); run (e, l, r, 512);
+    CHECK (std::abs (levelDb (l, sr, 2.5, 3) - levelDb (b, sr, 2.5, 3)) < 0.2, "did not let go after the loud part: %.2f dB", levelDb (l, sr, 2.5, 3) - levelDb (b, sr, 2.5, 3));
+    float jump = 0; for (size_t i = (size_t) (sr * 0.2); i < (size_t) (sr * 0.9); ++i) jump = std::max (jump, std::abs (l[i] - l[i - 1])); CHECK (jump < 0.25f, "the tamed sound has a click in it (step %.3f)", jump);
+}
+
 int main()
 {
-    testUntouched(); testCeiling(); testBlocks(); testReduction(); testPicture(); testMixer();
+    testUntouched(); testCeiling(); testBlocks(); testReduction(); testPicture(); testMixer(); testTransient(); testTame();
     if (failures) { printf ("fitbus: %d failed\n", failures); return 1; }
     printf ("fitbus: all tests passed\n"); return 0;
 }
