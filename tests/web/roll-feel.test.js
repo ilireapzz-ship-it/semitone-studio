@@ -2,7 +2,7 @@
 const path=require('path'), {chromium}=require('playwright');
 let fails=0; const ok=(c,m,x)=>{ if(!c){ fails++; console.log('FAIL',m,x===undefined?'':JSON.stringify(x)); } };
 (async()=>{ const b=await chromium.launch(), p=await b.newPage({viewport:{width:1440,height:900}}), errs=[]; p.on('pageerror',e=>errs.push(e.message));
- await p.addInitScript(()=>{ window.__noStart=1; }); await p.goto('file://'+path.join(__dirname,'..','..','web','semitone-studio.html')); await p.waitForTimeout(1200);
+ await p.addInitScript(()=>{ window.__noStart=1; }); await p.goto('file://'+path.join(__dirname,'..','..','web','semitone-studio.html')); await p.waitForTimeout(1200); await p.evaluate(()=>{ S.scaleLock=false; }); /* this checks exact pitches */
  await p.evaluate(()=>{ const v=document.querySelector('.startview'); if(v) v.hidden=true; spPut({big:false}); shellDock('roll'); setLayer('melody'); S.ctxOn=false; window.__h=[]; const q=partHear; partHear=(p,m,v,d)=>{ __h.push([p,m]); }; }); await p.waitForTimeout(300);
  const rect=i=>p.evaluate(i=>{ const R=$('#roll').getBoundingClientRect(), q=S.rects[i]; return {x:R.left+q.x+q.w/2,y:R.top+q.y+q.h/2,m:q.n.src.m,rh:S.rl.rh,left:R.left,top:R.top,W:S.rl.W,h:R.height}; },i);
  const heard=()=>p.evaluate(()=>{ const a=__h.slice(); __h.length=0; return a; });

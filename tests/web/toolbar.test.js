@@ -27,7 +27,7 @@ let fails=0; const ok=(c,m,x)=>{ if(!c){ fails++; console.log('FAIL',m,x===undef
  await p.keyboard.press('d'); const e=await p.evaluate(()=>{ const R=$('#roll').getBoundingClientRect(), q=S.rects[S.rects.length-1]; return {x:R.left+q.x+q.w/2,y:R.top+q.y+q.h/2}; }); await p.mouse.click(e.x,e.y); await p.waitForTimeout(150); ok(await count()===c0,'Erase removes it with one click');
  await p.keyboard.press('v'); ok(await p.evaluate(()=>S.rollTool==='select'&&!S.slice),'V is back to Select');
  await p.keyboard.press('c'); ok(await p.evaluate(()=>S.rollTool==='slice'&&S.slice===true),'C is the Slice tool'); await p.keyboard.press('v');
- await p.evaluate(()=>setLayer('chords')); ok(await p.evaluate(()=>$('[data-tool="draw"]').disabled&&$('#tbQuant').disabled&&!$('#snapBtn').disabled),'note-only tools rest on Chords'); await p.evaluate(()=>setLayer('melody'));
+ await p.evaluate(()=>setLayer('chords')); ok(await p.evaluate(()=>!$('[data-tool="draw"]').disabled&&$('[data-tool="slice"]').disabled&&$('#tbQuant').disabled&&!$('#snapBtn').disabled),'note-only tools rest on Chords; Draw works there (25 Nov)'); await p.evaluate(()=>setLayer('melody'));
  // free-timed drum hit plays where it was put and survives saving
  const d=await p.evaluate(()=>{ snapSet(.25,false); drumRollOpen(); const n=rollArr()[0]; S.selNote=n; S.selSet=new Set([n]); n.start=+(n.start+.07).toFixed(4); refreshAfterEdit(true); const t=S.song.sections[S.sel].type, ev=drumPerf(barList('song').find(b=>b.si===S.sel)), r=drumRow(n.m); return {saved:!!projectData().beatOff,off:Object.values(S.beatOff[t])[0],row:r,hit:ev.filter(e=>e.r===r).map(e=>e.x)}; });
  ok(d.saved&&Math.abs(Object.values(d.off)[0]-.07)<1e-6,'a drum hit can sit off the grid',d);

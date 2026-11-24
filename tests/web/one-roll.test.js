@@ -1,7 +1,7 @@
 const path=require('path'), {chromium}=require('playwright');
 let fails=0; const ok=(c,m,x)=>{ if(!c){ fails++; console.log('FAIL',m,x===undefined?'':JSON.stringify(x)); } };
 (async()=>{ const b=await chromium.launch(), p=await b.newPage({viewport:{width:1440,height:900}}), errs=[]; p.on('pageerror',e=>errs.push(e.message));
- await p.addInitScript(()=>{ window.__noStart=1; }); await p.goto('file://'+path.join(__dirname,'..','..','web','semitone-studio.html')); await p.waitForTimeout(1200);
+ await p.addInitScript(()=>{ window.__noStart=1; }); await p.goto('file://'+path.join(__dirname,'..','..','web','semitone-studio.html')); await p.waitForTimeout(1200); await p.evaluate(()=>{ S.scaleLock=false; }); /* this checks exact pitches */
  await p.evaluate(()=>{ if(!S.song) $('#newBtn').click(); spPut({big:false}); }); await p.waitForTimeout(400);
  const roll=async()=>p.evaluate(()=>{ const r=$('#roll').getBoundingClientRect(), q=S.rects[0]; return {x:r.left+q.x+q.w/2,y:r.top+q.y+q.h/2,rx:r.left,ry:r.top,w:r.width,h:r.height,rh:S.rl.rh,n:S.rects.length}; });
  // bass opens on the main roll, untouched until a real change
@@ -20,7 +20,7 @@ let fails=0; const ok=(c,m,x)=>{ if(!c){ fails++; console.log('FAIL',m,x===undef
  await p.mouse.move(q0.x,q0.y); await p.mouse.down(); await p.mouse.move(q0.x+60,q0.y,{steps:4}); await p.mouse.up(); await p.waitForTimeout(120);
  ok(await p.evaluate(d=>rollArr()[0].dur>d,q0.d),'the right edge of a bass note stretches it');
  const n0=await p.evaluate(()=>rollArr().length);
- await p.mouse.dblclick(r.rx+r.w*.93,r.ry+r.h*.2); await p.waitForTimeout(150);
+ { const sp=await p.evaluate(()=>{ const R=$('#roll').getBoundingClientRect(); for(let fy=.2;fy<.9;fy+=.06) for(let fx=.93;fx>.5;fx-=.06){ const x=R.width*fx, y=R.height*fy; if(!S.rects.some(q=>x>=q.x-8&&x<=q.x+q.w+8&&y>=q.y-4&&y<=q.y+q.h+4)) return [R.left+x,R.top+y]; } return null; }); await p.mouse.dblclick(sp[0],sp[1]); } await p.waitForTimeout(150);
  ok(await p.evaluate(()=>rollArr().length)===n0+1,'double-click adds a bass note');
  await p.keyboard.press('Delete'); await p.waitForTimeout(150);
  ok(await p.evaluate(()=>rollArr().length)===n0,'Delete removes it');

@@ -129,7 +129,9 @@
     "lana-honeymoon",
     "lana-nfr",
     "lana-bb",
-    "jazz"
+    "jazz",
+    "lana-lfl",
+    "lana-ocean"
    ],
    "src": [
     "https://www.soundonsound.com/techniques/secrets-mix-engineers-tom-elmhirst",
@@ -279,7 +281,8 @@
     "tiersen-postrock",
     "country",
     "fleetwood",
-    "lana-nfr"
+    "lana-nfr",
+    "lana-cocc"
    ],
    "src": [
     "https://www.soundonsound.com/techniques/inside-track-alabama-shakes-sound-color",
@@ -432,7 +435,8 @@
     "tiersen",
     "tiersen-piano",
     "lana-bb",
-    "fleetwood"
+    "fleetwood",
+    "lana-ocean"
    ],
    "src": [
     "https://uaudio.com/webzine/2006/march/text/content2.html",
@@ -546,7 +550,9 @@
     "lana-btd",
     "charli",
     "psych",
-    "chappell"
+    "chappell",
+    "lana-lfl",
+    "lana-cocc"
    ],
    "src": [
     "https://musictech.com/features/interviews/emily-lazar/",
@@ -774,6 +780,21 @@
   "psych": {
    "mix": "everett",
    "master": "ludwig",
+   "why": "closest documented approach to this style; change it any time"
+  },
+  "lana-lfl": {
+   "mix": "elmhirst",
+   "master": "lazar",
+   "why": "closest documented approach to this style; change it any time"
+  },
+  "lana-cocc": {
+   "mix": "everett",
+   "master": "lazar",
+   "why": "closest documented approach to this style; change it any time"
+  },
+  "lana-ocean": {
+   "mix": "elmhirst",
+   "master": "katz",
    "why": "closest documented approach to this style; change it any time"
   }
  },

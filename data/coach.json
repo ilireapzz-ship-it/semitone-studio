@@ -213,7 +213,10 @@
         "lana-nfr": 0.5,
         "lana-bb": 0.5,
         "jazz": 0.6,
-        "psych": 0.7
+        "psych": 0.7,
+        "lana-lfl": 0.7,
+        "lana-cocc": 0.5,
+        "lana-ocean": 0.5
       },
       "breakIt": "Conversational, drifting phrasing is part of some writers' character: then the rule is a hint, not an error."
     },

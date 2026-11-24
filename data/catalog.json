@@ -842,6 +842,218 @@
           ]
         },
         {
+          "album": "Lust for Life",
+          "year": 2017,
+          "era": "lana-lfl",
+          "producers": [
+            "Lana Del Rey",
+            "Rick Nowels",
+            "Kieron Menzies",
+            "Dean Reid",
+            "Benny Blanco",
+            "Emile Haynie",
+            "Boi-1da",
+            "Sean Ono Lennon"
+          ],
+          "sound": [
+            "slow trap drums and 808",
+            "dream pop and 50s-60s pop colours",
+            "folk guitar songs",
+            "Mellotron and strings",
+            "duets and guest rappers"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Lust_for_Life_(Lana_Del_Rey_album)"
+          ],
+          "songs": [
+            {
+              "title": "Love",
+              "tags": [
+                "dreamy",
+                "nostalgic",
+                "mid-tempo",
+                "slow build",
+                "reverb electric guitar",
+                "mellotron"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Lust for Life",
+              "tags": [
+                "dreamy",
+                "romantic",
+                "synth",
+                "mid-tempo",
+                "old Hollywood"
+              ],
+              "chords": true
+            },
+            {
+              "title": "13 Beaches",
+              "tags": [
+                "lonely",
+                "cinematic",
+                "strings",
+                "trap hi-hats",
+                "slow",
+                "beach haze"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Cherry",
+              "tags": [
+                "sultry",
+                "dark",
+                "trip-hop beat",
+                "808",
+                "slow",
+                "6/8"
+              ],
+              "chords": true
+            },
+            {
+              "title": "White Mustang",
+              "tags": [
+                "romantic",
+                "nostalgic",
+                "piano",
+                "strings",
+                "trap hi-hats",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Summer Bummer",
+              "tags": [
+                "dark",
+                "sultry",
+                "hazy",
+                "hip-hop beat",
+                "trap hi-hats",
+                "808"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Groupie Love",
+              "tags": [
+                "dreamy",
+                "romantic",
+                "hip-hop beat",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "In My Feelings",
+              "tags": [
+                "defiant",
+                "dark",
+                "trap hi-hats",
+                "808",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Coachella – Woodstock in My Mind",
+              "tags": [
+                "reflective",
+                "hazy",
+                "trap hi-hats",
+                "mellotron",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "God Bless America – and All the Beautiful Women in It",
+              "tags": [
+                "defiant",
+                "acoustic guitar",
+                "808",
+                "strings",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "When the World Was at War We Kept Dancing",
+              "tags": [
+                "defiant",
+                "folk",
+                "acoustic guitar",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Beautiful People Beautiful Problems",
+              "tags": [
+                "reflective",
+                "piano",
+                "strings",
+                "mid-tempo",
+                "70s California"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Tomorrow Never Came",
+              "tags": [
+                "nostalgic",
+                "tender",
+                "acoustic guitar",
+                "mellotron",
+                "celesta",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Heroin",
+              "tags": [
+                "dark",
+                "cinematic",
+                "organ",
+                "choir",
+                "slow build",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Change",
+              "tags": [
+                "intimate",
+                "hopeful",
+                "piano",
+                "sparse",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Get Free",
+              "tags": [
+                "hopeful",
+                "reverb electric guitar",
+                "mid-tempo",
+                "beach haze"
+              ],
+              "chords": true
+            }
+          ],
+          "vibes": [
+            "summer road trip",
+            "beach haze",
+            "late-night drive"
+          ]
+        },
+        {
           "album": "Norman Fucking Rockwell!",
           "year": 2019,
           "era": "lana-nfr",
@@ -1207,6 +1419,378 @@
             "small-town Americana",
             "bedroom confessional",
             "smoky lounge"
+          ]
+        },
+        {
+          "album": "Chemtrails Over the Country Club",
+          "year": 2021,
+          "era": "lana-cocc",
+          "producers": [
+            "Lana Del Rey",
+            "Jack Antonoff",
+            "Rick Nowels"
+          ],
+          "sound": [
+            "minimal country folk",
+            "acoustic and twelve-string guitar",
+            "piano and Mellotron",
+            "horns and pedal steel",
+            "whispered high vocal"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Chemtrails_over_the_Country_Club"
+          ],
+          "songs": [
+            {
+              "title": "White Dress",
+              "tags": [
+                "nostalgic",
+                "tender",
+                "piano",
+                "slow",
+                "slow build",
+                "small-town Americana"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Chemtrails Over the Country Club",
+              "tags": [
+                "dreamy",
+                "hazy",
+                "piano",
+                "acoustic guitar",
+                "mellotron",
+                "strings",
+                "6/8",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Tulsa Jesus Freak",
+              "tags": [
+                "sultry",
+                "hazy",
+                "trip-hop beat",
+                "synth bass",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Let Me Love You Like a Woman",
+              "tags": [
+                "tender",
+                "romantic",
+                "piano",
+                "slide guitar",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Wild at Heart",
+              "tags": [
+                "nostalgic",
+                "acoustic guitar",
+                "piano",
+                "horns",
+                "6/8",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Dark but Just a Game",
+              "tags": [
+                "dark",
+                "jazzy",
+                "mid-tempo",
+                "tempo changes"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Not All Who Wander Are Lost",
+              "tags": [
+                "hazy",
+                "folk",
+                "acoustic guitar",
+                "organ",
+                "no drums",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Yosemite",
+              "tags": [
+                "tender",
+                "intimate",
+                "folk",
+                "acoustic guitar",
+                "mellotron",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Breaking Up Slowly",
+              "tags": [
+                "mournful",
+                "small-town Americana",
+                "piano",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Dance Till We Die",
+              "tags": [
+                "warm",
+                "nostalgic",
+                "piano",
+                "horns",
+                "70s California",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "For Free",
+              "tags": [
+                "tender",
+                "piano",
+                "horns",
+                "folk",
+                "slow"
+              ],
+              "cover": true,
+              "note": "a cover of another writer's song: listed, not analysed",
+              "chords": false
+            }
+          ],
+          "vibes": [
+            "small-town Americana",
+            "open road",
+            "Laurel Canyon dusk"
+          ]
+        },
+        {
+          "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+          "year": 2023,
+          "era": "lana-ocean",
+          "producers": [
+            "Lana Del Rey",
+            "Jack Antonoff",
+            "Drew Erickson",
+            "Zach Dawes",
+            "Mike Hermosa",
+            "Benji Lysaght",
+            "Nick Waterhouse",
+            "Ian Doerr"
+          ],
+          "sound": [
+            "long piano ballads",
+            "gospel choir and strings",
+            "folk guitar",
+            "trap switch-ups",
+            "spoken and improvised interludes"
+          ],
+          "src": [
+            "https://en.wikipedia.org/wiki/Did_You_Know_That_There's_a_Tunnel_Under_Ocean_Blvd"
+          ],
+          "songs": [
+            {
+              "title": "The Grants",
+              "tags": [
+                "tender",
+                "hopeful",
+                "piano",
+                "choir",
+                "strings",
+                "slow build"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Did You Know That There's a Tunnel Under Ocean Blvd",
+              "tags": [
+                "yearning",
+                "cinematic",
+                "piano",
+                "strings",
+                "choir",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Sweet",
+              "tags": [
+                "tender",
+                "piano",
+                "strings",
+                "no drums",
+                "old Hollywood",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "A&W",
+              "tags": [
+                "dark",
+                "defiant",
+                "acoustic guitar",
+                "trap hi-hats",
+                "808",
+                "tempo changes"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Judah Smith Interlude",
+              "tags": [
+                "spoken section",
+                "piano",
+                "restless"
+              ],
+              "interlude": true,
+              "chords": false,
+              "note": "mostly a spoken sermon: listed, not analysed"
+            },
+            {
+              "title": "Candy Necklace",
+              "tags": [
+                "dark",
+                "noir",
+                "piano",
+                "strings",
+                "jazzy",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Jon Batiste Interlude",
+              "tags": [
+                "psychedelic",
+                "jazzy",
+                "piano",
+                "spoken section"
+              ],
+              "interlude": true,
+              "chords": false,
+              "note": "a loose studio interlude: listed, not analysed"
+            },
+            {
+              "title": "Kintsugi",
+              "tags": [
+                "intimate",
+                "mournful",
+                "piano",
+                "sparse",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Fingertips",
+              "tags": [
+                "confessional",
+                "strings",
+                "no drums",
+                "sparse",
+                "slow"
+              ],
+              "chords": false,
+              "note": "no chord source found yet: tags and the album sound still apply; fill in with the song analyser"
+            },
+            {
+              "title": "Paris, Texas",
+              "tags": [
+                "dreamy",
+                "lonely",
+                "piano",
+                "sparse",
+                "no drums"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Grandfather Please Stand on the Shoulders of My Father While He's Deep-Sea Fishing",
+              "tags": [
+                "hazy",
+                "dreamy",
+                "piano",
+                "saxophone",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Let the Light In",
+              "tags": [
+                "romantic",
+                "warm",
+                "acoustic guitar",
+                "piano",
+                "70s California",
+                "slow"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Margaret",
+              "tags": [
+                "hopeful",
+                "warm",
+                "piano",
+                "saxophone",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Fishtail",
+              "tags": [
+                "sultry",
+                "hazy",
+                "trap hi-hats",
+                "808",
+                "mid-tempo"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Peppers",
+              "tags": [
+                "playful",
+                "hip-hop beat",
+                "psychedelic",
+                "mid-tempo",
+                "beach haze"
+              ],
+              "chords": true
+            },
+            {
+              "title": "Taco Truck x VB",
+              "tags": [
+                "hazy",
+                "trap hi-hats",
+                "808",
+                "tempo changes",
+                "beach haze"
+              ],
+              "chords": true
+            }
+          ],
+          "vibes": [
+            "bedroom confessional",
+            "70s California",
+            "neon city"
           ]
         }
       ]

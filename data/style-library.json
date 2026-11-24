@@ -5485,6 +5485,1273 @@
       }
     },
     {
+      "id": "lana-lfl",
+      "kind": "artist",
+      "tags": [
+        "Lana Del Rey"
+      ],
+      "alsoTags": [
+        "genre:dream pop",
+        "genre:trip hop",
+        "mood:dreamy"
+      ],
+      "style": {
+        "id": "lana-lfl",
+        "meter": "4/4",
+        "comp": "sustain",
+        "swing": 50,
+        "name": "Lana Del Rey · Lust for Life (2017)",
+        "lane": "Lana Del Rey",
+        "desc": "Folk-tinged dream pop over slow trap drums: dorian and minor loops (i–III–v–IV, VI–iv–VII–i) beside bright major songs with a 50s glow (I–V–vi–IV); Mellotron, strings, deep bass and many duets.",
+        "mode": "dorian",
+        "key": 4,
+        "bpm": 99,
+        "sevenths": false,
+        "density": 0.32,
+        "leap": 0.3,
+        "register": [
+          50,
+          76
+        ],
+        "sound": "dreamy",
+        "drums": true,
+        "structure": "pop",
+        "contour": -0.2,
+        "space": 1.5,
+        "mopts": {
+          "verse": {
+            "shift": -3
+          },
+          "chorus": {
+            "shift": 5
+          }
+        },
+        "rhythms": [
+          [
+            2,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            2
+          ],
+          [
+            1.5,
+            0.5,
+            2
+          ],
+          [
+            3,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1
+          ]
+        ],
+        "bpmRange": [
+          67,
+          130
+        ],
+        "mMajor": {
+          "0": {
+            "2": 3,
+            "5": 3,
+            "6": 2,
+            "4": 1,
+            "3": 1
+          },
+          "1": {
+            "3": 1
+          },
+          "2": {
+            "5": 2,
+            "3": 1,
+            "0": 1
+          },
+          "3": {
+            "0": 6,
+            "4": 3,
+            "5": 1
+          },
+          "4": {
+            "5": 3,
+            "3": 2,
+            "0": 2,
+            "1": 1
+          },
+          "5": {
+            "4": 4,
+            "3": 2,
+            "0": 1
+          },
+          "6": {
+            "3": 1
+          }
+        },
+        "mMinor": {
+          "0": {
+            "6": 4,
+            "2": 3,
+            "4": 2,
+            "3": 1,
+            "5": 1
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "4": 2,
+            "3": 1,
+            "5": 1
+          },
+          "3": {
+            "0": 6,
+            "6": 1,
+            "5": 1,
+            "1": 1,
+            "4": 1
+          },
+          "4": {
+            "3": 3,
+            "0": 1,
+            "6": 1,
+            "5": 1
+          },
+          "5": {
+            "3": 3,
+            "6": 2,
+            "0": 1,
+            "2": 1,
+            "4": 1
+          },
+          "6": {
+            "5": 4,
+            "0": 2,
+            "4": 1,
+            "3": 1
+          }
+        },
+        "modeShare": {
+          "major": 0.42,
+          "minor": 0.57
+        },
+        "m": {
+          "0": {
+            "6": 4,
+            "2": 3,
+            "4": 2,
+            "3": 1,
+            "5": 1
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "4": 2,
+            "3": 1,
+            "5": 1
+          },
+          "3": {
+            "0": 6,
+            "6": 1,
+            "5": 1,
+            "1": 1,
+            "4": 1
+          },
+          "4": {
+            "3": 3,
+            "0": 1,
+            "6": 1,
+            "5": 1
+          },
+          "5": {
+            "3": 3,
+            "6": 2,
+            "0": 1,
+            "2": 1,
+            "4": 1
+          },
+          "6": {
+            "5": 4,
+            "0": 2,
+            "4": 1,
+            "3": 1
+          }
+        }
+      },
+      "bass": "held",
+      "groove": "halftime",
+      "kit": "808",
+      "instr": {
+        "chords": "i:strings",
+        "pad": "i:piano",
+        "bass": "i:junobass",
+        "lead": "i:steel"
+      },
+      "quirks": "ballad",
+      "feel": {
+        "kick": 0,
+        "snare": 0.012,
+        "hat": 0.006,
+        "jit": 0.004,
+        "vj": 0.08,
+        "ghost": 0,
+        "acc": 0.3
+      },
+      "sug": {
+        "ext": 0.4,
+        "borrow": 0.65,
+        "sec": 0.4,
+        "tri": 0.05,
+        "sus": 0.35
+      },
+      "trans": {
+        "chorus": [
+          "rev",
+          "sweep",
+          "impact"
+        ],
+        "verse": [],
+        "bridge": [
+          "sweep"
+        ],
+        "pre": [
+          "rev"
+        ],
+        "outro": [
+          "down"
+        ]
+      },
+      "art": {
+        "legato": 0.8,
+        "vibLong": 0.75,
+        "scoopStart": 0.35,
+        "fallEnd": 0.45,
+        "slideLeap": 0.3,
+        "ghost": 0,
+        "stacc": 0.05,
+        "accent": 0.2,
+        "grace": 0.05,
+        "tenuto": 0.25,
+        "info": "Reverb-soaked and stacked: a close low verse, then a wide, layered higher chorus; long held notes with vibrato."
+      },
+      "arrangement": {
+        "drums": "slow trap or hip-hop drums on most songs, entering after a quiet verse; live drums on the rock-leaning ones",
+        "strings": "Mellotron and strings fill behind the vocal; the second half of the album leans on acoustic guitar and piano",
+        "voice": "guest voices answer the lead on duets; heavily stacked backing vocals in choruses",
+        "extras": [
+          "Mellotron",
+          "vibraphone",
+          "harpsichord",
+          "celesta",
+          "organ"
+        ]
+      },
+      "mixHint": "Deep round low end and dry trap drums, with Mellotron, strings and stacked vocals wide in a long reverb.",
+      "dna": {
+        "tagline": "dream-pop haze over slow trap drums",
+        "intro": "Lust for Life, made mainly with Rick Nowels, Kieron Menzies and Dean Reid, mixes slow trap beats, folk guitar and 50s and 60s pop colours, with several guest singers and rappers.",
+        "stats": [
+          [
+            "Songs analysed",
+            "16"
+          ],
+          [
+            "Tempo",
+            "slow, half-time, about 67–130"
+          ],
+          [
+            "Harmony",
+            "dorian and minor loops, with major songs"
+          ]
+        ],
+        "points": [
+          {
+            "c": "high",
+            "t": "Alt-pop, folk and trap-pop, produced mostly with Rick Nowels, Kieron Menzies and Dean Reid; Mellotron is credited on many songs.",
+            "used": "instruments, kit, mix",
+            "src": [
+              "https://en.wikipedia.org/wiki/Lust_for_Life_(Lana_Del_Rey_album)"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "13 Beaches and Heroin run dorian loops (i–VII–v–IV and i–III–v–IV); White Mustang and When the World Was at War are dorian too.",
+            "used": "chord matrix, mode",
+            "src": [
+              "https://www.hooktheory.com/theorytab/view/lana-del-rey/13-beaches",
+              "https://www.hooktheory.com/theorytab/view/lana-del-rey/heroin",
+              "https://www.hooktheory.com/theorytab/view/lana-del-rey/white-mustang",
+              "https://www.hooktheory.com/theorytab/view/lana-del-rey/when-the-world-was-at-war-we-kept-dancing"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Several songs swap between a major key and its relative minor for the pre-chorus or chorus (Love, Lust for Life, Beautiful People Beautiful Problems, Coachella).",
+            "used": "chord matrix, modeShare",
+            "src": [
+              "https://www.hooktheory.com/theorytab/view/lana-del-rey/love",
+              "https://www.hooktheory.com/theorytab/view/lana-del-rey/lust-for-life",
+              "https://www.hooktheory.com/theorytab/view/lana-del-rey/beautiful-people-beautiful-problems",
+              "https://www.hooktheory.com/theorytab/view/lana-del-rey/coachella---woodstock-in-my-mind"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "A minor iv or a major III colours the brighter songs (Get Free, Tomorrow Never Came, Groupie Love).",
+            "used": "sug.borrow, sug.sec",
+            "src": [
+              "https://www.hooktheory.com/theorytab/view/lana-del-rey/get-free",
+              "https://www.hooktheory.com/theorytab/view/lana-del-rey/tomorrow-never-came",
+              "https://www.hooktheory.com/theorytab/view/lana-del-rey/groupie-love-featuring-asap-rocky"
+            ]
+          }
+        ]
+      },
+      "songsAnalysed": [
+        {
+          "song": "Love",
+          "album": "Lust for Life",
+          "key": "Bb major",
+          "bpm": 99,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/love"
+        },
+        {
+          "song": "Lust for Life",
+          "album": "Lust for Life",
+          "key": "C minor",
+          "bpm": 100,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/lust-for-life"
+        },
+        {
+          "song": "13 Beaches",
+          "album": "Lust for Life",
+          "key": "A dorian",
+          "bpm": 144,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/13-beaches"
+        },
+        {
+          "song": "Cherry",
+          "album": "Lust for Life",
+          "key": "G# minor",
+          "bpm": 125,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/cherry"
+        },
+        {
+          "song": "White Mustang",
+          "album": "Lust for Life",
+          "key": "B dorian",
+          "bpm": 115,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/white-mustang"
+        },
+        {
+          "song": "Summer Bummer",
+          "album": "Lust for Life",
+          "key": "Eb minor",
+          "bpm": 135,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/summer-bummer"
+        },
+        {
+          "song": "Groupie Love",
+          "album": "Lust for Life",
+          "key": "A major",
+          "bpm": 88,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/groupie-love-featuring-asap-rocky"
+        },
+        {
+          "song": "In My Feelings",
+          "album": "Lust for Life",
+          "key": "E dorian",
+          "bpm": 180,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/in-my-feelings"
+        },
+        {
+          "song": "Coachella – Woodstock in My Mind",
+          "album": "Lust for Life",
+          "key": "G mixolydian",
+          "bpm": 130,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/coachella---woodstock-in-my-mind"
+        },
+        {
+          "song": "God Bless America – and All the Beautiful Women in It",
+          "album": "Lust for Life",
+          "key": "F# minor",
+          "bpm": 88,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/god-bless-america"
+        },
+        {
+          "song": "When the World Was at War We Kept Dancing",
+          "album": "Lust for Life",
+          "key": "A dorian",
+          "bpm": 116,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/when-the-world-was-at-war-we-kept-dancing"
+        },
+        {
+          "song": "Beautiful People Beautiful Problems",
+          "album": "Lust for Life",
+          "key": "F major",
+          "bpm": 123,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/beautiful-people-beautiful-problems"
+        },
+        {
+          "song": "Tomorrow Never Came",
+          "album": "Lust for Life",
+          "key": "C major",
+          "bpm": 73,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/tomorrow-never-came"
+        },
+        {
+          "song": "Heroin",
+          "album": "Lust for Life",
+          "key": "E dorian",
+          "bpm": 120,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/heroin"
+        },
+        {
+          "song": "Change",
+          "album": "Lust for Life",
+          "key": "C major",
+          "bpm": 86,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/change"
+        },
+        {
+          "song": "Get Free",
+          "album": "Lust for Life",
+          "key": "Bb major",
+          "bpm": 102,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/get-free"
+        }
+      ],
+      "artist": "Lana Del Rey",
+      "eraOf": "Lana Del Rey",
+      "eraName": "Lust for Life (2017)",
+      "catalog": {
+        "artist": "Lana Del Rey",
+        "albums": [
+          "Lust for Life"
+        ]
+      }
+    },
+    {
+      "id": "lana-cocc",
+      "kind": "artist",
+      "tags": [
+        "Lana Del Rey"
+      ],
+      "alsoTags": [
+        "genre:folk",
+        "genre:americana",
+        "genre:country",
+        "producer:Jack Antonoff"
+      ],
+      "style": {
+        "id": "lana-cocc",
+        "meter": "4/4",
+        "comp": "strum",
+        "swing": 50,
+        "name": "Lana Del Rey · Chemtrails Over the Country Club (2021)",
+        "lane": "Lana Del Rey",
+        "desc": "Minimal country folk: acoustic and twelve-string guitar, piano and Mellotron, simple loops (IV–V–vi, I–♭VII–IV, VI–i–III–VII), slow waltz and 6/8 songs, a whispered high voice and few drums.",
+        "mode": "ionian",
+        "key": 7,
+        "bpm": 84,
+        "sevenths": false,
+        "density": 0.34,
+        "leap": 0.3,
+        "register": [
+          52,
+          77
+        ],
+        "sound": "keys",
+        "drums": true,
+        "structure": "pop",
+        "contour": -0.1,
+        "space": 1.5,
+        "mopts": {
+          "chorus": {
+            "shift": 3
+          }
+        },
+        "rhythms": [
+          [
+            2,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            2
+          ],
+          [
+            1.5,
+            0.5,
+            2
+          ],
+          [
+            3,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1
+          ]
+        ],
+        "bpmRange": [
+          62,
+          127
+        ],
+        "mMajor": {
+          "0": {
+            "6": 3,
+            "5": 3,
+            "4": 2
+          },
+          "1": {
+            "5": 1
+          },
+          "2": {
+            "5": 1
+          },
+          "3": {
+            "4": 6,
+            "0": 5
+          },
+          "4": {
+            "5": 4,
+            "3": 2,
+            "2": 1,
+            "1": 1
+          },
+          "5": {
+            "3": 6,
+            "0": 3
+          },
+          "6": {
+            "3": 3
+          }
+        },
+        "mMinor": {
+          "0": {
+            "2": 4,
+            "5": 4,
+            "3": 3
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "6": 6
+          },
+          "3": {
+            "5": 2,
+            "0": 2
+          },
+          "4": {
+            "0": 2
+          },
+          "5": {
+            "0": 6,
+            "6": 2,
+            "2": 2
+          },
+          "6": {
+            "5": 4,
+            "4": 2,
+            "0": 2
+          }
+        },
+        "modeShare": {
+          "major": 0.62,
+          "minor": 0.38
+        },
+        "m": {
+          "0": {
+            "6": 3,
+            "5": 3,
+            "4": 2
+          },
+          "1": {
+            "5": 1
+          },
+          "2": {
+            "5": 1
+          },
+          "3": {
+            "4": 6,
+            "0": 5
+          },
+          "4": {
+            "5": 4,
+            "3": 2,
+            "2": 1,
+            "1": 1
+          },
+          "5": {
+            "3": 6,
+            "0": 3
+          },
+          "6": {
+            "3": 3
+          }
+        }
+      },
+      "bass": "root",
+      "groove": "halftime",
+      "kit": "acoustic",
+      "instr": {
+        "chords": "i:steel",
+        "pad": "i:piano",
+        "bass": "i:bassgtr",
+        "lead": "i:steel"
+      },
+      "quirks": "natural",
+      "feel": {
+        "kick": 0,
+        "snare": 0.012,
+        "hat": 0.006,
+        "jit": 0.006,
+        "vj": 0.12,
+        "ghost": 0.1,
+        "acc": 0.25
+      },
+      "sug": {
+        "ext": 0.35,
+        "borrow": 0.4,
+        "sec": 0.2,
+        "tri": 0,
+        "sus": 0.4
+      },
+      "trans": {
+        "chorus": [
+          "rev"
+        ],
+        "verse": [],
+        "bridge": [
+          "sweep"
+        ],
+        "pre": [
+          "rev"
+        ],
+        "outro": [
+          "down"
+        ]
+      },
+      "art": {
+        "legato": 0.7,
+        "vibLong": 0.55,
+        "scoopStart": 0.35,
+        "fallEnd": 0.45,
+        "slideLeap": 0.3,
+        "ghost": 0,
+        "stacc": 0.05,
+        "accent": 0.1,
+        "grace": 0.05,
+        "tenuto": 0.25,
+        "info": "Breathy and high: whispered falsetto phrases packed with words, light vibrato, soft endings."
+      },
+      "arrangement": {
+        "guitars": "acoustic and twelve-string guitar with piano carry most songs",
+        "drums": "soft brushed drums, often late or absent",
+        "extras": [
+          "Mellotron",
+          "horns",
+          "pedal steel",
+          "organ",
+          "slide guitar"
+        ]
+      },
+      "mixHint": "Small and close: acoustic guitar and piano dry up front, voice breathy with a soft reverb, Mellotron and horns far behind, little low end.",
+      "dna": {
+        "tagline": "hushed country folk and twelve-string haze",
+        "intro": "Chemtrails Over the Country Club, made mostly with Jack Antonoff, is a quieter, folkier record than NFR, with country colours and a few guest women singers.",
+        "stats": [
+          [
+            "Songs analysed",
+            "10"
+          ],
+          [
+            "Tempo",
+            "slow, some waltz and 6/8"
+          ],
+          [
+            "Harmony",
+            "simple major and minor loops, some mixolydian"
+          ]
+        ],
+        "points": [
+          {
+            "c": "high",
+            "t": "Folk, country folk and Americana, more minimal than Norman Fucking Rockwell!; produced by Jack Antonoff, with Rick Nowels on Yosemite.",
+            "used": "instruments, kit, mix",
+            "src": [
+              "https://en.wikipedia.org/wiki/Chemtrails_over_the_Country_Club"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "The title song keeps one loop, IV–V–vi in G major in 6/8, for verse and chorus.",
+            "used": "chord matrix",
+            "src": [
+              "https://www.hooktheory.com/theorytab/view/lana-del-rey/chemtrails-over-the-country-club"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Wild at Heart moves from an F# minor pre-chorus to an A mixolydian chorus (I–♭VII–IV); Dance Till We Die is G mixolydian in its bridge.",
+            "used": "chord matrix",
+            "src": [
+              "https://www.hooktheory.com/theorytab/view/lana-del-rey/wild-at-heart",
+              "https://www.hooktheory.com/theorytab/view/lana-del-rey/dance-till-we-die"
+            ]
+          },
+          {
+            "c": "low",
+            "t": "Hooktheory has only one section for seven of the ten songs: tune with the song analyser."
+          }
+        ]
+      },
+      "songsAnalysed": [
+        {
+          "song": "White Dress",
+          "album": "Chemtrails Over the Country Club",
+          "key": "C major",
+          "bpm": 122,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/white-dress"
+        },
+        {
+          "song": "Chemtrails Over the Country Club",
+          "album": "Chemtrails Over the Country Club",
+          "key": "G major",
+          "bpm": 101,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/chemtrails-over-the-country-club"
+        },
+        {
+          "song": "Tulsa Jesus Freak",
+          "album": "Chemtrails Over the Country Club",
+          "key": "D minor",
+          "bpm": 69,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/tulsa-jesus-freak"
+        },
+        {
+          "song": "Let Me Love You Like a Woman",
+          "album": "Chemtrails Over the Country Club",
+          "key": "C major",
+          "bpm": 134,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/let-me-love-you-like-a-woman"
+        },
+        {
+          "song": "Wild at Heart",
+          "album": "Chemtrails Over the Country Club",
+          "key": "F# minor",
+          "bpm": 210,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/wild-at-heart"
+        },
+        {
+          "song": "Dark but Just a Game",
+          "album": "Chemtrails Over the Country Club",
+          "key": "C dorian",
+          "bpm": 158,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/dark-but-just-a-game"
+        },
+        {
+          "song": "Not All Who Wander Are Lost",
+          "album": "Chemtrails Over the Country Club",
+          "key": "G major",
+          "bpm": 84,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/not-all-who-wander-are-lost"
+        },
+        {
+          "song": "Yosemite",
+          "album": "Chemtrails Over the Country Club",
+          "key": "A minor",
+          "bpm": 106,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/yosemite"
+        },
+        {
+          "song": "Breaking Up Slowly",
+          "album": "Chemtrails Over the Country Club",
+          "key": "Bb minor",
+          "bpm": 119,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/breaking-up-slowly-(ft-nikki-lane)"
+        },
+        {
+          "song": "Dance Till We Die",
+          "album": "Chemtrails Over the Country Club",
+          "key": "G mixolydian",
+          "bpm": 127,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/dance-till-we-die"
+        }
+      ],
+      "artist": "Lana Del Rey",
+      "eraOf": "Lana Del Rey",
+      "eraName": "Chemtrails Over the Country Club (2021)",
+      "catalog": {
+        "artist": "Lana Del Rey",
+        "albums": [
+          "Chemtrails Over the Country Club"
+        ]
+      }
+    },
+    {
+      "id": "lana-ocean",
+      "kind": "artist",
+      "tags": [
+        "Lana Del Rey"
+      ],
+      "alsoTags": [
+        "genre:americana",
+        "genre:folk",
+        "instrument:piano",
+        "mood:cinematic",
+        "producer:Jack Antonoff"
+      ],
+      "style": {
+        "id": "lana-ocean",
+        "meter": "4/4",
+        "comp": "sustain",
+        "swing": 50,
+        "name": "Lana Del Rey · Did You Know That There's a Tunnel Under Ocean Blvd (2023)",
+        "lane": "Lana Del Rey",
+        "desc": "Long, wandering piano ballads with strings and gospel choir, mostly major (IV–I–V–vi, I–V–ii), then trap-leaning songs that flip key and tempo halfway.",
+        "mode": "ionian",
+        "key": 9,
+        "bpm": 80,
+        "sevenths": true,
+        "density": 0.36,
+        "leap": 0.3,
+        "register": [
+          52,
+          76
+        ],
+        "sound": "keys",
+        "drums": true,
+        "structure": "pop",
+        "contour": -0.1,
+        "space": 1.5,
+        "mopts": {
+          "chorus": {
+            "shift": 2
+          }
+        },
+        "rhythms": [
+          [
+            2,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            2
+          ],
+          [
+            1.5,
+            0.5,
+            2
+          ],
+          [
+            3,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1
+          ]
+        ],
+        "bpmRange": [
+          62,
+          132
+        ],
+        "mMajor": {
+          "0": {
+            "3": 4,
+            "4": 3,
+            "6": 2,
+            "2": 1,
+            "5": 1
+          },
+          "1": {
+            "0": 1,
+            "3": 1,
+            "4": 1,
+            "2": 1
+          },
+          "2": {
+            "6": 1,
+            "4": 1,
+            "0": 1
+          },
+          "3": {
+            "0": 6,
+            "4": 1,
+            "1": 1
+          },
+          "4": {
+            "3": 3,
+            "1": 2,
+            "5": 1,
+            "0": 1
+          },
+          "5": {
+            "4": 1,
+            "0": 1
+          },
+          "6": {
+            "3": 1,
+            "5": 1,
+            "0": 1
+          }
+        },
+        "mMinor": {
+          "0": {
+            "3": 5,
+            "6": 2,
+            "5": 1,
+            "4": 1
+          },
+          "1": {
+            "0": 1
+          },
+          "2": {
+            "4": 1,
+            "5": 1,
+            "0": 1
+          },
+          "3": {
+            "0": 6,
+            "4": 1,
+            "2": 1
+          },
+          "4": {
+            "2": 2,
+            "3": 1,
+            "5": 1,
+            "0": 1
+          },
+          "5": {
+            "4": 2,
+            "0": 2,
+            "3": 1
+          },
+          "6": {
+            "5": 1,
+            "3": 1,
+            "4": 1
+          }
+        },
+        "modeShare": {
+          "major": 0.62,
+          "minor": 0.38
+        },
+        "m": {
+          "0": {
+            "3": 4,
+            "4": 3,
+            "6": 2,
+            "2": 1,
+            "5": 1
+          },
+          "1": {
+            "0": 1,
+            "3": 1,
+            "4": 1,
+            "2": 1
+          },
+          "2": {
+            "6": 1,
+            "4": 1,
+            "0": 1
+          },
+          "3": {
+            "0": 6,
+            "4": 1,
+            "1": 1
+          },
+          "4": {
+            "3": 3,
+            "1": 2,
+            "5": 1,
+            "0": 1
+          },
+          "5": {
+            "4": 1,
+            "0": 1
+          },
+          "6": {
+            "3": 1,
+            "5": 1,
+            "0": 1
+          }
+        }
+      },
+      "bass": "held",
+      "groove": "halftime",
+      "kit": "acoustic",
+      "instr": {
+        "chords": "i:piano",
+        "pad": "i:strings",
+        "bass": "i:bassgtr",
+        "lead": "i:strings"
+      },
+      "quirks": "natural",
+      "feel": {
+        "kick": 0,
+        "snare": 0.014,
+        "hat": 0.008,
+        "jit": 0.007,
+        "vj": 0.12,
+        "ghost": 0.1,
+        "acc": 0.25
+      },
+      "sug": {
+        "ext": 0.5,
+        "borrow": 0.55,
+        "sec": 0.35,
+        "tri": 0.05,
+        "sus": 0.45
+      },
+      "trans": {
+        "chorus": [
+          "rev"
+        ],
+        "verse": [],
+        "bridge": [
+          "sweep"
+        ],
+        "pre": [],
+        "outro": [
+          "down"
+        ]
+      },
+      "art": {
+        "legato": 0.6,
+        "vibLong": 0.4,
+        "scoopStart": 0.35,
+        "fallEnd": 0.45,
+        "slideLeap": 0.3,
+        "ghost": 0,
+        "stacc": 0.05,
+        "accent": 0.15,
+        "grace": 0.05,
+        "tenuto": 0.25,
+        "info": "Stream-of-thought: near-spoken, uneven phrases close to the mic, then long soft held notes in the chorus."
+      },
+      "arrangement": {
+        "piano": "piano leads; strings, organ and gospel voices swell late",
+        "switch": "some songs change key, tempo or beat midway (A&W, Taco Truck x VB)",
+        "beats": "trap drums and heavy bass on the closing songs (Fishtail, Peppers, Taco Truck x VB)",
+        "extras": [
+          "gospel choir",
+          "Mellotron",
+          "saxophone",
+          "twelve-string guitar",
+          "spoken interlude"
+        ]
+      },
+      "mixHint": "Close piano and voice with room noise left in, strings and choir wide and warm; for the trap songs, heavy saturated bass and dry drums.",
+      "dna": {
+        "tagline": "family piano hymns that turn into trap",
+        "intro": "Made with Jack Antonoff, Drew Erickson, Zach Dawes, Mike Hermosa and others, Ocean Blvd sets long piano and string songs about family beside experimental beat switches.",
+        "stats": [
+          [
+            "Songs analysed",
+            "13"
+          ],
+          [
+            "Tempo",
+            "slow and free, with mid-song changes"
+          ],
+          [
+            "Harmony",
+            "major, with minor, mixolydian and modal colours"
+          ]
+        ],
+        "points": [
+          {
+            "c": "high",
+            "t": "Americana and alternative pop with piano pop, gospel, folk, trap and psychedelic touches; several songs have string arrangements by Drew Erickson.",
+            "used": "instruments, mix",
+            "src": [
+              "https://en.wikipedia.org/wiki/Did_You_Know_That_There's_a_Tunnel_Under_Ocean_Blvd"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "A&W changes mode by section (phrygian dominant verse, major pre-chorus, mixolydian chorus) and turns from folk to trap halfway.",
+            "used": "chord matrix, arrangement.switch",
+            "src": [
+              "https://www.hooktheory.com/theorytab/view/lana-del-rey/a-and-w",
+              "https://en.wikipedia.org/wiki/A%26W_(song)"
+            ]
+          },
+          {
+            "c": "high",
+            "t": "Sweet goes from A mixolydian to C major; Taco Truck x VB goes from E minor at 62 BPM to D major at 136.",
+            "used": "chord matrix, arrangement.switch",
+            "src": [
+              "https://www.hooktheory.com/theorytab/view/lana-del-rey/sweet",
+              "https://www.hooktheory.com/theorytab/view/lana-del-rey/taco-truck-x-vb"
+            ]
+          },
+          {
+            "c": "low",
+            "t": "Hooktheory has only one section for Kintsugi, Paris, Texas, Grandfather and Fishtail, and nothing for Fingertips: tune with the song analyser."
+          }
+        ]
+      },
+      "songsAnalysed": [
+        {
+          "song": "The Grants",
+          "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+          "key": "G major",
+          "bpm": 121,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/the-grants"
+        },
+        {
+          "song": "Did You Know That There's a Tunnel Under Ocean Blvd",
+          "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+          "key": "C major",
+          "bpm": 120,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/did-you-know-that-theres-a-tunnel"
+        },
+        {
+          "song": "Sweet",
+          "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+          "key": "A mixolydian",
+          "bpm": 68,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/sweet"
+        },
+        {
+          "song": "A&W",
+          "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+          "key": "Bb major",
+          "bpm": 156,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/a-and-w"
+        },
+        {
+          "song": "Candy Necklace",
+          "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+          "key": "F# minor",
+          "bpm": 120,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/candy-necklace"
+        },
+        {
+          "song": "Kintsugi",
+          "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+          "key": "A major",
+          "bpm": 101,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/kintsugi"
+        },
+        {
+          "song": "Paris, Texas",
+          "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+          "key": "C minor",
+          "bpm": 166,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/paris-texas"
+        },
+        {
+          "song": "Grandfather Please Stand on the Shoulders of My Father While He's Deep-Sea Fishing",
+          "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+          "key": "Eb mixolydian",
+          "bpm": 160,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/grandfather-please-stand-on-the-shoulders"
+        },
+        {
+          "song": "Let the Light In",
+          "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+          "key": "A major",
+          "bpm": 67,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/let-the-light-in"
+        },
+        {
+          "song": "Margaret",
+          "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+          "key": "A major",
+          "bpm": 104,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/margaret"
+        },
+        {
+          "song": "Fishtail",
+          "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+          "key": "F dorian",
+          "bpm": 89,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/fishtail"
+        },
+        {
+          "song": "Peppers",
+          "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+          "key": "E minor",
+          "bpm": 157,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/peppers"
+        },
+        {
+          "song": "Taco Truck x VB",
+          "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+          "key": "E minor",
+          "bpm": 136,
+          "c": "high",
+          "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/taco-truck-x-vb"
+        }
+      ],
+      "artist": "Lana Del Rey",
+      "eraOf": "Lana Del Rey",
+      "eraName": "Did You Know That There's a Tunnel Under Ocean Blvd (2023)",
+      "catalog": {
+        "artist": "Lana Del Rey",
+        "albums": [
+          "Did You Know That There's a Tunnel Under Ocean Blvd"
+        ]
+      }
+    },
+    {
       "id": "cinematic",
       "kind": "genre",
       "tags": [
@@ -10044,7 +11311,9 @@
             "what": "A slow filter sweep on your lead synth",
             "why": "Fits his hands-on analog synth playing; the sweep itself is a guess, done on your plug-in",
             "c": "low",
-            "src": ["https://reverb.com/featured/in-the-studio-with-super-producer-mike-dean"],
+            "src": [
+              "https://reverb.com/featured/in-the-studio-with-super-producer-mike-dean"
+            ],
             "onByDefault": true,
             "op": "plug:lead:filter sweep@bridge,outro"
           },
@@ -10272,7 +11541,9 @@
             "what": "Synths darker in the verse, so the chorus opens up",
             "why": "Takes his dark verse, clear chorus contrast from the vocal to your synths",
             "c": "low",
-            "src": ["https://en.wikipedia.org/wiki/Poker_Face_(song)"],
+            "src": [
+              "https://en.wikipedia.org/wiki/Poker_Face_(song)"
+            ],
             "onByDefault": true,
             "op": "plug:chords:filter dark@verse"
           },
@@ -10642,7 +11913,9 @@
             "what": "Chords get brighter section by section, up to the end",
             "why": "The same slow build as his layering, done with your plug-in’s filter",
             "c": "low",
-            "src": ["https://www.soundonsound.com/techniques/inside-track-olivia-rodrigo-vampire"],
+            "src": [
+              "https://www.soundonsound.com/techniques/inside-track-olivia-rodrigo-vampire"
+            ],
             "onByDefault": true,
             "op": "plug:chords:filter climb@verse1..lastChorus"
           },
@@ -12348,17 +13621,42 @@
   },
   "artistEras": {
     "about": "Artists whose albums sound very different get one profile per era. Picking the artist tag shows the eras as chips; with none picked, Semitone uses the artist's default profile. Picking one era uses only that era's chords, tempo, sounds and mix. Picking two or more blends them by the normal blend rules (first is the core). Eras are never mixed silently. A song tag (\"piano\", \"cinematic\") can also narrow the songs used: the matrix is rebuilt from only the matching songs in data/catalog.json, if at least 4 match. \"matrixFrom\" on a profile means its chords come from another profile (or only that profile's songs from one album) until it has enough songs of its own.",
-    "Lana Del Rey": {"range": {"voice": "contralto", "lo": "F3", "hi": "F5", "src": ["https://en.wikipedia.org/wiki/List_of_contraltos_in_non-classical_music"], "note": "A guide from her usual voice type, not measured notes. Her range is disputed."}, 
+    "Lana Del Rey": {
+      "range": {
+        "voice": "contralto",
+        "lo": "F3",
+        "hi": "F5",
+        "src": [
+          "https://en.wikipedia.org/wiki/List_of_contraltos_in_non-classical_music"
+        ],
+        "note": "A guide from her usual voice type, not measured notes. Her range is disputed."
+      },
       "default": "sadcore",
       "eras": [
         "lana-btd",
         "lana-uv",
         "lana-honeymoon",
+        "lana-lfl",
         "lana-nfr",
-        "lana-bb"
+        "lana-cocc",
+        "lana-bb",
+        "lana-ocean"
       ]
     },
-    "Lady Gaga": {"range": {"voice": "mezzo-soprano", "lo": "A3", "hi": "A5", "belt": ["A4", "F#5"], "src": ["https://megavocalcritic.blogspot.com/2014/05/vocal-profile-of-lady-gaga.html"], "note": "A guide from her voice type and one fan-written vocal profile, not measured notes."}, 
+    "Lady Gaga": {
+      "range": {
+        "voice": "mezzo-soprano",
+        "lo": "A3",
+        "hi": "A5",
+        "belt": [
+          "A4",
+          "F#5"
+        ],
+        "src": [
+          "https://megavocalcritic.blogspot.com/2014/05/vocal-profile-of-lady-gaga.html"
+        ],
+        "note": "A guide from her voice type and one fan-written vocal profile, not measured notes."
+      },
       "default": "gaga",
       "eras": [
         "gaga",
@@ -12366,7 +13664,16 @@
         "gaga-mayhem"
       ]
     },
-    "Fleetwood Mac": {"range": {"voice": "mezzo-soprano (Stevie Nicks)", "lo": "A3", "hi": "A5", "src": ["https://faroutmagazine.co.uk/from-folk-dreamer-to-rock-n-roll-virtuoso-the-vocal-evolution-of-stevie-nicks/"], "note": "A guide from the usual mezzo range, for Stevie Nicks only. Other singers in the band differ."}, 
+    "Fleetwood Mac": {
+      "range": {
+        "voice": "mezzo-soprano (Stevie Nicks)",
+        "lo": "A3",
+        "hi": "A5",
+        "src": [
+          "https://faroutmagazine.co.uk/from-folk-dreamer-to-rock-n-roll-virtuoso-the-vocal-evolution-of-stevie-nicks/"
+        ],
+        "note": "A guide from the usual mezzo range, for Stevie Nicks only. Other singers in the band differ."
+      },
       "default": "fleetwood",
       "eras": [
         "fleetwood",

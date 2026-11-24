@@ -758,6 +758,41 @@
         "add:counter:riff@chorus",
         "add:pad@all"
       ]
+    },
+    "lana-lfl": {
+      "extras": [
+        "pad",
+        "harmony",
+        "counter"
+      ],
+      "notes": "Mellotron and string bed, stacked backing vocals, guest-style answering lines, slow trap drums.",
+      "moves": [
+        "add:pad@chorus",
+        "add:harmony@chorus",
+        "add:counter:answer@chorus"
+      ]
+    },
+    "lana-cocc": {
+      "extras": [
+        "harmony",
+        "counter"
+      ],
+      "notes": "Acoustic guitar and piano with soft harmony voices; one slide, pedal steel or horn answer line, little else.",
+      "moves": [
+        "add:harmony@chorus",
+        "add:counter:answer@chorus"
+      ]
+    },
+    "lana-ocean": {
+      "extras": [
+        "harmony",
+        "counter"
+      ],
+      "notes": "Piano and voice; strings and gospel-style harmonies arrive late.",
+      "moves": [
+        "add:harmony@chorus",
+        "add:counter:inner@last-chorus"
+      ]
     }
   },
   "producerParts": {

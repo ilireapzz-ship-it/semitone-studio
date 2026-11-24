@@ -2631,6 +2631,509 @@
         "src": "https://hooktheory.com/theorytab/view/charli-xcx/boom-clap",
         "album": "Sucker"
       }
+    ],
+    "lana-lfl": [
+      {
+        "song": "Love",
+        "album": "Lust for Life",
+        "key": "Bb major",
+        "sections": {
+          "verse": "I V vi IV",
+          "pre (G minor)": "VII VI iv",
+          "chorus": "I V vi IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/love",
+        "c": "med",
+        "bpm": 99
+      },
+      {
+        "song": "Lust for Life",
+        "album": "Lust for Life",
+        "key": "C minor",
+        "sections": {
+          "pre (Eb major)": "I iii vi V",
+          "chorus": "VI iv VII i"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/lust-for-life",
+        "c": "med",
+        "bpm": 100
+      },
+      {
+        "song": "13 Beaches",
+        "album": "Lust for Life",
+        "key": "A dorian",
+        "sections": {
+          "intro": "i VII v IV",
+          "chorus": "i VII v IV ii",
+          "leadout": "i VII v IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/13-beaches",
+        "c": "med",
+        "bpm": 144,
+        "note": "Hooktheory clocks the intro at 73 BPM and the chorus at 144 (half-time feel)"
+      },
+      {
+        "song": "Cherry",
+        "album": "Lust for Life",
+        "key": "G# minor",
+        "sections": {
+          "verse": "i i VII i",
+          "chorus": "VI i VII"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/cherry",
+        "c": "med",
+        "bpm": 125,
+        "meter": "6/8",
+        "note": "Hooktheory marks the verse 6/8 and the chorus 3/4; SongBPM gives 94 BPM in 3"
+      },
+      {
+        "song": "White Mustang",
+        "album": "Lust for Life",
+        "key": "B dorian",
+        "sections": {
+          "chorus": "i v VII IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/white-mustang",
+        "c": "med",
+        "bpm": 115
+      },
+      {
+        "song": "Summer Bummer",
+        "album": "Lust for Life",
+        "key": "Eb minor",
+        "sections": {
+          "verse": "i V v VI V",
+          "chorus": "i V v VI V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/summer-bummer",
+        "c": "med",
+        "bpm": 135,
+        "note": "the v is diminished on Hooktheory; half-time feel (67 BPM on the sheet music)"
+      },
+      {
+        "song": "Groupie Love",
+        "album": "Lust for Life",
+        "key": "A major",
+        "sections": {
+          "chorus": "I III vi IV iv"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/groupie-love-featuring-asap-rocky",
+        "c": "med",
+        "bpm": 88,
+        "note": "III is V7/vi on Hooktheory"
+      },
+      {
+        "song": "In My Feelings",
+        "album": "Lust for Life",
+        "key": "E dorian",
+        "sections": {
+          "bridge": "III IV i"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/in-my-feelings",
+        "c": "med",
+        "bpm": 180,
+        "note": "half-time feel: 90 on SongBPM"
+      },
+      {
+        "song": "Coachella – Woodstock in My Mind",
+        "album": "Lust for Life",
+        "key": "G mixolydian",
+        "sections": {
+          "verse": "I bVII IV",
+          "chorus (E minor)": "iv i VII VI",
+          "outro": "I bVII IV V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/coachella---woodstock-in-my-mind",
+        "c": "med",
+        "bpm": 130
+      },
+      {
+        "song": "God Bless America – and All the Beautiful Women in It",
+        "album": "Lust for Life",
+        "key": "F# minor",
+        "sections": {
+          "chorus": "i #vii VII #vi",
+          "bridge": "i V VII IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/god-bless-america",
+        "c": "med",
+        "bpm": 88,
+        "note": "the raised vii and vi are diminished on Hooktheory"
+      },
+      {
+        "song": "When the World Was at War We Kept Dancing",
+        "album": "Lust for Life",
+        "key": "A dorian",
+        "sections": {
+          "verse": "i IV",
+          "pre": "bVI IV",
+          "chorus": "i III IV V i",
+          "leadout": "bVI III"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/when-the-world-was-at-war-we-kept-dancing",
+        "c": "med",
+        "bpm": 116,
+        "note": "the lead-out bVI is IV7/III on Hooktheory"
+      },
+      {
+        "song": "Beautiful People Beautiful Problems",
+        "album": "Lust for Life",
+        "key": "F major",
+        "sections": {
+          "verse": "I vi V IV",
+          "pre (D minor)": "VII VI",
+          "chorus (D minor)": "i VII VI VII"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/beautiful-people-beautiful-problems",
+        "c": "med",
+        "bpm": 123
+      },
+      {
+        "song": "Tomorrow Never Came",
+        "album": "Lust for Life",
+        "key": "C major",
+        "sections": {
+          "pre": "I iii I IV iv",
+          "chorus": "I iii vi V IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/tomorrow-never-came",
+        "c": "med",
+        "bpm": 73,
+        "note": "the second I in the pre-chorus is V7/IV on Hooktheory"
+      },
+      {
+        "song": "Heroin",
+        "album": "Lust for Life",
+        "key": "E dorian",
+        "sections": {
+          "verse": "i III v IV",
+          "chorus": "i III v IV",
+          "bridge": "i III v IV",
+          "outro (E mixolydian)": "I bVII bIII IV I"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/heroin",
+        "c": "med",
+        "bpm": 120
+      },
+      {
+        "song": "Change",
+        "album": "Lust for Life",
+        "key": "C major",
+        "sections": {
+          "verse": "vi V IV V",
+          "pre": "ii IV vi V",
+          "chorus": "vi V IV V",
+          "leadout": "I vi IV V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/change",
+        "c": "med",
+        "bpm": 86
+      },
+      {
+        "song": "Get Free",
+        "album": "Lust for Life",
+        "key": "Bb major",
+        "sections": {
+          "verse": "I III IV iv",
+          "pre": "I III IV iv",
+          "chorus": "I vi"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/get-free",
+        "c": "med",
+        "bpm": 102,
+        "note": "III is V/vi on Hooktheory"
+      }
+    ],
+    "lana-cocc": [
+      {
+        "song": "White Dress",
+        "album": "Chemtrails Over the Country Club",
+        "key": "C major",
+        "sections": {
+          "verse": "IV V ii vi IV",
+          "chorus": "IV V iii vi"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/white-dress",
+        "c": "med",
+        "bpm": 122
+      },
+      {
+        "song": "Chemtrails Over the Country Club",
+        "album": "Chemtrails Over the Country Club",
+        "key": "G major",
+        "sections": {
+          "verse": "IV V vi",
+          "chorus": "IV V vi"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/chemtrails-over-the-country-club",
+        "c": "med",
+        "bpm": 101,
+        "meter": "6/8"
+      },
+      {
+        "song": "Tulsa Jesus Freak",
+        "album": "Chemtrails Over the Country Club",
+        "key": "D minor",
+        "sections": {
+          "chorus": "VI i III VII"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/tulsa-jesus-freak",
+        "c": "med",
+        "bpm": 69
+      },
+      {
+        "song": "Let Me Love You Like a Woman",
+        "album": "Chemtrails Over the Country Club",
+        "key": "C major",
+        "sections": {
+          "chorus": "IV I V"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/let-me-love-you-like-a-woman",
+        "c": "med",
+        "bpm": 134,
+        "note": "half-time feel (67)"
+      },
+      {
+        "song": "Wild at Heart",
+        "album": "Chemtrails Over the Country Club",
+        "key": "F# minor",
+        "sections": {
+          "pre": "VI VII v i",
+          "chorus (A mixolydian)": "I bVII IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/wild-at-heart",
+        "c": "med",
+        "bpm": 210,
+        "meter": "6/8",
+        "note": "Hooktheory counts 210 in the pre-chorus and 186 in the chorus, in 6/8"
+      },
+      {
+        "song": "Dark but Just a Game",
+        "album": "Chemtrails Over the Country Club",
+        "key": "C dorian",
+        "sections": {
+          "chorus": "i IV bVI i IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/dark-but-just-a-game",
+        "c": "med",
+        "bpm": 158,
+        "note": "half-time feel (79)"
+      },
+      {
+        "song": "Not All Who Wander Are Lost",
+        "album": "Chemtrails Over the Country Club",
+        "key": "G major",
+        "sections": {
+          "chorus": "I vi"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/not-all-who-wander-are-lost",
+        "c": "med",
+        "bpm": 84
+      },
+      {
+        "song": "Yosemite",
+        "album": "Chemtrails Over the Country Club",
+        "key": "A minor",
+        "sections": {
+          "chorus": "III VII i VI III"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/yosemite",
+        "c": "med",
+        "bpm": 106
+      },
+      {
+        "song": "Breaking Up Slowly",
+        "album": "Chemtrails Over the Country Club",
+        "key": "Bb minor",
+        "sections": {
+          "chorus": "i III VII VI"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/breaking-up-slowly-(ft-nikki-lane)",
+        "c": "med",
+        "bpm": 119,
+        "meter": "3/4"
+      },
+      {
+        "song": "Dance Till We Die",
+        "album": "Chemtrails Over the Country Club",
+        "key": "G mixolydian",
+        "sections": {
+          "bridge": "I bVII IV IV I"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/dance-till-we-die",
+        "c": "med",
+        "bpm": 127
+      }
+    ],
+    "lana-ocean": [
+      {
+        "song": "The Grants",
+        "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+        "key": "G major",
+        "sections": {
+          "verse": "I iv",
+          "chorus": "V IV",
+          "bridge": "I IV",
+          "outro": "I IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/the-grants",
+        "c": "med",
+        "bpm": 121
+      },
+      {
+        "song": "Did You Know That There's a Tunnel Under Ocean Blvd",
+        "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+        "key": "C major",
+        "sections": {
+          "pre": "IV I V vi V",
+          "chorus": "IV I V ii IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/did-you-know-that-theres-a-tunnel",
+        "c": "med",
+        "bpm": 120,
+        "note": "can be felt at 60"
+      },
+      {
+        "song": "Sweet",
+        "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+        "key": "A mixolydian",
+        "sections": {
+          "verse": "I bVII I bIII I",
+          "chorus (C major)": "V I iii #v vi"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/sweet",
+        "c": "med",
+        "bpm": 68,
+        "note": "Hooktheory: verse 68 BPM, chorus 62; the #v is viiø/vi"
+      },
+      {
+        "song": "A&W",
+        "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+        "key": "Bb major",
+        "sections": {
+          "intro (Bb phrygian dominant)": "I iv",
+          "verse (Bb phrygian dominant)": "I iv",
+          "pre": "I iii bVII vi",
+          "chorus (Bb mixolydian)": "I bVII bVI IV bVI"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/a-and-w",
+        "c": "med",
+        "bpm": 156,
+        "note": "half-time feel (78)"
+      },
+      {
+        "song": "Candy Necklace",
+        "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+        "key": "F# minor",
+        "sections": {
+          "verse (F# dorian)": "i bVI IV",
+          "pre": "iv i",
+          "chorus": "i iv v iv v"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/candy-necklace",
+        "c": "med",
+        "bpm": 120
+      },
+      {
+        "song": "Kintsugi",
+        "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+        "key": "A major",
+        "sections": {
+          "chorus": "vi I IV V vi"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/kintsugi",
+        "c": "med",
+        "bpm": 101
+      },
+      {
+        "song": "Paris, Texas",
+        "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+        "key": "C minor",
+        "sections": {
+          "intro": "i v VI v VI"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/paris-texas",
+        "c": "med",
+        "bpm": 166,
+        "meter": "3/4",
+        "note": "bare chords without thirds on Hooktheory"
+      },
+      {
+        "song": "Grandfather Please Stand on the Shoulders of My Father While He's Deep-Sea Fishing",
+        "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+        "key": "Eb mixolydian",
+        "sections": {
+          "verse": "I v IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/grandfather-please-stand-on-the-shoulders",
+        "c": "med",
+        "bpm": 160,
+        "note": "half-time feel (80)"
+      },
+      {
+        "song": "Let the Light In",
+        "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+        "key": "A major",
+        "sections": {
+          "verse": "ii V I I IV",
+          "chorus": "ii iii I I IV"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/let-the-light-in",
+        "c": "med",
+        "bpm": 67,
+        "note": "the second I is V7/IV; Hooktheory counts the chorus at 132 (double)"
+      },
+      {
+        "song": "Margaret",
+        "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+        "key": "A major",
+        "sections": {
+          "pre": "I V ii",
+          "chorus": "I V ii"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/margaret",
+        "c": "med",
+        "bpm": 104
+      },
+      {
+        "song": "Fishtail",
+        "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+        "key": "F dorian",
+        "sections": {
+          "pre": "i VII IV III"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/fishtail",
+        "c": "med",
+        "bpm": 89
+      },
+      {
+        "song": "Peppers",
+        "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+        "key": "E minor",
+        "sections": {
+          "verse": "VI v III v III",
+          "chorus": "VI v III v III"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/peppers",
+        "c": "med",
+        "bpm": 157,
+        "note": "half-time feel (78)"
+      },
+      {
+        "song": "Taco Truck x VB",
+        "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+        "key": "E minor",
+        "sections": {
+          "verse": "i VII VI",
+          "pre (E dorian)": "i VII v IV",
+          "chorus (D major)": "IV I vi V",
+          "leadout (D mixolydian)": "IV I bVII"
+        },
+        "src": "https://www.hooktheory.com/theorytab/view/lana-del-rey/taco-truck-x-vb",
+        "c": "med",
+        "bpm": 136,
+        "note": "Hooktheory: verse 62 BPM, then 136"
+      }
     ]
   },
   "existingStyles": {
@@ -41231,6 +41734,3195 @@
         "range": null,
         "src": [
           "https://www.hooktheory.com/theorytab/view/adele/skyfall"
+        ]
+      }
+    ],
+    "lana-lfl": [
+      {
+        "song": "Love",
+        "artist": "Lana Del Rey",
+        "album": "Lust for Life",
+        "key": "Bb major",
+        "c": "high",
+        "bpm": 99,
+        "meter": "4/4",
+        "feel": "half-time",
+        "energy": "mid",
+        "mood": [
+          "dreamy",
+          "nostalgic",
+          "hopeful"
+        ],
+        "vibe": [
+          "space",
+          "summer road trip"
+        ],
+        "themes": [
+          "love",
+          "youth"
+        ],
+        "sound": [
+          "synth pads",
+          "live drums",
+          "guitar-led"
+        ],
+        "desc": "A slow-swelling dream-pop opener with a fifties rock and girl-group glow, echoing guitar, Mellotron and big drums; hopeful and nostalgic about young people in love.",
+        "plan": [
+          {
+            "name": "verse",
+            "key": "Bb major",
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "keyboards",
+              "bass guitar"
+            ]
+          },
+          {
+            "name": "pre-chorus",
+            "key": "G minor",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "synth pad",
+              "mellotron"
+            ]
+          },
+          {
+            "name": "chorus",
+            "key": "Bb major",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "live drums",
+              "electric guitar",
+              "mellotron"
+            ]
+          }
+        ],
+        "switch": [
+          "pre-chorus sits in the relative G minor, verse and chorus in Bb major"
+        ],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Lust_for_Life_(Lana_Del_Rey_album)",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/love",
+          "https://en.wikipedia.org/wiki/Love_(Lana_Del_Rey_song)",
+          "https://songbpm.com/@lana-del-rey/love",
+          "https://popmatters.com/lana-del-rey-lust-for-life-2495384850.html"
+        ]
+      },
+      {
+        "song": "Lust for Life",
+        "artist": "Lana Del Rey",
+        "album": "Lust for Life",
+        "key": "Eb major",
+        "c": "medium",
+        "alt": "C minor",
+        "keyNote": "Hooktheory: pre-chorus Eb major, chorus C minor (relative). The verse is not analysed there.",
+        "bpm": 100,
+        "meter": "4/4",
+        "feel": "straight",
+        "energy": "mid",
+        "mood": [
+          "romantic",
+          "dreamy",
+          "playful"
+        ],
+        "vibe": [
+          "old Hollywood",
+          "summer road trip"
+        ],
+        "themes": [
+          "love",
+          "desire",
+          "glamour"
+        ],
+        "sound": [
+          "synth pads",
+          "electronic",
+          "live drums"
+        ],
+        "desc": "A dreamy bubblegum duet with The Weeknd in a girl-group and doo-wop mould, stacked vocal loops over soft drums and synths; playful and romantic, with the Hollywood sign as its setting.",
+        "plan": [
+          {
+            "name": "verse",
+            "key": null,
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "synth pad",
+              "mellotron"
+            ]
+          },
+          {
+            "name": "pre-chorus",
+            "key": "Eb major",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "synth pad",
+              "drum machine"
+            ]
+          },
+          {
+            "name": "chorus",
+            "key": "C minor",
+            "energy": "high",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "drum machine",
+              "synth bass",
+              "synth"
+            ],
+            "note": "The Weeknd joins; distorted synths"
+          }
+        ],
+        "switch": [
+          "pre-chorus in Eb major, chorus in the relative C minor"
+        ],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Lust_for_Life_(Lana_Del_Rey_album)",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/lust-for-life",
+          "https://en.wikipedia.org/wiki/Lust_for_Life_(Lana_Del_Rey_song)",
+          "https://www.younghollywood.com/scene/track-by-track-lana-del-rey-s-lust-for-life.html"
+        ]
+      },
+      {
+        "song": "13 Beaches",
+        "artist": "Lana Del Rey",
+        "album": "Lust for Life",
+        "key": "A dorian",
+        "c": "high",
+        "alt": "G major",
+        "keyNote": "Hooktheory: A dorian throughout. SongBPM: G major (same notes).",
+        "bpm": 144,
+        "meter": "4/4",
+        "feel": "half-time",
+        "energy": "mid",
+        "mood": [
+          "melancholy",
+          "lonely",
+          "cinematic"
+        ],
+        "vibe": [
+          "beach haze",
+          "film noir"
+        ],
+        "themes": [
+          "fame",
+          "loneliness",
+          "escape"
+        ],
+        "sound": [
+          "orchestral strings",
+          "trap drums",
+          "synth pads"
+        ],
+        "desc": "Opens on a film sample and orchestral overture, then settles into slow, sparse trap drums under deep synths; lonely and dramatic, about hunting for privacy away from fame.",
+        "plan": [
+          {
+            "name": "intro",
+            "key": "A dorian",
+            "energy": "low",
+            "instruments": [
+              "strings",
+              "sound effects"
+            ],
+            "bpm": 73,
+            "note": "film-dialogue sample over an orchestral overture"
+          },
+          {
+            "name": "verse",
+            "key": null,
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "synth pad",
+              "piano"
+            ]
+          },
+          {
+            "name": "chorus",
+            "key": "A dorian",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "trap drums",
+              "synth bass",
+              "strings"
+            ]
+          },
+          {
+            "name": "chorus lead-out",
+            "key": "A dorian",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "synth pad",
+              "trap drums"
+            ]
+          }
+        ],
+        "switch": [
+          "orchestral, free-feeling intro gives way to a half-time beat"
+        ],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Lust_for_Life_(Lana_Del_Rey_album)",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/13-beaches",
+          "https://songbpm.com/@lana-del-rey/13-beaches",
+          "https://www.younghollywood.com/scene/track-by-track-lana-del-rey-s-lust-for-life.html",
+          "https://www.drownedinsound.org/archive-album-review-lana-del-rey-lust-for-life-4151213/"
+        ]
+      },
+      {
+        "song": "Cherry",
+        "artist": "Lana Del Rey",
+        "album": "Lust for Life",
+        "key": "G# minor",
+        "c": "high",
+        "keyNote": "Hooktheory and SongBPM agree on G# minor; Hooktheory counts 125 BPM, SongBPM 94 in 3.",
+        "bpm": 125,
+        "meter": "6/8",
+        "feel": "half-time",
+        "energy": "mid",
+        "mood": [
+          "sultry",
+          "dark",
+          "heartbroken"
+        ],
+        "vibe": [
+          "late-night drive"
+        ],
+        "themes": [
+          "heartbreak",
+          "love",
+          "desire"
+        ],
+        "sound": [
+          "trap drums",
+          "808 bass",
+          "guitar-led"
+        ],
+        "desc": "A slow, sultry trip-hop waltz with trap-style drums, deep bass and shadowy strings; hurt and sensual, about the damage that follows falling in love.",
+        "plan": [
+          {
+            "name": "verse",
+            "key": "G# minor",
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "electric guitar",
+              "trap drums"
+            ]
+          },
+          {
+            "name": "chorus",
+            "key": "G# minor",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "trap drums",
+              "808 bass",
+              "strings"
+            ],
+            "note": "Hooktheory writes the chorus in 3/4"
+          }
+        ],
+        "switch": [
+          "verse counted in 6/8 and chorus in 3/4 on Hooktheory"
+        ],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Lust_for_Life_(Lana_Del_Rey_album)",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/cherry",
+          "https://songbpm.com/@lana-del-rey/cherry",
+          "https://www.younghollywood.com/scene/track-by-track-lana-del-rey-s-lust-for-life.html",
+          "https://www.drownedinsound.org/archive-album-review-lana-del-rey-lust-for-life-4151213/"
+        ]
+      },
+      {
+        "song": "White Mustang",
+        "artist": "Lana Del Rey",
+        "album": "Lust for Life",
+        "key": "B dorian",
+        "c": "medium",
+        "alt": "F# minor",
+        "keyNote": "Hooktheory: chorus B dorian. SongBPM: F# minor (same notes).",
+        "bpm": 115,
+        "meter": "4/4",
+        "feel": "half-time",
+        "energy": "low",
+        "mood": [
+          "romantic",
+          "melancholy",
+          "nostalgic"
+        ],
+        "vibe": [
+          "late-night drive",
+          "summer road trip"
+        ],
+        "themes": [
+          "love",
+          "heartbreak",
+          "summer"
+        ],
+        "sound": [
+          "piano-led",
+          "trap drums",
+          "orchestral strings"
+        ],
+        "desc": "A short, wistful ballad of piano, Mellotron and strings over soft trap-leaning drums; resigned about a summer love that was never going to last.",
+        "plan": [
+          {
+            "name": "verse",
+            "key": null,
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "piano",
+              "synth pad"
+            ]
+          },
+          {
+            "name": "chorus",
+            "key": "B dorian",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "piano",
+              "strings",
+              "drum machine",
+              "mellotron"
+            ]
+          }
+        ],
+        "switch": [],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Lust_for_Life_(Lana_Del_Rey_album)",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/white-mustang",
+          "https://songbpm.com/@lana-del-rey/white-mustang",
+          "https://www.younghollywood.com/scene/track-by-track-lana-del-rey-s-lust-for-life.html",
+          "https://www.drownedinsound.org/archive-album-review-lana-del-rey-lust-for-life-4151213/"
+        ]
+      },
+      {
+        "song": "Summer Bummer",
+        "artist": "Lana Del Rey",
+        "album": "Lust for Life",
+        "key": "Eb minor",
+        "c": "high",
+        "keyNote": "Sheet music (cited on Wikipedia) and Hooktheory agree on Eb/D# minor; the sheet counts 67 BPM. SongBPM says Db major.",
+        "bpm": 135,
+        "meter": "4/4",
+        "feel": "half-time",
+        "energy": "mid",
+        "mood": [
+          "dark",
+          "sultry",
+          "hazy"
+        ],
+        "vibe": [
+          "late-night drive",
+          "beach haze"
+        ],
+        "themes": [
+          "desire",
+          "summer",
+          "toxic love"
+        ],
+        "sound": [
+          "trap drums",
+          "808 bass",
+          "electronic"
+        ],
+        "desc": "A noir-pop trap track with a rattling beat, minor-key piano, harpsichord and low cello; a hazy summer fling, shared with A$AP Rocky and Playboi Carti.",
+        "plan": [
+          {
+            "name": "verse",
+            "key": "Eb minor",
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "piano",
+              "trap drums",
+              "808 bass"
+            ]
+          },
+          {
+            "name": "chorus",
+            "key": "Eb minor",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "trap drums",
+              "808 bass",
+              "synth pad"
+            ]
+          }
+        ],
+        "switch": [],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Lust_for_Life_(Lana_Del_Rey_album)",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/summer-bummer",
+          "https://en.wikipedia.org/wiki/Summer_Bummer",
+          "https://songbpm.com/@lana-del-rey/summer-bummer",
+          "https://www.drownedinsound.org/archive-album-review-lana-del-rey-lust-for-life-4151213/"
+        ]
+      },
+      {
+        "song": "Groupie Love",
+        "artist": "Lana Del Rey",
+        "album": "Lust for Life",
+        "key": "A major",
+        "c": "medium",
+        "keyNote": "Hooktheory analyses the chorus only: A major.",
+        "bpm": 88,
+        "meter": "4/4",
+        "feel": "half-time",
+        "energy": "low",
+        "mood": [
+          "romantic",
+          "dreamy",
+          "hazy"
+        ],
+        "vibe": [
+          "late-night drive"
+        ],
+        "themes": [
+          "love",
+          "fame",
+          "devotion"
+        ],
+        "sound": [
+          "hip-hop drums",
+          "synth pads",
+          "live drums"
+        ],
+        "desc": "A languid retro pop song with a hip-hop beat, vibraphone and reverb-soaked vocals, joined by A$AP Rocky; giddy devotion to a star.",
+        "plan": [
+          {
+            "name": "verse",
+            "key": null,
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "vibraphone",
+              "synth pad"
+            ]
+          },
+          {
+            "name": "chorus",
+            "key": "A major",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "hip-hop drums",
+              "electric guitar",
+              "synth pad"
+            ]
+          }
+        ],
+        "switch": [],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Lust_for_Life_(Lana_Del_Rey_album)",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/groupie-love-featuring-asap-rocky",
+          "https://en.wikipedia.org/wiki/Groupie_Love",
+          "https://www.younghollywood.com/scene/track-by-track-lana-del-rey-s-lust-for-life.html"
+        ]
+      },
+      {
+        "song": "In My Feelings",
+        "artist": "Lana Del Rey",
+        "album": "Lust for Life",
+        "key": "E dorian",
+        "c": "medium",
+        "alt": "D major",
+        "keyNote": "Hooktheory analyses the bridge only: E dorian at 180 BPM (double of the felt 90). SongBPM: D major (same notes), 90 BPM.",
+        "bpm": 90,
+        "meter": "4/4",
+        "feel": "half-time",
+        "energy": "mid",
+        "mood": [
+          "defiant",
+          "dark",
+          "sultry"
+        ],
+        "vibe": [
+          "neon city"
+        ],
+        "themes": [
+          "toxic love",
+          "self-worth"
+        ],
+        "sound": [
+          "trap drums",
+          "808 bass",
+          "synth pads"
+        ],
+        "desc": "A brooding trap-pop kiss-off with heavy, overwhelming bass; jaded and defiant about falling for the wrong people again.",
+        "plan": [
+          {
+            "name": "verse",
+            "key": null,
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "synth pad",
+              "trap drums",
+              "808 bass"
+            ]
+          },
+          {
+            "name": "chorus",
+            "key": null,
+            "energy": "high",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "trap drums",
+              "808 bass",
+              "synth pad"
+            ]
+          },
+          {
+            "name": "bridge",
+            "key": "E dorian",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "piano",
+              "synth pad"
+            ]
+          }
+        ],
+        "switch": [],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Lust_for_Life_(Lana_Del_Rey_album)",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/in-my-feelings",
+          "https://songbpm.com/@lana-del-rey/in-my-feelings",
+          "https://www.younghollywood.com/scene/track-by-track-lana-del-rey-s-lust-for-life.html",
+          "https://www.drownedinsound.org/archive-album-review-lana-del-rey-lust-for-life-4151213/"
+        ]
+      },
+      {
+        "song": "Coachella – Woodstock in My Mind",
+        "artist": "Lana Del Rey",
+        "album": "Lust for Life",
+        "key": "G mixolydian",
+        "c": "high",
+        "bpm": 130,
+        "meter": "4/4",
+        "feel": "half-time",
+        "energy": "mid",
+        "mood": [
+          "nostalgic",
+          "hopeful",
+          "hazy"
+        ],
+        "vibe": [
+          "summer road trip",
+          "desert highway"
+        ],
+        "themes": [
+          "america",
+          "youth",
+          "time"
+        ],
+        "sound": [
+          "trap drums",
+          "synth pads",
+          "electronic"
+        ],
+        "desc": "A subtle, stuttering trap beat under Mellotron, organ and flute colours; reflective and uneasy, setting a festival weekend against world tension.",
+        "plan": [
+          {
+            "name": "verse",
+            "key": "G mixolydian",
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "synth pad",
+              "mellotron"
+            ]
+          },
+          {
+            "name": "pre-chorus and chorus",
+            "key": "E minor",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "trap drums",
+              "synth pad",
+              "organ"
+            ]
+          },
+          {
+            "name": "outro",
+            "key": "G mixolydian",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "trap drums",
+              "flute"
+            ]
+          }
+        ],
+        "switch": [
+          "verse in G mixolydian, chorus in E minor, outro back to G mixolydian"
+        ],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Lust_for_Life_(Lana_Del_Rey_album)",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/coachella---woodstock-in-my-mind",
+          "https://www.younghollywood.com/scene/track-by-track-lana-del-rey-s-lust-for-life.html",
+          "https://www.drownedinsound.org/archive-album-review-lana-del-rey-lust-for-life-4151213/"
+        ]
+      },
+      {
+        "song": "God Bless America – and All the Beautiful Women in It",
+        "artist": "Lana Del Rey",
+        "album": "Lust for Life",
+        "key": "F# minor",
+        "c": "high",
+        "keyNote": "Hooktheory: F# minor with a chromatic falling line under the chorus.",
+        "bpm": 88,
+        "meter": "4/4",
+        "feel": "half-time",
+        "energy": "mid",
+        "mood": [
+          "defiant",
+          "hopeful",
+          "cinematic"
+        ],
+        "vibe": [
+          "neon city"
+        ],
+        "themes": [
+          "america",
+          "freedom",
+          "self-worth"
+        ],
+        "sound": [
+          "guitar-led",
+          "trap drums",
+          "808 bass",
+          "orchestral strings"
+        ],
+        "desc": "Acoustic guitar over slow trap drums and 808 with strings, brass and tack piano; a defiant, heartfelt show of solidarity with women.",
+        "plan": [
+          {
+            "name": "verse",
+            "key": null,
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "acoustic guitar"
+            ]
+          },
+          {
+            "name": "pre-chorus and chorus",
+            "key": "F# minor",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "acoustic guitar",
+              "trap drums",
+              "808 bass",
+              "strings"
+            ]
+          },
+          {
+            "name": "bridge",
+            "key": "F# minor",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "strings",
+              "trap drums"
+            ]
+          }
+        ],
+        "switch": [],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Lust_for_Life_(Lana_Del_Rey_album)",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/god-bless-america",
+          "https://www.younghollywood.com/scene/track-by-track-lana-del-rey-s-lust-for-life.html",
+          "https://www.drownedinsound.org/archive-album-review-lana-del-rey-lust-for-life-4151213/"
+        ]
+      },
+      {
+        "song": "When the World Was at War We Kept Dancing",
+        "artist": "Lana Del Rey",
+        "album": "Lust for Life",
+        "key": "A dorian",
+        "c": "high",
+        "bpm": 116,
+        "meter": "4/4",
+        "feel": "half-time",
+        "energy": "mid",
+        "mood": [
+          "defiant",
+          "anxious",
+          "hopeful"
+        ],
+        "vibe": [
+          "desert highway"
+        ],
+        "themes": [
+          "america",
+          "escape",
+          "freedom"
+        ],
+        "sound": [
+          "acoustic guitar",
+          "trap drums",
+          "folk"
+        ],
+        "desc": "Folk guitar with a sixties protest feel that meets heavy drums and organ; asks whether an era is ending and answers with dancing.",
+        "plan": [
+          {
+            "name": "verse",
+            "key": "A dorian",
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "acoustic guitar"
+            ]
+          },
+          {
+            "name": "pre-chorus",
+            "key": "A dorian",
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "acoustic guitar",
+              "synth pad"
+            ]
+          },
+          {
+            "name": "chorus",
+            "key": "A dorian",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "live drums",
+              "synth bass",
+              "organ"
+            ],
+            "note": "Hooktheory counts the chorus in 2/4"
+          },
+          {
+            "name": "chorus lead-out",
+            "key": "A dorian",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "acoustic guitar",
+              "live drums"
+            ]
+          }
+        ],
+        "switch": [],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Lust_for_Life_(Lana_Del_Rey_album)",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/when-the-world-was-at-war-we-kept-dancing",
+          "https://www.younghollywood.com/scene/track-by-track-lana-del-rey-s-lust-for-life.html",
+          "https://www.drownedinsound.org/archive-album-review-lana-del-rey-lust-for-life-4151213/"
+        ]
+      },
+      {
+        "song": "Beautiful People Beautiful Problems",
+        "artist": "Lana Del Rey",
+        "album": "Lust for Life",
+        "key": "F major",
+        "c": "high",
+        "alt": "D minor",
+        "keyNote": "Hooktheory: verse F major, pre-chorus and chorus D minor.",
+        "bpm": 123,
+        "meter": "4/4",
+        "feel": "half-time",
+        "energy": "mid",
+        "mood": [
+          "nostalgic",
+          "melancholy",
+          "intimate"
+        ],
+        "vibe": [
+          "70s California"
+        ],
+        "themes": [
+          "fame",
+          "loneliness",
+          "self-worth"
+        ],
+        "sound": [
+          "piano-led",
+          "live drums",
+          "synth pads"
+        ],
+        "desc": "A piano-led soft-rock duet with Stevie Nicks, with strings, organ and live drums; two generations reflecting on fame and vulnerability.",
+        "plan": [
+          {
+            "name": "verse",
+            "key": "F major",
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "piano"
+            ]
+          },
+          {
+            "name": "pre-chorus",
+            "key": "D minor",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "piano",
+              "strings"
+            ]
+          },
+          {
+            "name": "chorus",
+            "key": "D minor",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "piano",
+              "live drums",
+              "strings",
+              "organ"
+            ]
+          }
+        ],
+        "switch": [
+          "verse in F major, pre-chorus and chorus in the relative D minor"
+        ],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Lust_for_Life_(Lana_Del_Rey_album)",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/beautiful-people-beautiful-problems",
+          "https://www.younghollywood.com/scene/track-by-track-lana-del-rey-s-lust-for-life.html",
+          "https://www.drownedinsound.org/archive-album-review-lana-del-rey-lust-for-life-4151213/"
+        ]
+      },
+      {
+        "song": "Tomorrow Never Came",
+        "artist": "Lana Del Rey",
+        "album": "Lust for Life",
+        "key": "C major",
+        "c": "high",
+        "bpm": 73,
+        "meter": "4/4",
+        "feel": "straight",
+        "energy": "low",
+        "mood": [
+          "nostalgic",
+          "tender",
+          "melancholy"
+        ],
+        "vibe": [
+          "Laurel Canyon dusk",
+          "rainy window"
+        ],
+        "themes": [
+          "love",
+          "heartbreak",
+          "nostalgia"
+        ],
+        "sound": [
+          "acoustic guitar",
+          "guitar-led"
+        ],
+        "desc": "A Beatles-styled folk-pop duet with Sean Ono Lennon: acoustic guitars, harpsichord, celesta, upright bass and Mellotron; wistful about a love that never arrived.",
+        "plan": [
+          {
+            "name": "verse",
+            "key": null,
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "acoustic guitar",
+              "upright bass"
+            ]
+          },
+          {
+            "name": "pre-chorus",
+            "key": "C major",
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "acoustic guitar",
+              "mellotron"
+            ]
+          },
+          {
+            "name": "chorus",
+            "key": "C major",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "acoustic guitar",
+              "mellotron",
+              "organ",
+              "percussion"
+            ]
+          }
+        ],
+        "switch": [
+          "minor iv closes the pre-chorus"
+        ],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Lust_for_Life_(Lana_Del_Rey_album)",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/tomorrow-never-came",
+          "https://www.younghollywood.com/scene/track-by-track-lana-del-rey-s-lust-for-life.html",
+          "https://popmatters.com/lana-del-rey-lust-for-life-2495384850.html"
+        ]
+      },
+      {
+        "song": "Heroin",
+        "artist": "Lana Del Rey",
+        "album": "Lust for Life",
+        "key": "E dorian",
+        "c": "high",
+        "alt": "B minor",
+        "keyNote": "Hooktheory: E dorian. SongBPM: B minor (same notes).",
+        "bpm": 120,
+        "meter": "4/4",
+        "feel": "half-time",
+        "energy": "mid",
+        "mood": [
+          "dark",
+          "melancholy",
+          "cinematic"
+        ],
+        "vibe": [
+          "desert highway",
+          "Laurel Canyon dusk"
+        ],
+        "themes": [
+          "drugs",
+          "fame",
+          "escape",
+          "california"
+        ],
+        "sound": [
+          "piano-led",
+          "live drums",
+          "choir"
+        ],
+        "desc": "A long, slow burn of organ, electric piano, choir and drums; dark and melancholy, treating fame and addiction as one thing in a haunted canyon.",
+        "plan": [
+          {
+            "name": "verse and pre-chorus",
+            "key": "E dorian",
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "keys",
+              "organ"
+            ]
+          },
+          {
+            "name": "chorus",
+            "key": "E dorian",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "live drums",
+              "electric guitar",
+              "synth bass"
+            ]
+          },
+          {
+            "name": "bridge",
+            "key": "E dorian",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "keys",
+              "live drums"
+            ]
+          },
+          {
+            "name": "outro",
+            "key": "E mixolydian",
+            "energy": "high",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "live drums",
+              "electric guitar"
+            ]
+          }
+        ],
+        "switch": [
+          "one four-chord loop runs through verse, chorus and bridge; the outro turns to E mixolydian with a borrowed bIII"
+        ],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Lust_for_Life_(Lana_Del_Rey_album)",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/heroin",
+          "https://songbpm.com/@lana-del-rey/heroin",
+          "https://www.younghollywood.com/scene/track-by-track-lana-del-rey-s-lust-for-life.html",
+          "https://popmatters.com/lana-del-rey-lust-for-life-2495384850.html"
+        ]
+      },
+      {
+        "song": "Change",
+        "artist": "Lana Del Rey",
+        "album": "Lust for Life",
+        "key": "C major",
+        "c": "high",
+        "bpm": 86,
+        "meter": "4/4",
+        "feel": "straight",
+        "energy": "low",
+        "mood": [
+          "hopeful",
+          "melancholy",
+          "intimate"
+        ],
+        "vibe": [
+          "bedroom confessional"
+        ],
+        "themes": [
+          "independence",
+          "freedom",
+          "america"
+        ],
+        "sound": [
+          "piano-led"
+        ],
+        "desc": "A plain piano ballad with very little around it; apprehensive but steady, about being ready for change in herself and the world.",
+        "plan": [
+          {
+            "name": "verse",
+            "key": "C major",
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "piano"
+            ]
+          },
+          {
+            "name": "pre-chorus",
+            "key": "C major",
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "piano"
+            ]
+          },
+          {
+            "name": "chorus",
+            "key": "C major",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "piano",
+              "backing vocals"
+            ]
+          },
+          {
+            "name": "chorus lead-out",
+            "key": "C major",
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "piano"
+            ]
+          }
+        ],
+        "switch": [],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Lust_for_Life_(Lana_Del_Rey_album)",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/change",
+          "https://www.younghollywood.com/scene/track-by-track-lana-del-rey-s-lust-for-life.html",
+          "https://popmatters.com/lana-del-rey-lust-for-life-2495384850.html"
+        ]
+      },
+      {
+        "song": "Get Free",
+        "artist": "Lana Del Rey",
+        "album": "Lust for Life",
+        "key": "Bb major",
+        "c": "high",
+        "bpm": 102,
+        "meter": "4/4",
+        "feel": "straight",
+        "energy": "mid",
+        "mood": [
+          "hopeful",
+          "dreamy",
+          "defiant"
+        ],
+        "vibe": [
+          "beach haze",
+          "summer road trip"
+        ],
+        "themes": [
+          "freedom",
+          "escape",
+          "self-worth"
+        ],
+        "sound": [
+          "guitar-led",
+          "live drums",
+          "synth pads"
+        ],
+        "desc": "A brighter, quicker closer with guitar, organ and live drums; a hopeful vow to leave the dark behind.",
+        "plan": [
+          {
+            "name": "verse",
+            "key": "Bb major",
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "electric guitar",
+              "synth pad"
+            ]
+          },
+          {
+            "name": "pre-chorus",
+            "key": "Bb major",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "electric guitar",
+              "live drums"
+            ]
+          },
+          {
+            "name": "chorus",
+            "key": "Bb major",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "electric guitar",
+              "live drums",
+              "organ"
+            ]
+          }
+        ],
+        "switch": [
+          "verse uses a major III and a minor iv before the two-chord chorus"
+        ],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Lust_for_Life_(Lana_Del_Rey_album)",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/get-free",
+          "https://www.younghollywood.com/scene/track-by-track-lana-del-rey-s-lust-for-life.html",
+          "https://popmatters.com/lana-del-rey-lust-for-life-2495384850.html"
+        ]
+      }
+    ],
+    "lana-cocc": [
+      {
+        "song": "White Dress",
+        "artist": "Lana Del Rey",
+        "album": "Chemtrails Over the Country Club",
+        "key": "C major",
+        "c": "high",
+        "bpm": 122,
+        "meter": "4/4",
+        "feel": "half-time",
+        "energy": "mid",
+        "mood": [
+          "nostalgic",
+          "melancholy",
+          "tender"
+        ],
+        "vibe": [
+          "small-town Americana"
+        ],
+        "themes": [
+          "nostalgia",
+          "youth",
+          "fame"
+        ],
+        "sound": [
+          "piano-led",
+          "live drums"
+        ],
+        "desc": "Sparse piano under a strained, whispered high voice, with a small band behind; wistful about waiting tables before fame.",
+        "plan": [
+          {
+            "name": "verse",
+            "key": "C major",
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "piano"
+            ]
+          },
+          {
+            "name": "chorus",
+            "key": "C major",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "piano",
+              "bass guitar",
+              "drums"
+            ],
+            "note": "breathless, crowded falsetto phrases"
+          },
+          {
+            "name": "outro",
+            "key": null,
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "piano",
+              "electric guitar",
+              "live drums"
+            ]
+          }
+        ],
+        "switch": [],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Chemtrails_over_the_Country_Club",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/white-dress",
+          "https://popmatters.com/lana-del-rey-chemtrails2-review",
+          "https://www.spinmagazine.com/2021/03/lana-del-rey-chemtrails-over-the-country-club-album-review/",
+          "https://www.irishtimes.com/culture/music/lana-del-rey-chemtrails-over-the-country-club-review-a-low-key-masterpiece-1.4514582"
+        ]
+      },
+      {
+        "song": "Chemtrails Over the Country Club",
+        "artist": "Lana Del Rey",
+        "album": "Chemtrails Over the Country Club",
+        "key": "G major",
+        "c": "high",
+        "bpm": 101,
+        "meter": "6/8",
+        "feel": "waltz",
+        "energy": "low",
+        "mood": [
+          "dreamy",
+          "melancholy",
+          "hazy"
+        ],
+        "vibe": [
+          "small-town Americana"
+        ],
+        "themes": [
+          "escape",
+          "family",
+          "america",
+          "summer"
+        ],
+        "sound": [
+          "guitar-led",
+          "acoustic guitar",
+          "orchestral strings"
+        ],
+        "desc": "A floating chamber-folk waltz of piano, twelve-string guitar, Mellotron, strings and horn; dreamy suburban calm with unease underneath.",
+        "plan": [
+          {
+            "name": "verse",
+            "key": "G major",
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "piano",
+              "12-string acoustic guitar"
+            ]
+          },
+          {
+            "name": "chorus",
+            "key": "G major",
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "guitar",
+              "mellotron",
+              "strings"
+            ]
+          },
+          {
+            "name": "bridge",
+            "key": null,
+            "energy": "mid",
+            "instruments": [
+              "live drums",
+              "bass guitar",
+              "electric guitar"
+            ],
+            "note": "a glitchy break about halfway (per critics)"
+          }
+        ],
+        "switch": [
+          "the same three-chord loop serves verse and chorus"
+        ],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Chemtrails_over_the_Country_Club",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/chemtrails-over-the-country-club",
+          "https://en.wikipedia.org/wiki/Chemtrails_over_the_Country_Club_(song)",
+          "https://popmatters.com/lana-del-rey-chemtrails2-review",
+          "https://www.spinmagazine.com/2021/03/lana-del-rey-chemtrails-over-the-country-club-album-review/",
+          "https://www.irishtimes.com/culture/music/lana-del-rey-chemtrails-over-the-country-club-review-a-low-key-masterpiece-1.4514582"
+        ]
+      },
+      {
+        "song": "Tulsa Jesus Freak",
+        "artist": "Lana Del Rey",
+        "album": "Chemtrails Over the Country Club",
+        "key": "D minor",
+        "c": "high",
+        "keyNote": "Hooktheory analyses the chorus only: D minor.",
+        "bpm": 69,
+        "meter": "4/4",
+        "feel": "half-time",
+        "energy": "low",
+        "mood": [
+          "sultry",
+          "dark",
+          "hazy"
+        ],
+        "vibe": [
+          "open road",
+          "small-town Americana"
+        ],
+        "themes": [
+          "desire",
+          "faith",
+          "love"
+        ],
+        "sound": [
+          "hip-hop drums",
+          "synth pads",
+          "guitar-led"
+        ],
+        "desc": "A hypnotic mix of droning synth bass, shuffling beat and siren-like vocals; a sultry song of Southern devotion.",
+        "plan": [
+          {
+            "name": "verse",
+            "key": null,
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "guitar",
+              "synth pad"
+            ]
+          },
+          {
+            "name": "chorus",
+            "key": "D minor",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "synth bass",
+              "drum machine",
+              "guitar"
+            ]
+          }
+        ],
+        "switch": [],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Chemtrails_over_the_Country_Club",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/tulsa-jesus-freak",
+          "https://popmatters.com/lana-del-rey-chemtrails2-review"
+        ]
+      },
+      {
+        "song": "Let Me Love You Like a Woman",
+        "artist": "Lana Del Rey",
+        "album": "Chemtrails Over the Country Club",
+        "key": "C major",
+        "c": "high",
+        "keyNote": "Hooktheory analyses the chorus only: C major, counted at 134 (felt 67).",
+        "bpm": 67,
+        "meter": "4/4",
+        "feel": "half-time",
+        "energy": "low",
+        "mood": [
+          "tender",
+          "romantic",
+          "nostalgic"
+        ],
+        "vibe": [
+          "open road",
+          "70s California"
+        ],
+        "themes": [
+          "love",
+          "escape",
+          "home"
+        ],
+        "sound": [
+          "piano-led",
+          "guitar-led",
+          "live drums"
+        ],
+        "desc": "A stark piano ballad with bending slide-guitar licks, organ and brushed drums; tender and calm, ready to leave the city for an enduring love.",
+        "plan": [
+          {
+            "name": "verse",
+            "key": null,
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "piano"
+            ]
+          },
+          {
+            "name": "chorus",
+            "key": "C major",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "piano",
+              "slide guitar",
+              "live drums",
+              "organ"
+            ]
+          }
+        ],
+        "switch": [],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Chemtrails_over_the_Country_Club",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/let-me-love-you-like-a-woman",
+          "https://en.wikipedia.org/wiki/Let_Me_Love_You_like_a_Woman",
+          "https://popmatters.com/lana-del-rey-chemtrails2-review",
+          "https://www.spinmagazine.com/2021/03/lana-del-rey-chemtrails-over-the-country-club-album-review/"
+        ]
+      },
+      {
+        "song": "Wild at Heart",
+        "artist": "Lana Del Rey",
+        "album": "Chemtrails Over the Country Club",
+        "key": "A mixolydian",
+        "c": "medium",
+        "alt": "F# minor",
+        "keyNote": "Hooktheory: pre-chorus F# minor, chorus A mixolydian. Its BPM counts (210 and 186, in 6/8) are shown here as a third of that, one dotted beat: 70 and 62.",
+        "bpm": 62,
+        "meter": "6/8",
+        "feel": "waltz",
+        "energy": "mid",
+        "mood": [
+          "nostalgic",
+          "defiant",
+          "hazy"
+        ],
+        "vibe": [
+          "open road",
+          "small-town Americana"
+        ],
+        "themes": [
+          "freedom",
+          "fame",
+          "road",
+          "love"
+        ],
+        "sound": [
+          "acoustic guitar",
+          "piano-led",
+          "live drums"
+        ],
+        "desc": "A lilting folk-pop song of piano, twelve-string guitar, Mellotron and horns; restless, with a roadside Southern setting.",
+        "plan": [
+          {
+            "name": "verse",
+            "key": null,
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "piano",
+              "12-string acoustic guitar"
+            ]
+          },
+          {
+            "name": "pre-chorus",
+            "key": "F# minor",
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "guitar",
+              "mellotron"
+            ],
+            "bpm": 70
+          },
+          {
+            "name": "chorus",
+            "key": "A mixolydian",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "guitar",
+              "live drums",
+              "brass"
+            ],
+            "bpm": 62
+          }
+        ],
+        "switch": [
+          "pre-chorus in F# minor, chorus opens into A mixolydian and a slower pulse"
+        ],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Chemtrails_over_the_Country_Club",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/wild-at-heart",
+          "https://www.spinmagazine.com/2021/03/lana-del-rey-chemtrails-over-the-country-club-album-review/"
+        ]
+      },
+      {
+        "song": "Dark but Just a Game",
+        "artist": "Lana Del Rey",
+        "album": "Chemtrails Over the Country Club",
+        "key": "C dorian",
+        "c": "medium",
+        "keyNote": "Hooktheory analyses pre-chorus and chorus only: C dorian with a borrowed bVI, counted at 158 (felt 79).",
+        "bpm": 79,
+        "meter": "4/4",
+        "feel": "half-time",
+        "energy": "mid",
+        "mood": [
+          "dark",
+          "melancholy",
+          "defiant"
+        ],
+        "vibe": [
+          "smoky lounge",
+          "late-night drive"
+        ],
+        "themes": [
+          "fame",
+          "glamour",
+          "sadness"
+        ],
+        "sound": [
+          "guitar-led",
+          "live drums",
+          "synth pads"
+        ],
+        "desc": "Wispy beats and guitar that shift partway into a low, downtempo R&B groove; disenchanted with fame and its costs.",
+        "plan": [
+          {
+            "name": "verse",
+            "key": null,
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "guitar",
+              "mellotron"
+            ]
+          },
+          {
+            "name": "pre-chorus and chorus",
+            "key": "C dorian",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "bass guitar",
+              "drums",
+              "guitar",
+              "synth pad"
+            ],
+            "note": "heavy low end"
+          },
+          {
+            "name": "outro",
+            "key": null,
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "synth pad",
+              "drums",
+              "12-string acoustic guitar"
+            ]
+          }
+        ],
+        "switch": [
+          "critics hear the groove change midway and the key shift in the second verse"
+        ],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Chemtrails_over_the_Country_Club",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/dark-but-just-a-game",
+          "https://popmatters.com/lana-del-rey-chemtrails2-review",
+          "https://www.spinmagazine.com/2021/03/lana-del-rey-chemtrails-over-the-country-club-album-review/"
+        ]
+      },
+      {
+        "song": "Not All Who Wander Are Lost",
+        "artist": "Lana Del Rey",
+        "album": "Chemtrails Over the Country Club",
+        "key": "G major",
+        "c": "medium",
+        "keyNote": "Hooktheory analyses the chorus only: G major.",
+        "bpm": 84,
+        "meter": "4/4",
+        "feel": "straight",
+        "energy": "low",
+        "mood": [
+          "hazy",
+          "nostalgic",
+          "tender"
+        ],
+        "vibe": [
+          "open road",
+          "small-town Americana"
+        ],
+        "themes": [
+          "road",
+          "freedom",
+          "love"
+        ],
+        "sound": [
+          "acoustic guitar",
+          "folk",
+          "no drums"
+        ],
+        "desc": "A wispy, floating folk song of twelve-string guitar, bass and organ with no drums; gentle wanderlust.",
+        "plan": [
+          {
+            "name": "verse",
+            "key": null,
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "acoustic guitar"
+            ]
+          },
+          {
+            "name": "chorus",
+            "key": "G major",
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "12-string acoustic guitar",
+              "bass guitar",
+              "organ"
+            ]
+          }
+        ],
+        "switch": [],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Chemtrails_over_the_Country_Club",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/not-all-who-wander-are-lost",
+          "https://www.spinmagazine.com/2021/03/lana-del-rey-chemtrails-over-the-country-club-album-review/",
+          "https://www.irishtimes.com/culture/music/lana-del-rey-chemtrails-over-the-country-club-review-a-low-key-masterpiece-1.4514582"
+        ]
+      },
+      {
+        "song": "Yosemite",
+        "artist": "Lana Del Rey",
+        "album": "Chemtrails Over the Country Club",
+        "key": "A minor",
+        "c": "high",
+        "keyNote": "Hooktheory analyses the chorus only: A minor.",
+        "bpm": 106,
+        "meter": "4/4",
+        "feel": "straight",
+        "energy": "low",
+        "mood": [
+          "tender",
+          "romantic",
+          "intimate"
+        ],
+        "vibe": [
+          "open road",
+          "Laurel Canyon dusk"
+        ],
+        "themes": [
+          "love",
+          "devotion",
+          "time"
+        ],
+        "sound": [
+          "acoustic guitar",
+          "folk"
+        ],
+        "desc": "A campfire acoustic-guitar song with percussion and Mellotron; contented and romantic about love that stays the same as seasons change.",
+        "plan": [
+          {
+            "name": "verse",
+            "key": null,
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "acoustic guitar"
+            ]
+          },
+          {
+            "name": "chorus",
+            "key": "A minor",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "acoustic guitar",
+              "percussion",
+              "bass guitar",
+              "mellotron"
+            ]
+          }
+        ],
+        "switch": [],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Chemtrails_over_the_Country_Club",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/yosemite",
+          "https://popmatters.com/lana-del-rey-chemtrails2-review",
+          "https://www.spinmagazine.com/2021/03/lana-del-rey-chemtrails-over-the-country-club-album-review/"
+        ]
+      },
+      {
+        "song": "Breaking Up Slowly",
+        "artist": "Lana Del Rey",
+        "album": "Chemtrails Over the Country Club",
+        "key": "Bb minor",
+        "c": "high",
+        "keyNote": "Hooktheory analyses the chorus only: Bb minor in 3/4.",
+        "bpm": 119,
+        "meter": "3/4",
+        "feel": "waltz",
+        "energy": "low",
+        "mood": [
+          "heartbroken",
+          "melancholy",
+          "lonely"
+        ],
+        "vibe": [
+          "small-town Americana"
+        ],
+        "themes": [
+          "heartbreak",
+          "loneliness"
+        ],
+        "sound": [
+          "country",
+          "guitar-led",
+          "piano-led"
+        ],
+        "desc": "A slow country waltz shared with Nikki Lane: piano, guitar and pedal steel; resigned about a long, drawn-out separation.",
+        "plan": [
+          {
+            "name": "verse",
+            "key": null,
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "guitar",
+              "piano"
+            ]
+          },
+          {
+            "name": "chorus",
+            "key": "Bb minor",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "guitar",
+              "pedal steel",
+              "bass guitar"
+            ]
+          }
+        ],
+        "switch": [],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Chemtrails_over_the_Country_Club",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/breaking-up-slowly-(ft-nikki-lane)",
+          "https://popmatters.com/lana-del-rey-chemtrails2-review",
+          "https://www.spinmagazine.com/2021/03/lana-del-rey-chemtrails-over-the-country-club-album-review/",
+          "https://www.irishtimes.com/culture/music/lana-del-rey-chemtrails-over-the-country-club-review-a-low-key-masterpiece-1.4514582"
+        ]
+      },
+      {
+        "song": "Dance Till We Die",
+        "artist": "Lana Del Rey",
+        "album": "Chemtrails Over the Country Club",
+        "key": "G mixolydian",
+        "c": "medium",
+        "keyNote": "Hooktheory analyses the bridge only: G mixolydian.",
+        "bpm": 127,
+        "meter": "4/4",
+        "feel": "half-time",
+        "energy": "mid",
+        "mood": [
+          "nostalgic",
+          "hopeful",
+          "playful"
+        ],
+        "vibe": [
+          "Laurel Canyon dusk",
+          "70s California"
+        ],
+        "themes": [
+          "friendship",
+          "fame",
+          "freedom"
+        ],
+        "sound": [
+          "piano-led",
+          "brass",
+          "live drums"
+        ],
+        "desc": "A warm piano and Rhodes ballad with horns and accordion; salutes the women songwriters before her.",
+        "plan": [
+          {
+            "name": "verse",
+            "key": null,
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "piano",
+              "rhodes"
+            ]
+          },
+          {
+            "name": "chorus",
+            "key": null,
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "piano",
+              "live drums",
+              "brass"
+            ]
+          },
+          {
+            "name": "bridge",
+            "key": "G mixolydian",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "live drums",
+              "bass guitar",
+              "brass",
+              "electric guitar"
+            ]
+          }
+        ],
+        "switch": [],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Chemtrails_over_the_Country_Club",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/dance-till-we-die",
+          "https://www.spinmagazine.com/2021/03/lana-del-rey-chemtrails-over-the-country-club-album-review/"
+        ]
+      },
+      {
+        "song": "For Free",
+        "artist": "Lana Del Rey",
+        "album": "Chemtrails Over the Country Club",
+        "key": "F major",
+        "c": "low",
+        "alt": "C major",
+        "keyNote": "SongBPM: F major in 3. A fan chord sheet (Kompas) is written in C major.",
+        "bpm": 114,
+        "meter": "3/4",
+        "feel": "waltz",
+        "energy": "low",
+        "mood": [
+          "tender",
+          "nostalgic",
+          "intimate"
+        ],
+        "vibe": [
+          "Laurel Canyon dusk"
+        ],
+        "themes": [
+          "fame",
+          "nostalgia"
+        ],
+        "sound": [
+          "piano-led",
+          "brass",
+          "folk",
+          "no drums"
+        ],
+        "desc": "A tender, mostly piano cover of a Joni Mitchell song shared with Zella Day and Weyes Blood; about fame and generosity.",
+        "plan": [
+          {
+            "name": "verse",
+            "key": null,
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "piano",
+              "mellotron"
+            ],
+            "note": "three voices"
+          },
+          {
+            "name": "outro",
+            "key": null,
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "piano",
+              "brass"
+            ]
+          }
+        ],
+        "switch": [],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Chemtrails_over_the_Country_Club",
+          "https://songbpm.com/@lana-del-rey/for-free-MiJxHBBKDx",
+          "https://www.kompas.com/hype/copy/2021/03/25/110000066/twitter.com",
+          "https://www.spinmagazine.com/2021/03/lana-del-rey-chemtrails-over-the-country-club-album-review/"
+        ]
+      }
+    ],
+    "lana-ocean": [
+      {
+        "song": "The Grants",
+        "artist": "Lana Del Rey",
+        "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+        "key": "G major",
+        "c": "high",
+        "bpm": 121,
+        "meter": "4/4",
+        "feel": "straight",
+        "energy": "mid",
+        "mood": [
+          "tender",
+          "hopeful",
+          "intimate"
+        ],
+        "vibe": [
+          "bedroom confessional"
+        ],
+        "themes": [
+          "family",
+          "faith",
+          "love",
+          "death"
+        ],
+        "sound": [
+          "piano-led",
+          "choir",
+          "orchestral strings"
+        ],
+        "desc": "Gospel singers open before a warm piano ballad that swells with strings and organ; about family, faith and what memory carries on.",
+        "plan": [
+          {
+            "name": "intro",
+            "key": null,
+            "energy": "low",
+            "instruments": [
+              "backing vocals"
+            ]
+          },
+          {
+            "name": "verse",
+            "key": "G major",
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "piano"
+            ]
+          },
+          {
+            "name": "pre-chorus and chorus",
+            "key": "G major",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "piano",
+              "strings",
+              "bass guitar"
+            ],
+            "bpm": 126
+          },
+          {
+            "name": "bridge",
+            "key": "G major",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "piano",
+              "organ"
+            ],
+            "bpm": 124
+          },
+          {
+            "name": "outro",
+            "key": "G major",
+            "energy": "mid",
+            "instruments": [
+              "backing vocals",
+              "piano",
+              "strings"
+            ],
+            "bpm": 123
+          }
+        ],
+        "switch": [
+          "a minor iv in the verse turns to a major IV later on"
+        ],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Did_You_Know_That_There's_a_Tunnel_Under_Ocean_Blvd",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/the-grants",
+          "https://younghollywood.com/scene/track-by-track-lana-del-rey-s-did-you-know-that-there-s-a-tunnel-under-ocean-blvd.html",
+          "https://exclaim.ca/amparticle/lana_del_rey_did_you_know_that_theres_a_tunnel_under_ocean_blvd_review",
+          "https://diymag.com/review/album/lana-del-rey-did-you-know-that-theres-a-tunnel-under-ocean-blvd",
+          "https://www.theringer.com/music/2023/3/29/23661832/lana-del-rey-tunnel-under-ocean-blvd-review"
+        ]
+      },
+      {
+        "song": "Did You Know That There's a Tunnel Under Ocean Blvd",
+        "artist": "Lana Del Rey",
+        "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+        "key": "C major",
+        "c": "high",
+        "bpm": 120,
+        "meter": "4/4",
+        "feel": "half-time",
+        "energy": "mid",
+        "mood": [
+          "melancholy",
+          "romantic",
+          "lonely"
+        ],
+        "vibe": [
+          "old Hollywood",
+          "beach haze"
+        ],
+        "themes": [
+          "desire",
+          "love",
+          "time",
+          "loneliness"
+        ],
+        "sound": [
+          "orchestral strings",
+          "live drums",
+          "choir"
+        ],
+        "desc": "A slow orchestral ballad of piano, strings and soft drums, with saxophone and a gospel choir at the end; yearning not to be forgotten.",
+        "plan": [
+          {
+            "name": "verse",
+            "key": null,
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "piano",
+              "strings"
+            ]
+          },
+          {
+            "name": "pre-chorus",
+            "key": "C major",
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "piano",
+              "strings"
+            ]
+          },
+          {
+            "name": "chorus",
+            "key": "C major",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "live drums",
+              "strings",
+              "bass guitar"
+            ]
+          },
+          {
+            "name": "final chorus",
+            "key": null,
+            "energy": "high",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "live drums",
+              "strings",
+              "saxophone"
+            ],
+            "note": "gospel voices return"
+          }
+        ],
+        "switch": [],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Did_You_Know_That_There's_a_Tunnel_Under_Ocean_Blvd",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/did-you-know-that-theres-a-tunnel",
+          "https://younghollywood.com/scene/track-by-track-lana-del-rey-s-did-you-know-that-there-s-a-tunnel-under-ocean-blvd.html",
+          "https://exclaim.ca/amparticle/lana_del_rey_did_you_know_that_theres_a_tunnel_under_ocean_blvd_review"
+        ]
+      },
+      {
+        "song": "Sweet",
+        "artist": "Lana Del Rey",
+        "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+        "key": "A mixolydian",
+        "c": "medium",
+        "alt": "C major",
+        "keyNote": "Hooktheory: verse A mixolydian (with bIII), chorus C major.",
+        "bpm": 68,
+        "meter": "4/4",
+        "feel": "rubato",
+        "energy": "low",
+        "mood": [
+          "tender",
+          "nostalgic",
+          "romantic"
+        ],
+        "vibe": [
+          "old Hollywood",
+          "cabaret"
+        ],
+        "themes": [
+          "love",
+          "independence",
+          "california"
+        ],
+        "sound": [
+          "piano-led",
+          "orchestral strings",
+          "no drums"
+        ],
+        "desc": "A short, whispery show-tune-like ballad of fluttering piano and strings; tender, glamorous and quietly barbed.",
+        "plan": [
+          {
+            "name": "verse",
+            "key": "A mixolydian",
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "piano"
+            ]
+          },
+          {
+            "name": "chorus",
+            "key": "C major",
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "piano",
+              "strings"
+            ],
+            "bpm": 62
+          }
+        ],
+        "switch": [
+          "verse in A mixolydian, chorus shifts up a minor third to C major"
+        ],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Did_You_Know_That_There's_a_Tunnel_Under_Ocean_Blvd",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/sweet",
+          "https://younghollywood.com/scene/track-by-track-lana-del-rey-s-did-you-know-that-there-s-a-tunnel-under-ocean-blvd.html",
+          "https://exclaim.ca/amparticle/lana_del_rey_did_you_know_that_theres_a_tunnel_under_ocean_blvd_review",
+          "https://diymag.com/review/album/lana-del-rey-did-you-know-that-theres-a-tunnel-under-ocean-blvd"
+        ]
+      },
+      {
+        "song": "A&W",
+        "artist": "Lana Del Rey",
+        "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+        "key": "Bb major",
+        "c": "medium",
+        "keyNote": "Hooktheory: verse Bb phrygian dominant, pre-chorus Bb major, chorus Bb mixolydian. Wikipedia quotes a reading of the second part as C mixolydian.",
+        "bpm": 156,
+        "meter": "4/4",
+        "feel": "half-time",
+        "energy": "mid",
+        "mood": [
+          "dark",
+          "defiant",
+          "anxious"
+        ],
+        "vibe": [
+          "neon city",
+          "late-night drive"
+        ],
+        "themes": [
+          "self-worth",
+          "america",
+          "sadness",
+          "desire"
+        ],
+        "sound": [
+          "acoustic guitar",
+          "trap drums",
+          "808 bass",
+          "electronic"
+        ],
+        "desc": "A seven-minute song in two halves: plucked folk guitar and piano in an uneasy mode, then a distorted trap half with heavy bass; a confrontational portrait of a woman judged and disbelieved.",
+        "plan": [
+          {
+            "name": "intro",
+            "key": "Bb phrygian dominant",
+            "energy": "low",
+            "instruments": [
+              "acoustic guitar",
+              "piano"
+            ]
+          },
+          {
+            "name": "verse",
+            "key": "Bb phrygian dominant",
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "acoustic guitar",
+              "piano"
+            ]
+          },
+          {
+            "name": "pre-chorus",
+            "key": "Bb major",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "acoustic guitar",
+              "mellotron"
+            ]
+          },
+          {
+            "name": "chorus",
+            "key": "Bb mixolydian",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "guitar",
+              "synth pad"
+            ]
+          },
+          {
+            "name": "outro",
+            "key": null,
+            "energy": "high",
+            "instruments": [
+              "vocal",
+              "trap drums",
+              "808 bass",
+              "synth"
+            ],
+            "note": "second half: trap beat, pitched vocals"
+          }
+        ],
+        "switch": [
+          "folk first half, trap second half",
+          "verse in phrygian dominant, pre-chorus major, chorus mixolydian with a bVI"
+        ],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Did_You_Know_That_There's_a_Tunnel_Under_Ocean_Blvd",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/a-and-w",
+          "https://en.wikipedia.org/wiki/A%26W_(song)",
+          "https://younghollywood.com/scene/track-by-track-lana-del-rey-s-did-you-know-that-there-s-a-tunnel-under-ocean-blvd.html",
+          "https://exclaim.ca/amparticle/lana_del_rey_did_you_know_that_theres_a_tunnel_under_ocean_blvd_review",
+          "https://diymag.com/review/album/lana-del-rey-did-you-know-that-theres-a-tunnel-under-ocean-blvd"
+        ]
+      },
+      {
+        "song": "Judah Smith Interlude",
+        "artist": "Lana Del Rey",
+        "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+        "key": "A major",
+        "c": "low",
+        "keyNote": "SongBPM machine reading (counted in 3); a mostly spoken track, so key and tempo are loose.",
+        "bpm": 119,
+        "meter": null,
+        "feel": "rubato",
+        "energy": "low",
+        "mood": [
+          "tense",
+          "anxious",
+          "intimate"
+        ],
+        "vibe": [
+          "smoky lounge"
+        ],
+        "themes": [
+          "faith",
+          "desire"
+        ],
+        "sound": [
+          "piano-led",
+          "ambient"
+        ],
+        "desc": "A recorded sermon by a pastor over loose piano and bluesy electric guitar; tense and confrontational.",
+        "plan": [
+          {
+            "name": "spoken interlude",
+            "key": null,
+            "energy": "low",
+            "instruments": [
+              "piano",
+              "electric guitar",
+              "programmed drums"
+            ],
+            "note": "spoken sermon, not sung by Lana"
+          }
+        ],
+        "switch": [],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Did_You_Know_That_There's_a_Tunnel_Under_Ocean_Blvd",
+          "https://songbpm.com/@lana-del-rey/judah-smith-interlude-PZgN9Jktgj",
+          "https://younghollywood.com/scene/track-by-track-lana-del-rey-s-did-you-know-that-there-s-a-tunnel-under-ocean-blvd.html",
+          "https://diymag.com/review/album/lana-del-rey-did-you-know-that-theres-a-tunnel-under-ocean-blvd"
+        ]
+      },
+      {
+        "song": "Candy Necklace",
+        "artist": "Lana Del Rey",
+        "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+        "key": "F# minor",
+        "c": "high",
+        "bpm": 120,
+        "meter": "4/4",
+        "feel": "half-time",
+        "energy": "mid",
+        "mood": [
+          "dark",
+          "romantic",
+          "melancholy"
+        ],
+        "vibe": [
+          "film noir",
+          "old Hollywood"
+        ],
+        "themes": [
+          "toxic love",
+          "desire",
+          "youth"
+        ],
+        "sound": [
+          "piano-led",
+          "orchestral strings",
+          "jazz",
+          "no drums"
+        ],
+        "desc": "A dark piano piece with Jon Batiste, with sparse, eerie strings, celesta and double bass; obsessive and cinematic, with a swirling outro.",
+        "plan": [
+          {
+            "name": "verse",
+            "key": "F# dorian",
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "piano"
+            ]
+          },
+          {
+            "name": "pre-chorus",
+            "key": "F# minor",
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "piano",
+              "strings"
+            ]
+          },
+          {
+            "name": "chorus",
+            "key": "F# minor",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "piano",
+              "strings",
+              "upright bass",
+              "mellotron"
+            ]
+          },
+          {
+            "name": "outro",
+            "key": null,
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "piano",
+              "strings"
+            ],
+            "note": "Jon Batiste’s voice joins"
+          }
+        ],
+        "switch": [
+          "verse in F# dorian, chorus in F# minor"
+        ],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Did_You_Know_That_There's_a_Tunnel_Under_Ocean_Blvd",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/candy-necklace",
+          "https://en.wikipedia.org/wiki/Candy_Necklace",
+          "https://younghollywood.com/scene/track-by-track-lana-del-rey-s-did-you-know-that-there-s-a-tunnel-under-ocean-blvd.html",
+          "https://exclaim.ca/amparticle/lana_del_rey_did_you_know_that_theres_a_tunnel_under_ocean_blvd_review"
+        ]
+      },
+      {
+        "song": "Jon Batiste Interlude",
+        "artist": "Lana Del Rey",
+        "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+        "key": "A major",
+        "c": "low",
+        "keyNote": "SongBPM machine reading (half-time 84); a loose interlude, so key and tempo are uncertain.",
+        "bpm": 168,
+        "meter": "3/4",
+        "feel": "rubato",
+        "energy": "low",
+        "mood": [
+          "hazy",
+          "dreamy",
+          "playful"
+        ],
+        "vibe": [
+          "kaleidoscope",
+          "smoky lounge"
+        ],
+        "themes": [
+          "love",
+          "desire"
+        ],
+        "sound": [
+          "piano-led",
+          "jazz",
+          "ambient"
+        ],
+        "desc": "A drifting studio piece: Jon Batiste’s piano and voice with Mellotron and guitar, turning psychedelic and synthetic before it fades.",
+        "plan": [
+          {
+            "name": "instrumental",
+            "key": null,
+            "energy": "mid",
+            "instruments": [
+              "piano",
+              "mellotron",
+              "electric guitar",
+              "bass guitar",
+              "drums"
+            ],
+            "note": "piano with scattered voices"
+          }
+        ],
+        "switch": [],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Did_You_Know_That_There's_a_Tunnel_Under_Ocean_Blvd",
+          "https://songbpm.com/@lana-del-rey/jon-batiste-interlude-xzFCmUVLgs",
+          "https://younghollywood.com/scene/track-by-track-lana-del-rey-s-did-you-know-that-there-s-a-tunnel-under-ocean-blvd.html"
+        ]
+      },
+      {
+        "song": "Kintsugi",
+        "artist": "Lana Del Rey",
+        "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+        "key": "A major",
+        "c": "medium",
+        "keyNote": "Hooktheory analyses the chorus only: A major.",
+        "bpm": 101,
+        "meter": "4/4",
+        "feel": "rubato",
+        "energy": "low",
+        "mood": [
+          "intimate",
+          "heartbroken",
+          "hopeful"
+        ],
+        "vibe": [
+          "bedroom confessional"
+        ],
+        "themes": [
+          "death",
+          "family",
+          "sadness"
+        ],
+        "sound": [
+          "piano-led",
+          "acoustic guitar"
+        ],
+        "desc": "A long, hushed piano song with barely any backing; grieves lost relatives and looks toward healing.",
+        "plan": [
+          {
+            "name": "verse",
+            "key": null,
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "piano"
+            ]
+          },
+          {
+            "name": "chorus",
+            "key": "A major",
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "piano",
+              "acoustic guitar"
+            ]
+          },
+          {
+            "name": "outro",
+            "key": null,
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "piano"
+            ]
+          }
+        ],
+        "switch": [],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Did_You_Know_That_There's_a_Tunnel_Under_Ocean_Blvd",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/kintsugi",
+          "https://younghollywood.com/scene/track-by-track-lana-del-rey-s-did-you-know-that-there-s-a-tunnel-under-ocean-blvd.html",
+          "https://exclaim.ca/amparticle/lana_del_rey_did_you_know_that_theres_a_tunnel_under_ocean_blvd_review",
+          "https://www.theringer.com/music/2023/3/29/23661832/lana-del-rey-tunnel-under-ocean-blvd-review"
+        ]
+      },
+      {
+        "song": "Fingertips",
+        "artist": "Lana Del Rey",
+        "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+        "key": "F major",
+        "c": "low",
+        "keyNote": "SongBPM: F major, 104 in 5; search results also show 124 (Musicstax) and 79 (Shazam), pages not opened. Tempo is free.",
+        "bpm": 104,
+        "meter": null,
+        "feel": "rubato",
+        "energy": "low",
+        "mood": [
+          "heartbroken",
+          "anxious",
+          "intimate"
+        ],
+        "vibe": [
+          "bedroom confessional"
+        ],
+        "themes": [
+          "family",
+          "death",
+          "loneliness",
+          "fame"
+        ],
+        "sound": [
+          "orchestral strings",
+          "piano-led",
+          "ambient",
+          "no drums"
+        ],
+        "desc": "A stream of consciousness with no fixed tune: strings, Mellotron and Wurlitzer swell at uneven moments under a near-spoken vocal; grief and family worry.",
+        "plan": [
+          {
+            "name": "verse",
+            "key": null,
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "strings",
+              "piano"
+            ],
+            "note": "critics hear no conventional melody or shape"
+          },
+          {
+            "name": "outro",
+            "key": null,
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "strings",
+              "mellotron"
+            ]
+          }
+        ],
+        "switch": [
+          "strings enter and swell at irregular intervals"
+        ],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Did_You_Know_That_There's_a_Tunnel_Under_Ocean_Blvd",
+          "https://songbpm.com/@lana-del-rey/fingertips-Hhi1ZLHdSm",
+          "https://younghollywood.com/scene/track-by-track-lana-del-rey-s-did-you-know-that-there-s-a-tunnel-under-ocean-blvd.html",
+          "https://exclaim.ca/amparticle/lana_del_rey_did_you_know_that_theres_a_tunnel_under_ocean_blvd_review",
+          "https://diymag.com/review/album/lana-del-rey-did-you-know-that-theres-a-tunnel-under-ocean-blvd",
+          "https://www.theringer.com/music/2023/3/29/23661832/lana-del-rey-tunnel-under-ocean-blvd-review"
+        ]
+      },
+      {
+        "song": "Paris, Texas",
+        "artist": "Lana Del Rey",
+        "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+        "key": "C minor",
+        "c": "medium",
+        "keyNote": "Hooktheory analyses the intro only: C minor in 3/4, open chords.",
+        "bpm": 166,
+        "meter": "3/4",
+        "feel": "waltz",
+        "energy": "low",
+        "mood": [
+          "dreamy",
+          "melancholy",
+          "lonely"
+        ],
+        "vibe": [
+          "open road",
+          "winter"
+        ],
+        "themes": [
+          "escape",
+          "road",
+          "home"
+        ],
+        "sound": [
+          "piano-led",
+          "ambient",
+          "no drums"
+        ],
+        "desc": "A music-box-like piano waltz built on a SYML piece; plain, sing-song and sad, a simple travel story.",
+        "plan": [
+          {
+            "name": "intro",
+            "key": "C minor",
+            "energy": "low",
+            "instruments": [
+              "piano"
+            ]
+          },
+          {
+            "name": "verse",
+            "key": null,
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "piano"
+            ]
+          },
+          {
+            "name": "chorus",
+            "key": null,
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "piano",
+              "mellotron",
+              "acoustic guitar"
+            ]
+          }
+        ],
+        "switch": [],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Did_You_Know_That_There's_a_Tunnel_Under_Ocean_Blvd",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/paris-texas",
+          "https://younghollywood.com/scene/track-by-track-lana-del-rey-s-did-you-know-that-there-s-a-tunnel-under-ocean-blvd.html",
+          "https://diymag.com/review/album/lana-del-rey-did-you-know-that-theres-a-tunnel-under-ocean-blvd"
+        ]
+      },
+      {
+        "song": "Grandfather Please Stand on the Shoulders of My Father While He's Deep-Sea Fishing",
+        "artist": "Lana Del Rey",
+        "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+        "key": "Eb mixolydian",
+        "c": "medium",
+        "keyNote": "Hooktheory analyses the verse only: Eb mixolydian (minor v), counted at 160 (felt 80).",
+        "bpm": 80,
+        "meter": "4/4",
+        "feel": "half-time",
+        "energy": "low",
+        "mood": [
+          "hazy",
+          "hopeful",
+          "dreamy"
+        ],
+        "vibe": [
+          "beach haze"
+        ],
+        "themes": [
+          "family",
+          "faith",
+          "ocean",
+          "fame"
+        ],
+        "sound": [
+          "piano-led",
+          "ambient"
+        ],
+        "desc": "Piano from a Riopy piece with Mellotron, synth pads and late saxophone; breezy and blue, about family and the sea, and a defence of her own art.",
+        "plan": [
+          {
+            "name": "verse",
+            "key": "Eb mixolydian",
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "piano"
+            ]
+          },
+          {
+            "name": "chorus",
+            "key": null,
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "piano",
+              "mellotron",
+              "synth pad"
+            ]
+          },
+          {
+            "name": "outro",
+            "key": null,
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "piano",
+              "saxophone"
+            ]
+          }
+        ],
+        "switch": [],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Did_You_Know_That_There's_a_Tunnel_Under_Ocean_Blvd",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/grandfather-please-stand-on-the-shoulders",
+          "https://younghollywood.com/scene/track-by-track-lana-del-rey-s-did-you-know-that-there-s-a-tunnel-under-ocean-blvd.html",
+          "https://www.theringer.com/music/2023/3/29/23661832/lana-del-rey-tunnel-under-ocean-blvd-review"
+        ]
+      },
+      {
+        "song": "Let the Light In",
+        "artist": "Lana Del Rey",
+        "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+        "key": "A major",
+        "c": "high",
+        "keyNote": "Hooktheory counts the verse at 67 and the chorus at 132 (the same pulse doubled).",
+        "bpm": 67,
+        "meter": "4/4",
+        "feel": "straight",
+        "energy": "mid",
+        "mood": [
+          "romantic",
+          "nostalgic",
+          "tender"
+        ],
+        "vibe": [
+          "70s California",
+          "Laurel Canyon dusk"
+        ],
+        "themes": [
+          "love",
+          "desire",
+          "devotion"
+        ],
+        "sound": [
+          "guitar-led",
+          "piano-led",
+          "live drums",
+          "country"
+        ],
+        "desc": "A warm country-folk duet with Father John Misty: acoustic, twelve-string and electric guitars, piano, organ and drums; an easy, playful romance.",
+        "plan": [
+          {
+            "name": "verse and pre-chorus",
+            "key": "A major",
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "acoustic guitar",
+              "piano"
+            ]
+          },
+          {
+            "name": "chorus",
+            "key": "A major",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "live drums",
+              "electric guitar",
+              "organ",
+              "strings"
+            ]
+          }
+        ],
+        "switch": [],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Did_You_Know_That_There's_a_Tunnel_Under_Ocean_Blvd",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/let-the-light-in",
+          "https://younghollywood.com/scene/track-by-track-lana-del-rey-s-did-you-know-that-there-s-a-tunnel-under-ocean-blvd.html",
+          "https://diymag.com/review/album/lana-del-rey-did-you-know-that-theres-a-tunnel-under-ocean-blvd"
+        ]
+      },
+      {
+        "song": "Margaret",
+        "artist": "Lana Del Rey",
+        "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+        "key": "A major",
+        "c": "high",
+        "keyNote": "Hooktheory writes it in 4/4; Young Hollywood hears a waltz.",
+        "bpm": 104,
+        "meter": "4/4",
+        "feel": "waltz",
+        "energy": "mid",
+        "mood": [
+          "romantic",
+          "hopeful",
+          "tender"
+        ],
+        "vibe": [
+          "70s California"
+        ],
+        "themes": [
+          "love",
+          "friendship",
+          "fate"
+        ],
+        "sound": [
+          "piano-led",
+          "acoustic guitar",
+          "live drums",
+          "brass"
+        ],
+        "desc": "A warm, waltz-like band song with Bleachers: piano, banjo, guitars and saxophones; a bright tribute to a friend’s love story.",
+        "plan": [
+          {
+            "name": "verse",
+            "key": null,
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "piano",
+              "acoustic guitar"
+            ]
+          },
+          {
+            "name": "pre-chorus",
+            "key": "A major",
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "piano"
+            ]
+          },
+          {
+            "name": "chorus",
+            "key": "A major",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "piano",
+              "live drums"
+            ]
+          },
+          {
+            "name": "outro",
+            "key": null,
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "live drums",
+              "saxophone"
+            ]
+          }
+        ],
+        "switch": [],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Did_You_Know_That_There's_a_Tunnel_Under_Ocean_Blvd",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/margaret",
+          "https://younghollywood.com/scene/track-by-track-lana-del-rey-s-did-you-know-that-there-s-a-tunnel-under-ocean-blvd.html",
+          "https://diymag.com/review/album/lana-del-rey-did-you-know-that-theres-a-tunnel-under-ocean-blvd"
+        ]
+      },
+      {
+        "song": "Fishtail",
+        "artist": "Lana Del Rey",
+        "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+        "key": "F dorian",
+        "c": "medium",
+        "keyNote": "Hooktheory analyses the pre-chorus only: F dorian.",
+        "bpm": 89,
+        "meter": "4/4",
+        "feel": "half-time",
+        "energy": "mid",
+        "mood": [
+          "sultry",
+          "hazy",
+          "playful"
+        ],
+        "vibe": [
+          "neon city",
+          "late-night drive"
+        ],
+        "themes": [
+          "toxic love",
+          "sadness",
+          "self-worth"
+        ],
+        "sound": [
+          "trap drums",
+          "synth pads",
+          "electronic"
+        ],
+        "desc": "Airy ambience, then a trap beat with skittering hats and heavy autotune; cool and cheeky about being wanted sadder.",
+        "plan": [
+          {
+            "name": "verse",
+            "key": null,
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "synth pad",
+              "piano"
+            ]
+          },
+          {
+            "name": "pre-chorus",
+            "key": "F dorian",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "synth pad",
+              "mellotron"
+            ]
+          },
+          {
+            "name": "chorus",
+            "key": null,
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "trap drums",
+              "808 bass",
+              "synth pad"
+            ]
+          }
+        ],
+        "switch": [],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Did_You_Know_That_There's_a_Tunnel_Under_Ocean_Blvd",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/fishtail",
+          "https://younghollywood.com/scene/track-by-track-lana-del-rey-s-did-you-know-that-there-s-a-tunnel-under-ocean-blvd.html",
+          "https://exclaim.ca/amparticle/lana_del_rey_did_you_know_that_theres_a_tunnel_under_ocean_blvd_review",
+          "https://www.theringer.com/music/2023/3/29/23661832/lana-del-rey-tunnel-under-ocean-blvd-review"
+        ]
+      },
+      {
+        "song": "Peppers",
+        "artist": "Lana Del Rey",
+        "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+        "key": "E minor",
+        "c": "high",
+        "keyNote": "Hooktheory counts 157 (felt 78).",
+        "bpm": 157,
+        "meter": "4/4",
+        "feel": "half-time",
+        "energy": "mid",
+        "mood": [
+          "playful",
+          "sultry",
+          "defiant"
+        ],
+        "vibe": [
+          "beach haze",
+          "summer road trip"
+        ],
+        "themes": [
+          "love",
+          "desire",
+          "youth",
+          "california"
+        ],
+        "sound": [
+          "hip-hop drums",
+          "guitar-led",
+          "electronic"
+        ],
+        "desc": "A swaggering bass-led hip-hop groove around a sped-up Tommy Genesis sample, with a psychedelic rock streak; carefree and cheeky.",
+        "plan": [
+          {
+            "name": "verse",
+            "key": "E minor",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "bass guitar",
+              "hip-hop drums"
+            ]
+          },
+          {
+            "name": "chorus",
+            "key": "E minor",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "bass guitar",
+              "hip-hop drums",
+              "electric guitar"
+            ]
+          },
+          {
+            "name": "outro",
+            "key": null,
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "electric guitar",
+              "live drums"
+            ]
+          }
+        ],
+        "switch": [],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Did_You_Know_That_There's_a_Tunnel_Under_Ocean_Blvd",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/peppers",
+          "https://younghollywood.com/scene/track-by-track-lana-del-rey-s-did-you-know-that-there-s-a-tunnel-under-ocean-blvd.html",
+          "https://exclaim.ca/amparticle/lana_del_rey_did_you_know_that_theres_a_tunnel_under_ocean_blvd_review",
+          "https://diymag.com/review/album/lana-del-rey-did-you-know-that-theres-a-tunnel-under-ocean-blvd"
+        ]
+      },
+      {
+        "song": "Taco Truck x VB",
+        "artist": "Lana Del Rey",
+        "album": "Did You Know That There's a Tunnel Under Ocean Blvd",
+        "key": "E minor",
+        "c": "medium",
+        "alt": "D major",
+        "keyNote": "Hooktheory: verse E minor (62 BPM), pre-chorus E dorian, chorus D major, lead-out D mixolydian (136 BPM).",
+        "bpm": 62,
+        "meter": "4/4",
+        "feel": "half-time",
+        "energy": "mid",
+        "mood": [
+          "hazy",
+          "defiant",
+          "sultry"
+        ],
+        "vibe": [
+          "neon city",
+          "beach haze",
+          "late-night drive"
+        ],
+        "themes": [
+          "love",
+          "california",
+          "nostalgia"
+        ],
+        "sound": [
+          "trap drums",
+          "808 bass",
+          "electronic",
+          "guitar-led"
+        ],
+        "desc": "A bluesy, minimal start that flips into a grimy, bass-heavy early version of Venice Bitch; relaxed, then dark and woozy.",
+        "plan": [
+          {
+            "name": "verse",
+            "key": "E minor",
+            "energy": "low",
+            "instruments": [
+              "vocal",
+              "electric guitar",
+              "trap drums"
+            ]
+          },
+          {
+            "name": "pre-chorus",
+            "key": "E dorian",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "synth pad",
+              "trap drums"
+            ],
+            "bpm": 136
+          },
+          {
+            "name": "chorus",
+            "key": "D major",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "backing vocals",
+              "synth bass",
+              "trap drums"
+            ],
+            "bpm": 136
+          },
+          {
+            "name": "chorus lead-out",
+            "key": "D mixolydian",
+            "energy": "mid",
+            "instruments": [
+              "vocal",
+              "synth",
+              "trap drums",
+              "808 bass"
+            ],
+            "bpm": 136
+          }
+        ],
+        "switch": [
+          "tempo and key change: E minor at 62, then E dorian and D major at 136"
+        ],
+        "range": null,
+        "src": [
+          "https://en.wikipedia.org/wiki/Did_You_Know_That_There's_a_Tunnel_Under_Ocean_Blvd",
+          "https://www.hooktheory.com/theorytab/view/lana-del-rey/taco-truck-x-vb",
+          "https://younghollywood.com/scene/track-by-track-lana-del-rey-s-did-you-know-that-there-s-a-tunnel-under-ocean-blvd.html",
+          "https://diymag.com/review/album/lana-del-rey-did-you-know-that-theres-a-tunnel-under-ocean-blvd",
+          "https://www.theringer.com/music/2023/3/29/23661832/lana-del-rey-tunnel-under-ocean-blvd-review"
         ]
       }
     ]

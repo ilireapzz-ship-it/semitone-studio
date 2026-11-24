@@ -11,7 +11,7 @@ const url='file://'+require('path').resolve(__dirname,'../../web/semitone-studio
  const settle=()=>p.evaluate(()=>{ H.quietUntil=0; H.last=null; });
  const changes=[
   ['style','Changed style',()=>{ TL.pick=['genre:rnb']; TL.choices={}; $('#tagUse').click(); }],
-  ['key','Changed key',()=>{ const e=$('#keySel'); e.value=String((S.key+3)%12); e.dispatchEvent(new Event('change',{bubbles:true})); }],
+  ['key','Moved the song',()=>{ const e=$('#keySel'); e.value=String((S.key+3)%12); e.dispatchEvent(new Event('change',{bubbles:true})); }],
   ['mode','Changed mode',()=>{ const e=$('#modeSel'); e.value=[...e.options].find(o=>o.value!==S.mode).value; e.dispatchEvent(new Event('change',{bubbles:true})); }],
   ['time signature','Changed time signature',()=>{ const e=$('#meterSel'); e.value=[...e.options].find(o=>o.value!==S.meter).value; e.dispatchEvent(new Event('change',{bubbles:true})); }],
   ['tempo','Changed tempo',()=>{ const e=$('#bpm'); e.value=String(S.bpm>100?90:110); e.dispatchEvent(new Event('input',{bubbles:true})); e.dispatchEvent(new Event('change',{bubbles:true})); }],
