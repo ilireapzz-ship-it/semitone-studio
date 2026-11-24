@@ -164,7 +164,7 @@ public:
         if (id.isEmpty()) return;
         auto d = known.getTypeForIdentifierString (id);
         if (d == nullptr) { if (onLoaded) onLoaded (ch, false, "That plug-in isn't on this computer"); return; }
-        fm.createPluginInstanceAsync (*d, sr, bs, [this, ch, stateB64, gen, mainOnly, alive = aliveFlag] (std::unique_ptr<juce::AudioPluginInstance> p, const juce::String& err)
+        fm.createPluginInstanceAsync (*d, sr, bs, [this, ch, id, stateB64, gen, mainOnly, alive = aliveFlag] (std::unique_ptr<juce::AudioPluginInstance> p, const juce::String& err)
         {
             if (! alive->load() || gen != loadGen[(size_t) ch]) return;
             if (p == nullptr) { if (onLoaded) onLoaded (ch, false, err); return; }
@@ -177,6 +177,7 @@ public:
             p->prepareToPlay (sr, bs);
             const auto name = p->getName();
             { const juce::SpinLock::ScopedLockType sl (lock); inst[(size_t) ch] = std::move (p); }
+            instId[(size_t) ch] = id;
             if (onLoaded) onLoaded (ch, true, name);
         });
     }
@@ -186,6 +187,7 @@ public:
         windows[(size_t) ch].reset();
         std::unique_ptr<juce::AudioPluginInstance> old;
         { const juce::SpinLock::ScopedLockType sl (lock); old = std::move (inst[(size_t) ch]); ccLast[(size_t) ch].fill (-1); }
+        instId[(size_t) ch].clear();
     }
 
     // Splice Bridge is an audition tool, not a part: it has no strip, isn't exported, and goes straight to the output.
@@ -257,6 +259,10 @@ public:
         return mb.toBase64Encoding();
     }
 
+    // message thread: which plug-in (or effect) is really there, so a saved sound only ever goes to its own plug-in
+    juce::String loadedId (int ch) const { return ch >= 0 && ch < 16 ? instId[(size_t) ch] : juce::String(); }
+    juce::String loadedFxId (int t, int slot) const { return t >= 0 && t <= masterFx && slot >= 0 && slot < fxSlots ? fxId[(size_t) t][(size_t) slot] : juce::String(); }
+
     void testNote (int ch) { testCh = ch; }
 
     // One note, right now, so a note placed on the piano roll is heard in the plug-in's own sound.
@@ -296,12 +302,13 @@ public:
         fxWin[(size_t) t][(size_t) slot].reset();
         std::unique_ptr<juce::AudioPluginInstance> old;
         { const juce::SpinLock::ScopedLockType sl (lock); old = std::move (fx[(size_t) t][(size_t) slot]); }
+        fxId[(size_t) t][(size_t) slot].clear();
         old.reset();
         const auto gen = ++fxGen[(size_t) t][(size_t) slot];
         if (id.isEmpty()) return;
         auto d = known.getTypeForIdentifierString (id);
         if (d == nullptr) { if (onFxLoaded) onFxLoaded (t, slot, false, "That effect isn't on this computer"); return; }
-        fm.createPluginInstanceAsync (*d, sr, bs, [this, t, slot, stateB64, gen, alive = aliveFlag] (std::unique_ptr<juce::AudioPluginInstance> p, const juce::String& err)
+        fm.createPluginInstanceAsync (*d, sr, bs, [this, t, slot, id, stateB64, gen, alive = aliveFlag] (std::unique_ptr<juce::AudioPluginInstance> p, const juce::String& err)
         {
             if (! alive->load() || gen != fxGen[(size_t) t][(size_t) slot]) return;
             if (p == nullptr) { if (onFxLoaded) onFxLoaded (t, slot, false, err); return; }
@@ -312,6 +319,7 @@ public:
             p->prepareToPlay (sr, bs);
             const auto name = p->getName();
             { const juce::SpinLock::ScopedLockType sl (lock); fx[(size_t) t][(size_t) slot] = std::move (p); }
+            fxId[(size_t) t][(size_t) slot] = id;
             if (onFxLoaded) onFxLoaded (t, slot, true, name);
         });
     }
@@ -783,6 +791,8 @@ private:
 
     std::array<std::array<std::unique_ptr<juce::AudioPluginInstance>, 4>, 17> fx;
     std::array<std::array<std::unique_ptr<HostWindow>, 4>, 17> fxWin;
+    std::array<juce::String, 16> instId;
+    std::array<std::array<juce::String, 4>, 17> fxId;
     juce::AudioBuffer<float> fxTemp { maxChannels, 8192 };
     bool lanesMoving = false;
     uint32_t lastBuiltInMask = 0;

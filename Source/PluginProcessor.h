@@ -45,6 +45,7 @@ public:
     // ---- called from the editor (message thread) ----
     void setTimelineFromVar (const juce::var& v);
     void setProjectState (const juce::String& json) { const juce::ScopedLock sl (stateLock); projectJson = json; }
+    void refreshHostStates();   // desktop app, while closing: the plug-ins' sounds as they are this moment, into the saved song
     juce::String getProjectState() const { const juce::ScopedLock sl (stateLock); return projectJson; }
     void setStandaloneTransport (bool play, double startBeat, double bpm);
     bool isStandalone() const { return wrapperType == wrapperType_Standalone; }

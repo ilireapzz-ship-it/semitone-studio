@@ -112,7 +112,7 @@ void SemitoneEditor::clipFile()
 #endif
 }
 
-SemitoneEditor::~SemitoneEditor() { stopTimer(); if (proc.host) { proc.host->onList = nullptr; proc.host->onLoaded = nullptr; proc.host->onFxLoaded = nullptr; } }
+SemitoneEditor::~SemitoneEditor() { stopTimer(); proc.refreshHostStates(); if (proc.host) { proc.host->onList = nullptr; proc.host->onLoaded = nullptr; proc.host->onFxLoaded = nullptr; } }
 
 // The web view is blank until the page arrives, so it waits just outside the window and the loading screen shows here.
 void SemitoneEditor::resized() { browser.setBounds (shown ? getLocalBounds() : getLocalBounds().withX (getWidth() + 8)); }

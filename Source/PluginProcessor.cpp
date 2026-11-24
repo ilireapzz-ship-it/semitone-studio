@@ -691,6 +691,55 @@ void SemitoneProcessor::setStandaloneTransport (bool play, double startBeat, dou
     stPlaying = play;
 }
 
+// 25 Nov (Jamie: "ensure plugin states are saved with the project"). The page asks each plug-in for its sound every few seconds and before a save;
+// a knob turned just before closing would miss that. Only the text of each saved sound is swapped, so nothing else in the song can change.
+void SemitoneProcessor::refreshHostStates()
+{
+    if (! isStandalone() || host == nullptr) return;
+    const auto json = getProjectState();
+    const auto v = juce::JSON::parse (json);
+    const auto song = v.getProperty ("song", {}), map = v.getProperty ("hostMap", {});
+    if (! song.isObject() || ! map.isObject()) return;
+    std::string text = json.toStdString();
+    bool changed = false;
+    // "key":"old" -> "key":"new" once. Both sounds are base64, so there is nothing to escape; sounds inside saved versions are escaped text and can't match.
+    auto swap = [&] (const juce::String& before, const juce::String& was, const juce::String& after, const juce::String& now)
+    {
+        if (was.isEmpty() || now.isEmpty() || was == now) return false;
+        const auto find = (before + was + after).toStdString();
+        const auto at = text.find (find);
+        if (at == std::string::npos) return false;
+        text.replace (at, find.size(), (before + now + after).toStdString());
+        return changed = true;
+    };
+    const auto states = song.getProperty ("hostState", {});
+    if (auto* parts = map.getProperty ("parts", {}).getDynamicObject())
+        for (const auto& q : parts->getProperties())
+        {
+            const int ch = (int) q.value.getProperty ("ch", -1);
+            if (host->loadedId (ch) != q.value.getProperty ("id", "").toString()) continue;
+            swap ("\"" + q.name.toString() + "\":\"", states.getProperty (q.name, "").toString(), "\"", host->stateB64 (ch));
+        }
+    if (auto* fx = map.getProperty ("fx", {}).getArray())
+        for (const auto& e : *fx)
+        {
+            const int t = (int) e.getProperty ("t", -1), slot = (int) e.getProperty ("slot", -1);
+            const auto u = e.getProperty ("u", "").toString(), id = e.getProperty ("id", "").toString();
+            if (u.isEmpty() || host->loadedFxId (t, slot) != id) continue;
+            juce::String was;
+            if (auto* byPart = song.getProperty ("hostFx", {}).getDynamicObject())
+                for (const auto& k : byPart->getProperties())
+                    if (auto* list = k.value.getArray())
+                        for (const auto& x : *list) if (x.getProperty ("u", "").toString() == u) was = x.getProperty ("state", "").toString();
+            const auto now = host->fxState (t, slot);
+            if (! swap ("\"u\":\"" + u + "\",\"state\":\"", was, "\"", now)) swap ("\"state\":\"", was, "\",\"u\":\"" + u + "\"", now);
+        }
+    if (! changed) return;
+    const auto out = juce::String::fromUTF8 (text.data(), (int) text.size());
+    setProjectState (out);
+    st::files::writeSafely (st::files::autosaveFile(), out);
+}
+
 void SemitoneProcessor::getStateInformation (juce::MemoryBlock& dest)
 {
     // The whole Semitone song is saved inside the DAW project.
