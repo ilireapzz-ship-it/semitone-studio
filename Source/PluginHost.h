@@ -4,6 +4,9 @@
 #include "Sequencer.h"
 #include "Synth.h"
 #include "SongFiles.h"
+#include <bitset>
+#include <cstdint>
+#include <cstring>
 #include <thread>
 
 // Phase 3, desktop app only: your own instrument plug-ins on Semitone's parts. Each MIDI channel can hold one.
@@ -16,12 +19,17 @@ struct SongHead : juce::AudioPlayHead
     std::atomic<double> bpm { 120 }, ppq { 0 }, loopA { 0 }, loopB { 0 };
     std::atomic<bool> playing { false }, looping { false };
     std::atomic<int> top { 4 }, bot { 4 };
+    std::atomic<int64_t> samples { 0 };       // 25 Nov: plug-ins were always told sample 0 and 4/4
+    std::atomic<double> rate { 48000 };
     juce::Optional<PositionInfo> getPosition() const override
     {
         PositionInfo p;
         p.setBpm (bpm.load()); p.setPpqPosition (ppq.load()); p.setIsPlaying (playing.load());
         p.setTimeSignature (TimeSignature { top.load(), bot.load() });
-        p.setTimeInSeconds (ppq.load() * 60.0 / juce::jmax (1.0, bpm.load()));
+        p.setTimeInSamples (samples.load());
+        p.setTimeInSeconds ((double) samples.load() / juce::jmax (1.0, rate.load()));
+        const double bar = juce::jmax (.25, top.load() * 4.0 / juce::jmax (1, bot.load()));
+        p.setPpqPositionOfLastBarStart (std::floor (ppq.load() / bar) * bar);
         p.setIsLooping (looping.load());
         if (looping.load()) p.setLoopPoints (LoopPoints { loopA.load(), loopB.load() });
         return p;
@@ -91,6 +99,33 @@ public:
     std::function<void (int, bool, juce::String)> onLoaded;         // channel, ok, name or why not
     std::function<void (const juce::String&)> onLog;               // a line for the start-up log
 
+    // 25 Nov: some plug-ins (ValhallaVintageVerb) leave their main input and output off until the host switches them on, so an effect
+    // came up with 0 in and 0 out and gave back silence. Only the main pair is touched: sidechains and extra outputs stay as they are.
+    // The plug-in must not be running. Called before and after its saved sound goes in.
+    static void openMain (juce::AudioPluginInstance& p, bool effect)
+    {
+        const bool hasIn = p.getBusCount (true) > 0, hasOut = p.getBusCount (false) > 0;
+        const int ins = p.getMainBusNumInputChannels(), outs = p.getMainBusNumOutputChannels();
+        const bool inOff = effect && hasIn && ins == 0, outOff = hasOut && outs == 0;
+        const bool narrow = effect && hasIn && hasOut && ! inOff && ! outOff && (ins == 1 || outs == 1);   // a mono effect: in stereo if it can
+        if (! inOff && ! outOff && ! narrow) return;
+        p.releaseResources();
+        const auto now = p.getBusesLayout();
+        auto put = [&] (const juce::AudioChannelSet& in, const juce::AudioChannelSet& out)
+        {
+            auto want = now;
+            if (effect && hasIn) { if (in.isDisabled()) return false; want.inputBuses.getReference (0) = in; }
+            if (hasOut) { if (out.isDisabled()) return false; want.outputBuses.getReference (0) = out; }
+            return p.setBusesLayout (want);     // asks the plug-in first, and leaves everything as it was if it says no
+        };
+        const auto stereo = juce::AudioChannelSet::stereo(), mono = juce::AudioChannelSet::mono();
+        if (put (stereo, stereo) || narrow) return;
+        const auto lastIn = hasIn ? p.getBus (true, 0)->getLastEnabledLayout() : juce::AudioChannelSet::disabled();
+        const auto lastOut = hasOut ? p.getBus (false, 0)->getLastEnabledLayout() : juce::AudioChannelSet::disabled();
+        if (put (lastIn, lastOut) || put (mono, stereo)) return;
+        put (mono, mono);
+    }
+
     // 21 Nov (Jamie: "how come no sound is coming from opus?"; it works in FL). process() skips a plug-in with more channels than its buffer,
     // so a plug-in with many multi-outs never ran at all, not even from its own keyboard. Its buses are left alone (some instruments crash
     // when outputs are switched off) unless there are more than the buffer holds; then only its main ones stay on (we use the first pair).
@@ -105,6 +140,7 @@ public:
             say << "; more than Semitone holds, so only its main outputs are on (" << p.getTotalNumOutputChannels() << " out)";
             if (count() > maxChannels) say << " - still too many, it can't play";
         }
+        say << "; main " << p.getMainBusNumInputChannels() << " in, " << p.getMainBusNumOutputChannels() << " out";
         if (onLog) onLog (say);
     }
     bool scanning = false; juce::String scanningName; float progress = 0;
@@ -114,12 +150,22 @@ public:
         fm.addDefaultFormats();
         if (auto xml = juce::XmlDocument::parse (listFile())) known.recreateFromXml (*xml);
     }
-    ~PartHost() override { aliveFlag->store (false); stopTimer(); scanThread.reset(); const juce::SpinLock::ScopedLockType sl (lock); for (auto& t : fxWin) for (auto& w : t) w.reset(); for (auto& t : fx) for (auto& p : t) p.reset(); for (auto& w : windows) w.reset(); for (auto& i : inst) i.reset(); }
+    ~PartHost() override
+    {
+        aliveFlag->store (false); stopTimer(); scanThread.reset();
+        const AllHeld quiet (*this);
+        bridgeWin.reset(); audition.reset();
+        for (auto& t : fxWin) for (auto& w : t) w.reset();
+        for (auto& t : fx) for (auto& p : t) p.reset();
+        for (auto& w : windows) w.reset();
+        for (auto& i : inst) i.reset();
+    }
 
     void prepare (double rate, int blockSize)
     {
-        sr = rate; bs = juce::jmax (32, blockSize);
-        const juce::SpinLock::ScopedLockType sl (lock);
+        // 25 Nov: not under the lock. Preparing can run the message loop, and a load finishing inside it would wait for that lock for ever.
+        const AllHeld quiet (*this);
+        sr = rate; bs = juce::jmax (64, blockSize); head.rate = rate;   // 64: the smallest block an export uses
         for (auto& i : inst) if (i) { i->releaseResources(); i->setRateAndBufferSizeDetails (sr, bs); i->prepareToPlay (sr, bs); }
         for (auto& t : fx) for (auto& p : t) if (p) { p->releaseResources(); p->setRateAndBufferSizeDetails (sr, bs); p->prepareToPlay (sr, bs); }
         temp.setSize (maxChannels, bs * 2, false, false, true);
@@ -164,19 +210,26 @@ public:
         if (id.isEmpty()) return;
         auto d = known.getTypeForIdentifierString (id);
         if (d == nullptr) { if (onLoaded) onLoaded (ch, false, "That plug-in isn't on this computer"); return; }
+        ++loading;
         fm.createPluginInstanceAsync (*d, sr, bs, [this, ch, id, stateB64, gen, mainOnly, alive = aliveFlag] (std::unique_ptr<juce::AudioPluginInstance> p, const juce::String& err)
         {
-            if (! alive->load() || gen != loadGen[(size_t) ch]) return;
+            if (! alive->load()) return;
+            --loading;
+            if (gen != loadGen[(size_t) ch]) return;
             if (p == nullptr) { if (onLoaded) onLoaded (ch, false, err); return; }
             // leave its buses alone: some instruments crash if outputs are switched off. process() gives room for them all and uses the first two.
             p->setRateAndBufferSizeDetails (sr, bs);
             p->setPlayHead (&head);
             if (mainOnly) p->disableNonMainBuses();
+            openMain (*p, false);
             if (stateB64.isNotEmpty()) { juce::MemoryBlock mb; if (mb.fromBase64Encoding (stateB64)) p->setStateInformation (mb.getData(), (int) mb.getSize()); }
+            if (! alive->load() || gen != loadGen[(size_t) ch]) return;   // its own message boxes can let another load through
+            openMain (*p, false);
             fitChannels (*p);
             p->prepareToPlay (sr, bs);
             const auto name = p->getName();
-            { const juce::SpinLock::ScopedLockType sl (lock); inst[(size_t) ch] = std::move (p); }
+            instBad[(size_t) ch] = false; instSaid[(size_t) ch] = false; instReset[(size_t) ch] = 0;
+            { const juce::SpinLock::ScopedLockType sl (lock); std::swap (inst[(size_t) ch], p); }
             instId[(size_t) ch] = id;
             if (onLoaded) onLoaded (ch, true, name);
         });
@@ -187,6 +240,9 @@ public:
         windows[(size_t) ch].reset();
         std::unique_ptr<juce::AudioPluginInstance> old;
         { const juce::SpinLock::ScopedLockType sl (lock); old = std::move (inst[(size_t) ch]); ccLast[(size_t) ch].fill (-1); }
+        // 25 Nov: notes asked for and never played go with the plug-in, or they'd fill the queue for every other part
+        for (auto& s : previewQueue) { int v = s.load(); if (v != 0 && (v >> 22) - 1 == ch) s.compare_exchange_strong (v, 0); }
+        if (testCh.load() == ch) testCh = -1;
         instId[(size_t) ch].clear();
     }
 
@@ -198,15 +254,20 @@ public:
         std::unique_ptr<juce::PluginDescription> d;
         for (const auto& t : known.getTypes()) if (t.name == "Splice Bridge") { d = std::make_unique<juce::PluginDescription> (t); break; }
         if (d == nullptr) { if (onBridge) onBridge (false, "Splice Bridge isn't on this computer"); return; }
-        fm.createPluginInstanceAsync (*d, sr, bs, [this] (std::unique_ptr<juce::AudioPluginInstance> p, const juce::String& err)
+        ++loading;
+        fm.createPluginInstanceAsync (*d, sr, bs, [this, alive = aliveFlag] (std::unique_ptr<juce::AudioPluginInstance> p, const juce::String& err)
         {
+            if (! alive->load()) return;
+            --loading;
             if (p == nullptr) { if (onBridge) onBridge (false, err); return; }
             p->setRateAndBufferSizeDetails (sr, bs);
             p->setPlayHead (&head);
+            openMain (*p, false);
             fitChannels (*p);
             p->prepareToPlay (sr, bs);
             const auto name = p->getName();
-            { const juce::SpinLock::ScopedLockType sl (lock); audition = std::move (p); }
+            { const juce::SpinLock::ScopedLockType sl (lock); std::swap (audition, p); }
+            bridgeWin.reset();   // a window of one it replaced
             if (onBridge) onBridge (true, name);
             bridgeOpen();
         });
@@ -215,7 +276,7 @@ public:
     {
         if (bridgeWin) { bridgeWin->raise(); return; }
         if (audition == nullptr || ! audition->hasEditor()) return;
-        bridgeWin = std::make_unique<HostWindow> (*audition, [this] { juce::MessageManager::callAsync ([this] { bridgeWin.reset(); }); });
+        bridgeWin = std::make_unique<HostWindow> (*audition, [this, alive = aliveFlag] { juce::MessageManager::callAsync ([this, alive] { if (alive->load()) bridgeWin.reset(); }); });
     }
     void bridgeClear()
     {
@@ -225,19 +286,21 @@ public:
         if (onBridge) onBridge (false, {});
     }
     void setLoop (double a, double b) { head.loopA = a; head.loopB = b; head.looping = b > a; }
-    void setTransport (double bpm, double ppq, bool playing) { head.bpm = bpm; head.ppq = ppq; head.playing = playing; }
+    void setTransport (double bpm, double ppq, bool playing, int64_t samples) { head.bpm = bpm; head.ppq = ppq; head.playing = playing; head.samples = samples; }
+    void setMeter (int top, int bot) { head.top = juce::jlimit (1, 32, top); head.bot = juce::jlimit (1, 32, bot); }
 
     // Audio thread, last of all: whatever Bridge is playing, straight to the output.
     void processAudition (float* L, float* R, int n)
     {
         const juce::SpinLock::ScopedTryLockType sl (lock);
-        if (! sl.isLocked() || audition == nullptr || n > temp.getNumSamples()) return;
+        if (! sl.isLocked() || allHold.load() > 0 || audition == nullptr || n > temp.getNumSamples()) return;
         const int chans = juce::jmax (2, audition->getTotalNumOutputChannels(), audition->getTotalNumInputChannels());
         if (chans > maxChannels) return;
         temp.clear();
         juce::AudioBuffer<float> view (temp.getArrayOfWritePointers(), chans, n);
         juce::MidiBuffer none;
         audition->processBlock (view, none);
+        if (! sane (view.getReadPointer (0), n) || ! sane (view.getReadPointer (1), n)) return;
         for (int i = 0; i < n; ++i) { L[i] += view.getSample (0, i); if (R != nullptr && R != L) R[i] += view.getSample (1, i); }
     }
 
@@ -247,7 +310,7 @@ public:
         auto* p = inst[(size_t) ch].get();
         if (windows[(size_t) ch]) { windows[(size_t) ch]->raise(); return; }   // already open: bring it to the front
         if (p == nullptr || ! p->hasEditor()) return;
-        windows[(size_t) ch] = std::make_unique<HostWindow> (*p, [this, ch] { juce::MessageManager::callAsync ([this, ch] { windows[(size_t) ch].reset(); }); });
+        windows[(size_t) ch] = std::make_unique<HostWindow> (*p, [this, ch, alive = aliveFlag] { juce::MessageManager::callAsync ([this, ch, alive] { if (alive->load()) windows[(size_t) ch].reset(); }); });
     }
 
     juce::String stateB64 (int ch)
@@ -263,12 +326,13 @@ public:
     juce::String loadedId (int ch) const { return ch >= 0 && ch < 16 ? instId[(size_t) ch] : juce::String(); }
     juce::String loadedFxId (int t, int slot) const { return t >= 0 && t <= masterFx && slot >= 0 && slot < fxSlots ? fxId[(size_t) t][(size_t) slot] : juce::String(); }
 
-    void testNote (int ch) { testCh = ch; }
+    void testNote (int ch) { if (ch >= 0 && ch < 16 && inst[(size_t) ch] != nullptr) testCh = ch; }
 
     // One note, right now, so a note placed on the piano roll is heard in the plug-in's own sound.
     void previewNote (int ch, int note, int vel, int ms)
     {
-        const int v = ((juce::jlimit (0, 30, ch) + 1) << 22) | (juce::jlimit (0, 127, note) << 15) | (juce::jlimit (1, 127, vel) << 8) | juce::jlimit (1, 255, ms / 10);
+        if (ch < 0 || ch > 15 || inst[(size_t) ch] == nullptr) return;   // 25 Nov: with no plug-in there (it failed, or is still loading) nothing ever took the note out
+        const int v = ((ch + 1) << 22) | (juce::jlimit (0, 127, note) << 15) | (juce::jlimit (1, 127, vel) << 8) | juce::jlimit (1, 255, ms / 10);
         for (auto& s : previewQueue) { int empty = 0; if (s.compare_exchange_strong (empty, v)) break; }
     }
 
@@ -294,7 +358,8 @@ public:
         return a;
     }
 
-    std::function<void (int, int, bool, juce::String)> onFxLoaded;   // target, slot, ok, name or why not
+    std::function<void (int, int, bool, juce::String, bool)> onFxLoaded;   // target, slot, ok, name or why not, dry: it has no way in or out, so the sound goes past it
+    std::function<void (int, int, juce::String)> onBad;                     // channel or target, slot (-1: the part's plug-in), name: it gave out something that isn't sound
 
     void fxLoad (int t, int slot, const juce::String& id, const juce::String& stateB64)
     {
@@ -307,20 +372,28 @@ public:
         const auto gen = ++fxGen[(size_t) t][(size_t) slot];
         if (id.isEmpty()) return;
         auto d = known.getTypeForIdentifierString (id);
-        if (d == nullptr) { if (onFxLoaded) onFxLoaded (t, slot, false, "That effect isn't on this computer"); return; }
+        if (d == nullptr) { if (onFxLoaded) onFxLoaded (t, slot, false, "That effect isn't on this computer", false); return; }
+        ++loading;
         fm.createPluginInstanceAsync (*d, sr, bs, [this, t, slot, id, stateB64, gen, alive = aliveFlag] (std::unique_ptr<juce::AudioPluginInstance> p, const juce::String& err)
         {
-            if (! alive->load() || gen != fxGen[(size_t) t][(size_t) slot]) return;
-            if (p == nullptr) { if (onFxLoaded) onFxLoaded (t, slot, false, err); return; }
+            if (! alive->load()) return;
+            --loading;
+            if (gen != fxGen[(size_t) t][(size_t) slot]) return;
+            if (p == nullptr) { if (onFxLoaded) onFxLoaded (t, slot, false, err, false); return; }
             p->setRateAndBufferSizeDetails (sr, bs);
+            openMain (*p, true);
             if (stateB64.isNotEmpty()) { juce::MemoryBlock mb; if (mb.fromBase64Encoding (stateB64)) p->setStateInformation (mb.getData(), (int) mb.getSize()); }
+            if (! alive->load() || gen != fxGen[(size_t) t][(size_t) slot]) return;
             p->setPlayHead (&head);
+            openMain (*p, true);
             fitChannels (*p);
             p->prepareToPlay (sr, bs);
             const auto name = p->getName();
-            { const juce::SpinLock::ScopedLockType sl (lock); fx[(size_t) t][(size_t) slot] = std::move (p); }
+            const bool dry = p->getMainBusNumInputChannels() == 0 || p->getMainBusNumOutputChannels() == 0;
+            fxBad[(size_t) t][(size_t) slot] = false; fxSaid[(size_t) t][(size_t) slot] = false; fxReset[(size_t) t][(size_t) slot] = 0;
+            { const juce::SpinLock::ScopedLockType sl (lock); std::swap (fx[(size_t) t][(size_t) slot], p); }
             fxId[(size_t) t][(size_t) slot] = id;
-            if (onFxLoaded) onFxLoaded (t, slot, true, name);
+            if (onFxLoaded) onFxLoaded (t, slot, true, name, dry);
         });
     }
 
@@ -352,7 +425,7 @@ public:
         auto& w = fxWin[(size_t) t][(size_t) slot];
         if (w) { w->raise(); return; }
         if (p == nullptr || ! p->hasEditor()) return;
-        w = std::make_unique<HostWindow> (*p, [this, t, slot] { juce::MessageManager::callAsync ([this, t, slot] { fxWin[(size_t) t][(size_t) slot].reset(); }); });
+        w = std::make_unique<HostWindow> (*p, [this, t, slot, alive = aliveFlag] { juce::MessageManager::callAsync ([this, t, slot, alive] { if (alive->load()) fxWin[(size_t) t][(size_t) slot].reset(); }); });
     }
 
     juce::String fxState (int t, int slot) const
@@ -382,14 +455,14 @@ public:
     {
         if (t < 0 || t >= masterFx) return;
         const juce::SpinLock::ScopedTryLockType sl (lock);
-        if (sl.isLocked() && n <= fxTemp.getNumSamples()) runFx (t, L, R, n);
+        if (sl.isLocked() && allHold.load() == 0 && n <= fxTemp.getNumSamples()) runFx (t, L, R, n);
     }
 
     // Audio thread: the whole-song effects, after everything is mixed.
     void processMaster (float* L, float* R, int n)
     {
         const juce::SpinLock::ScopedTryLockType sl (lock);
-        if (sl.isLocked() && n <= fxTemp.getNumSamples()) runFx (masterFx, L, R, n);
+        if (sl.isLocked() && allHold.load() == 0 && n <= fxTemp.getNumSamples()) runFx (masterFx, L, R, n);
     }
 
     // Presets the plug-in lists itself. Many list nothing useful ("Prog 1", "<disabled>"), so those are left out.
@@ -415,7 +488,7 @@ public:
     {
         auto* p = (ch >= 0 && ch < 16) ? inst[(size_t) ch].get() : nullptr;
         if (p == nullptr || i < 0 || i >= p->getNumPrograms()) return;
-        const juce::SpinLock::ScopedLockType sl (lock);
+        const Held held (*this, instHold[(size_t) ch]);
         p->setCurrentProgram (i);
     }
 
@@ -424,7 +497,9 @@ public:
         auto* p = (ch >= 0 && ch < 16) ? inst[(size_t) ch].get() : nullptr;
         juce::MemoryBlock mb;
         if (p == nullptr || b64.isEmpty() || ! mb.fromBase64Encoding (b64)) return;
-        const juce::SpinLock::ScopedLockType sl (lock);
+        // 25 Nov: only this plug-in waits. Under the lock every plug-in and effect stopped until it was done, note-offs were lost, and one
+        // that put up a message box could freeze the app.
+        const Held held (*this, instHold[(size_t) ch]);
         p->setStateInformation (mb.getData(), (int) mb.getSize());
     }
 
@@ -559,8 +634,10 @@ public:
     void process (const std::vector<Event>& events, int n, float* L, float* R, double beat = -1, bool toEngine = false)
     {
         outReady.fill (false);   // a skipped block hands back silence, never last block's audio again
+        if (beat < 0 && rolling) stopFor.fill (true);
+        rolling = beat >= 0;
         const juce::SpinLock::ScopedTryLockType sl (lock);
-        if (! sl.isLocked() || n > temp.getNumSamples() || n > partOut.getNumSamples()) return;
+        if (! sl.isLocked() || allHold.load() > 0 || n > temp.getNumSamples() || n > partOut.getNumSamples()) { keepOffs (events, -1); return; }
         // While playing, lanes set the controls. On stop each goes back to its resting value (a lane's first
         // point), so stopping in the gap of a tremolo doesn't leave the plug-in silent.
         const bool stopped = beat < 0 && lanesMoving;
@@ -572,7 +649,7 @@ public:
                         const auto& ps = inst[(size_t) k.ch]->getParameters();
                         const float v = juce::jlimit (0.0f, 1.0f, stopped ? k.pts.front().second : k.at (beat));
                         if (k.fxParam >= ccBase) queueCc (k.ch, k.fxParam - ccBase, juce::roundToInt (v * 127.0f));
-                        else if (k.fxParam >= 0 && k.fxParam < ps.size()) ps[k.fxParam]->setValue (v);
+                        else if (k.fxParam >= 0 && k.fxParam < ps.size() && instHold[(size_t) k.ch].load() == 0) ps[k.fxParam]->setValue (v);
                     }
         lanesMoving = beat >= 0;
 
@@ -602,12 +679,38 @@ public:
         for (int ch = 0; ch < 16; ++ch)
         {
             auto* p = inst[(size_t) ch].get();
-            if (p == nullptr) continue;
+            auto& keys = down[(size_t) ch];
+            if (p == nullptr) { keys.reset(); pendOff[(size_t) ch].reset(); pendBend[(size_t) ch] = -1; stopFor[(size_t) ch] = false; continue; }
+            if (instHold[(size_t) ch].load() > 0 || instBad[(size_t) ch].load()) { keepOffs (events, ch); continue; }
             midi.clear();
+            // notes that ended while this plug-in was held back end now, so none is left hanging
+            if (pendOff[(size_t) ch].any())
+            {
+                for (int k = 0; k < 128; ++k)
+                    if (pendOff[(size_t) ch].test ((size_t) k)) { midi.addEvent (juce::MidiMessage (0x80, k, 0), 0); keys.reset ((size_t) k); }
+                pendOff[(size_t) ch].reset();
+            }
+            if (pendBend[(size_t) ch] >= 0) { midi.addEvent (juce::MidiMessage (0xE0, pendBend[(size_t) ch] & 127, pendBend[(size_t) ch] >> 7), 0); pendBend[(size_t) ch] = -1; }
+            // stopped: end whatever is still down, and say so with all-notes-off (123). Not all-sound-off (120): that would cut every tail dead.
+            if (stopFor[(size_t) ch])
+            {
+                stopFor[(size_t) ch] = false;
+                if (keys.any())
+                    for (int k = 0; k < 128; ++k)
+                        if (keys.test ((size_t) k)) midi.addEvent (juce::MidiMessage (0x80, k, 0), 0);
+                keys.reset();
+                midi.addEvent (juce::MidiMessage (0xB0, 123, 0), 0);
+            }
             for (int q = 0; q < ccCount; ++q)
                 if (ccOut[(size_t) q].ch == ch) midi.addEvent (juce::MidiMessage::controllerEvent (1, ccOut[(size_t) q].cc, ccOut[(size_t) q].v), 0);
             for (const auto& e : events)
-                if ((e.status & 15) == ch) midi.addEvent (juce::MidiMessage (e.status & 0xF0, e.d1, e.d2), e.offset);
+                if ((e.status & 15) == ch)
+                {
+                    midi.addEvent (juce::MidiMessage (e.status & 0xF0, e.d1, e.d2), e.offset);
+                    const int type = e.status & 0xF0;
+                    if (type == 0x90 && e.d2 > 0) keys.set ((size_t) (e.d1 & 127));
+                    else if (type == 0x80 || type == 0x90) keys.reset ((size_t) (e.d1 & 127));
+                }
             if (testCh.load() == ch) { testCh = -1; heldCh = ch; heldLeft = (int) (sr * .7); midi.addEvent (juce::MidiMessage (0x90, 60, 100), 0); }
             if (heldCh == ch && (heldLeft -= n) <= 0) { heldCh = -1; midi.addEvent (juce::MidiMessage (0x80, 60, 0), 0); }
             for (auto& s : previewQueue)
@@ -626,6 +729,12 @@ public:
             juce::AudioBuffer<float> view (temp.getArrayOfWritePointers(), outs, n);
             view.clear();
             p->processBlock (view, midi);
+            if (p->getMainBusNumOutputChannels() == 1) view.copyFrom (1, 0, view, 0, 0, n);   // 25 Nov: a mono instrument was only on the left
+            if (! sane (view.getReadPointer (0), n) || ! sane (view.getReadPointer (1), n))
+            {
+                view.clear (0, 0, n); view.clear (1, 0, n);
+                instBad[(size_t) ch] = true;
+            }
             runFx (ch, view.getWritePointer (0), view.getWritePointer (1), n);
             lineUp[(size_t) ch].run (view.getWritePointer (0), view.getWritePointer (1), n, juce::jmax (0, slowest - late[(size_t) ch]));
             if (toEngine)
@@ -649,8 +758,34 @@ public:
     // Exporting: faster than real time, so plug-ins use their best quality and load everything they need.
     void setOffline (bool on)
     {
+        const juce::SpinLock::ScopedLockType sl (lock);   // called from the export's thread
         for (auto& p : inst) if (p) p->setNonRealtime (on);
         for (auto& t : fx) for (auto& p : t) if (p) p->setNonRealtime (on);
+    }
+
+    int loadsPending() const { return loading; }             // message thread: plug-ins and effects still on their way
+
+    // Message thread, a couple of times a second: a plug-in that gave out something that isn't sound (25 Nov: one bad sample silenced the whole
+    // song until a restart) has been left out since. Start it afresh, at most every 5 seconds, and say so once.
+    void pollBad()
+    {
+        const auto now = juce::jmax ((juce::uint32) 1, juce::Time::getMillisecondCounter());
+        auto again = [now] (juce::uint32& last) { if (last != 0 && now - last < 5000) return false; last = now; return true; };
+        for (size_t c = 0; c < inst.size(); ++c)
+            if (instBad[c].load() && inst[c] != nullptr && again (instReset[c]))
+            {
+                inst[c]->reset();
+                instBad[c] = false;
+                if (! instSaid[c]) { instSaid[c] = true; if (onBad) onBad ((int) c, -1, inst[c]->getName()); }
+            }
+        for (size_t t = 0; t < fx.size(); ++t)
+            for (size_t s = 0; s < fx[t].size(); ++s)
+                if (fxBad[t][s].load() && fx[t][s] != nullptr && again (fxReset[t][s]))
+                {
+                    fx[t][s]->reset();
+                    fxBad[t][s] = false;
+                    if (! fxSaid[t][s]) { fxSaid[t][s] = true; if (onBad) onBad ((int) t, (int) s, fx[t][s]->getName()); }
+                }
     }
 
     static constexpr int ccBase = 100000;   // a lane with an index from here sends MIDI controller (index - ccBase)
@@ -702,7 +837,10 @@ private:
                     juce::ChildProcess p;
                     if (p.start (juce::StringArray { exe, "--scan-one", jobs[i].format, jobs[i].file, out.getFullPathName() }, 0))
                     {
-                        if (! p.waitForProcessToFinish (60000)) p.kill();
+                        // in short waits: closing the app used to wait up to a minute for the plug-in being looked at
+                        bool ended = false;
+                        for (int w = 0; w < 300 && ! ended && ! threadShouldExit(); ++w) ended = p.waitForProcessToFinish (200);
+                        if (! ended) p.kill();
                         else if (p.getExitCode() == 0)
                             if (auto x = juce::parseXML (out))
                                 for (auto* e : x->getChildIterator())
@@ -733,6 +871,54 @@ private:
     std::unique_ptr<ScanThread> scanThread;
     std::atomic<float> scanShare { 0 };
     std::shared_ptr<std::atomic<bool>> aliveFlag = std::make_shared<std::atomic<bool>> (true);
+    int loading = 0;                                               // message thread
+    // 25 Nov: a plug-in whose sound is being changed (or all of them, while they are prepared) sits out. Setting the flag and then taking the
+    // lock once means the audio thread is out of it; after that it looks at the flag first.
+    std::atomic<int> allHold { 0 };
+    std::array<std::atomic<int>, 16> instHold {};
+    struct Held
+    {
+        Held (PartHost& h, std::atomic<int>& f) : flag (f) { flag.fetch_add (1); const juce::SpinLock::ScopedLockType sl (h.lock); }
+        ~Held() { flag.fetch_sub (1); }
+        std::atomic<int>& flag;
+        JUCE_DECLARE_NON_COPYABLE (Held)
+    };
+    struct AllHeld : Held { explicit AllHeld (PartHost& h) : Held (h, h.allHold) {} };
+    // audio thread sets, pollBad clears: gave out something that isn't sound
+    std::array<std::atomic<bool>, 16> instBad {};
+    std::array<std::array<std::atomic<bool>, fxSlots>, masterFx + 1> fxBad {};
+    std::array<bool, 16> instSaid {};
+    std::array<std::array<bool, fxSlots>, masterFx + 1> fxSaid {};
+    std::array<juce::uint32, 16> instReset {};
+    std::array<std::array<juce::uint32, fxSlots>, masterFx + 1> fxReset {};
+    // audio thread: the notes each plug-in has down, the note-offs and bend that came while it sat out, and who still has to hear about a stop
+    std::array<std::bitset<128>, 16> down, pendOff;
+    std::array<int, 16> pendBend = [] { std::array<int, 16> a {}; a.fill (-1); return a; }();
+    std::array<bool, 16> stopFor {};
+    bool rolling = false;
+    void keepOffs (const std::vector<Event>& events, int ch)
+    {
+        for (const auto& e : events)
+        {
+            const int c = e.status & 15, type = e.status & 0xF0;
+            if (ch >= 0 && c != ch) continue;
+            if (type == 0x80 || (type == 0x90 && e.d2 == 0)) pendOff[(size_t) c].set ((size_t) (e.d1 & 127));
+            else if (type == 0xE0) pendBend[(size_t) c] = (e.d1 & 127) | ((e.d2 & 127) << 7);
+        }
+    }
+    // real sound: no NaN, no infinity, nothing absurd (a million times full scale)
+    static bool sane (const float* x, int n)
+    {
+        static_assert (sizeof (float) == sizeof (uint32_t), "32-bit floats");
+        uint32_t most = 0;
+        for (int i = 0; i < n; ++i)
+        {
+            uint32_t u;
+            std::memcpy (&u, x + i, sizeof (u));
+            most = std::max (most, u & 0x7fffffffu);
+        }
+        return most < 0x49742400u;     // the bits of 1000000.0f
+    }
     std::array<juce::uint32, 16> loadGen {};                       // message thread: which load of each part is the latest
     std::array<std::array<juce::uint32, fxSlots>, masterFx + 1> fxGen {};
 
@@ -773,19 +959,41 @@ private:
 
     void runFx (int t, float* L, float* R, int n)
     {
-        for (auto& p : fx[(size_t) t])
+        for (size_t s = 0; s < fx[(size_t) t].size(); ++s)
         {
-            if (p == nullptr) continue;
+            auto* p = fx[(size_t) t][s].get();
+            if (p == nullptr || fxBad[(size_t) t][s].load()) continue;
+            const int in = p->getMainBusNumInputChannels(), out = p->getMainBusNumOutputChannels();
+            if (in == 0 || out == 0) continue;     // 25 Nov: no way in or no way out: the sound goes past it (the page is told)
+            const bool two = R != nullptr && R != L;
+            const bool mid = in == 1 && two;       // a mono effect gets the middle of the stereo sound
             const int chans = juce::jmax (2, p->getTotalNumOutputChannels(), p->getTotalNumInputChannels());
             if (chans > maxChannels) continue;
             juce::AudioBuffer<float> view (fxTemp.getArrayOfWritePointers(), chans, n);
             view.clear();
-            view.copyFrom (0, 0, L, n);
-            view.copyFrom (1, 0, R != nullptr ? R : L, n);
+            if (mid)
+            {
+                auto* m = view.getWritePointer (0);
+                for (int i = 0; i < n; ++i) m[i] = .5f * (L[i] + R[i]);
+            }
+            else
+            {
+                view.copyFrom (0, 0, L, n);
+                if (in > 1) view.copyFrom (1, 0, R != nullptr ? R : L, n);
+            }
             juce::MidiBuffer none;
             p->processBlock (view, none);
-            juce::FloatVectorOperations::copy (L, view.getReadPointer (0), n);
-            if (R != nullptr && R != L) juce::FloatVectorOperations::copy (R, view.getReadPointer (p->getTotalNumOutputChannels() > 1 ? 1 : 0), n);
+            const float* a = view.getReadPointer (0);
+            const float* b = view.getReadPointer (out > 1 ? 1 : 0);
+            if (! sane (a, n) || ! sane (b, n)) { fxBad[(size_t) t][s] = true; continue; }   // the sound goes past it until pollBad has reset it
+            if (mid && out == 1 && p->getLatencySamples() == 0)
+            {
+                // mono in, mono out: the sides go round it, so the part keeps its width (not when it answers late: they'd no longer line up)
+                for (int i = 0; i < n; ++i) { const float side = .5f * (L[i] - R[i]); L[i] = a[i] + side; R[i] = a[i] - side; }
+                continue;
+            }
+            juce::FloatVectorOperations::copy (L, a, n);
+            if (two) juce::FloatVectorOperations::copy (R, b, n);
         }
     }
 

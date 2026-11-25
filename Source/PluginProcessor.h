@@ -9,7 +9,9 @@
 #include <map>
 #include <set>
 #include <array>
+#include <bitset>
 #include <mutex>
+#include <thread>
 
 // The plugin: plays the song from the Semitone interface as MIDI, in time with the host.
 // Each part leaves on its own MIDI channel so the DAW can route it to any instrument (Omnisphere etc).
@@ -47,7 +49,14 @@ public:
     void setProjectState (const juce::String& json) { const juce::ScopedLock sl (stateLock); projectJson = json; }
     void refreshHostStates();   // desktop app, while closing: the plug-ins' sounds as they are this moment, into the saved song
     juce::String getProjectState() const { const juce::ScopedLock sl (stateLock); return projectJson; }
-    void setStandaloneTransport (bool play, double startBeat, double bpm);
+    // desktop app: the crash-safe copy of the song. False if it couldn't be written (tried again half a minute later, or at once when closing).
+    bool writeAutosave (bool closing = false);
+    // where the song that opened came from: "autosave", "previous" (the one before it), "project" (a DAW project, or the app's own saved state),
+    // "damaged" (it was cut short and there is no other), or nothing for a first start
+    juce::String restoredFrom() const { const juce::ScopedLock sl (stateLock); return restored; }
+    int stateLoads() const { return loads.load(); }   // how many times a different song has been put in from outside (a DAW preset or project)
+    // once: play the song through and stop at `end` (same beats as startBeat) instead of looping
+    void setStandaloneTransport (bool play, double startBeat, double bpm, bool once = false, double end = 0);
     bool isStandalone() const { return wrapperType == wrapperType_Standalone; }
     void setMasterOut (float v) { masterOut = juce::jlimit (0.0f, 2.0f, v); }
     float takePeakL() { return peakL.exchange (0); }
@@ -64,6 +73,9 @@ public:
     void setStandaloneTempo (double bpm) { if (bpm > 0) stBpm = bpm; }
     void setListen (float lo, float hi) { listenLo = lo; listenHi = hi; }
     bool isBouncing() const { return bouncingNow.load(); }
+    void runBounce (std::function<void()> job);   // on its own thread, which this waits for when the app closes
+    bool notesPending() const { return builds.load() > 0; }   // a new sound is still being made (piano and plucked notes)
+    int missingClips() const;                                 // sections the song needs that the page hasn't sent yet (message thread)
     bool bounce (const juce::File& file, double beats, double bpm, const std::vector<std::pair<double, double>>& tempo, std::function<void (float)> progress);
     // layout: [{id, at}] — returns the clip ids this plugin still needs rendered
     juce::StringArray setAudioLayout (const juce::var& items);
@@ -91,6 +103,9 @@ private:
     std::atomic<bool> stPlaying { false };
     std::atomic<double> stBpm { 120.0 };
     double stPpq = 0.0;
+    int64_t stSamples = 0;      // the same place in samples, for hosted plug-ins
+    bool engineWas = false;     // audio thread: the engine played the last block
+    std::array<std::bitset<128>, 16> outDown;   // audio thread: notes sent out as MIDI and not ended yet
     std::atomic<double> stStartRequest { -1.0 };
 
     st::ClipPlayer clipPlayer;
@@ -115,7 +130,13 @@ private:
     std::atomic<float> listenLo { 0 }, listenHi { 0 };   // Listen on: what you hear, never what's exported
     float listenWasLo = 0, listenWasHi = 0;
     st::Biquad listenHp, listenLp;
-    std::atomic<bool> bouncingNow { false }, abortBounce { false };
+    std::atomic<bool> bouncingNow { false }, abortBounce { false }, bounceRunning { false };
+    std::thread bounceThread;
+    std::shared_ptr<std::atomic<bool>> alive = std::make_shared<std::atomic<bool>> (true);
+    std::atomic<int> builds { 0 }, loads { 0 };
+    juce::String lastAutosaved;             // message thread
+    bool autosaveRotated = false;
+    juce::uint32 autosaveFailedAt = 0;
     std::mutex renderLock;                 // held for a whole export; a device restart during it waits until the export ends
     double pendingSr = 0; int pendingBlock = 0;   // a prepareToPlay that arrived mid-export
     std::atomic<bool> engineAll { false };   // app only: the engine plays the whole song (a plug-in is on a part)
@@ -154,7 +175,7 @@ private:
     std::array<juce::uint32, 1024> inBuf {};
 
     juce::CriticalSection stateLock;
-    juce::String projectJson, timelineJson;
+    juce::String projectJson, timelineJson, restored;
 
     juce::ThreadPool synthPool { 1 };   // last, so it stops first
 

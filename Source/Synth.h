@@ -782,8 +782,14 @@ public:
             line[i].assign ((size_t) len[i], 0.0f);
             pos[i] = 0; lp[i] = 0;
         }
+        pre.reset();
         pre.highpass (180, 1, sr);
         setDecay (t60);
+    }
+    void clear()   // audio thread: no reverb left over
+    {
+        for (size_t i = 0; i < 8; ++i) { std::fill (line[i].begin(), line[i].end(), 0.0f); lp[i] = 0; }
+        pre.reset();
     }
     void setDecay (float seconds)
     {
@@ -837,6 +843,7 @@ public:
         reduce = want > reduce ? want + (reduce - want) * kA : want + (reduce - want) * kR;
         return std::pow (10.0f, -reduce / 20) * makeup;
     }
+    void reset() { reduce = 0; }
 private:
     float thr = 0, slope = 0, kA = 0, kR = 0, reduce = 0, makeup = 1;
 };
@@ -870,6 +877,8 @@ public:
         hasShelf = p.on && (p.shelfLo != 0 || p.shelfHi != 0);
         if (hasShelf) { polishLowShelf (shelfL, 90, p.shelfLo, sr); polishHighShelf (shelfH, 10000, p.shelfHi, sr); }
     }
+    // nothing from before is left: no filter memory, no gain reduction
+    void reset() { hp.reset(); shelfL.reset(); shelfH.reset(); glue.reset(); lim.reset(); }
     void run (float& l, float& r)
     {
         l = hp.run (l, 0); r = hp.run (r, 1);
@@ -917,6 +926,7 @@ public:
     {
         sr = sampleRate;
         room.prepare (sr);
+        polish.reset();   // 25 Nov: a bad number once in here stayed for good
         for (int i = 0; i < 3; ++i) choruses[(size_t) i].prepare (sr, i + 1);
         for (auto& v : voices) v.active = false;
         current.reset();
@@ -986,8 +996,11 @@ public:
         secPerBeat = beatInc > 0 ? 1 / (beatInc * sr) : 0;
         // same order as the page: master gain, room, master effects, filter sweep, master fader, polish
         const bool monoOut = ((current->monoMask >> 16) & 1u) != 0;   // "Mono check" on the master: hear the mix as a mono speaker plays it
+        // 25 Nov: one sample that isn't a number, from a plug-in or an effect, used to stay in the room and the master filters until a restart
+        auto sane = [] (float& l, float& r) { if (! std::isfinite (l + r)) l = r = 0; };
         auto finish = [&] (int i, float l, float r)
         {
+                sane (l, r);
                 l *= .6f; r *= .6f;
                 if (monoOut) l = r = .5f * (l + r);
                 if (current->roomMix > 0)
@@ -1003,6 +1016,7 @@ public:
                     l = sweep.run (l, 0); r = sweep.run (r, 1); --sweepLeft;
                 }
                 l *= masterGain; r *= masterGain;
+                sane (l, r);
                 polish.run (l, r);
                 gate += dg;
                 l *= gate; r *= gate;
@@ -1016,7 +1030,7 @@ public:
             if ((i & 31) == 0)
             {
                 updateLanes (beat < 0 ? -1 : beat + i * beatInc);
-                if (beat >= 0) fireTrans (beat + i * beatInc);
+                if (beat >= 0 && (songEnd < 0 || beat + i * beatInc < songEnd)) fireTrans (beat + i * beatInc);
             }
             float l = 0, r = 0;
             float rbL[FxBank::buses] {}, rbR[FxBank::buses] {};
@@ -1045,6 +1059,7 @@ public:
                 const double now = beat + i * beatInc, secPerBeat = beatInc > 0 ? 1 / (beatInc * sr) : 0;
                 for (const auto& seg : *current->takes)
                 {
+                    if (songEnd >= 0 && now >= songEnd) break;
                     if (now < seg.beat || now >= seg.end || ! seg.audio) continue;
                     const double pos = (seg.start + (now - seg.beat) * secPerBeat) * seg.audio->rate;
                     if (pos < 0) continue;
@@ -1183,6 +1198,9 @@ public:
     {
         for (auto& v : voices) v.active = false;
         bends.fill (1);
+        for (auto& t : transVoices) t.active = false;
+        sweepLeft = 0;
+        room.clear();
     }
 
     int activeVoices() const
@@ -1196,6 +1214,7 @@ public:
 
 public:
     float takeLevel = 1;
+    double songEnd = -1;   // audio thread, before process(): the song beat where a song played once ends (-1: it loops)
     // Audio thread, before process(): one block of a plug-in's sound for this channel, or nullptr
     void setExternal (int ch, const float* l, const float* r) { if (ch >= 0 && ch < 16) { extL[(size_t) ch] = l; extR[(size_t) ch] = r; } }
     static constexpr float extTrim = 1.0f / .6f;   // cancels the master gain, which is matched to the page's quiet voices
@@ -1223,10 +1242,11 @@ private:
     {
         chGain.fill (1); hasPan.fill (false); masterGain = 1;
         if (beat < 0 || ! current) return;
+        const double laneBeat = songEnd >= 0 ? std::min (beat, songEnd - 1.0e-6) : beat;   // played once: lanes hold their last value while the song rings out
         for (const auto& k : current->lanes)
         {
             if (k.macro >= 0 && (macroOn == nullptr || ! macroOn[k.macro].load (std::memory_order_relaxed))) continue;
-            const float v = k.macro >= 0 ? k.fromMacro (macroVals[k.macro].load (std::memory_order_relaxed)) : k.at (beat);
+            const float v = k.macro >= 0 ? k.fromMacro (macroVals[k.macro].load (std::memory_order_relaxed)) : k.at (laneBeat);
             if (k.fxSlot >= 0) { if (fxBus) if (auto* f = fxBus->at (k.ch < 0 ? FxBank::master : k.ch, k.fxSlot)) f->set (k.fxParam, v); }
             else if (k.ch < 0) { if (! k.pan) masterGain = v; }
             else if (k.pan) { chPan[(size_t) (k.ch & 15)] = v; hasPan[(size_t) (k.ch & 15)] = true; }

@@ -105,6 +105,50 @@ int main()
         int hits = 0; for (int i = 0; i < 96000 * 2; ++i) if (L3[(size_t) i] > 0.2f) ++hits;
         if (hits != 2) { std::printf ("FAIL clip loop hits=%d\n", hits); return 1; }
         std::printf ("ok: clips locked to the playhead\n");
+        // played once: the click is heard once, nothing wraps round, and the last section rings past the end
+        std::vector<float> L4 (96000 * 2, 0.0f);
+        for (int o = 0; o < 96000 * 2; o += 480) pl.process (true, o * (2.0 / 48000.0), 120.0, 48000.0, 480, 4.0, 4.0, L4.data() + o, nullptr, true);
+        hits = 0; for (int i = 0; i < 96000 * 2; ++i) if (L4[(size_t) i] > 0.2f) ++hits;
+        if (hits != 1) { std::printf ("FAIL clip once hits=%d\n", hits); return 1; }
+        c->pcm[(size_t) (2.5 * 48000) * 2] = 16000;       // in the section's tail: 2.4 s after its start, 0.4 s past the end of the song
+        std::fill (L4.begin(), L4.end(), 0.0f);
+        for (int o = 0; o < 96000 * 2; o += 480) pl.process (true, o * (2.0 / 48000.0), 120.0, 48000.0, 480, 4.0, 4.0, L4.data() + o, nullptr, true);
+        int at = -1; for (int i = 48000; i < 96000 * 2; ++i) if (L4[(size_t) i] > 0.2f) { at = i; break; }
+        if (std::abs (at - 115200) > 2) { std::printf ("FAIL clip tail at=%d\n", at); return 1; }
+        std::printf ("ok: clips played once don't wrap, and ring out\n");
+    }
+    // played once: every note once, nothing from the start again at the end, note-offs still on time; then looping works again
+    {
+        auto t = std::make_shared<st::Timeline>(); t->length = 4;
+        t->notes.push_back ({ 0, 1, 0, 36, 100 }); t->notes.push_back ({ 3, 4, 1, 60, 90 }); t->ctls.push_back ({ 0, 0xE1, 0, 70 }); t->sort();
+        st::Sequencer s; s.setTimeline (t); s.setOnce (4);
+        std::map<int, int> ons, offs; int bends = 0;
+        const double step = 500 * 2.0 / 48000.0;          // 500 samples doesn't land on the end
+        double ppq = 0; std::vector<st::Event> e;
+        for (int b = 0; b < 400; ++b)
+        {
+            e.clear(); s.process (true, ppq, 120.0, 48000.0, 500, e); ppq += step;
+            for (auto& x : e) { if ((x.status & 0xF0) == 0x90) ons[x.d1]++; else if ((x.status & 0xF0) == 0x80) offs[x.d1]++; else if (x.status == 0xE1) ++bends; }
+        }
+        if (ons[36] != 1 || ons[60] != 1 || offs[36] != 1 || offs[60] != 1 || bends != 1 || s.activeCount() != 0)
+        { std::printf ("FAIL once ons=%d/%d offs=%d/%d bends=%d\n", ons[36], ons[60], offs[36], offs[60], bends); return 1; }
+        e.clear(); s.process (false, ppq, 120.0, 48000.0, 500, e);
+        s.setOnce (0); int loops = 0; ppq = 0;
+        for (int b = 0; b < 400; ++b) { e.clear(); s.process (true, ppq, 120.0, 48000.0, 500, e); ppq += step; for (auto& x : e) if ((x.status & 0xF0) == 0x90 && x.d1 == 36) ++loops; }
+        if (loops != 3) { std::printf ("FAIL loop after once: %d\n", loops); return 1; }
+        std::printf ("ok: a song played once stops at its end\n");
+    }
+    // a note still down at the end of a song played once ends when playing stops
+    {
+        auto t = std::make_shared<st::Timeline>(); t->length = 4;
+        t->notes.push_back ({ 3, 9, 0, 40, 100 }); t->sort();
+        st::Sequencer s; s.setTimeline (t); s.setOnce (4); std::vector<st::Event> e;
+        double ppq = 2.9; for (int b = 0; b < 200; ++b) { e.clear(); s.process (true, ppq, 120.0, 48000.0, 512, e); ppq += 512 * 2.0 / 48000.0; }
+        if (s.activeCount() != 1) { std::printf ("FAIL once held\n"); return 1; }
+        e.clear(); s.process (false, ppq, 120.0, 48000.0, 512, e);
+        int off = 0; for (auto& x : e) if ((x.status & 0xF0) == 0x80 && x.d1 == 40) ++off;
+        if (off != 1 || s.activeCount() != 0) { std::printf ("FAIL once stop off=%d\n", off); return 1; }
+        std::printf ("ok: stopping ends what is still held\n");
     }
     return 0;
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include <juce_gui_extra/juce_gui_extra.h>
 #include "PluginProcessor.h"
+#include "SongFiles.h"
 
 // The plugin window: the full Semitone interface in an embedded web view,
 // connected to the native side with a few events (see web bridge in the HTML).
@@ -17,6 +18,11 @@ private:
     juce::WebBrowserComponent::Options makeOptions();
     std::optional<juce::WebBrowserComponent::Resource> getResource (const juce::String& url);
     void saveFile (const juce::String& name, const juce::String& base64);
+    void sendInit (bool again);
+    void setPref (const juce::var&);
+    void packFile (const juce::var&);
+    void comeForward();
+    static juce::File packFolder (const juce::String& name);
     void dragFile (const juce::String& name, const juce::String& base64);
     void dragAudio (const juce::var& v);
     void sendMarkers (const juce::var& v);
@@ -52,7 +58,9 @@ private:
     std::unique_ptr<juce::FileChooser> chooser;
     std::vector<juce::uint32> incoming;
     std::array<float, 8> sentMacro { -1, -1, -1, -1, -1, -1, -1, -1 };   // FL macro values last sent to the page
-    juce::String lastAutosaved;
+    bool pageReady = false, autosaveSaid = false;   // the page has asked for its song; it has been told the autosave can't be written
+    int loadsSeen = 0;                              // SemitoneProcessor::stateLoads when the page last got its song
+    st::files::Chunks chunks;                       // loops and packs arriving in pieces
     int lastHostLatency = 0;
     std::atomic<bool> bouncing { false };
     void startBounce (const juce::var&);

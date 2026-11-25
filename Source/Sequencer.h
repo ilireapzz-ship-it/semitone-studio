@@ -54,6 +54,11 @@ public:
     }
     Sequencer() { active.reserve (1024); }
 
+    // Play the song through once and stop at `end` (beats, in the same count as the playhead). 0 = loop, as before.
+    // 25 Nov: without it the song's first beat sounded again at the end, in exports and whenever the engine plays.
+    void setOnce (double end) { onceEnd = end; }
+    double onceAt() const { return onceEnd.load(); }
+
     // Message thread: hand over a new song. The audio thread picks it up on its next block.
     void setTimeline (std::shared_ptr<const Timeline> t) { std::atomic_store (&pending, std::move (t)); }
 
@@ -88,7 +93,7 @@ public:
         lastEnd = ppqEnd;
 
         // Started mid-song by the app: sound the notes already held at this point, so a chord isn't missing until the next one.
-        if (chaseNext.exchange (false) && current->length > 0)
+        if (chaseNext.exchange (false) && current->length > 0 && (onceEnd.load() <= 0 || ppqStart < onceEnd.load()))
         {
             const double base = std::floor (ppqStart / current->length) * current->length, pos = ppqStart - base;
             for (const auto& n : current->notes)
@@ -122,14 +127,16 @@ public:
         // Note-ons, wrapping around the loop as many times as the block needs.
         const double L = current->length;
         const auto& ns = current->notes;
+        const double once = onceEnd.load();
+        const double noteEnd = once > 0 ? std::min (ppqEnd, once) : ppqEnd;   // nothing new starts from the end on; notes still end on time
         double a = ppqStart;
         int guard = 0;
         double k = std::floor (a / L);   // which pass of the loop; counted, not re-derived, so rounding can't send it back a pass
-        while (a < ppqEnd && guard++ < 64)
+        while (a < noteEnd && guard++ < 64)
         {
             const double base = k * L;
             const double from = std::max (0.0, a - base);
-            const double to = std::min (ppqEnd - base, L);
+            const double to = std::min (noteEnd - base, L);
             const auto& cs = current->ctls;
             auto ci = std::lower_bound (cs.begin(), cs.end(), from, [] (const Ctl& c, double v) { return c.at < v; });
             for (; ci != cs.end() && ci->at < to; ++ci)
@@ -149,7 +156,7 @@ public:
                     active.push_back ({ absEnd, it->ch & 15, it->key & 127 });
             }
             if (to >= L) { k += 1; a = k * L; }
-            else a = ppqEnd;
+            else a = noteEnd;
         }
     }
 
@@ -195,6 +202,7 @@ private:
     std::vector<Active> active;
     bool wasPlaying = false, needSetup = true;
     std::atomic<bool> chaseNext { false };
+    std::atomic<double> onceEnd { 0 };
     unsigned bentChannels = 0;
     double lastEnd = 0;
 };

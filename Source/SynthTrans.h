@@ -32,7 +32,14 @@ inline std::shared_ptr<TakeAudio> readTake (const std::string& path)
     if (std::fread (h, 1, 44, f) != 44 || std::memcmp (h, "RIFF", 4) != 0 || std::memcmp (h + 36, "data", 4) != 0 || (h[22] != 1 && h[22] != 2) || h[34] != 24) { std::fclose (f); return nullptr; }
     out->rate = h[24] | h[25] << 8 | h[26] << 16 | (unsigned) h[27] << 24;
     out->chans = h[22];
-    const uint32_t bytes = h[40] | h[41] << 8 | h[42] << 16 | (uint32_t) h[43] << 24;
+    uint32_t bytes = h[40] | h[41] << 8 | h[42] << 16 | (uint32_t) h[43] << 24;
+    // 25 Nov: a take cut off by a crash has an unfinished header, so the file's own length decides
+    if (std::fseek (f, 0, SEEK_END) == 0)
+    {
+        const long len = std::ftell (f);
+        if (len >= 44 && (bytes == 0 || bytes > (uint32_t) (len - 44))) bytes = (uint32_t) (len - 44);
+    }
+    std::fseek (f, 44, SEEK_SET);
     std::vector<unsigned char> raw ((size_t) bytes);
     const size_t got = std::fread (raw.data(), 1, raw.size(), f);
     std::fclose (f);

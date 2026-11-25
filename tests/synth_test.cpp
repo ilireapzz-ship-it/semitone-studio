@@ -687,6 +687,71 @@ int main()
         CHECK (std::abs (20 * std::log10 (dry / on)) > 3, "the compressor really turns this down (%.1f dB)", 20 * std::log10 (dry / on));
     }
 
+    // One bad number from a plug-in (25 Nov): the song plays on, and nothing stays behind in the room, the master filters or the compressors
+    {
+        auto mk = [] (bool polish) { auto p = std::make_shared<SynthPatch>(); p->hasExt = true; p->extLevel[2] = 1; p->roomMix = .3f; p->roomT60 = 1; p->polish.on = polish; return p; };
+        for (int on = 0; on < 2; ++on)
+        {
+            Synth sy; sy.prepare (SR); sy.setPatch (mk (on != 0));
+            std::vector<float> xl (256), xr (256), l (256), r (256);
+            float loud = 0; bool clean = true;
+            for (int b = 0; b < 200; ++b)
+            {
+                for (int i = 0; i < 256; ++i) xl[(size_t) i] = xr[(size_t) i] = .2f * (float) std::sin (2 * synthPi * 220 * (b * 256 + i) / SR);
+                if (b == 20) { xl[7] = std::nanf (""); xr[9] = INFINITY; }
+                std::fill (l.begin(), l.end(), 0.0f); std::fill (r.begin(), r.end(), 0.0f);
+                sy.setExternal (2, xl.data(), xr.data());
+                sy.process ({}, 256, l.data(), r.data());
+                for (int i = 0; i < 256; ++i) { clean = clean && std::isfinite (l[(size_t) i]) && std::isfinite (r[(size_t) i]); if (b > 150) loud = std::max (loud, std::abs (l[(size_t) i])); }
+            }
+            CHECK (clean, "a bad sample reaches the output (polish %d)", on);
+            CHECK (loud > .02f, "the song goes quiet after a bad sample (polish %d, peak %.4f)", on, loud);
+        }
+        Polish p; PolishPatch pp; pp.on = true; p.set (pp, SR);
+        float l = std::nanf (""), r = l; p.run (l, r); p.reset();
+        float most = 0; for (int i = 0; i < 4800; ++i) { l = r = .2f * (float) std::sin (2 * synthPi * 220 * i / SR); p.run (l, r); most = std::max (most, std::abs (l)); if (! std::isfinite (l)) { most = -1; break; } }
+        CHECK (most > .02f, "Polish::reset leaves nothing behind (%.4f)", most);
+    }
+
+    // Played once: past the end a volume line holds its last value, and nothing that belongs after the end starts
+    {
+        auto p = std::make_shared<SynthPatch>(); p->hasExt = true; p->extLevel[1] = 1;
+        Lane k; k.ch = 1; k.pts = { { 0, 1 }, { 3.9, 0 }, { 4, 0 }, { 4, 1 } }; p->lanes.push_back (k);
+        p->trans = std::make_shared<std::vector<TransEv>>(); TransEv im; im.kind = TransEv::impact; im.at = 4; p->trans->push_back (im);
+        Synth sy; sy.prepare (SR); sy.setPatch (p); sy.songEnd = 4;
+        std::vector<float> x (256, .3f), l (256), r (256); float past = 0;
+        for (int b = 0; b < 60; ++b)
+        {
+            std::fill (l.begin(), l.end(), 0.0f); std::fill (r.begin(), r.end(), 0.0f);
+            sy.setExternal (1, x.data(), x.data());
+            sy.process ({}, 256, l.data(), r.data(), 1, 3.95 + b * 256 * 2 / SR, 2 / SR);
+            if (b > 20) past = std::max (past, peakOf (l, 0, 256));
+        }
+        CHECK (past < .02f, "past the end of a song played once: peak %.4f", past);
+    }
+
+    // The engine switched off in the middle of a note: nothing is left to drone when it comes back
+    {
+        Synth sy; sy.prepare (SR); sy.setPatch (single (junoPatch (0)));
+        auto a = run (sy, { { 0, on (0, 57, 100) } }, 24000);
+        CHECK (peakOf (a.l, 12000, 24000) > .01f, "the note sounds");
+        sy.silence();
+        auto b = run (sy, {}, 24000);
+        CHECK (peakOf (b.l, 2000, 24000) < 1.0e-3f, "after silence(): peak %.5f", peakOf (b.l, 2000, 24000));
+    }
+
+    // A take cut off by a crash: the header says nothing, the file's length does
+    {
+        const char* path = "cut-take.wav";
+        unsigned char h[44] = { 'R','I','F','F',0,0,0,0,'W','A','V','E','f','m','t',' ',16,0,0,0,1,0,1,0,0x80,0xbb,0,0,0x80,0x32,2,0,3,0,24,0,'d','a','t','a',0,0,0,0 };
+        auto* f = std::fopen (path, "wb"); std::fwrite (h, 1, 44, f);
+        for (int i = 0; i < 1000; ++i) { unsigned char s[3] = { 0, 0, 0x20 }; std::fwrite (s, 1, 3, f); }
+        std::fclose (f);
+        auto t = readTake (path);
+        CHECK (t && t->data.size() == 1000 && std::abs (t->data[500] - .25f) < .001f, "a take with an unfinished header reads whole");
+        std::remove (path);
+    }
+
     printf (failures ? "%d synth tests FAILED\n" : "all synth tests passed\n", failures);
     return failures ? 1 : 0;
 }

@@ -68,6 +68,21 @@ int main()
     d = read (path);
     assert (std::abs (s24 (d, 47) / 8388607.0 - .5) < 1e-3);
     std::printf ("ok: input 1, input 2 or both, as the track asks\n");
+
+    // 25 Nov: while recording, the header already says how long the take is, so a crash keeps it; and a take ended early hands its result to stop()
+    assert (r.start (path, 48000));
+    for (int b = 0; b < 150; ++b) r.push (L.data(), nullptr, 480);
+    std::this_thread::sleep_for (std::chrono::milliseconds (300));
+    d = read (path);
+    assert (u32 (d, 40) >= 48000 * 3 && u32 (d, 40) + 44 <= d.size());
+    r.endEarly();
+    assert (! r.active());
+    r.push (L.data(), nullptr, 480);
+    res = r.stop();
+    d = read (path);
+    assert (res.frames == 72000 && ! res.failed && u32 (d, 40) == 72000 * 3 && d.size() == 44 + 72000 * 3);
+    assert (r.stop().frames == 0);
+    std::printf ("ok: an unfinished take is readable, and one ended early is kept\n");
     std::remove (path);
     std::printf ("all take tests passed\n");
 }

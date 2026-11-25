@@ -63,11 +63,21 @@ SemitoneEditor::SemitoneEditor (SemitoneProcessor& p)
             auto* o = new juce::DynamicObject(); o->setProperty ("on", ok); o->setProperty ("info", info);
             self->browser.emitEventIfBrowserIsVisible ("st_bridge_state", juce::var (o));
         };
-        proc.host->onFxLoaded = [self] (int t, int slot, bool ok, juce::String info)
+        proc.host->onFxLoaded = [self] (int t, int slot, bool ok, juce::String info, bool dry)
         {
             if (self == nullptr) return;
             auto* o = new juce::DynamicObject(); o->setProperty ("t", t); o->setProperty ("slot", slot); o->setProperty ("ok", ok); o->setProperty ("info", info);
+            if (dry) { o->setProperty ("dry", true); o->setProperty ("why", "it has no audio input and output Semitone can use"); }
             self->browser.emitEventIfBrowserIsVisible ("st_host_fx_loaded", juce::var (o));
+        };
+        proc.host->onBad = [self] (int at, int slot, juce::String name)
+        {
+            if (self == nullptr) return;
+            bootMark ("plug-in gave out something that isn't sound: " + name);
+            auto* o = new juce::DynamicObject();
+            if (slot < 0) o->setProperty ("ch", at); else { o->setProperty ("t", at); o->setProperty ("slot", slot); }
+            o->setProperty ("name", name);
+            self->browser.emitEventIfBrowserIsVisible ("st_host_bad", juce::var (o));
         };
     }
     browser.goToURL (juce::WebBrowserComponent::getResourceProviderRoot());
@@ -77,13 +87,70 @@ SemitoneEditor::SemitoneEditor (SemitoneProcessor& p)
 }
 
 // A loop's audio stays beside the app, so the app and the plug-in window both find it. Chunks of base64, like the section clips.
+// 25 Nov: built beside the old file and swapped in when whole, so a crash or a full disk can't leave a cut-off loop.
 void SemitoneEditor::loopPut (const juce::var& v)
 {
-    const auto f = loopFile (v.getProperty ("id", "").toString());
-    if ((int) v.getProperty ("i", 0) == 0) f.deleteFile();
+    const auto id = v.getProperty ("id", "").toString();
+    if (id.isEmpty()) return;
+    const int i = (int) v.getProperty ("i", 0), n = (int) v.getProperty ("n", 1);
     // 11 Nov: the page sends standard base64; MemoryBlock::fromBase64Encoding only reads JUCE's own format, so nothing was ever written
-    const auto mb = decode (v.getProperty ("b64", "").toString()); if (mb.getSize() == 0) return;
-    f.appendData (mb.getData(), mb.getSize());
+    juce::MemoryOutputStream mo;
+    const bool decoded = juce::Base64::convertFromBase64 (mo, v.getProperty ("b64", "").toString());
+    bool done = false;
+    if (! chunks.add (loopFile (id), i, n, mo.getData(), mo.getDataSize(), decoded, done) && i >= n - 1)
+    {
+        auto* o = new juce::DynamicObject(); o->setProperty ("id", id);
+        browser.emitEventIfBrowserIsVisible ("st_loop_failed", juce::var (o));
+    }
+}
+
+juce::File SemitoneEditor::packFolder (const juce::String& name)
+{
+    return juce::File::getSpecialLocation (juce::File::userDocumentsDirectory).getChildFile ("Semitone Studio").getChildFile ("Exports").getChildFile (juce::File::createLegalFileName (name));
+}
+
+// the pitch pack folder, a file at a time, in chunks of base64
+void SemitoneEditor::packFile (const juce::var& v)
+{
+    const auto f = packFolder (v.getProperty ("folder", "Pitch pack").toString()).getChildFile (v.getProperty ("name", "file").toString());
+    f.getParentDirectory().createDirectory();
+    // 11 Nov: standard base64 from the page (fromBase64Encoding read none of it: the pack folder stayed empty)
+    juce::MemoryOutputStream mo;
+    const bool decoded = juce::Base64::convertFromBase64 (mo, v.getProperty ("b64", "").toString());
+    bool done = false;
+    chunks.add (f, (int) v.getProperty ("i", 0), (int) v.getProperty ("n", 1), mo.getData(), mo.getDataSize(), decoded, done);   // st_pack_done counts what really landed
+}
+
+// App settings, shared by the app and the plug-in window.
+void SemitoneEditor::setPref (const juce::var& v)
+{
+    const auto f = prefsFile();
+    juce::String text;
+    for (int i = 0; i < 4; ++i)
+    {
+        text = f.loadFileAsString();
+        if (text.isNotEmpty() || ! f.existsAsFile() || f.getSize() == 0) break;
+        juce::Thread::sleep (15);
+    }
+    // 25 Nov: a file that couldn't be read just then (the other window is writing it) used to be replaced by this one setting
+    if (text.isEmpty() && f.existsAsFile() && f.getSize() > 0) return;
+    auto now = juce::JSON::parse (text);
+    if (now.getDynamicObject() == nullptr)
+    {
+        if (text.isNotEmpty()) f.copyFileTo (f.getSiblingFile ("settings damaged.json"));
+        now = juce::var (new juce::DynamicObject());
+    }
+    now.getDynamicObject()->setProperty (v.getProperty ("key", "").toString(), v.getProperty ("value", {}));
+    st::files::writeSafely (f, juce::JSON::toString (now));
+}
+
+void SemitoneEditor::comeForward()
+{
+    if (auto* top = getTopLevelComponent())
+    {
+        if (auto* peer = top->getPeer()) if (peer->isMinimised()) peer->setMinimised (false);
+        top->toFront (true);
+    }
 }
 
 void SemitoneEditor::loopSend (const juce::String& id, const juce::File& f, const juce::String& event)
@@ -112,7 +179,38 @@ void SemitoneEditor::clipFile()
 #endif
 }
 
-SemitoneEditor::~SemitoneEditor() { stopTimer(); proc.refreshHostStates(); if (proc.host) { proc.host->onList = nullptr; proc.host->onLoaded = nullptr; proc.host->onFxLoaded = nullptr; } }
+SemitoneEditor::~SemitoneEditor()
+{
+    stopTimer();
+    proc.writeAutosave (true);      // 25 Nov: the last seconds before closing were lost. First as it is, in case a plug-in crashes when asked for its sound
+    proc.refreshHostStates();
+    proc.writeAutosave (true);
+    if (proc.host) { proc.host->onList = nullptr; proc.host->onLoaded = nullptr; proc.host->onFxLoaded = nullptr; proc.host->onBad = nullptr; proc.host->onBridge = nullptr; }
+}
+
+// Where the page runs, and the song it opens with. `again`: a different song was put in from outside (a DAW preset) while the window was open.
+void SemitoneEditor::sendInit (bool again)
+{
+    loadsSeen = proc.stateLoads();
+    const auto song = proc.getProjectState();
+    auto* o = new juce::DynamicObject();
+    o->setProperty ("plugin", ! proc.isStandalone());
+    o->setProperty ("drumHit", true);   // this build's engine takes a drum hit's own pan, pitch and length (controllers 85-88, Synth::handle)
+    o->setProperty ("host", juce::PluginHostType().getHostDescription());
+    o->setProperty ("projectB64", forPage (song));
+    o->setProperty ("recent", st::files::recentVar());
+    o->setProperty ("songFile", proc.songFile);
+    o->setProperty ("soundMode", proc.getSoundMode());
+    o->setProperty ("standalone", proc.isStandalone());
+    o->setProperty ("sr", proc.getSampleRateNow());
+    o->setProperty ("restored", proc.restoredFrom());     // autosave, previous, project, damaged, or nothing
+    if (again) o->setProperty ("again", true);
+    if (st::files::secondCopy()) o->setProperty ("second", true);
+    { const juce::File sf (proc.songFile); o->setProperty ("songFileSame", sf.existsAsFile() && sf.loadFileAsString() == song); }
+    o->setProperty ("prefs", juce::JSON::parse (prefsFile()));  // app settings, shared by the app and the plug-in window
+    bootMark ("sending the song to the page");
+    browser.emitEventIfBrowserIsVisible ("st_init", juce::var (o));
+}
 
 // The web view is blank until the page arrives, so it waits just outside the window and the loading screen shows here.
 void SemitoneEditor::resized() { browser.setBounds (shown ? getLocalBounds() : getLocalBounds().withX (getWidth() + 8)); }
@@ -165,28 +263,8 @@ juce::WebBrowserComponent::Options SemitoneEditor::makeOptions()
         .withResourceProvider ([this] (const juce::String& url) { return getResource (url); })
         // the interface is ready: tell it where it runs and hand back the song saved in the DAW project
         .withEventListener ("st_mark", [] (const juce::var& v) { bootMark ("page: " + v.getProperty ("t", "").toString()); })
-        .withEventListener ("st_ready", [this] (const juce::var&) { bootMark ("page ready");
-            auto* o = new juce::DynamicObject();
-            o->setProperty ("plugin", ! proc.isStandalone());
-            o->setProperty ("drumHit", true);   // this build's engine takes a drum hit's own pan, pitch and length (controllers 85-88, Synth::handle)
-            o->setProperty ("host", juce::PluginHostType().getHostDescription());
-            o->setProperty ("projectB64", forPage (proc.getProjectState()));
-            o->setProperty ("recent", st::files::recentVar());
-            o->setProperty ("songFile", proc.songFile);
-            o->setProperty ("soundMode", proc.getSoundMode());
-            o->setProperty ("standalone", proc.isStandalone());
-            o->setProperty ("sr", proc.getSampleRateNow());
-            { const juce::File sf (proc.songFile); o->setProperty ("songFileSame", sf.existsAsFile() && sf.loadFileAsString() == proc.getProjectState()); }
-            o->setProperty ("prefs", juce::JSON::parse (prefsFile()));  // app settings, shared by the app and the plug-in window
-            bootMark ("sending the song to the page");
-            browser.emitEventIfBrowserIsVisible ("st_init", juce::var (o));
-        })
-        .withEventListener ("st_pref", [] (const juce::var& v) {
-            auto now = juce::JSON::parse (prefsFile());
-            if (now.getDynamicObject() == nullptr) now = juce::var (new juce::DynamicObject());
-            now.getDynamicObject()->setProperty (v.getProperty ("key", "").toString(), v.getProperty ("value", {}));
-            prefsFile().replaceWithText (juce::JSON::toString (now));
-        })
+        .withEventListener ("st_ready", [this] (const juce::var&) { bootMark ("page ready"); pageReady = true; sendInit (false); })
+        .withEventListener ("st_pref", [this] (const juce::var& v) { setPref (v); })
         .withEventListener ("st_song_save", [this] (const juce::var& v) { saveSong (v); })
         .withEventListener ("st_song_open", [this] (const juce::var& v) {
             const auto path = v.getProperty ("path", "").toString();
@@ -210,13 +288,22 @@ juce::WebBrowserComponent::Options SemitoneEditor::makeOptions()
         .withEventListener ("st_options", [this] (const juce::var&) { showAudioSettings(); })
         .withEventListener ("st_title", [this] (const juce::var& v) { setTitle (v.getProperty ("title", "Semitone Studio").toString()); })
         .withEventListener ("st_timeline", [this] (const juce::var& v) { proc.setTimelineFromVar (v); })
-        .withEventListener ("st_state", [this] (const juce::var& v) { proc.setProjectState (v.getProperty ("json", "").toString()); })
+        .withEventListener ("st_state", [this] (const juce::var& v) { if (proc.stateLoads() == loadsSeen) proc.setProjectState (v.getProperty ("json", "").toString()); })
         .withEventListener ("st_transport", [this] (const juce::var& v) {
             if (proc.isBouncing()) return;   // the export owns the transport until it ends
-            proc.setStandaloneTransport ((bool) v.getProperty ("play", false), (double) v.getProperty ("beat", 0.0), (double) v.getProperty ("bpm", 120.0));
+            proc.setStandaloneTransport ((bool) v.getProperty ("play", false), (double) v.getProperty ("beat", 0.0), (double) v.getProperty ("bpm", 120.0),
+                                         (bool) v.getProperty ("once", false), (double) v.getProperty ("end", 0.0));
+        })
+        // before an export: how much is still on its way
+        .withEventListener ("st_host_busy", [this] (const juce::var&) {
+            auto* o = new juce::DynamicObject();
+            o->setProperty ("loading", proc.host ? proc.host->loadsPending() : 0);
+            o->setProperty ("notes", proc.notesPending());
+            o->setProperty ("clips", proc.missingClips());
+            browser.emitEventIfBrowserIsVisible ("st_host_busyis", juce::var (o));
         })
         .withEventListener ("st_listen", [this] (const juce::var& v) { proc.setListen ((float) (double) v.getProperty ("lo", 0.0), (float) (double) v.getProperty ("hi", 0.0)); })
-        .withEventListener ("st_tempo", [this] (const juce::var& v) { proc.setStandaloneTempo ((double) v.getProperty ("bpm", 0.0)); })
+        .withEventListener ("st_tempo", [this] (const juce::var& v) { if (! proc.isBouncing()) proc.setStandaloneTempo ((double) v.getProperty ("bpm", 0.0)); })
         .withEventListener ("st_save", [this] (const juce::var& v) { saveFile (v.getProperty ("name", "Semitone export").toString(), v.getProperty ("b64", "").toString()); })
         // song structure -> FL Studio Playlist markers, through Semitone's controller script
         .withEventListener ("st_markers", [this] (const juce::var& v) { sendMarkers (v); })
@@ -226,19 +313,9 @@ juce::WebBrowserComponent::Options SemitoneEditor::makeOptions()
             if (what == "load") proc.host->bridgeLoad(); else if (what == "open") proc.host->bridgeOpen(); else if (what == "close") proc.host->bridgeClear();
             else if (what == "loop") proc.host->setLoop ((double) v.getProperty ("a", 0.0), (double) v.getProperty ("b", 0.0));
         })
-        .withEventListener ("st_pack_file", [] (const juce::var& v) {
-            // the pitch pack folder, a file at a time, in chunks of base64
-            const auto root = juce::File::getSpecialLocation (juce::File::userDocumentsDirectory).getChildFile ("Semitone Studio").getChildFile ("Exports")
-                                  .getChildFile (juce::File::createLegalFileName (v.getProperty ("folder", "Pitch pack").toString()));
-            const auto f = root.getChildFile (v.getProperty ("name", "file").toString());
-            f.getParentDirectory().createDirectory();
-            if ((int) v.getProperty ("i", 0) == 0) f.deleteFile();
-            // 11 Nov: standard base64 from the page (fromBase64Encoding read none of it: the pack folder stayed empty)
-            juce::MemoryOutputStream mo; if (juce::Base64::convertFromBase64 (mo, v.getProperty ("b64", "").toString()) && mo.getDataSize() > 0) f.appendData (mo.getData(), mo.getDataSize());
-        })
+        .withEventListener ("st_pack_file", [this] (const juce::var& v) { packFile (v); })
         .withEventListener ("st_pack_show", [this] (const juce::var& v) {
-            const auto dir = juce::File::getSpecialLocation (juce::File::userDocumentsDirectory).getChildFile ("Semitone Studio").getChildFile ("Exports")
-                .getChildFile (juce::File::createLegalFileName (v.getProperty ("folder", "").toString()));
+            const auto dir = packFolder (v.getProperty ("folder", "").toString());
             // tell the page how many files really landed, so it never says Saved when nothing was written
             auto* o = new juce::DynamicObject();
             o->setProperty ("folder", v.getProperty ("folder", ""));
@@ -454,6 +531,13 @@ void SemitoneEditor::timerCallback()
         meterWas = most;
     }
     if ((ticks % 60) == 0) proc.releaseRetired();
+    if (proc.host && (ticks % 30) == 0) proc.host->pollBad();
+    if (pageReady && (ticks % 30) == 0 && proc.stateLoads() != loadsSeen) sendInit (true);
+    if (proc.isStandalone() && (ticks % 20) == 0 && ! st::files::secondCopy())
+    {
+        const auto ask = st::files::comeForwardFile();      // a second copy was opened: show this one instead
+        if (ask.existsAsFile() && ask.deleteFile()) comeForward();
+    }
     if (proc.host && (ticks % 30) == 0 && proc.host->latencySamples() != lastHostLatency)
     {
         lastHostLatency = proc.host->latencySamples();
@@ -490,9 +574,13 @@ void SemitoneEditor::timerCallback()
     // standalone app: keep a crash-safe autosave of the song, every couple of seconds while it changes
     if (proc.isStandalone() && (ticks % 120) == 0)
     {
-        const auto json = proc.getProjectState();
-        if (json.isNotEmpty() && json != lastAutosaved && st::files::writeSafely (st::files::autosaveFile(), json))
-            lastAutosaved = json;
+        const bool ok = proc.writeAutosave();
+        if (! ok && ! autosaveSaid)
+        {
+            auto* o = new juce::DynamicObject(); o->setProperty ("ok", false); o->setProperty ("autosave", true);
+            browser.emitEventIfBrowserIsVisible ("st_song_saved", juce::var (o));
+        }
+        autosaveSaid = ! ok;
     }
 
     // FL Studio automating "Macro 1-8": tell the page, so the lanes show "FL is automating this"
@@ -547,7 +635,7 @@ void SemitoneEditor::saveFile (const juce::String& name, const juce::String& bas
                           [this, data] (const juce::FileChooser& fc) {
                               const auto f = fc.getResult();
                               auto* o = new juce::DynamicObject();
-                              if (f != juce::File() && f.replaceWithData (data.getData(), data.getSize()))
+                              if (f != juce::File() && st::files::writeBytes (f, data.getData(), data.getSize()))
                               {
                                   o->setProperty ("ok", true);
                                   o->setProperty ("path", f.getFullPathName());
@@ -690,7 +778,7 @@ void SemitoneEditor::startBounce (const juce::var& v)
     juce::Component::SafePointer<SemitoneEditor> self (this);
     auto say = [self] (const char* id, juce::var o) { juce::MessageManager::callAsync ([self, id, o] { if (self != nullptr) self->browser.emitEventIfBrowserIsVisible (id, o); }); };
     auto& p = proc;
-    juce::Thread::launch ([&p, self, file, beats, bpm, tempo, say]
+    proc.runBounce ([&p, self, file, beats, bpm, tempo, say]
     {
         int last = -1;
         const bool ok = p.bounce (file, beats, bpm, tempo, [&] (float f)
@@ -750,6 +838,7 @@ void SemitoneEditor::takeOpenInput (bool granted)
             h->stopPlaying();
             if (auto* bus = proc.getBus (true, 0)) bus->enable (true);
             auto setup = h->deviceManager.getAudioDeviceSetup();
+            const auto before = setup;
             if (setup.inputDeviceName.isEmpty())
                 if (auto* type = h->deviceManager.getCurrentDeviceTypeObject())
                 {
@@ -760,7 +849,14 @@ void SemitoneEditor::takeOpenInput (bool granted)
                 }
             setup.useDefaultInputChannels = true;
             const auto err = h->deviceManager.setAudioDeviceSetup (setup, true);
-            if (err.isNotEmpty()) o->setProperty ("err", err);
+            if (err.isNotEmpty())
+            {
+                // 25 Nov: JUCE closes the speakers too when the microphone can't open, and everything played silently after that
+                o->setProperty ("err", err);
+                if (auto* bus = proc.getBus (true, 0)) bus->enable (false);
+                const auto back = h->deviceManager.setAudioDeviceSetup (before, true);
+                if (back.isNotEmpty()) h->deviceManager.initialiseWithDefaultDevices (0, 2);
+            }
             h->startPlaying();
         }
         h->getMuteInputValue().setValue (false);    // the input only goes to the file: nothing reaches the speakers
@@ -791,7 +887,8 @@ void SemitoneEditor::takeStop()
    #endif
     o->setProperty ("file", takeFile.getFileName());
     o->setProperty ("frames", (double) res.frames);
-    o->setProperty ("dropped", (double) res.dropped);
+    o->setProperty ("dropped", (double) (res.dropped + (res.failed ? 1 : 0)));   // a full disk loses audio as well: the page says so either way
+    if (res.failed) o->setProperty ("failed", true);
     o->setProperty ("inLat", inLat);
     browser.emitEventIfBrowserIsVisible ("st_take_done", juce::var (o));
 }

@@ -52,8 +52,9 @@ public:
 
     // Audio thread. Adds the clips into L/R (R may equal L for mono).
     // loopLen/offset: the timeline the DAW plays (song beats offset..offset+loopLen, looped).
+    // once: played through one time. The last section rings out past the end, and nothing wraps round to the start (25 Nov).
     void process (bool playing, double ppqStart, double bpm, double sampleRate, int n,
-                  double loopLen, double offset, float* L, float* R)
+                  double loopLen, double offset, float* L, float* R, bool once = false)
     {
         current = std::atomic_load (&pending);
         if (! playing || ! current || current->items.empty() || loopLen <= 0 || bpm <= 0 || sampleRate <= 0 || n <= 0) return;
@@ -62,8 +63,9 @@ public:
         while (i < n && guard++ < 64)
         {
             const double beat = ppqStart + i * bps;
-            double pos = std::fmod (beat, loopLen); if (pos < 0) pos += loopLen;
-            const double toWrap = loopLen - pos;
+            double pos = beat;
+            if (! once) { pos = std::fmod (beat, loopLen); if (pos < 0) pos += loopLen; }
+            const double toWrap = once ? (n - i + 1) * bps : loopLen - pos;
             int m = (int) std::ceil (toWrap / bps - 1.0e-9);
             m = std::max (1, std::min (n - i, m));
             const double sb0 = pos + offset, sb1 = sb0 + m * bps;

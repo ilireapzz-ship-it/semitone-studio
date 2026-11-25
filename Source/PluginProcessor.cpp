@@ -20,8 +20,23 @@ SemitoneProcessor::SemitoneProcessor()
     if (isStandalone())
     {
         host = std::make_unique<st::PartHost>();
-        const auto f = st::files::autosaveFile();
-        if (f.existsAsFile()) projectJson = f.loadFileAsString();
+        const auto f = st::files::appData().getChildFile ("Autosave.semitone");   // a second copy starts from the first one's song and saves to its own
+        const auto text = f.existsAsFile() ? f.loadFileAsString() : juce::String();
+        if (st::files::isSong (text))
+        {
+            projectJson = text; restored = "autosave";
+            if (! st::files::secondCopy()) lastAutosaved = text;
+        }
+        else if (f.existsAsFile())
+        {
+            // 25 Nov: a cut-short autosave used to open as a starter song that then replaced it. It is kept, and the one before it opens
+            // (or, if there is none, the state the app saved when it last closed: setStateInformation).
+            restored = "damaged";
+            if (f.getSize() > 0 && ! st::files::secondCopy())
+                f.copyFileTo (f.getSiblingFile ("Autosave damaged " + juce::Time::getCurrentTime().formatted ("%Y-%m-%d %H%M%S") + ".semitone"));
+            const auto before = st::files::previousFile().loadFileAsString();
+            if (st::files::isSong (before)) { projectJson = before; restored = "previous"; }
+        }
     }
 }
 
@@ -40,7 +55,17 @@ SemitoneProcessor::~SemitoneProcessor()
 {
     for (auto* p : macroParams) if (p != nullptr) p->removeListener (this);
     abortBounce = true;
-    for (int i = 0; i < 500 && bouncingNow.load(); ++i) juce::Thread::sleep (10);
+    for (int i = 0; i < 500 && bounceRunning.load(); ++i) juce::Thread::sleep (10);
+    if (bounceThread.joinable()) { if (bounceRunning.load()) bounceThread.detach(); else bounceThread.join(); }   // stuck in a plug-in: don't hang the app on it
+    alive->store (false);
+}
+
+void SemitoneProcessor::runBounce (std::function<void()> job)
+{
+    if (bounceThread.joinable()) bounceThread.join();   // the one before, which has ended
+    abortBounce = false;
+    bounceRunning = true;
+    bounceThread = std::thread ([this, job] { job(); bounceRunning = false; });
 }
 
 void SemitoneProcessor::prepareToPlay (double sampleRate, int maxBlock)
@@ -49,6 +74,7 @@ void SemitoneProcessor::prepareToPlay (double sampleRate, int maxBlock)
     std::unique_lock<std::mutex> g (renderLock, std::try_to_lock);
     if (! g.owns_lock()) { pendingSr = sampleRate; pendingBlock = maxBlock; return; }
     const bool changed = sampleRate != sr;
+    if (changed && takeRecorder.active()) takeRecorder.endEarly();   // the rest would be at another speed
     sr = sampleRate;
     blockNow = maxBlock;
     if (changed) { synth.setPatch (nullptr); listenWasLo = listenWasHi = -1; }   // -1: the Listen filters are worked out again for the new rate   // notes rendered for the old rate would play out of tune until the rebuild lands
@@ -87,7 +113,7 @@ void SemitoneProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
     midi.clear();        // incoming MIDI is not passed through
     const int n = buffer.getNumSamples();
 
-    bool playing = false; double ppq = 0.0, bpm = 120.0; bool hostTransport = false;
+    bool playing = false; double ppq = 0.0, bpm = 120.0; bool hostTransport = false; int64_t samplesNow = 0;
 
     if (auto* ph = getPlayHead())
     {
@@ -103,22 +129,40 @@ void SemitoneProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
     {
         // our own transport (standalone app, or a host that gives no position)
         const double req = stStartRequest.exchange (-1.0);
-        if (req >= 0.0) stPpq = req;
+        if (req >= 0.0) { stPpq = req; stSamples = (int64_t) std::llround (req * 60.0 / juce::jmax (1.0, stBpm.load()) * sr); }
         playing = stPlaying.load();
         bpm = stBpm.load();
         ppq = stPpq;
-        if (playing) stPpq += n * (bpm / 60.0) / sr;
+        samplesNow = stSamples;
+        if (playing) { stPpq += n * (bpm / 60.0) / sr; stSamples += n; }
         hostTransport = false;
     }
+    const double once = isStandalone() ? sequencer.onceAt() : 0;   // the beat where the song ends when it isn't looped; 0 = loop
 
     events.clear();
     sequencer.process (playing, ppq, bpm, sr, n, events);
     const int mode = soundMode.load();
-    if (mode == 0 || mode == 2)
+    const bool midiOn = mode == 0 || mode == 2;
+    const uint32_t muted = midiMute.load();
+    // 25 Nov: switching to Semitone's sounds only (or muting a channel) mid-song held back the note-offs too, so the DAW's instruments hung
+    for (int ch = 0; ch < 16; ++ch)
+        if (outDown[(size_t) ch].any() && (! midiOn || ((muted >> ch) & 1)))
+        {
+            for (int k = 0; k < 128; ++k)
+                if (outDown[(size_t) ch].test ((size_t) k)) midi.addEvent (juce::MidiMessage (0x80 | ch, k, 0), 0);
+            outDown[(size_t) ch].reset();
+            midi.addEvent (juce::MidiMessage (0xE0 | ch, 0, 64), 0);
+        }
+    if (midiOn)
         for (const auto& e : events)
-            if (! ((midiMute.load() >> (e.status & 15)) & 1)
+            if (! ((muted >> (e.status & 15)) & 1)
                 && ! ((e.status & 0xF0) == 0xB0 && e.d1 >= 85 && e.d1 <= 88))   // a drum hit's own pan, pitch and length are for the built-in kit only
+            {
                 midi.addEvent (juce::MidiMessage (e.status, e.d1, e.d2), e.offset);
+                const int type = e.status & 0xF0;
+                if (type == 0x90 && e.d2 > 0) outDown[(size_t) (e.status & 15)].set ((size_t) (e.d1 & 127));
+                else if (type == 0x80 || type == 0x90) outDown[(size_t) (e.status & 15)].reset ((size_t) (e.d1 & 127));
+            }
 
     // Semitone's own instruments, rendered by the interface, played on the DAW's timeline
     // (the standalone app plays its sound in the interface itself)
@@ -127,8 +171,17 @@ void SemitoneProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
     const bool viaEngine = host && isStandalone() && engineAll.load() && mode != 2 && buffer.getNumChannels() > 1;
     if (! viaEngine) synth.plugFxMask = 0;
     double hostBeat = -1;
-    if (host) host->setTransport (bpm, ppq, playing);
-    if (host) { const double loop = tlLength.load(); if (playing && loop > 0) { hostBeat = std::fmod (ppq, loop); if (hostBeat < 0) hostBeat += loop; hostBeat += tlOffset.load(); } }
+    if (host) host->setTransport (bpm, ppq, playing && ! (once > 0 && ppq >= once), samplesNow);   // past the end of a song played once, synced plug-ins stop
+    if (host)
+    {
+        const double loop = tlLength.load();
+        if (playing && loop > 0)
+        {
+            if (once > 0) hostBeat = juce::jmin (ppq, once - 1.0e-6);   // its lanes hold their last value while the song rings out
+            else { hostBeat = std::fmod (ppq, loop); if (hostBeat < 0) hostBeat += loop; }
+            hostBeat += tlOffset.load();
+        }
+    }
     int engineWait = 0;
     if (viaEngine)
     {
@@ -138,7 +191,8 @@ void SemitoneProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
         synth.plugFxMask = host->builtInFxMask();   // your effects on Semitone's own parts
         engineWait = host->slowestPart();
     }
-    if (mode != 2 && (! isStandalone() || engineAll.load()) && buffer.getNumChannels() > 0)
+    const bool engineOn = mode != 2 && (! isStandalone() || engineAll.load()) && buffer.getNumChannels() > 0;
+    if (engineOn)
     {
         float* L = buffer.getWritePointer (0);
         float* R = buffer.getNumChannels() > 1 ? buffer.getWritePointer (1) : L;
@@ -147,7 +201,7 @@ void SemitoneProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
         const double songTempo = songBpm.load();
         const bool tempoMatches = isStandalone() || songTempo <= 0 || std::abs (bpm - songTempo) < .5;
         // in the app, clips hold only your samples, so they play alongside the engine and wait for slow plug-ins with it
-        if (mode != 3 && tempoMatches) clipPlayer.process (playing, ppq - engineWait * (bpm / 60.0) / sr, bpm, sr, n, len, off, L, R);
+        if (mode != 3 && tempoMatches) clipPlayer.process (playing, ppq - engineWait * (bpm / 60.0) / sr, bpm, sr, n, len, off, L, R, once > 0);
         // the native engine fills in wherever no rendered section covers the playhead
         bool covered = false;
         if (mode != 3 && len > 0 && tempoMatches)
@@ -159,10 +213,11 @@ void SemitoneProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
         double beat = -1;
         if (playing && len > 0)
         {
-            double pos = std::fmod (ppq, len);
-            if (pos < 0) pos += len;
+            double pos = ppq;
+            if (once <= 0) { pos = std::fmod (ppq, len); if (pos < 0) pos += len; }
             beat = pos + off;
         }
+        synth.songEnd = once > 0 ? once + off : -1;
         synth.takeLevel = tempoMatches ? takeGain.load() : 0.0f;
         if (engineWait > 0 || ! waiting.empty())
         {
@@ -182,7 +237,8 @@ void SemitoneProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
         else synth.process (events, n, L, R, covered ? 0.0f : 1.0f, beat, bpm / 60.0 / sr);
         sampleClock += n;
     }
-    else if (mode == 2) synth.silence();
+    else if (engineWas) { synth.silence(); waiting.clear(); }   // 25 Nov: notes left held here came back as a drone when the engine was next used
+    engineWas = engineOn;
 
     // your own plug-ins on Semitone's parts (desktop app)
     if (host && buffer.getNumChannels() > 0)
@@ -234,6 +290,9 @@ void SemitoneProcessor::setTimelineFromVar (const juce::var& v)
     tl->length = (double) v.getProperty ("length", 0.0);
     songBpm = (double) v.getProperty ("bpm", 0.0);
     engineAll = (bool) v.getProperty ("engineAll", false);
+    if (host)
+        if (auto* sig = v.getProperty ("sig", juce::var()).getArray())
+            if (sig->size() >= 2) host->setMeter ((int) (*sig)[0], (int) (*sig)[1]);
     if (auto* arr = v.getProperty ("notes", juce::var()).getArray())
     {
         const int count = arr->size() / 5;
@@ -555,8 +614,10 @@ void SemitoneProcessor::buildSynthPatch()
 {
     const int gen = ++synthGen;
     const double rate = sr;
+    ++builds;
     synthPool.addJob ([this, gen, rate]
     {
+        struct Done { std::atomic<int>& n; ~Done() { --n; } } done { builds };
         std::shared_ptr<const st::SynthPatch> tmpl;
         std::vector<std::set<int>> keys;
         {
@@ -651,19 +712,29 @@ bool SemitoneProcessor::bounce (const juce::File& file, double beats, double bpm
     juce::MidiBuffer midi;
     setStandaloneTransport (false, 0, bpm);
     for (int i = 0; i < 8; ++i) { buf.clear(); processBlock (buf, midi); }    // let notes from before finish cleanly
-    setStandaloneTransport (true, 0, bpm);
+    setStandaloneTransport (true, 0, bpm, true, beats);
     int skip = host->latencySamples();
+    const int late = skip;
     size_t mark = 0;
     double at = 0;
     bool ok = true;
-    int tail = (int) (sr * 3) + skip;
-    while (ok && ! abortBounce.load() && (at < beats || tail > 0))
+    // 25 Nov: until it has been quiet for a second and a half, up to 12 seconds (then a short fade). It was always 3, which cut long reverbs.
+    int left = (int) (sr * 12) + late, quiet = 0;
+    const int fade = (int) (sr * .25);
+    while (ok && ! abortBounce.load() && (at < beats || left > 0))
     {
-        if (at >= beats) { if (stPlaying.load()) stPlaying = false; tail -= bs; }
+        const bool tail = at >= beats;
+        if (tail) left -= bs;
         while (mark < tempo.size() && tempo[mark].first <= at) { stBpm = tempo[mark].second; ++mark; }
         buf.clear();
         processBlock (buf, midi);
         at += bs * (stBpm.load() / 60.0) / sr;
+        if (tail)
+        {
+            quiet = juce::jmax (buf.getMagnitude (0, 0, bs), buf.getMagnitude (1, 0, bs)) < 1.0e-4f ? quiet + bs : 0;
+            if (quiet > (int) (sr * 1.5) + late) left = 0;
+            else if (left < fade) buf.applyGainRamp (0, bs, juce::jlimit (0.0f, 1.0f, (float) (left + bs) / (float) fade), juce::jlimit (0.0f, 1.0f, (float) left / (float) fade));
+        }
         const int drop = juce::jmin (skip, bs);
         skip -= drop;
         if (drop < bs)
@@ -674,19 +745,22 @@ bool SemitoneProcessor::bounce (const juce::File& file, double beats, double bpm
         if (progress && at < beats) progress ((float) (at / beats));
     }
     w.reset();
-    stBpm = bpm;
+    setStandaloneTransport (false, 0, bpm);
     host->setOffline (false);
-    const double psr = pendingSr; const int pblock = pendingBlock;
     g.unlock();
-    if (psr > 0 && ! abortBounce.load()) prepareToPlay (psr, pblock);
+    const double psr = pendingSr; const int pblock = pendingBlock;
     bouncingNow = false;
-    suspendProcessing (false);
+    // a device change that came during the export: plug-ins must be prepared on the message thread (from here it could lock the app up)
+    if (psr > 0 && ! abortBounce.load())
+        juce::MessageManager::callAsync ([this, here = alive, psr, pblock] { if (! here->load()) return; prepareToPlay (psr, pblock); suspendProcessing (false); });
+    else suspendProcessing (false);
     return ok && ! abortBounce.load();
 }
 
-void SemitoneProcessor::setStandaloneTransport (bool play, double startBeat, double bpm)
+void SemitoneProcessor::setStandaloneTransport (bool play, double startBeat, double bpm, bool once, double end)
 {
     if (bpm > 0) stBpm = bpm;
+    if (play) sequencer.setOnce (once && end > 0 && isStandalone() ? end : 0.0);
     if (play) { stStartRequest = juce::jmax (0.0, startBeat); sequencer.chaseOnNextBlock(); }
     stPlaying = play;
 }
@@ -736,8 +810,26 @@ void SemitoneProcessor::refreshHostStates()
         }
     if (! changed) return;
     const auto out = juce::String::fromUTF8 (text.data(), (int) text.size());
-    setProjectState (out);
-    st::files::writeSafely (st::files::autosaveFile(), out);
+    if (st::files::isSong (out)) setProjectState (out);   // the caller writes the autosave, changed or not
+}
+
+bool SemitoneProcessor::writeAutosave (bool closing)
+{
+    if (! isStandalone()) return true;
+    const auto json = getProjectState();
+    if (json.isEmpty() || json == lastAutosaved) return true;
+    const auto now = juce::jmax ((juce::uint32) 1, juce::Time::getMillisecondCounter());
+    if (! closing && autosaveFailedAt != 0 && now - autosaveFailedAt < 30000) return false;
+    // 25 Nov: the song as it was when this session began is kept as the previous autosave
+    if (! autosaveRotated)
+    {
+        const auto was = st::files::autosaveFile().loadFileAsString();
+        autosaveRotated = ! st::files::isSong (was) || st::files::writeSafely (st::files::previousFile(), was);
+    }
+    if (! st::files::writeSafely (st::files::autosaveFile(), json)) { autosaveFailedAt = now; return false; }
+    autosaveFailedAt = 0;
+    lastAutosaved = json;
+    return true;
 }
 
 void SemitoneProcessor::getStateInformation (juce::MemoryBlock& dest)
@@ -747,6 +839,10 @@ void SemitoneProcessor::getStateInformation (juce::MemoryBlock& dest)
     { const juce::ScopedLock sl (stateLock); t.setProperty ("project", projectJson, nullptr); t.setProperty ("timeline", timelineJson, nullptr); t.setProperty ("songFile", songFile, nullptr); }
     t.setProperty ("soundMode", soundMode.load(), nullptr);
     t.setProperty ("audioLayout", juce::JSON::toString (audioLayout, true), nullptr);
+    // 25 Nov: the host's Macro 1-8, and which of them it has taken over, so a project opens with them as they were
+    juce::StringArray macros;
+    for (int i = 0; i < 8; ++i) macros.add (juce::String (macroVal[(size_t) i].load(), 6) + (macroTouched[(size_t) i].load() ? "t" : ""));
+    t.setProperty ("macros", macros.joinIntoString (" "), nullptr);
     t.setProperty ("version", 1, nullptr);
     juce::MemoryOutputStream mo (dest, false);
     t.writeToStream (mo);
@@ -760,11 +856,25 @@ void SemitoneProcessor::setStateInformation (const void* data, int size)
     {
         const juce::ScopedLock sl (stateLock);
         // the standalone app's autosave is always newer than the state saved when it last quit
-        if (! (isStandalone() && projectJson.isNotEmpty())) projectJson = t.getProperty ("project").toString();
+        if (! (isStandalone() && projectJson.isNotEmpty()))
+        {
+            const auto song = t.getProperty ("project").toString();
+            if (song != projectJson) ++loads;      // an open window shows it (SemitoneEditor::timerCallback)
+            projectJson = song;
+            if (song.isNotEmpty()) restored = "project";
+        }
         tl = t.getProperty ("timeline").toString();
         if (t.hasProperty ("songFile")) songFile = t.getProperty ("songFile").toString();
     }
     if (tl.isNotEmpty()) setTimelineFromVar (juce::JSON::parse (tl)); // plays even before the window is opened
+    const auto macros = juce::StringArray::fromTokens (t.getProperty ("macros").toString(), " ", "");
+    for (int i = 0; i < juce::jmin (8, macros.size()); ++i)
+    {
+        const bool on = macros[i].endsWithChar ('t');
+        const float value = juce::jlimit (0.0f, 1.0f, macros[i].getFloatValue());
+        if (auto* p = macroParams[(size_t) i]) static_cast<juce::AudioProcessorParameter*> (p)->setValueNotifyingHost (value);
+        macroVal[(size_t) i] = value; macroTouched[(size_t) i] = on;
+    }
     if (t.hasProperty ("soundMode")) setSoundMode ((int) t.getProperty ("soundMode"));
     if (t.hasProperty ("audioLayout")) setAudioLayout (juce::JSON::parse (t.getProperty ("audioLayout").toString())); // sound from the clip cache
 }
@@ -841,6 +951,15 @@ juce::StringArray SemitoneProcessor::setAudioLayout (const juce::var& items)
     return need;
 }
 
+int SemitoneProcessor::missingClips() const
+{
+    int n = 0;
+    if (auto* arr = audioLayout.getArray())
+        for (const auto& it : *arr)
+            if (clips.find (it.getProperty ("id", "").toString()) == clips.end()) ++n;
+    return n;
+}
+
 void SemitoneProcessor::addClip (const juce::String& id, std::shared_ptr<st::Clip> clip)
 {
     if (! clip || id.isEmpty()) return;
@@ -888,6 +1007,34 @@ int SemitoneProcessor::popIncomingMidi (std::vector<juce::uint32>& dest)
 
 juce::AudioProcessorEditor* SemitoneProcessor::createEditor() { return new SemitoneEditor (*this); }
 
+// 25 Nov: two copies of the app wrote over each other's unsaved song. The second asks the first to come forward, and leaves once it has.
+// If it doesn't answer (it has hung) the second opens after all, with an autosave of its own. Test copies (SEMITONE_DATA) are left alone.
+static void oneCopyOnly()
+{
+    if (juce::SystemStats::getEnvironmentVariable ("SEMITONE_DATA", {}).isNotEmpty()) return;
+    static juce::InterProcessLock running ("SemitoneStudioApp");
+    const auto ask = st::files::comeForwardFile();
+    if (running.enter (0)) { ask.deleteFile(); return; }
+   #if JUCE_WINDOWS
+    {
+        // let the first copy take the focus this one was given
+        juce::DynamicLibrary user32 ("user32.dll");
+        using Allow = int (__stdcall*) (unsigned long);
+        if (auto fn = (Allow) user32.getFunction ("AllowSetForegroundWindow")) fn (0xffffffffUL);
+    }
+   #endif
+    ask.replaceWithText ("1");
+    if (ask.existsAsFile())
+        for (int i = 0; i < 60; ++i)
+        {
+            juce::Thread::sleep (100);
+            if (running.enter (0)) { ask.deleteFile(); return; }   // the first was only closing
+            if (! ask.existsAsFile()) std::_Exit (0);              // it came forward
+        }
+    ask.deleteFile();
+    st::files::secondCopy() = true;
+}
+
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     // the short-lived copy that opens one plug-in file during a scan: it does that and leaves, with no window
@@ -899,5 +1046,6 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
        #endif
         std::_Exit (st::PartHost::scanOne (args));
     }
+    if (juce::JUCEApplicationBase::isStandaloneApp()) oneCopyOnly();
     return new SemitoneProcessor();
 }

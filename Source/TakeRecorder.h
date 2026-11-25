@@ -31,7 +31,8 @@ public:
         if (file == nullptr) return false;
         sr = (int) sampleRate;
         ring.assign ((size_t) std::max (1024, sr * 8 * chans), 0.0f);   // 8 seconds of slack
-        rd.store (0); wr.store (0); frames = 0; droppedFrames.store (0); peak.store (0);
+        rd.store (0); wr.store (0); frames = 0; headerAt = 0; writeFailed = false; droppedFrames.store (0); peak.store (0);
+        last = Result();
         writeHeader();
         running.store (true);
         worker = std::thread ([this] { drainLoop(); });
@@ -77,19 +78,24 @@ public:
     float takePeak() noexcept { return peak.exchange (0); }
     int channels() const noexcept { return chans; }
 
-    struct Result { uint64_t frames = 0, dropped = 0; };
+    // failed: the disk didn't take all of it
+    struct Result { uint64_t frames = 0, dropped = 0; bool failed = false; };
+
+    // The audio device changed speed in the middle of a take: finish the file here, at the speed it was recorded.
+    // The next stop() hands back its result.
+    void endEarly() { if (file != nullptr) last = stop(); }
 
     Result stop()
     {
         Result res;
-        if (file == nullptr) return res;
+        if (file == nullptr) { res = last; last = Result(); return res; }
         running.store (false, std::memory_order_release);
         if (worker.joinable()) worker.join();
         drain();
         finishHeader();
-        std::fclose (file);
+        if (std::fclose (file) != 0) writeFailed = true;
         file = nullptr;
-        res.frames = frames; res.dropped = droppedFrames.load();
+        res.frames = frames; res.dropped = droppedFrames.load(); res.failed = writeFailed;
         return res;
     }
 
@@ -99,6 +105,14 @@ private:
         while (running.load (std::memory_order_acquire))
         {
             drain();
+            // 25 Nov: the header says how long the take is so far, about once a second, so a crash keeps what was recorded
+            if (frames >= headerAt + (uint64_t) sr)
+            {
+                headerAt = frames;
+                finishHeader();
+                std::fseek (file, 0, SEEK_END);
+                if (std::fflush (file) != 0) writeFailed = true;
+            }
             std::this_thread::sleep_for (std::chrono::milliseconds (20));
         }
     }
@@ -115,8 +129,8 @@ private:
             const float s = std::clamp (ring[r], -1.0f, 1.0f);
             const int32_t v = (int32_t) (s * 8388607.0f);
             b[0] = (uint8_t) (v & 255); b[1] = (uint8_t) ((v >> 8) & 255); b[2] = (uint8_t) ((v >> 16) & 255);
-            std::fwrite (b, 1, 3, file);
-            if (++k == (size_t) chans) { ++frames; k = 0; }
+            if (std::fwrite (b, 1, 3, file) != 3) writeFailed = true;
+            if (++k == (size_t) chans) { if (! writeFailed) ++frames; k = 0; }
             r = (r + 1) % cap;
         }
         rd.store (r, std::memory_order_release);
@@ -144,7 +158,9 @@ private:
     std::atomic<bool> running { false };
     std::atomic<uint64_t> droppedFrames { 0 };
     std::atomic<float> peak { 0 };
-    uint64_t frames = 0;
+    uint64_t frames = 0, headerAt = 0;   // the writing thread while recording
+    bool writeFailed = false;
+    Result last;
     int sr = 48000, mode = mix, chans = 1;
 };
 }
