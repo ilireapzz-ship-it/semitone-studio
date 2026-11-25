@@ -1,6 +1,6 @@
 # Problem search, 25 November 2026
 
-Found by searching and testing copies of Semitone. Nothing here is fixed yet unless it says so.
+Found by searching and testing copies of Semitone. **Fixed 26 November** (tests/web/search-fixes.test.js, and the app build from b747c93), except: offering unfinished takes at start-up; two drum takes through sections that share a beat keep only the first (and say so); page-rendered files use a built-in sound for plug-in parts (and say so); loops keep playing through a Silence transition.
 
 **Rechecked** = tried again separately (or confirmed in the code that does it). **Tested** = reproduced once, with a script. **Read** = found by reading the code, not run.
 
